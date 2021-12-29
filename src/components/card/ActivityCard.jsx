@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import moment from 'moment'
 import LiNote from '../ui/LiNote'
 import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu'
@@ -8,6 +9,8 @@ const ActivityCard = (props) => {
 
   const { addNote, updateNote, lowPriority, mediumPriority, highPriority, noPriority,
     numberCard, pausas, onPlayPause } = props
+
+  const navigate = useNavigate()
 
   const date = moment(props.fecha_tx)
   const pausaState = pausas.length > 0 && pausas[pausas.length - 1].boton === 2
@@ -46,12 +49,19 @@ const ActivityCard = (props) => {
       break
   }
 
+  const openDetails = () => {
+    navigate(`detalle-actividad/${props.id_det}`, { replace: true })
+  }
+
   return (
-    <div className={`
+    <div
+      className={`
       p-4 rounded-lg shadow-md grid transition duration-200
       hover:shadow-xl hover:scale-95 transform text-sm
        ${userStyles.styles}
-    `}>
+    `}
+      onDoubleClick={openDetails}
+    >
       <div>
         <header className='flex items-start justify-between gap-3 capitalize font-semibold'>
           <h1 className='text-base'>
@@ -162,7 +172,7 @@ const ActivityCard = (props) => {
         <span className='flex items-center gap-2'>
           <p>estado</p>
           <button
-            onClick={() => onPlayPause({ id_activity: props.id_det, pausaState })}
+            onClick={() => onPlayPause({ props, pausaState })}
           >
             {
               pausaState ?

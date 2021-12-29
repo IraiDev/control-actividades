@@ -30,8 +30,9 @@ const Activity = () => {
   const [modalAdd, toggleModalAdd] = useState(false)
   const [modalPause, toggleModalPause] = useState(false)
   const [notes, setNotes] = useState([])
-  const [values, setValues] = useState({ desc: '', id: null, id_ref: null })
-  const { activities, newNote, updateNote, deleteNote, updatePriority, onPlayPause } = useActivity()
+  const [values, setValues] = useState({ desc: '', id: null, id_ref: null, title: '', content: '' })
+  const { activities, newNote, updateNote, deleteNote,
+    updatePriority, onPlayPause, updatePriorityAndAddNote } = useActivity()
 
   const openModalEdit = ({ notes }) => {
     toggleModalEdit(true)
@@ -58,12 +59,12 @@ const Activity = () => {
     setValues({ desc: '', id: null, id_ref: null })
   }
 
-  const handleOnPlayPause = ({ pausaState, id_activity }) => {
+  const handleOnPlayPause = ({ pausaState, props }) => {
     if (pausaState) {
       toggleModalPause(true)
-      setValues({ ...values, id_ref: id_activity })
+      setValues({ ...values, id_ref: props.id_det, title: props.actividad || 'Sin titulo', content: props.func_objeto || 'Sin descripcion' })
     }
-    else { onPlayPause({ id_actividad: id_activity }) }
+    else { onPlayPause({ id_actividad: props.id_det }) }
   }
 
   const onPause = () => {
@@ -77,6 +78,46 @@ const Activity = () => {
       return
     }
     onPlayPause({ id_actividad: values.id_ref, mensaje: values.desc })
+    onCloseModals()
+  }
+
+  const onDelete = ({ id, id_activity, desc }) => {
+    Alert({
+      icon: 'warn',
+      title: 'Atención',
+      content: `¿Estas seguro de eliminar la siguiente nota: <strong>${desc}</strong>?`,
+      cancelButton: 'No, cancelar',
+      confirmButton: 'Si, eliminar',
+      action: () => {
+        deleteNote({ id_nota: id, id_actividad: id_activity })
+        setNotes(notes.filter(n => n.id !== id))
+      }
+    })
+  }
+
+  const onUpdate = () => {
+    if (values.desc.trim() === '') {
+      Alert({
+        title: 'Atención',
+        content: 'No puedes actualizar una nota sin una descripcion',
+        showCancelButton: false,
+      })
+      return
+    }
+    updateNote({ id_nota: values.id, description: values.desc, id_actividad: values.id_ref })
+    setNotes(notes.map(note => note.id === values.id ? { ...note, desc: values.desc } : note))
+  }
+
+  const onAdd = () => {
+    if (values.desc.trim() === '') {
+      Alert({
+        title: 'Atención',
+        content: 'No puedes crear una nota sin una descripcion',
+        showCancelButton: false,
+      })
+      return
+    }
+    newNote({ id_actividad: values.id_ref, description: values.desc })
     onCloseModals()
   }
 
@@ -98,7 +139,7 @@ const Activity = () => {
               noPriority={() => updatePriority({ prioridad_numero: 1000, id_actividad: act.id_det })}
               addNote={() => openModalAdd({ id_activity: act.id_det })}
               updateNote={() => openModalEdit({ notes: act.notas })}
-              onPlayPause={({ id_activity, pausaState }) => handleOnPlayPause({ id_activity, pausaState })}
+              onPlayPause={({ props, pausaState }) => handleOnPlayPause({ props, pausaState })}
               {...act}
             />
           ))
@@ -119,24 +160,25 @@ const Activity = () => {
                 notes.map(note => (
                   <li
                     key={note.id_nota}
-                    className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'
+                    className={`
+                      flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 cursor-pointer
+                      shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200
+                      ${values.id === note.id_nota && 'border-2 border-blue-400'}
+                      `}
                     onClick={() => {
                       setValues({ desc: note.desc, id: note.id, id_ref: note.id_activity })
                     }}
                   >
-                    <span className='cursor-pointer'>
+                    <span>
                       <h1>
                         {note.user}
-                        <span className='text-gray-600 text-xs font-light ml-2'>({moment(note.date).format('DD/MM/yyyy, HH:mm')})</span>
+                        <span className='text-gray-600 text-xs font-light ml-2'>{moment(note.date).format('DD/MM/yyyy, HH:mm')}</span>
                       </h1>
                       <p className='text-gray-600 text-sm'>{note.desc}</p>
                     </span>
                     <button
                       className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
-                      onClick={() => {
-                        deleteNote({ id_nota: note.id, id_actividad: note.id_activity })
-                        setNotes(notes.filter(n => n.id !== note.id))
-                      }}
+                      onClick={() => onDelete({ id: note.id, id_activity: note.id_activity, desc: note.desc })}
                     >
                       <i className='fas fa-trash fa-sm'></i>
                     </button>
@@ -145,6 +187,8 @@ const Activity = () => {
             }
           </ul>
           <TextArea
+            disabled={values.id === null}
+            placeholder='Selecciona una nota para editar...'
             field='descripcion'
             value={values.desc}
             onChange={e => setValues({ ...values, desc: e.target.value })}
@@ -154,10 +198,7 @@ const Activity = () => {
               w-max border border-blue-400 text-blue-400 hover:text-white hover:bg-blue-400 
               hover:shadow-lg hover:shadow-blue-500/30 rounded-full place-self-end'
             name='modificar nota'
-            onClick={() => {
-              updateNote({ id_nota: values.id, description: values.desc, id_actividad: values.id_ref })
-              setNotes(notes.map(note => note.id === values.id ? { ...note, desc: values.desc } : note))
-            }}
+            onClick={onUpdate}
           />
         </div>
       </Modal>
@@ -168,13 +209,13 @@ const Activity = () => {
       >
         <div className='grid gap-5'>
           <h1 className='text-xl font-semibold capitalize'>crear Notas</h1>
-          <h5 className='text-sm'>Notas por defecto: </h5>
+          <h5 className='text-sm'>Notas rapidas: </h5>
           <ul className='max-h-56 overflow-custom'>
             {
               defaultNotes.map(note => (
                 <li
                   key={note.id}
-                  className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'
+                  className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'
                 >
                   <span>
                     <p className='text-gray-600 text-sm'>{note.desc}</p>
@@ -182,7 +223,8 @@ const Activity = () => {
                   <button
                     className='ml-2 text-blue-400 hover:text-blue-600 transition duration-200 transform hover:hover:scale-125'
                     onClick={() => {
-                      newNote({ id_actividad: values.id_ref, description: note.desc })
+                      note.id === 11121 ? updatePriorityAndAddNote({ prioridad_numero: 100, id_actividad: values.id_ref, description: note.desc })
+                        : newNote({ id_actividad: values.id_ref, description: note.desc })
                       onCloseModals()
                     }}
                   >
@@ -202,10 +244,7 @@ const Activity = () => {
               w-max border border-blue-400 text-blue-400 hover:text-white hover:bg-blue-400 
               hover:shadow-lg hover:shadow-blue-500/30 rounded-full place-self-end'
             name='crear nota'
-            onClick={() => {
-              newNote({ id_actividad: values.id_ref, description: values.desc })
-              onCloseModals()
-            }}
+            onClick={onAdd}
           />
         </div>
       </Modal>
@@ -216,15 +255,19 @@ const Activity = () => {
       >
         <div className='grid gap-5'>
           <h1 className='text-xl font-semibold capitalize'>
-            Pausar actividad:
+            Pausar actividad: {values.title}, {values.id_ref}
           </h1>
-          <h5 className='text-sm'>Pausas por defecto: </h5>
+          <h5 className='text-sm'>Descripcion actividad: </h5>
+          <p className='text-sm whitespace-pre-wrap max-h-44 overflow-custom p-1.5 rounded-lg bg-black/5'>
+            {values.content}
+          </p>
+          <h5 className='text-sm'>Pausas rapidas: </h5>
           <ul className='max-h-56 overflow-custom'>
             {
               defaultPauses.map(pause => (
                 <li
                   key={pause.id}
-                  className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'
+                  className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'
                 >
                   <p className='text-gray-600 text-sm'>{pause.desc}</p>
                   <button

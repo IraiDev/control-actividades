@@ -25,7 +25,7 @@ const Input = ({
             onChange={onChange}
             disabled={disabled}
             type={type}
-            className={`px-4 py-2 rounded-md bg-gray-100 focus:bg-white transition duration-500 focus:ring-2 focus:shadow-lg ${width}`}
+            className={`px-4 py-2 rounded-md bg-black/5 focus:bg-white transition duration-200 focus:ring-2 focus:shadow-lg ${width}`}
             placeholder={placeholder}
             onKeyPress={(event) => {
                if (!isNumber) return

@@ -1,22 +1,23 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { UiContext } from '../context/UiContext'
 import { Alert } from '../helpers/alerts'
 import { fetchToken } from '../helpers/fetch'
 
-export const useActivity = () => {
-  const { setIsLoading } = useContext(UiContext)
-  const [activities, setActivities] = useState([])
+export const useDetail = (id) => {
 
-  const fetchActivities = async () => {
+  const { setIsLoading } = useContext(UiContext)
+  const [activity, setActivity] = useState({})
+
+  const fetchDetail = async () => {
     try {
       setIsLoading(true)
-      const resp = await fetchToken(`task/get-task-ra?id_actividad`, {}, 'POST')
+      const resp = await fetchToken(`task/get-task-ra?id_actividad=${id}&es_detalle=true`, {}, 'POST')
       const body = await resp.json()
       const { ok, tareas } = body
 
-      // console.log(body)
+      console.log(body)
       setIsLoading(false)
-      if (ok) { setActivities(tareas) }
+      if (ok) { setActivity(tareas[0]) }
       else { console.log('Error') }
 
     } catch (e) {
@@ -30,7 +31,7 @@ export const useActivity = () => {
     try {
       const resp = await fetchToken('task/create-note', { id_actividad, description }, 'POST')
       const body = await resp.json()
-      if (body.ok) { fetchActivities() }
+      if (body.ok) { fetchDetail() }
       else {
         Alert({
           icon: 'error',
@@ -52,14 +53,7 @@ export const useActivity = () => {
       const resp = await fetchToken('task/update-note', { id_nota, description, id_actividad }, 'PUT')
       const body = await resp.json()
       setIsLoading(false)
-      if (body.ok) {
-        setActivities(activities.map(act => act.id_det === id_actividad ? {
-          ...act, notas: act.notas.map(note => note.id_nota === id_nota ?
-            { ...note, desc_nota: description } : note)
-        } : act)
-        )
-      }
-
+      if (body.ok) { fetchDetail() }
       else {
         Alert({
           icon: 'error',
@@ -74,15 +68,13 @@ export const useActivity = () => {
     }
   }
 
-  const deleteNote = async ({ id_nota, id_actividad }) => {
+  const deleteNote = async ({ id_nota }) => {
     setIsLoading(true)
     try {
       const resp = await fetchToken('task/delete-note', { id_nota }, 'DELETE')
       const body = await resp.json()
       setIsLoading(false)
-      if (body.ok) {
-        setActivities(activities.map(act => act.id_det === id_actividad ? { ...act, notas: act.notas.filter(note => note.id_nota !== id_nota) } : act))
-      }
+      if (body.ok) { fetchDetail() }
       else {
         Alert({
           icon: 'error',
@@ -103,9 +95,7 @@ export const useActivity = () => {
       const resp = await fetchToken('task/update-priority', { prioridad_numero, id_actividad }, 'POST')
       const body = await resp.json()
       setIsLoading(false)
-      if (body.ok) {
-        setActivities(activities.map(act => act.id_det === id_actividad ? { ...act, prioridad_etiqueta: prioridad_numero } : act))
-      }
+      if (body.ok) { fetchDetail() }
       else {
         Alert({
           icon: 'error',
@@ -128,7 +118,7 @@ export const useActivity = () => {
       const resp2 = await fetchToken('task/create-note', { id_actividad, description }, 'POST')
       const body2 = await resp2.json()
       setIsLoading(false)
-      if (body.ok && body2.ok) { fetchActivities() }
+      if (body.ok && body2.ok) { fetchDetail() }
       else {
         Alert({
           icon: 'error',
@@ -149,7 +139,7 @@ export const useActivity = () => {
       const resp = await fetchToken('task/play-pause', { id_actividad, mensaje }, 'POST')
       const body = await resp.json()
       setIsLoading(false)
-      if (body.ok) { fetchActivities() }
+      if (body.ok) { fetchDetail() }
       else {
         Alert({
           icon: 'error',
@@ -165,9 +155,10 @@ export const useActivity = () => {
   }
 
   useEffect(() => {
-    fetchActivities()
+    fetchDetail()
     // eslint-disable-next-line
   }, [])
 
-  return { activities, newNote, updateNote, deleteNote, updatePriority, onPlayPause, updatePriorityAndAddNote }
+  return { activity, newNote, updateNote, deleteNote, updatePriority, onPlayPause, updatePriorityAndAddNote }
+
 }
