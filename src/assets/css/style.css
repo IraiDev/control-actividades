@@ -1,0 +1,21 @@
+
+.overflow-custom {
+   overflow-y: auto;
+   overflow-x: auto;
+   scroll-behavior: auto;
+   scrollbar-width: thin;
+ }
+ 
+ .overflow-custom::-webkit-scrollbar {
+   width: 7px;
+   height: 7px;
+ }
+ 
+ .overflow-custom::-webkit-scrollbar-thumb {
+   background: rgba(0, 0, 0, 0.2);
+   border-radius: 5px;
+ }
+ 
+ .overflow-custom::-webkit-scrollbar-corner {
+   background: transparent;
+ }

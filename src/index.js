@@ -1,23 +1,54 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
-import reportWebVitals from './reportWebVitals';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Providers, LocalizationHelper } from '@microsoft/mgt-element'
+import { Msal2Provider } from '@microsoft/mgt-msal2-provider'
+import '@szhsin/react-menu/dist/index.css'
+import './assets/css/index.css'
+import './assets/css/style.css'
+import App from './App'
+import * as serviceWorkerRegistration from './serviceWorkerRegistration'
+import reportWebVitals from './reportWebVitals'
+import GraphProvider from './context/GraphContext'
+import ActivityProvider from './context/ActivityContext'
+import UiProvider from './context/UiContext'
+
+Providers.globalProvider = new Msal2Provider({
+  clientId: 'b71117b7-2266-427c-b1c8-9e7f367cacc3',
+  scopes: [
+    "user.read",
+    "openid",
+    "profile",
+    "people.read",
+    "user.readbasic.all",
+    "Tasks.Read",
+    "Group.Read.All",
+    "Group.ReadWrite.All",
+    "Tasks.ReadWrite",
+    "Presence.Read.All",
+  ],
+})
+
+LocalizationHelper.strings = {
+  _components: {
+    login: {
+      signInLinkSubtitle: "Iniciar sesion",
+      signOutLinkSubtitle: "Cerrar sesion",
+    },
+  },
+}
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <UiProvider>
+    <ActivityProvider>
+      <GraphProvider>
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+      </GraphProvider>
+    </ActivityProvider>
+  </UiProvider>
+  ,
   document.getElementById('root')
-);
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://cra.link/PWA
-serviceWorkerRegistration.unregister();
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+)
+serviceWorkerRegistration.unregister()
+reportWebVitals()

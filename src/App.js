@@ -1,26 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useContext, useEffect } from 'react'
+import useIsSignedIn from './hooks/useSignedIn'
+import { getFetch } from './helpers/fetchingGraph'
+import { ActivityContext } from './context/ActivityContext'
+import AppRouter from './routes/AppRouter'
 
-function App() {
+const App = () => {
+
+  const { login, setIsLogin } = useContext(ActivityContext)
+  const [isSigendIn] = useIsSignedIn()
+
+  useEffect(() => {
+    // !isSigendIn && ActFunc.logout()
+    setIsLogin(isSigendIn)
+
+    const onLogin = async () => {
+      await getFetch('/me/').then(resp => {
+        login(resp.mail)
+      })
+    }
+
+    if (isSigendIn) {
+      onLogin()
+    }
+    console.log('estado login', isSigendIn)
+  }, [isSigendIn])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <AppRouter />
+  )
 }
 
-export default App;
+export default App
