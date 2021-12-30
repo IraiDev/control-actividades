@@ -13,10 +13,10 @@ const ActivityCard = (props) => {
   const navigate = useNavigate()
 
   const date = moment(props.fecha_tx)
-  const pausaState = pausas.length > 0 && pausas[pausas.length - 1].boton === 2
+  const pausaState = pausas?.length > 0 && pausas.at(-1).boton === 2
   let userStyles = {
     priority: 'S/P',
-    styles: 'border bg-white hover:border-gray-400'
+    styles: 'border bg-white text-slate-700 hover:border-gray-400'
   }
 
   switch (props.prioridad_etiqueta) {
@@ -31,7 +31,7 @@ const ActivityCard = (props) => {
     case 400:
       userStyles = {
         priority: 'Media',
-        styles: 'text-white bg-yellow-500/80',
+        styles: 'text-white bg-yellow-600/70',
         menu: 'text-white bg-yellow-500',
         hoverMenu: 'hover:bg-yellow-400',
       }
@@ -49,18 +49,14 @@ const ActivityCard = (props) => {
       break
   }
 
-  const openDetails = () => {
-    navigate(`detalle-actividad/${props.id_det}`, { replace: true })
-  }
-
   return (
     <div
       className={`
-      p-4 rounded-lg shadow-md grid transition duration-200
-      hover:shadow-xl hover:scale-95 transform text-sm
+        p-4 rounded-lg shadow-md grid transition duration-200 hover:scale-95 transform text-sm
+        shadow-slate-400/40 hover:shadow-xl hover:shadow-slate-400/40
        ${userStyles.styles}
     `}
-      onDoubleClick={openDetails}
+      onDoubleClick={() => navigate(`detalle-actividad/${props.id_det}`, { replace: true })}
     >
       <div>
         <header className='flex items-start justify-between gap-3 capitalize font-semibold'>
@@ -159,14 +155,14 @@ const ActivityCard = (props) => {
                   <LiNote
                     key={note.id_nota}
                     numberNote={i + 1}
-                    className={userStyles.priority === 'S/P' ? 'text-slate-300'
+                    className={userStyles.priority === 'S/P' ? 'text-slate-700/50'
                       : 'text-white/60'}
                     {...note}
                   />
                 ))
                 :
                 <li className={
-                  userStyles.priority === 'S/P' ? 'text-slate-300'
+                  userStyles.priority === 'S/P' ? 'text-slate-700/50'
                     : 'text-white/60'}>
                   No hay notas...
                 </li>

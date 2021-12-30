@@ -10,6 +10,8 @@ import Select from 'react-select'
 import { Alert } from '../../helpers/alerts'
 import Modal from '../ui/Modal'
 import { ActivityContext } from '../../context/ActivityContext'
+import Timer from '../timer/Timer'
+import CustomSelect from '../ui/CustomSelect'
 
 const today = moment(new Date()).format('YYYY/MM/DD')
 const baseUrl = 'http://www.zcloud.cl/registro_avance/'
@@ -34,7 +36,7 @@ const Detail = () => {
 
   const navigate = useNavigate()
   const { id } = useParams()
-  const { filters } = useContext(ActivityContext)
+  const { optionsArray } = useContext(ActivityContext)
   const { activity, newNote, updateNote, deleteNote, updatePriority, onPlayPause,
     updatePriorityAndAddNote, saveActivity, cloneActivity } = useDetail(id)
 
@@ -43,7 +45,13 @@ const Detail = () => {
   const [modalClone, toggleModalClone] = useState(false)
 
   const [modalPause, toggleModalPause] = useState(false)
-  const [options, setOptions] = useState({})
+  const [options, setOptions] = useState({
+    pr: { label: 'ninguno', value: null },
+    sp: { label: 'ninguno', value: null },
+    us: { label: 'ninguno', value: null },
+    ue: { label: 'ninguno', value: null },
+    ur: { label: 'ninguno', value: null },
+  })
   const [files, setFiles] = useState(null)
   const [values, setValues] = useState({ id: null, desc: '', content: '' })
   const [fields, setFields] = useState({
@@ -51,19 +59,26 @@ const Detail = () => {
   })
 
   // clone states
-  const [cloneOptions, setCloneOptions] = useState({})
+  const [cloneOptions, setCloneOptions] = useState({
+    pr: { label: 'ninguno', value: null },
+    sp: { label: 'ninguno', value: null },
+    us: { label: 'ninguno', value: null },
+    ue: { label: 'ninguno', value: null },
+    ur: { label: 'ninguno', value: null },
+  })
   const [cloneFiles, setCloneFiles] = useState(null)
   const [cloneFields, setCloneFields] = useState({
     cTitle: '', cDescription: '', cPriority: '', cTicket: '', cTime: '', cGloss: ''
   })
+
   // destructuring
   const { pausas } = activity
   const { title, description, gloss, ticket, priority, time } = fields
   const { cTitle, cDescription, cPriority, cTicket, cTime, cGloss } = cloneFields
-  const { projects, subProjects, users } = filters
+  const { projects, subProjects, users } = optionsArray
 
   const date = moment(activity.fecha_tx)
-  const pausaState = pausas?.length > 0 && pausas[pausas?.length - 1].boton === 2
+  const pausaState = pausas?.length > 0 && pausas.at(-1).boton === 2
   let userStyles = {
     priority: 'S/P',
     styles: 'bg-gray-200 hover:border-gray-400'
@@ -216,11 +231,11 @@ const Detail = () => {
 
   const onSave = async () => {
     const formData = new FormData()
-    options?.pr && formData.append('proyecto', options.pr)
-    options?.sp && formData.append('sub_proyecto', options.sp)
-    options?.us && formData.append('solicita', options.us)
-    options?.ue && formData.append('encargado', options.ue)
-    options?.ur && formData.append('revisor', options.ur)
+    options?.pr && formData.append('proyecto', options.pr.value)
+    options?.sp && formData.append('sub_proyecto', options.sp.value)
+    options?.us && formData.append('solicita', options.us.value)
+    options?.ue && formData.append('encargado', options.ue.value)
+    options?.ur && formData.append('revisor', options.ur.value)
     formData.append('prioridad', priority)
     formData.append('ticket', ticket)
     formData.append('tiempo_estimado', time)
@@ -235,11 +250,11 @@ const Detail = () => {
 
   const onClone = async () => {
     const formData = new FormData()
-    cloneOptions?.pr && formData.append('proyecto', cloneOptions.pr)
-    cloneOptions?.sp && formData.append('sub_proyecto', cloneOptions.sp)
-    cloneOptions?.us && formData.append('solicita', cloneOptions.us)
-    cloneOptions?.ue && formData.append('encargado', cloneOptions.ue)
-    cloneOptions?.ur && formData.append('revisor', cloneOptions.ur)
+    cloneOptions?.pr && formData.append('proyecto', cloneOptions.pr.value)
+    cloneOptions?.sp && formData.append('sub_proyecto', cloneOptions.sp.value)
+    cloneOptions?.us && formData.append('solicita', cloneOptions.us.value)
+    cloneOptions?.ue && formData.append('encargado', cloneOptions.ue.value)
+    cloneOptions?.ur && formData.append('revisor', cloneOptions.ur.value)
     formData.append('prioridad', cPriority)
     formData.append('ticket', cTicket)
     formData.append('tiempo_estimado', cTime)
@@ -255,11 +270,19 @@ const Detail = () => {
     let hours = time._data.hours
     let minutes = time._data.minutes
     let seconds = time._data.seconds
-    if (hours < 10) hours = `0${hours}`
-    if (minutes < 10) minutes = `0${minutes}`
-    if (seconds < 10) seconds = `0${seconds}`
+    if (hours < 10) hours = '0' + hours
+    if (minutes < 10) minutes = '0' + minutes
+    if (seconds < 10) seconds = '0' + seconds
 
-    return `${hours}:${minutes}:${seconds}`
+
+    return {
+      complete: hours + ':' + minutes + ':' + seconds,
+      section: {
+        hours: time._data.hours,
+        minutes: time._data.minutes,
+        seconds: time._data.seconds
+      }
+    }
   }
 
   useEffect(() => {
@@ -268,7 +291,7 @@ const Detail = () => {
         ...fields,
         title: activity.actividad || 'Sin titulo',
         description: activity.func_objeto,
-        gloss: activity.glosa,
+        gloss: activity.glosa_explicativa,
         ticket: activity.num_ticket_edit,
         priority: activity.prioridad_etiqueta,
         time: activity.tiempo_estimado
@@ -398,56 +421,36 @@ const Detail = () => {
                   </header>
                   <hr className='my-5' />
                   <section className='grid gap-2'>
-                    <span className='grid gap-2 capitalize text-sm'>
-                      proyecto:
-                      <Select
-                        className='uppercase'
-                        placeholder='Seleccione'
-                        options={projects}
-                        value={options.pr}
-                        onChange={option => setOptions({ ...options, pr: option })}
-                      />
-                    </span>
-                    <span className='grid gap-2 capitalize text-sm'>
-                      Sub proyecto:
-                      <Select
-                        className='uppercase'
-                        placeholder='Seleccione'
-                        options={subProjects.filter(s => s.id === options.pr?.value)}
-                        value={options.sp}
-                        onChange={option => setOptions({ ...options, sp: option })}
-                      />
-                    </span>
-                    <span className='grid gap-2 capitalize text-sm'>
-                      Solicitante:
-                      <Select
-                        className='uppercase'
-                        placeholder='Seleccione'
-                        options={users}
-                        value={options.us}
-                        onChange={option => setOptions({ ...options, us: option })}
-                      />
-                    </span>
-                    <span className='grid gap-2 capitalize text-sm'>
-                      encargado:
-                      <Select
-                        className='uppercase'
-                        placeholder='Seleccione'
-                        options={users}
-                        value={options.ue}
-                        onChange={option => setOptions({ ...options, ue: option })}
-                      />
-                    </span>
-                    <span className='grid gap-2 capitalize text-sm'>
-                      revisor:
-                      <Select
-                        className='uppercase'
-                        placeholder='Seleccione'
-                        options={users}
-                        value={options.ur}
-                        onChange={option => setOptions({ ...options, ur: option })}
-                      />
-                    </span>
+                    <CustomSelect
+                      label='Proyecto'
+                      options={projects}
+                      value={options.pr}
+                      onChange={option => setOptions({ ...options, pr: option })}
+                    />
+                    <CustomSelect
+                      label='Sub proyecto'
+                      options={options.pr.value ? subProjects?.filter(s => s.id === options.pr?.value) : subProjects}
+                      value={options.sp}
+                      onChange={option => setOptions({ ...options, sp: option })}
+                    />
+                    <CustomSelect
+                      label='Solicitante'
+                      options={users}
+                      value={options.us}
+                      onChange={option => setOptions({ ...options, us: option })}
+                    />
+                    <CustomSelect
+                      label='Encargado'
+                      options={users}
+                      value={options.ue}
+                      onChange={option => setOptions({ ...options, ue: option })}
+                    />
+                    <CustomSelect
+                      label='Revisor'
+                      options={users}
+                      value={options.ur}
+                      onChange={option => setOptions({ ...options, ur: option })}
+                    />
                   </section>
                 </aside>
 
@@ -491,14 +494,14 @@ const Detail = () => {
                     <h5 className='text-sm font-semibold'>Notas (Informes): </h5>
                     <section className='flex gap-2'>
                       <Button
-                        className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full
+                        className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg
                       hover:shadow-lg hover:shadow-slate-300/20 w-max'
                         type='icon'
                         icon='fas fa-plus'
                         onClick={() => toggleModalAdd(true)}
                       />
                       <Button
-                        className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full
+                        className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg
                       hover:shadow-lg hover:shadow-slate-300/20 w-max'
                         type='icon'
                         icon='fas fa-pen'
@@ -579,7 +582,8 @@ const Detail = () => {
                     mx-auto bg-slate-100 hover:bg-emerald-50 transition duration-200 
                     content-center place-content-center capitalize
                   '>
-                      {timeFormat(moment.duration(activity.tiempo_estimado, 'hours'))}
+
+                      {timeFormat(moment.duration(activity.tiempo_estimado, 'hours')).complete}
                       <span className='text-xs text-slate-500 text-center'>estimado</span>
                     </span>
                     <span
@@ -588,7 +592,11 @@ const Detail = () => {
                     mx-auto bg-slate-100 hover:bg-emerald-50 transition duration-200 
                     content-center place-content-center capitalize
                   '>
-                      {timeFormat(moment.duration(activity.tiempo_trabajado, 'hours'))}
+                      <Timer
+                        pause={pausaState}
+                        time={timeFormat(moment.duration(activity.tiempo_trabajado, 'hours')).section}
+                      />
+                      {/* {timeFormat(moment.duration(activity.tiempo_trabajado, 'hours'))} */}
                       <span className='text-xs text-slate-500 text-center'>trabajado</span>
                     </span>
                     <span
@@ -597,7 +605,12 @@ const Detail = () => {
                     mx-auto bg-slate-100 hover:bg-emerald-50 transition duration-200 
                     content-center place-content-center capitalize
                   '>
-                      {timeFormat(moment.duration(activity.tiempo_hoy, 'hours'))}
+                      <Timer
+                        pause={pausaState}
+                        time={timeFormat(moment.duration(activity.tiempo_hoy, 'hours')).section}
+                      />
+                      {/* <Timer pause={pausaState} /> */}
+                      {/* {timeFormat(moment.duration(activity.tiempo_hoy, 'hours'))} */}
                       <span className='text-xs text-slate-500 text-center'>hoy</span>
                     </span>
                   </div>
@@ -607,20 +620,20 @@ const Detail = () => {
               <footer className='flex flex-wrap justify-between mt-10'>
                 <aside className='flex gap-2'>
                   <Button
-                    className='text-red-400 bg-red-50 hover:bg-red-100 rounded-full
+                    className='text-red-400 bg-red-50 hover:bg-red-100 rounded-lg
                    hover:shadow-lg hover:shadow-red-300/20 w-max'
                     type='icon'
                     icon='fas fa-trash'
                   />
                   <Button
-                    className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full
+                    className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg
                    hover:shadow-lg hover:shadow-slate-300/20 w-max'
                     type='icon'
                     icon='fas fa-clone'
                     onClick={openModalClone}
                   />
                   <Button
-                    className={` rounded-full hover:shadow-lg  w-max
+                    className={` rounded-lg hover:shadow-lg  w-max
                      ${pausaState ? 'text-red-400 bg-red-50 hover:bg-red-100 hover:shadow-red-300/20'
                         : 'text-emerald-400 bg-emerald-50 hover:bg-emerald-100 hover:shadow-emerald-300/20'}
                    `}
@@ -835,7 +848,7 @@ const Detail = () => {
                     <Select
                       className='uppercase'
                       placeholder='Seleccione'
-                      options={subProjects.filter(s => s.id === cloneOptions.pr?.value)}
+                      options={options.pr.value ? subProjects?.filter(s => s.id === options.pr?.value) : subProjects}
                       value={cloneOptions.sp}
                       onChange={option => setCloneOptions({ ...cloneOptions, sp: option })}
                     />
@@ -940,7 +953,6 @@ const Detail = () => {
           </Modal>
 
         </>
-
       }
     </>
   )
