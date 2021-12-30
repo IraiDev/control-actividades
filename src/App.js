@@ -9,20 +9,16 @@ const App = () => {
   const { login, setIsLogin } = useContext(ActivityContext)
   const [isSigendIn] = useIsSignedIn()
 
+  const onLogin = async () => {
+    await getFetch('/me/').then(resp => {
+      login(resp.mail)
+    })
+  }
+
   useEffect(() => {
-    // !isSigendIn && ActFunc.logout()
     setIsLogin(isSigendIn)
-
-    const onLogin = async () => {
-      await getFetch('/me/').then(resp => {
-        login(resp.mail)
-      })
-    }
-
-    if (isSigendIn) {
-      onLogin()
-    }
-    console.log('estado login', isSigendIn)
+    isSigendIn && onLogin()
+    // eslint-disable-next-line
   }, [isSigendIn])
 
   return (

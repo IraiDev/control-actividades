@@ -137,23 +137,24 @@ const Planner = () => {
          </header>
          <section className='grid gap-4 px-10 pb-5 max-h-res overflow-custom grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
             {
-               tasks.map(task => {
-                  if (percentComplete === task.percentComplete) {
-                     return (
-                        <PlannerCard
-                           onAddTask={handleAddTask}
-                           key={task.id}
-                           etag={task}
-                           references={task.details.references}
-                           description={task.details.description}
-                           checklist={task.details.checklist}
-                           {...task} />
-                     )
-                  }
-                  else {
-                     return null
-                  }
-               })
+               tasks.length > 0 ?
+                  tasks.map(task => {
+                     if (percentComplete === task.percentComplete) {
+                        return (
+                           <PlannerCard
+                              onAddTask={handleAddTask}
+                              key={task.id}
+                              etag={task}
+                              references={task.details.references}
+                              description={task.details.description}
+                              checklist={task.details.checklist}
+                              {...task} />
+                        )
+                     }
+                     else {
+                        return null
+                     }
+                  }) : <div className='text-center col-span-4 text-slate-400'>No hay tareas...</div>
             }
          </section>
       </>

@@ -199,7 +199,7 @@ const Todo = () => {
                      else {
                         return null
                      }
-                  }) : <p>No hay Tareas...</p>
+                  }) : <div className='text-center col-span-4 text-slate-400'>No hay to-dos...</div>
             }
          </section>
 

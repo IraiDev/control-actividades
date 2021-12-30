@@ -1,11 +1,21 @@
+import { useEffect, useContext } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Activity from '../components/screen/Activity'
 import Detail from '../components/screen/Detail'
 import Planner from '../components/screen/Planner'
 import Todo from '../components/screen/Todo'
 import NavBar from '../components/ui/NavBar'
+import { ActivityContext } from '../context/ActivityContext';
 
 const DashRoutes = () => {
+
+   const { getFilters } = useContext(ActivityContext)
+
+   useEffect(() => {
+      getFilters()
+      // eslint-disable-next-line
+   }, [])
+
    return (
       <>
          <NavBar />

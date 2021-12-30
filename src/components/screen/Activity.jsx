@@ -128,21 +128,21 @@ const Activity = () => {
         grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
       '>
         {
-          activities.length > 0 &&
-          activities.map((act, i) => (
-            <ActivityCard
-              key={i}
-              numberCard={i + 1}
-              highPriority={() => updatePriority({ prioridad_numero: 100, id_actividad: act.id_det })}
-              mediumPriority={() => updatePriority({ prioridad_numero: 400, id_actividad: act.id_det })}
-              lowPriority={() => updatePriority({ prioridad_numero: 600, id_actividad: act.id_det })}
-              noPriority={() => updatePriority({ prioridad_numero: 1000, id_actividad: act.id_det })}
-              addNote={() => openModalAdd({ id_activity: act.id_det })}
-              updateNote={() => openModalEdit({ notes: act.notas })}
-              onPlayPause={({ props, pausaState }) => handleOnPlayPause({ props, pausaState })}
-              {...act}
-            />
-          ))
+          activities.length > 0 ?
+            activities.map((act, i) => (
+              <ActivityCard
+                key={i}
+                numberCard={i + 1}
+                highPriority={() => updatePriority({ prioridad_numero: 100, id_actividad: act.id_det })}
+                mediumPriority={() => updatePriority({ prioridad_numero: 400, id_actividad: act.id_det })}
+                lowPriority={() => updatePriority({ prioridad_numero: 600, id_actividad: act.id_det })}
+                noPriority={() => updatePriority({ prioridad_numero: 1000, id_actividad: act.id_det })}
+                addNote={() => openModalAdd({ id_activity: act.id_det })}
+                updateNote={() => openModalEdit({ notes: act.notas })}
+                onPlayPause={({ props, pausaState }) => handleOnPlayPause({ props, pausaState })}
+                {...act}
+              />
+            )) : <div className='text-center col-span-4 text-slate-400'>No hay actividades...</div>
         }
       </section>
       <footer className='fixed bottom-0 py-7 bg-gray-100 w-full'>foo</footer>

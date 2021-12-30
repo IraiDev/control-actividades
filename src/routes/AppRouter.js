@@ -4,24 +4,22 @@ import DashRoutes from './DashRoutes'
 import PrivateRoutes from './PrivateRoutes'
 import PublicRoutes from './PublicRoutes'
 
-const AppRouter = () => {
-   return (
-      <HashRouter>
-         <Routes>
-            <Route path="/login" element={
-               <PublicRoutes>
-                  <Login />
-               </PublicRoutes>
-            } />
+const AppRouter = () => (
+   <HashRouter>
+      <Routes>
+         <Route path="/login" element={
+            <PublicRoutes>
+               <Login />
+            </PublicRoutes>
+         } />
 
-            <Route path="/*" element={
-               <PrivateRoutes>
-                  <DashRoutes />
-               </PrivateRoutes>
-            } />
-         </Routes>
-      </HashRouter>
-   )
-}
+         <Route path="/*" element={
+            <PrivateRoutes>
+               <DashRoutes />
+            </PrivateRoutes>
+         } />
+      </Routes>
+   </HashRouter>
+)
 
 export default AppRouter

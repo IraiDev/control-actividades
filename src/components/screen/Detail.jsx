@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import moment from 'moment'
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
@@ -9,8 +9,10 @@ import Input from '../ui/Input'
 import Select from 'react-select'
 import { Alert } from '../../helpers/alerts'
 import Modal from '../ui/Modal'
+import { ActivityContext } from '../../context/ActivityContext'
 
 const today = moment(new Date()).format('YYYY/MM/DD')
+const baseUrl = 'http://www.zcloud.cl/registro_avance/'
 
 const defaultNotes = [
   { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -28,30 +30,33 @@ const defaultPauses = [
   { id: 1112424, desc: 'Salida a terreno...' }
 ]
 
+
+
 const Detail = () => {
 
   const navigate = useNavigate()
   const { id } = useParams()
-  const { activity, newNote, updateNote, deleteNote,
-    updatePriority, onPlayPause, updatePriorityAndAddNote } = useDetail(id)
-
+  const { filters } = useContext(ActivityContext)
+  const { activity, newNote, updateNote, deleteNote, updatePriority, onPlayPause,
+    updatePriorityAndAddNote, saveActivity } = useDetail(id)
   const [modalEdit, toggleModalEdit] = useState(false)
   const [modalAdd, toggleModalAdd] = useState(false)
   const [modalPause, toggleModalPause] = useState(false)
+  const [options, setOptions] = useState({})
   const [values, setValues] = useState({ id: null, desc: '', content: '' })
   const [fields, setFields] = useState({
     title: '', description: '', priority: '', ticket: '', time: '', gloss: ''
   })
-
   // destructuring
   const { pausas } = activity
   const { title, description, gloss, ticket, priority, time } = fields
+  const { projects, subProjects, priotities, status, users } = filters
 
   const date = moment(activity.fecha_tx)
   const pausaState = pausas?.length > 0 && pausas[pausas?.length - 1].boton === 2
   let userStyles = {
     priority: 'S/P',
-    styles: 'border bg-white hover:border-gray-400'
+    styles: 'bg-gray-200 hover:border-gray-400'
   }
 
   switch (activity.prioridad_etiqueta) {
@@ -156,8 +161,25 @@ const Detail = () => {
     onCloseModals()
   }
 
+  const onSave = async () => {
+    const formData = new FormData()
+    options?.pr && formData.append('proyecto', options.pr)
+    options?.sp && formData.append('sub_proyecto', options.sp)
+    options?.us && formData.append('solicita', options.us)
+    options?.ue && formData.append('encargado', options.ue)
+    options?.ur && formData.append('revisor', options.ur)
+    formData.append('prioridad', priority)
+    formData.append('ticket', ticket)
+    formData.append('tiempo_estimado', time)
+    formData.append('titulo', title)
+    formData.append('descripcion', description)
+    formData.append('glosa', gloss)
+    formData.append('id_actividad', activity.id_det)
+    // formData.append('archivos', files)
+  }
+
   useEffect(() => {
-    Object.keys(activity).length > 0 &&
+    if (Object.keys(activity).length > 0) {
       setFields({
         ...fields,
         title: activity.actividad || 'Sin titulo',
@@ -168,6 +190,14 @@ const Detail = () => {
         time: activity.tiempo_estimado
       })
 
+      setOptions({
+        pr: projects.find(p => p.value === activity.id_proy),
+        sp: subProjects.find(s => s.id === activity.id_proy && s.value === activity.id_sub_proyecto),
+        us: users.find(u => u.value === activity.user_solicita),
+        ue: users.find(u => u.value === activity.encargado_actividad),
+      })
+    }
+
     // eslint-disable-next-line
   }, [activity])
 
@@ -177,26 +207,42 @@ const Detail = () => {
         Object.keys(activity).length > 0 &&
         <>
           <div className='xl:container  mx-auto px-2 py-10'>
-            <main className='bg-white p-4 xl:p-8 rounded-lg shadow-lg shadow-gray-600/10 border grid gap-5'>
+            <main className='bg-white p-5 xl:p-8 rounded-lg shadow-lg shadow-gray-600/10 border grid gap-5'>
               <header className='flex flex-wrap items-center justify-between'>
                 <Button
                   type='icon'
-                  icon='fas fa-arrow-left'
+                  icon='fas fa-arrow-left fa-lg'
                   className='hover:text-blue-500'
                   onClick={() => navigate('/actividades', { replace: true })}
                 />
 
-                <div className='flex gap-1 p-1.5 rounded-full bg-black/5'>
-                  <span className='h-4 w-4 rounded-full bg-gray-300 transition duration-200 hover:scale-125 transform cursor-pointer' />
-                  <span className='h-4 w-4 rounded-full bg-green-800/70 transition duration-200 hover:scale-125 transform cursor-pointer' />
-                  <span className='h-4 w-4 rounded-full bg-yellow-500/80 transition duration-200 hover:scale-125 transform cursor-pointer' />
-                  <span className='h-4 w-4 rounded-full bg-red-800/70 transition duration-200 hover:scale-125 transform cursor-pointer' />
+                <div className='flex gap-1.5 p-1.5 rounded-full bg-black/5'>
+                  <span
+                    className='h-5 w-5 rounded-full bg-gray-300 transition 
+                      duration-200 hover:scale-125 transform cursor-pointer'
+                    onClick={() => updatePriority({ prioridad_numero: 1000, id_actividad: activity.id_det })}
+                  />
+                  <span
+                    className='h-5 w-5 rounded-full bg-green-800/70 transition 
+                      duration-200 hover:scale-125 transform cursor-pointer'
+                    onClick={() => updatePriority({ prioridad_numero: 600, id_actividad: activity.id_det })}
+                  />
+                  <span
+                    className='h-5 w-5 rounded-full bg-yellow-500/80 transition 
+                      duration-200 hover:scale-125 transform cursor-pointer'
+                    onClick={() => updatePriority({ prioridad_numero: 400, id_actividad: activity.id_det })}
+                  />
+                  <span
+                    className='h-5 w-5 rounded-full bg-red-800/70 transition 
+                      duration-200 hover:scale-125 transform cursor-pointer'
+                    onClick={() => updatePriority({ prioridad_numero: 100, id_actividad: activity.id_det })}
+                  />
                 </div>
               </header>
 
               <h2 className='text-xl text-center font-semibold capitalize truncate'>{activity.actividad}</h2>
 
-              <section className='grid grid-cols-1 lg:grid-cols-8 gap-3'>
+              <section className='grid grid-cols-1 lg:grid-cols-8 gap-5 '>
                 <aside className='col-span-1 md:col-span-2'>
                   <header className='text-sm'>
                     <p>
@@ -270,23 +316,53 @@ const Detail = () => {
                   <section className='grid gap-2'>
                     <span className='grid gap-2 capitalize text-sm'>
                       proyecto:
-                      <Select />
+                      <Select
+                        className='uppercase'
+                        placeholder='Seleccione'
+                        options={projects}
+                        value={options.pr}
+                        onChange={option => setOptions({ ...options, pr: option })}
+                      />
                     </span>
                     <span className='grid gap-2 capitalize text-sm'>
                       Sub proyecto:
-                      <Select />
+                      <Select
+                        className='uppercase'
+                        placeholder='Seleccione'
+                        options={subProjects.filter(s => s.id === options.pr?.value)}
+                        value={options.sp}
+                        onChange={option => setOptions({ ...options, sp: option })}
+                      />
                     </span>
                     <span className='grid gap-2 capitalize text-sm'>
                       Solicitante:
-                      <Select />
+                      <Select
+                        className='uppercase'
+                        placeholder='Seleccione'
+                        options={users}
+                        value={options.us}
+                        onChange={option => setOptions({ ...options, us: option })}
+                      />
                     </span>
                     <span className='grid gap-2 capitalize text-sm'>
                       encargado:
-                      <Select />
+                      <Select
+                        className='uppercase'
+                        placeholder='Seleccione'
+                        options={users}
+                        value={options.ue}
+                        onChange={option => setOptions({ ...options, ue: option })}
+                      />
                     </span>
                     <span className='grid gap-2 capitalize text-sm'>
                       revisor:
-                      <Select />
+                      <Select
+                        className='uppercase'
+                        placeholder='Seleccione'
+                        options={users}
+                        value={options.ur}
+                        onChange={option => setOptions({ ...options, ur: option })}
+                      />
                     </span>
                   </section>
                 </aside>
@@ -328,7 +404,7 @@ const Detail = () => {
 
                 <aside className='col-span-1 md:col-span-3'>
                   <div className='flex justify-between items-center mb-3'>
-                    <h5 className='text-sm'>Notas (Informes): </h5>
+                    <h5 className='text-sm font-semibold'>Notas (Informes): </h5>
                     <section className='flex gap-2'>
                       <Button
                         className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full
@@ -346,7 +422,7 @@ const Detail = () => {
                       />
                     </section>
                   </div>
-                  <ol className='max-h-56 overflow-custom'>
+                  <ol className='max-h-[540px] overflow-custom'>
                     {
                       activity.notas.length > 0 ?
                         activity.notas.map((note, i) => (
@@ -364,22 +440,38 @@ const Detail = () => {
                 </aside>
               </section>
 
+              <hr className='my-5' />
+
               <section className='grid grid-cols-1 md:grid-cols-2 gap-3'>
                 <aside>
-                  <h5 className='text-sm mb-3'>Archivos: </h5>
-                  <div className='grid grid-cols-2 gap-2 bg-black/5 rounded-lg p-1.5'>
-                    <span className='p-2 bg-white rounded-lg shadow-lg shadow-gray-600/10 border flex items-center justify-between'>
-                      <a href="#" rel='noreferrer' target='_blank'>
-                        archivo
-                      </a>
-                      <button
-                        className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
-                        onClick={() => console.log('delete')}
-                      >
-                        <i className='fas fa-trash fa-sm'></i>
-                      </button>
-                    </span>
-                  </div>
+                  <h5 className='text-sm mb-3 font-semibold'>Archivos: </h5>
+                  <ul className='h-28 overflow-custom border-x p-1.5'>
+                    {
+                      activity.tarea_documentos.length > 0 ?
+                        activity.tarea_documentos.map((file, i) => (
+                          <li
+                            key={file.id_docum}
+                            className='p-2 bg-white 
+                            border-t flex items-center justify-between'>
+                            <a
+                              className='text-slate-500 hover:text-blue-400 transition 
+                                duration-200 transform hover:scale-105 text-sm w-full truncate'
+                              href={baseUrl + file.ruta_docum}
+                              rel='noreferrer'
+                              target='_blank'
+                            >
+                              {i + 1}. <i className='fas fa-file'></i> {file.nom_docum}
+                            </a>
+                            <button
+                              className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
+                              onClick={() => console.log('delete: id actividad', file.id_det)}
+                            >
+                              <i className='fas fa-trash fa-sm'></i>
+                            </button>
+                          </li>
+                        )) : <li className='text-sm text-slate-400 ml-2'>No hay archivos...</li>
+                    }
+                  </ul>
                   <input
                     className='
                   file:rounded-full file:bg-blue-50 file:py-2 file:px-4 file:text-sm
@@ -393,7 +485,7 @@ const Detail = () => {
                 </aside>
 
                 <aside>
-                  <h5 className='text-sm mb-5 text-center'>Tiempos de la actividad: </h5>
+                  <h5 className='text-sm mb-5 text-center font-semibold'>Tiempos de la actividad: </h5>
                   <div className='grid grid-cols-3 content-center place-content-center'>
                     <span
                       className='

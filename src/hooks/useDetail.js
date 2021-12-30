@@ -1,11 +1,13 @@
 import { useEffect, useState, useContext } from 'react'
+import { ActivityContext } from '../context/ActivityContext'
 import { UiContext } from '../context/UiContext'
 import { Alert } from '../helpers/alerts'
-import { fetchToken } from '../helpers/fetch'
+import { fetchToken, fetchTokenFile } from '../helpers/fetch'
 
 export const useDetail = (id) => {
 
   const { setIsLoading } = useContext(UiContext)
+  const { filters } = useContext(ActivityContext)
   const [activity, setActivity] = useState({})
 
   const fetchDetail = async () => {
@@ -154,11 +156,31 @@ export const useDetail = (id) => {
     }
   }
 
+  const saveActivity = async (payload) => {
+    const resp = await fetchTokenFile('task/editar-detalle-actividad', payload, 'POST')
+    const body = await resp.json()
+
+    console.log(body)
+
+    if (body.ok) {
+      return body.ok
+    } else {
+      Alert({
+        icon: 'error',
+        title: 'Error',
+        content: body.response,
+        showCancelButton: false
+      })
+    }
+    return body.ok
+  }
+
   useEffect(() => {
     fetchDetail()
+    console.log('filtros: ', filters)
     // eslint-disable-next-line
   }, [])
 
-  return { activity, newNote, updateNote, deleteNote, updatePriority, onPlayPause, updatePriorityAndAddNote }
+  return { activity, newNote, updateNote, deleteNote, updatePriority, onPlayPause, updatePriorityAndAddNote, saveActivity }
 
 }
