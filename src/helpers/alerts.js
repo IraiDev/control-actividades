@@ -2,7 +2,7 @@ import Swal from 'sweetalert2'
 import { checkForms } from './helpersFunc'
 
 const showClass = {
-   popup: 'animate__animated animate__bounce animate__faster',
+   popup: 'animate__animated animate__fadeInDown animate__faster',
    backdrop: 'swal2-backdrop-show',
    icon: 'swal2-icon-show'
 }
@@ -35,7 +35,8 @@ export const Alert = async (props) => {
       showConfirmButton = true,
       isBlur = false,
       timer = undefined,
-      action = () => { return false }
+      action = () => { return false },
+      cancelAction = () => { return false }
    } = props
 
    switch (icon) {
@@ -112,10 +113,13 @@ export const Alert = async (props) => {
          timer,
          timerProgressBar: timer !== undefined,
          allowOutsideClick: isBlur,
-         width: '36rem',
+         width: '30rem',
       }).then((result) => {
          if (result.isConfirmed) {
             action()
+         }
+         else {
+            cancelAction()
          }
       })
    }

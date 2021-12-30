@@ -155,13 +155,19 @@ const ActivityCard = (props) => {
           <ul className='max-h-36 overflow-custom whitespace-pre-wrap mix-blend-luminosity'>
             {
               props.notas.length > 0 ?
-                props.notas.map(note => (
-                  <LiNote key={note.id_nota} {...note} />
+                props.notas.map((note, i) => (
+                  <LiNote
+                    key={note.id_nota}
+                    numberNote={i + 1}
+                    className={userStyles.priority === 'S/P' ? 'text-slate-300'
+                      : 'text-white/60'}
+                    {...note}
+                  />
                 ))
                 :
-                <li className={`
-                  ${userStyles.priority === 'S/P' ? 'text-gray-400' : 'text-gray-100'} 
-                  text-opacity-80`}>
+                <li className={
+                  userStyles.priority === 'S/P' ? 'text-slate-300'
+                    : 'text-white/60'}>
                   No hay notas...
                 </li>
             }

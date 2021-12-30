@@ -30,27 +30,37 @@ const defaultPauses = [
   { id: 1112424, desc: 'Salida a terreno...' }
 ]
 
-
-
 const Detail = () => {
 
   const navigate = useNavigate()
   const { id } = useParams()
   const { filters } = useContext(ActivityContext)
   const { activity, newNote, updateNote, deleteNote, updatePriority, onPlayPause,
-    updatePriorityAndAddNote, saveActivity } = useDetail(id)
+    updatePriorityAndAddNote, saveActivity, cloneActivity } = useDetail(id)
+
   const [modalEdit, toggleModalEdit] = useState(false)
   const [modalAdd, toggleModalAdd] = useState(false)
+  const [modalClone, toggleModalClone] = useState(false)
+
   const [modalPause, toggleModalPause] = useState(false)
   const [options, setOptions] = useState({})
+  const [files, setFiles] = useState(null)
   const [values, setValues] = useState({ id: null, desc: '', content: '' })
   const [fields, setFields] = useState({
     title: '', description: '', priority: '', ticket: '', time: '', gloss: ''
   })
+
+  // clone states
+  const [cloneOptions, setCloneOptions] = useState({})
+  const [cloneFiles, setCloneFiles] = useState(null)
+  const [cloneFields, setCloneFields] = useState({
+    cTitle: '', cDescription: '', cPriority: '', cTicket: '', cTime: '', cGloss: ''
+  })
   // destructuring
   const { pausas } = activity
   const { title, description, gloss, ticket, priority, time } = fields
-  const { projects, subProjects, priotities, status, users } = filters
+  const { cTitle, cDescription, cPriority, cTicket, cTime, cGloss } = cloneFields
+  const { projects, subProjects, users } = filters
 
   const date = moment(activity.fecha_tx)
   const pausaState = pausas?.length > 0 && pausas[pausas?.length - 1].boton === 2
@@ -93,7 +103,50 @@ const Detail = () => {
     toggleModalEdit(false)
     toggleModalAdd(false)
     toggleModalPause(false)
+    toggleModalClone(false)
     setValues({ desc: '', id: null, id_ref: null })
+  }
+
+  const openModalClone = () => {
+
+    const setFieldsData = (ticket = 0) => {
+      setCloneFields({
+        cTicket: ticket,
+        cTitle: title,
+        cDescription: description,
+        cPriority: priority,
+        cTime: time,
+        cGloss: gloss
+      })
+
+      setCloneOptions({
+        pr: projects.find(p => p.value === activity.id_proy),
+        sp: subProjects.find(s => s.id === activity.id_proy && s.value === activity.id_sub_proyecto),
+        us: users.find(u => u.value === activity.user_solicita),
+        ue: users.find(u => u.value === activity.encargado_actividad),
+      })
+    }
+
+    if (activity.num_ticket_edit === 0) {
+      setFieldsData()
+      toggleModalClone(true)
+      return
+    }
+
+    Alert({
+      title: 'Atención',
+      content: 'Desea incluir el ticket en la nueva actividad clonada?',
+      confirmButton: 'Si, incluir',
+      cancelButton: 'No, incluir',
+      cancelAction: () => {
+        setFieldsData()
+        toggleModalClone(true)
+      },
+      action: () => {
+        setFieldsData(ticket)
+        toggleModalClone(true)
+      }
+    })
   }
 
   const handleOnPlayPause = () => {
@@ -175,7 +228,38 @@ const Detail = () => {
     formData.append('descripcion', description)
     formData.append('glosa', gloss)
     formData.append('id_actividad', activity.id_det)
-    // formData.append('archivos', files)
+    files && formData.append('archivos', files)
+
+    await saveActivity(formData)
+  }
+
+  const onClone = async () => {
+    const formData = new FormData()
+    cloneOptions?.pr && formData.append('proyecto', cloneOptions.pr)
+    cloneOptions?.sp && formData.append('sub_proyecto', cloneOptions.sp)
+    cloneOptions?.us && formData.append('solicita', cloneOptions.us)
+    cloneOptions?.ue && formData.append('encargado', cloneOptions.ue)
+    cloneOptions?.ur && formData.append('revisor', cloneOptions.ur)
+    formData.append('prioridad', cPriority)
+    formData.append('ticket', cTicket)
+    formData.append('tiempo_estimado', cTime)
+    formData.append('titulo', cTitle)
+    formData.append('descripcion', cDescription)
+    formData.append('glosa', cGloss)
+    cloneFiles && formData.append('archivos', cloneFiles)
+
+    await cloneActivity(formData)
+  }
+
+  const timeFormat = (time) => {
+    let hours = time._data.hours
+    let minutes = time._data.minutes
+    let seconds = time._data.seconds
+    if (hours < 10) hours = `0${hours}`
+    if (minutes < 10) minutes = `0${minutes}`
+    if (seconds < 10) seconds = `0${seconds}`
+
+    return `${hours}:${minutes}:${seconds}`
   }
 
   useEffect(() => {
@@ -429,10 +513,10 @@ const Detail = () => {
                           <li
                             key={note.id_nota}
                             className='
-                          flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 
+                          bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 
                           shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200
                       '>
-                            {i + 1}. {note.desc_nota}
+                            <i className='fas fa-list-ul mr-2'></i> {i + 1}. {note.desc_nota}
                           </li>
                         )) : <li className='text-sm text-slate-400 ml-2'>No hay notas...</li>
                     }
@@ -480,7 +564,9 @@ const Detail = () => {
                   file:hover:shadow-lg file:hover:shadow-blue-400/20 text-slate-400 text-sm
                   file:mt-5
                   '
-                    type="file"
+                    type='file'
+                    name='file'
+                    onChange={e => setFiles(e.target.files[0])}
                   />
                 </aside>
 
@@ -493,7 +579,7 @@ const Detail = () => {
                     mx-auto bg-slate-100 hover:bg-emerald-50 transition duration-200 
                     content-center place-content-center capitalize
                   '>
-                      05:43:09
+                      {timeFormat(moment.duration(activity.tiempo_estimado, 'hours'))}
                       <span className='text-xs text-slate-500 text-center'>estimado</span>
                     </span>
                     <span
@@ -502,7 +588,7 @@ const Detail = () => {
                     mx-auto bg-slate-100 hover:bg-emerald-50 transition duration-200 
                     content-center place-content-center capitalize
                   '>
-                      05:43:09
+                      {timeFormat(moment.duration(activity.tiempo_trabajado, 'hours'))}
                       <span className='text-xs text-slate-500 text-center'>trabajado</span>
                     </span>
                     <span
@@ -511,7 +597,7 @@ const Detail = () => {
                     mx-auto bg-slate-100 hover:bg-emerald-50 transition duration-200 
                     content-center place-content-center capitalize
                   '>
-                      05:43:09
+                      {timeFormat(moment.duration(activity.tiempo_hoy, 'hours'))}
                       <span className='text-xs text-slate-500 text-center'>hoy</span>
                     </span>
                   </div>
@@ -531,6 +617,7 @@ const Detail = () => {
                    hover:shadow-lg hover:shadow-slate-300/20 w-max'
                     type='icon'
                     icon='fas fa-clone'
+                    onClick={openModalClone}
                   />
                   <Button
                     className={` rounded-full hover:shadow-lg  w-max
@@ -552,8 +639,9 @@ const Detail = () => {
                   />
                   <Button
                     className='bg-emerald-400 hover:bg-emerald-500 text-white hover:shadow-lg hover:shadow-emerald-400/40 rounded-full'
-                    name='Guardar'
+                    name='Guardar cambios'
                     icon='fas fa-trash'
+                    onClick={onSave}
                   />
                 </aside>
               </footer>
@@ -721,7 +809,138 @@ const Detail = () => {
               </footer>
             </div>
           </Modal>
+
+          {/* modal clone */}
+          <Modal showModal={modalClone} isBlur={false} onClose={onCloseModals}
+            padding='p-7'
+          >
+            <div className='grid gap-5'>
+              <h1 className='capitalize text-xl font-semibold text-center'>
+                Clonar actividad: {activity.id_det}, {activity.actividad}
+              </h1>
+              <header className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <aside>
+                  <span className='grid gap-2 capitalize text-sm'>
+                    proyecto:
+                    <Select
+                      className='uppercase'
+                      placeholder='Seleccione'
+                      options={projects}
+                      value={cloneOptions.pr}
+                      onChange={option => setCloneOptions({ ...cloneOptions, pr: option })}
+                    />
+                  </span>
+                  <span className='grid gap-2 capitalize text-sm'>
+                    Sub proyecto:
+                    <Select
+                      className='uppercase'
+                      placeholder='Seleccione'
+                      options={subProjects.filter(s => s.id === cloneOptions.pr?.value)}
+                      value={cloneOptions.sp}
+                      onChange={option => setCloneOptions({ ...cloneOptions, sp: option })}
+                    />
+                  </span>
+                  <span className='grid gap-2 capitalize text-sm'>
+                    Solicitante:
+                    <Select
+                      className='uppercase'
+                      placeholder='Seleccione'
+                      options={users}
+                      value={cloneOptions.us}
+                      onChange={option => setCloneOptions({ ...cloneOptions, us: option })}
+                    />
+                  </span>
+                  <span className='grid gap-2 capitalize text-sm'>
+                    encargado:
+                    <Select
+                      className='uppercase'
+                      placeholder='Seleccione'
+                      options={users}
+                      value={cloneOptions.ue}
+                      onChange={option => setCloneOptions({ ...cloneOptions, ue: option })}
+                    />
+                  </span>
+                  <span className='grid gap-2 capitalize text-sm'>
+                    revisor:
+                    <Select
+                      className='uppercase'
+                      placeholder='Seleccione'
+                      options={users}
+                      value={cloneOptions.ur}
+                      onChange={option => setCloneOptions({ ...cloneOptions, ur: option })}
+                    />
+                  </span>
+                </aside>
+                <aside className='mt-0.5'>
+                  <Input
+                    field='titulo'
+                    value={cTitle}
+                    onChange={e => setCloneFields({ ...cloneFields, cTitle: e.target.value })}
+                  />
+                  <Input
+                    field='ticket'
+                    value={cTicket}
+                    onChange={e => setCloneFields({ ...cloneFields, cTicket: e.target.value })}
+                  />
+                  <Input
+                    field='prioridad'
+                    value={cPriority}
+                    onChange={e => setCloneFields({ ...cloneFields, cPriority: e.target.value })}
+                  />
+                  <Input
+                    field='T. estimado'
+                    value={cTime}
+                    onChange={e => setCloneFields({ ...cloneFields, cTime: e.target.value })}
+                  />
+                </aside>
+              </header>
+
+              <section className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <TextArea
+                  field='descripccion'
+                  value={cDescription}
+                  onChange={e => setCloneFields({ ...cloneFields, cDescription: e.target.value })}
+                />
+                <TextArea
+                  field='glosa'
+                  value={cGloss}
+                  onChange={e => setCloneFields({ ...cloneFields, cGloss: e.target.value })}
+                />
+              </section>
+
+              <footer className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-10'>
+                <input
+                  className='
+                  file:rounded-full file:bg-blue-50 file:py-2 file:px-4 file:text-sm
+                  file:hover:bg-blue-100 file:text-blue-400 file:border-none
+                  file:transition file:duration-500 file:cursor-pointer file:font-semibold
+                  file:hover:shadow-lg file:hover:shadow-blue-400/20 text-slate-400 text-sm
+                  file:mt-5
+                  '
+                  type='file'
+                  name='cloneFile'
+                  onChange={e => setCloneFiles(e.target.files[0])}
+                />
+                <div className='place-self-end'>
+                  <Button
+                    className='bg-red-400 hover:bg-red-500 text-white hover:shadow-lg hover:shadow-red-400/40 rounded-full mr-2'
+                    name='cancelar'
+                    icon='fas fa-trash'
+                    onClick={onCloseModals}
+                  />
+                  <Button
+                    className='bg-emerald-400 hover:bg-emerald-500 text-white hover:shadow-lg hover:shadow-emerald-400/40 rounded-full'
+                    name='clonar actividad'
+                    icon='fas fa-trash'
+                    onClick={onClone}
+                  />
+                </div>
+              </footer>
+            </div>
+          </Modal>
+
         </>
+
       }
     </>
   )
