@@ -3,19 +3,17 @@ import { fetchToken } from '../helpers/fetch'
 import { Alert } from '../helpers/alerts'
 
 const initFilters = {
-  options: {
-    status: [],
-    projects: [],
-    usersE: [],
-    usersS: [],
-    subProjects: [],
-    priorities: [],
-  },
-  inputs: {
-    id: '',
-    title: '',
-    numPriority: ''
-  }
+  estado: '',
+  proyecto: [],
+  encargado: [],
+  solicitante: [],
+  subProy: [],
+  color: '',
+  id_actividad: '',
+  titulo: '',
+  prioridad_ra: '',
+  usuario_no_mostrar: '',
+  entrabajo: '',
 }
 
 export const ActivityContext = createContext()
@@ -25,6 +23,7 @@ function ActivityProvider({ children }) {
   const [user, setUser] = useState({ ok: false })
   const [optionsArray, setOptionsArray] = useState({})
   const [filters, setFilters] = useState(initFilters)
+  const [order, setOrder] = useState({})
 
   const login = async (email) => {
     try {
@@ -103,8 +102,6 @@ function ActivityProvider({ children }) {
     }
   }
 
-
-
   const getTimes = async () => {
     try {
       const resp = await fetchToken('task/get-times')
@@ -118,28 +115,6 @@ function ActivityProvider({ children }) {
     }
   }
 
-  const getNotify = async () => {
-    try {
-
-      const resp = await fetchToken('task/get-notifications')
-      const body = await resp.json()
-
-      if (body.ok) { }
-      else Alert({ icon: 'error', title: 'Error', content: 'Error al obtener notificaciones', timer: 3000, showCancelButton: false })
-
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const markNotifications = async (data) => {
-    const resp = await fetchToken('task/update-notification', data, 'POST')
-    const body = await resp.json()
-
-    if (body.ok) getNotify()
-    else Alert({ icon: 'error', title: 'Error', content: 'Error al marcar las notificaciones', timer: 3000, showCancelButton: false })
-  }
-
   const value = {
     setIsLogin,
     isLogin,
@@ -148,7 +123,9 @@ function ActivityProvider({ children }) {
     getFilters,
     optionsArray,
     filters,
-    saveFilters
+    saveFilters,
+    setOrder,
+    order
   }
   return (
     <ActivityContext.Provider value={value}>

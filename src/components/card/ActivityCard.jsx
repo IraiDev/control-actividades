@@ -8,12 +8,12 @@ const today = moment(new Date()).format('YYYY/MM/DD')
 const ActivityCard = (props) => {
 
   const { addNote, updateNote, lowPriority, mediumPriority, highPriority, noPriority,
-    numberCard, pausas, onPlayPause } = props
+    numberCard, pausas, onPlayPause, estado } = props
 
   const navigate = useNavigate()
 
   const date = moment(props.fecha_tx)
-  const pausaState = pausas?.length > 0 && pausas.at(-1).boton === 2
+  const pausaState = pausas?.length > 0 && pausas?.at(-1).boton === 2
   let userStyles = {
     priority: 'S/P',
     styles: 'border bg-white text-slate-700 hover:border-gray-400'
@@ -98,7 +98,7 @@ const ActivityCard = (props) => {
                 estado:
               </span>
               {
-                props.estado === 1 ? ' pendiente' : ' en trabajo'
+                estado === 1 ? ' pendiente' : ' en trabajo'
               }
             </p>
           </aside>
@@ -175,6 +175,7 @@ const ActivityCard = (props) => {
           <p>estado</p>
           <button
             onClick={() => onPlayPause({ props, pausaState })}
+            className={estado === 1 ? 'hidden' : ''}
           >
             {
               pausaState ?

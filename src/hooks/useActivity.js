@@ -1,16 +1,18 @@
 import { useContext, useEffect, useState } from 'react'
+import { ActivityContext } from '../context/ActivityContext'
 import { UiContext } from '../context/UiContext'
 import { Alert } from '../helpers/alerts'
 import { fetchToken } from '../helpers/fetch'
 
 export const useActivity = () => {
   const { setIsLoading } = useContext(UiContext)
+  const { filters, order } = useContext(ActivityContext)
   const [activities, setActivities] = useState([])
 
   const fetchActivities = async () => {
     try {
       setIsLoading(true)
-      const resp = await fetchToken(`task/get-task-ra?id_actividad`, {}, 'POST')
+      const resp = await fetchToken(`task/get-task-ra?id_actividad`, { ...filters, ...order }, 'POST')
       const body = await resp.json()
       const { ok, tareas } = body
 
@@ -167,7 +169,7 @@ export const useActivity = () => {
   useEffect(() => {
     fetchActivities()
     // eslint-disable-next-line
-  }, [])
+  }, [filters, order])
 
   return { activities, newNote, updateNote, deleteNote, updatePriority, onPlayPause, updatePriorityAndAddNote }
 }

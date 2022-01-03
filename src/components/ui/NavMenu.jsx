@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { Login } from '@microsoft/mgt-react'
 import Button from './Button'
 import LiNav from './LiNav'
@@ -10,6 +9,9 @@ import Modal from './Modal'
 import { useToggle } from '../../hooks/useToggle'
 import Input from './Input'
 import { UiContext } from '../../context/UiContext'
+import { routes } from '../../types/types'
+
+const { activity, planner, times } = routes
 
 const initForm = { id: null, title: '', idRef: null }
 
@@ -140,9 +142,9 @@ const NavMenu = ({ isOpen, toggleMenu }) => {
                   onClick={toggleMenu} />
             </header>
             <ul className=''>
-               <LiNav to='/informe-tiempos' name='informe de tiempos' />
-               <LiNav to='/actividades' name='actividades' />
-               <LiNav to='/planner' name='planner' />
+               <LiNav to={times} name='informe de tiempos' />
+               <LiNav to={activity} name='actividades' />
+               <LiNav to={planner} name='planner' />
             </ul>
             <div className='mx-5 border-t border-gray-300 my-5' />
             <section className='px-5 flex items-center justify-between'>

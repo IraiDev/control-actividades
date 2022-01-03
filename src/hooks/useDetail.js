@@ -1,5 +1,4 @@
 import { useEffect, useState, useContext } from 'react'
-// import { ActivityContext } from '../context/ActivityContext'
 import { UiContext } from '../context/UiContext'
 import { Alert } from '../helpers/alerts'
 import { fetchToken, fetchTokenFile } from '../helpers/fetch'
@@ -7,7 +6,6 @@ import { fetchToken, fetchTokenFile } from '../helpers/fetch'
 export const useDetail = (id) => {
 
   const { setIsLoading } = useContext(UiContext)
-  // const { filters } = useContext(ActivityContext)
   const [activity, setActivity] = useState({})
 
   const fetchDetail = async () => {

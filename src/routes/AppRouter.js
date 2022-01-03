@@ -3,17 +3,18 @@ import Login from '../components/screen/Login'
 import DashRoutes from './DashRoutes'
 import PrivateRoutes from './PrivateRoutes'
 import PublicRoutes from './PublicRoutes'
+import { routes } from '../types/types'
 
 const AppRouter = () => (
    <HashRouter>
       <Routes>
-         <Route path="/login" element={
+         <Route path={routes.login} element={
             <PublicRoutes>
                <Login />
             </PublicRoutes>
          } />
 
-         <Route path="/*" element={
+         <Route path='/*' element={
             <PrivateRoutes>
                <DashRoutes />
             </PrivateRoutes>

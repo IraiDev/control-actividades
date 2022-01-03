@@ -10,7 +10,9 @@ const SelectFilter = ({
   onChange,
   filterUp,
   filterDown,
-  defaultLabel = 'todos'
+  defaultLabel = 'todos',
+  upActive,
+  downActive
 }) => (
   <span className='flex justify-between items-center pl-5 pr-3 gap-1'>
 
@@ -27,13 +29,13 @@ const SelectFilter = ({
       />
     </span>
     <Button
-      className='rounded-full text-slate-600 hover:text-blue-500 mt-5'
+      className={`hover:text-blue-500 mt-5 ${upActive ? 'text-blue-500' : 'text-slate-600'}`}
       icon='fas fa-chevron-up fa-sm'
       type='icon'
       onClick={filterUp}
     />
     <Button
-      className='rounded-full text-slate-600 hover:text-blue-500 mt-5'
+      className={`hover:text-blue-500 mt-5 ${downActive ? 'text-blue-500' : 'text-slate-600'}`}
       icon='fas fa-chevron-down fa-sm'
       type='icon'
       onClick={filterDown}
