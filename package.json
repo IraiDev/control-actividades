@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
     "@microsoft/mgt-element": "^2.2.1",
     "@microsoft/mgt-msal2-provider": "^2.2.1",
     "@microsoft/mgt-react": "^2.2.1",
+    "@mui/material": "^5.2.7",
     "@szhsin/react-menu": "^1.11.0",
     "moment": "^2.29.1",
     "query-string": "^7.0.1",

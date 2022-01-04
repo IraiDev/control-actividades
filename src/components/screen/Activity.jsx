@@ -6,6 +6,12 @@ import TextArea from '../ui/TextArea'
 import Button from '../ui/Button'
 import moment from 'moment'
 import { Alert } from '../../helpers/alerts'
+import Pagination from '@mui/material/Pagination'
+import Table from '../table/Table'
+import TBody from '../table/TBody'
+import THead from '../table/THead'
+import Th from '../table/Th'
+import Td from '../table/Td'
 
 const defaultNotes = [
   { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -26,6 +32,7 @@ const defaultPauses = [
 const Activity = () => {
 
   // const { user } = useContext(ActivityContext)
+  const [view, setView] = useState(true)
   const [modalEdit, toggleModalEdit] = useState(false)
   const [modalAdd, toggleModalAdd] = useState(false)
   const [modalPause, toggleModalPause] = useState(false)
@@ -123,29 +130,104 @@ const Activity = () => {
 
   return (
     <>
-      <section className='
-        pt-10 pb-24 container mx-auto gap-3 grid 
-        grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
-      '>
-        {
-          activities.length > 0 ?
-            activities.map((act, i) => (
-              <ActivityCard
-                key={i}
-                numberCard={i + 1}
-                highPriority={() => updatePriority({ prioridad_numero: 100, id_actividad: act.id_det })}
-                mediumPriority={() => updatePriority({ prioridad_numero: 400, id_actividad: act.id_det })}
-                lowPriority={() => updatePriority({ prioridad_numero: 600, id_actividad: act.id_det })}
-                noPriority={() => updatePriority({ prioridad_numero: 1000, id_actividad: act.id_det })}
-                addNote={() => openModalAdd({ id_activity: act.id_det })}
-                updateNote={() => openModalEdit({ notes: act.notas })}
-                onPlayPause={({ props, pausaState }) => handleOnPlayPause({ props, pausaState })}
-                {...act}
-              />
-            )) : <div className='text-center col-span-4 text-slate-400'>No hay actividades...</div>
-        }
-      </section>
-      <footer className='fixed bottom-0 py-7 bg-gray-100 w-full'>foo</footer>
+      {
+        view ?
+          <section className='
+            pt-10 pb-24 container mx-auto gap-3 grid 
+            grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
+          '>
+            {
+              activities.length > 0 ?
+                activities.map((act, i) => (
+                  <ActivityCard
+                    key={i}
+                    numberCard={i + 1}
+                    highPriority={() => updatePriority({ prioridad_numero: 100, id_actividad: act.id_det })}
+                    mediumPriority={() => updatePriority({ prioridad_numero: 400, id_actividad: act.id_det })}
+                    lowPriority={() => updatePriority({ prioridad_numero: 600, id_actividad: act.id_det })}
+                    noPriority={() => updatePriority({ prioridad_numero: 1000, id_actividad: act.id_det })}
+                    addNote={() => openModalAdd({ id_activity: act.id_det })}
+                    updateNote={() => openModalEdit({ notes: act.notas })}
+                    onPlayPause={({ props, pausaState }) => handleOnPlayPause({ props, pausaState })}
+                    {...act}
+                  />
+                )) : <div className='text-center col-span-4 text-slate-400'>No hay actividades...</div>
+            }
+          </section>
+
+          :
+
+          <Table>
+            <THead>
+              <tr className='font-semibold text-center capitalize text-white bg-gray-700'>
+                <Th>Nᵒ</Th>
+                <Th>ID</Th>
+                <Th>ticket</Th>
+                <Th>proyecto</Th>
+                <Th>sub proyecto</Th>
+                <Th>solicitante</Th>
+                <Th>encargado</Th>
+                <Th>prioridad</Th>
+                <Th>fecha</Th>
+                <Th>actividad</Th>
+                <Th>descripion</Th>
+                <Th>estado</Th>
+                <Th>acciones</Th>
+              </tr>
+            </THead>
+            <TBody>
+              {
+                activities.length > 0 &&
+                activities.map((act, i) => (
+                  <tr
+                    key={act.id_det}
+                    className='text-gray-700 text-sm border-b border-gray-300 
+                      hover:bg-blue-100 transition duration-300 cursor-pointer'
+                  >
+                    <Td bgcolor>
+                      <span
+                        className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-md"
+                      >
+                        {i + 1}
+                      </span>
+                    </Td>
+                    <Td>{act.id_det}</Td>
+                    <Td bgcolor>{act.num_ticket_edit || '--'}</Td>
+                    <Td>{act.proyecto_tarea.abrev}</Td>
+                    <Td bgcolor>{act.subproyectos_tareas?.nombre_sub_proy ?? '--'}</Td>
+                    <Td>{act.user_solicita}</Td>
+                    <Td bgcolor>{act.encargado_actividad}</Td>
+                    <Td>{act.num_prioridad}</Td>
+                    <Td bgcolor>{moment(act.fecha_tx).format('DD/MM/yyyy')}</Td>
+                    <Td width='max-w-[150px]' align='text-left'>{act.actividad || 'Sin Titulo'}</Td>
+                    <Td bgcolor align='text-left'>{act.func_objeto}</Td>
+                    <Td>{act.estado === 1 ? 'Pendiente' : 'En trabajo'}</Td>
+                    <Td bgcolor>xd</Td>
+                  </tr>
+                ))}
+            </TBody>
+          </Table>
+
+      }
+
+      <footer className='fixed bottom-0 h-11 bg-slate-100 border w-full flex items-center justify-around'>
+        <span>{activities.length} Actividades</span>
+        <Pagination size='small' count={10} color='primary' />
+        <div>
+          <Button
+            type='icon'
+            icon='fas fa-th-large'
+            className='hover:text-blue-500 hover:bg-slate-200 rounded-lg'
+            onClick={() => setView(true)}
+          />
+          <Button
+            type='icon'
+            icon='fas fa-list'
+            className='hover:text-blue-500 hover:bg-slate-200 rounded-lg'
+            onClick={() => setView(false)}
+          />
+        </div>
+      </footer>
 
       {/* modal edit */}
       <Modal showModal={modalEdit} isBlur={false} onClose={onCloseModals}
