@@ -17,7 +17,10 @@ const Modal = ({ children, showModal, onClose, isBlur = true, className = 'max-w
          const body = document.querySelector('body')
          body.classList.remove('overflow-hidden')
       }
-      return null
+      return () => {
+         const body = document.querySelector('body')
+         body.classList.remove('overflow-hidden')
+      }
    }, [showModal])
 
    if (showModal) {

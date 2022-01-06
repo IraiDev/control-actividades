@@ -7,10 +7,10 @@ const today = moment(new Date()).format('YYYY/MM/DD')
 
 const ActivityCard = (props) => {
 
-  const { addNote, updateNote, lowPriority, mediumPriority, highPriority, noPriority,
-    numberCard, pausas, onPlayPause, estado } = props
-
-  const navigate = useNavigate()
+  const {
+    addNote, updateNote, lowPriority, mediumPriority, highPriority,
+    numberCard, pausas, onPlayPause, estado, noPriority
+  } = props
 
   const date = moment(props.fecha_tx)
   const pausaState = pausas?.length > 0 && pausas?.at(-1).boton === 2
@@ -49,13 +49,11 @@ const ActivityCard = (props) => {
       break
   }
 
+  const navigate = useNavigate()
+
   return (
-    <div
-      className={`
-        p-4 rounded-lg shadow-md grid transition duration-200 hover:scale-95 transform text-sm
-        shadow-slate-400/40 hover:shadow-xl hover:shadow-slate-400/40
-       ${userStyles.styles}
-    `}
+    <main
+      className={`${userStyles.styles} p-4 rounded-lg shadow-md grid transition duration-200 hover:scale-95 transform text-sm shadow-slate-400/40 hover:shadow-xl hover:shadow-slate-400/40`}
       onDoubleClick={() => navigate(`detalle-actividad/${props.id_det}`, { replace: true })}
     >
       <div>
@@ -63,7 +61,7 @@ const ActivityCard = (props) => {
           <h1 className='text-base'>
             {props.actividad || 'Sin Titulo'}
           </h1>
-          <span className='bg-indigo-300 rounded-md py-0.5 px-2.5 text-indigo-600 mb-2'>
+          <span className='bg-indigo-300 text-indigo-600 rounded-md py-0.5 px-2.5 mb-2'>
             {numberCard}
           </span>
         </header>
@@ -137,10 +135,8 @@ const ActivityCard = (props) => {
             </p>
           </aside>
         </section>
-        <section className={`
-        ${userStyles.priority === 'S/P' ? 'bg-opacity-5' : 'bg-opacity-10'} 
-          mt-2 bg-black bg-opacity-5 rounded-md p-1.5
-        `}>
+        <section
+          className={`${userStyles.priority === 'S/P' ? 'bg-opacity-5' : 'bg-opacity-10'} mt-2 bg-black bg-opacity-5 rounded-md p-1.5`}>
           <h5 className='font-semibold capitalize'>descripcion</h5>
           <p className='max-h-36 overflow-custom whitespace-pre-wrap mix-blend-luminosity'>
             {props.func_objeto}
@@ -239,7 +235,7 @@ const ActivityCard = (props) => {
           </Menu>
         </span>
       </footer>
-    </div >
+    </main >
   )
 }
 

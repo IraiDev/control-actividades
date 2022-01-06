@@ -12,6 +12,8 @@ import Modal from '../ui/Modal'
 import { ActivityContext } from '../../context/ActivityContext'
 import Timer from '../timer/Timer'
 import CustomSelect from '../ui/CustomSelect'
+import { routes } from '../../types/types'
+import TimerContainer from '../timer/TimerContainer'
 
 const today = moment(new Date()).format('YYYY/MM/DD')
 const baseUrl = 'http://www.zcloud.cl/registro_avance/'
@@ -37,8 +39,8 @@ const Detail = () => {
   const navigate = useNavigate()
   const { id } = useParams()
   const { optionsArray } = useContext(ActivityContext)
-  const { activity, newNote, updateNote, deleteNote, updatePriority, onPlayPause,
-    updatePriorityAndAddNote, saveActivity, cloneActivity } = useDetail(id)
+  const { activity, newNote, updateNote, deleteNote, updatePriority, onPlayPause, deleteActivity,
+    updatePriorityAndAddNote, saveActivity, cloneActivity, deleteDocument } = useDetail(id)
 
   const [modalEdit, toggleModalEdit] = useState(false)
   const [modalAdd, toggleModalAdd] = useState(false)
@@ -263,7 +265,10 @@ const Detail = () => {
     formData.append('glosa', cGloss)
     cloneFiles && formData.append('archivos', cloneFiles)
 
-    await cloneActivity(formData)
+    const ok = await cloneActivity(formData)
+    if (!ok) return
+    onCloseModals()
+    navigate(routes.activity)
   }
 
   const timeFormat = (time) => {
@@ -293,15 +298,15 @@ const Detail = () => {
         description: activity.func_objeto,
         gloss: activity.glosa_explicativa,
         ticket: activity.num_ticket_edit,
-        priority: activity.prioridad_etiqueta,
+        priority: activity.num_prioridad,
         time: activity.tiempo_estimado
       })
 
       setOptions({
-        pr: projects.find(p => p.value === activity.id_proy),
-        sp: subProjects.find(s => s.id === activity.id_proy && s.value === activity.id_sub_proyecto),
-        us: users.find(u => u.value === activity.user_solicita),
-        ue: users.find(u => u.value === activity.encargado_actividad),
+        pr: projects?.find(p => p.value === activity.id_proy),
+        sp: subProjects?.find(s => s.id === activity.id_proy && s.value === activity.id_sub_proyecto),
+        us: users?.find(u => u.value === activity.user_solicita),
+        ue: users?.find(u => u.value === activity.encargado_actividad),
       })
     }
 
@@ -419,7 +424,9 @@ const Detail = () => {
                       ({activity.num_prioridad})
                     </p>
                   </header>
+
                   <hr className='my-5' />
+
                   <section className='grid gap-2'>
                     <CustomSelect
                       label='Proyecto'
@@ -429,7 +436,7 @@ const Detail = () => {
                     />
                     <CustomSelect
                       label='Sub proyecto'
-                      options={options.pr.value ? subProjects?.filter(s => s.id === options.pr?.value) : subProjects}
+                      options={options?.pr?.value ? subProjects?.filter(s => s.id === options?.pr?.value) : subProjects}
                       value={options.sp}
                       onChange={option => setOptions({ ...options, sp: option })}
                     />
@@ -551,7 +558,7 @@ const Detail = () => {
                             </a>
                             <button
                               className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
-                              onClick={() => console.log('delete: id actividad', file.id_det)}
+                              onClick={() => deleteDocument({ id_docum: file.id_docum, doc_name: file.nom_docum })}
                             >
                               <i className='fas fa-trash fa-sm'></i>
                             </button>
@@ -561,12 +568,11 @@ const Detail = () => {
                   </ul>
                   <input
                     className='
-                  file:rounded-full file:bg-blue-50 file:py-2 file:px-4 file:text-sm
-                  file:hover:bg-blue-100 file:text-blue-400 file:border-none
-                  file:transition file:duration-500 file:cursor-pointer file:font-semibold
-                  file:hover:shadow-lg file:hover:shadow-blue-400/20 text-slate-400 text-sm
-                  file:mt-5
-                  '
+                      file:rounded-full file:bg-blue-50 file:py-2 file:px-4 file:text-sm
+                      file:hover:bg-blue-100 file:text-blue-400 file:border-none
+                      file:transition file:duration-500 file:cursor-pointer file:font-semibold
+                      file:hover:shadow-lg file:hover:shadow-blue-400/20 text-slate-400 text-sm
+                      file:mt-5'
                     type='file'
                     name='file'
                     onChange={e => setFiles(e.target.files[0])}
@@ -576,43 +582,21 @@ const Detail = () => {
                 <aside>
                   <h5 className='text-sm mb-5 text-center font-semibold'>Tiempos de la actividad: </h5>
                   <div className='grid grid-cols-3 content-center place-content-center'>
-                    <span
-                      className='
-                    font-semibold rounded-full grid h-24 w-24 border-4 border-emerald-400
-                    mx-auto bg-slate-100 hover:bg-emerald-50 transition duration-200 
-                    content-center place-content-center capitalize
-                  '>
-
+                    <TimerContainer subtitle='estimado'>
                       {timeFormat(moment.duration(activity.tiempo_estimado, 'hours')).complete}
-                      <span className='text-xs text-slate-500 text-center'>estimado</span>
-                    </span>
-                    <span
-                      className='
-                    font-semibold rounded-full grid h-24 w-24 border-4 border-emerald-400
-                    mx-auto bg-slate-100 hover:bg-emerald-50 transition duration-200 
-                    content-center place-content-center capitalize
-                  '>
+                    </TimerContainer>
+                    <TimerContainer subtitle='trabajado'>
                       <Timer
                         pause={pausaState}
                         time={timeFormat(moment.duration(activity.tiempo_trabajado, 'hours')).section}
                       />
-                      {/* {timeFormat(moment.duration(activity.tiempo_trabajado, 'hours'))} */}
-                      <span className='text-xs text-slate-500 text-center'>trabajado</span>
-                    </span>
-                    <span
-                      className='
-                    font-semibold rounded-full grid h-24 w-24 border-4 border-emerald-400
-                    mx-auto bg-slate-100 hover:bg-emerald-50 transition duration-200 
-                    content-center place-content-center capitalize
-                  '>
+                    </TimerContainer>
+                    <TimerContainer subtitle='hoy'>
                       <Timer
                         pause={pausaState}
                         time={timeFormat(moment.duration(activity.tiempo_hoy, 'hours')).section}
                       />
-                      {/* <Timer pause={pausaState} /> */}
-                      {/* {timeFormat(moment.duration(activity.tiempo_hoy, 'hours'))} */}
-                      <span className='text-xs text-slate-500 text-center'>hoy</span>
-                    </span>
+                    </TimerContainer>
                   </div>
                 </aside>
               </section>
@@ -624,6 +608,7 @@ const Detail = () => {
                    hover:shadow-lg hover:shadow-red-300/20 w-max'
                     type='icon'
                     icon='fas fa-trash'
+                    onClick={() => deleteActivity({ id_actividad: activity.id_det })}
                   />
                   <Button
                     className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg
@@ -648,7 +633,7 @@ const Detail = () => {
                     className='bg-red-400 hover:bg-red-500 text-white hover:shadow-lg hover:shadow-red-400/40 rounded-full mr-2'
                     name='cancelar'
                     icon='fas fa-trash'
-                    onClick={() => navigate('/actividades', { replace: true })}
+                    onClick={() => navigate(routes.activity, { replace: true })}
                   />
                   <Button
                     className='bg-emerald-400 hover:bg-emerald-500 text-white hover:shadow-lg hover:shadow-emerald-400/40 rounded-full'
@@ -848,7 +833,7 @@ const Detail = () => {
                     <Select
                       className='uppercase'
                       placeholder='Seleccione'
-                      options={options.pr.value ? subProjects?.filter(s => s.id === options.pr?.value) : subProjects}
+                      options={options?.pr?.value ? subProjects?.filter(s => s.id === options?.pr?.value) : subProjects}
                       value={cloneOptions.sp}
                       onChange={option => setCloneOptions({ ...cloneOptions, sp: option })}
                     />

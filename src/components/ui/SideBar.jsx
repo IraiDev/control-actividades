@@ -9,7 +9,7 @@ import { routes } from '../../types/types'
 
 const SideBar = ({ isOpen, toggleSideBar }) => {
 
-   const { optionsArray, saveFilters, setOrder, order } = useContext(ActivityContext)
+   const { optionsArray, saveFilters, setOrder, order, setPager, pager } = useContext(ActivityContext)
    const { pathname } = useLocation()
 
    const [userCheck, setUserCheck] = useState(false)
@@ -37,8 +37,11 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
          color: options.pi?.value || '',
          id_actividad: id,
          titulo: title,
-         prioridad_ra: numPriority
+         prioridad_ra: numPriority,
+         offset: 0,
       }
+
+      setPager({ ...pager, page: 1 })
 
       saveFilters({ payload: filters })
    }
@@ -56,6 +59,7 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
       reset()
       setUserCheck({ select: false, value: '' })
       setOrder({})
+      setPager({ limit: 10, page: 1 })
    }
 
    const setActive = ({ param, value }) => {

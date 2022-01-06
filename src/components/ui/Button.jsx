@@ -10,6 +10,7 @@ const Button = ({
   type,
   disabled = false,
   iconFirst = false,
+  title
 }) => {
 
   if (disabled) {
@@ -19,6 +20,7 @@ const Button = ({
   if (type === 'icon') {
     return (
       <button
+        title={title}
         onClick={onClick}
         className={`focus:outline-none transition duration-500 h-8 w-8 ${className} ${shadow && 'shadow-xl'}`}>
         <i className={icon}></i>

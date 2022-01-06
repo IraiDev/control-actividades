@@ -1,8 +1,7 @@
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { ActivityContext } from '../../context/ActivityContext'
 import { useToggle } from '../../hooks/useToggle'
-import UserIndicator from '../timer/UserIndicator'
 import Button from './Button'
 import NavMenu from './NavMenu'
 import SideBar from './SideBar'
@@ -10,6 +9,8 @@ import { routes } from '../../types/types'
 import { useNotify } from '../../hooks/useNotify'
 import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu'
 import moment from 'moment'
+import { fetchToken } from '../../helpers/fetch'
+import TimerUsers from '../timer/TimerUsers'
 
 const { activity } = routes
 
@@ -20,6 +21,26 @@ const NavBar = () => {
    const { saveFilters, filters } = useContext(ActivityContext)
    const [isMenuOpen, toggleMenu] = useToggle(null)
    const [isSideBarOpen, toggleSideBar] = useToggle(null)
+   const [usersTimes, setUsersTimes] = useState([])
+
+   const getTimes = async () => {
+      try {
+         const resp = await fetchToken('task/get-times')
+         const body = await resp.json()
+
+         if (body.ok) {
+            setUsersTimes(body.tiempos)
+            console.log(body)
+         }
+
+      } catch (error) {
+         console.log("getTimes error: ", error)
+      }
+   }
+
+   useEffect(() => {
+      getTimes()
+   }, [])
 
    return (
       <>
@@ -27,7 +48,7 @@ const NavBar = () => {
             {
                pathname === activity ?
                   <Button
-                     className='rounded-full bg-slate-100 hover:bg-slate-200 hover:shadow-lg
+                     className='rounded-full bg-black/5 hover:bg-slate-200 hover:shadow-lg
                         hover:shadow-slate-400/30 shadow'
                      type='iconText'
                      name='Filtros'
@@ -35,13 +56,9 @@ const NavBar = () => {
                   />
                   : <span />
             }
-            <section className='hidden md:flex gap-2 hover:bg-gray-100 p-2 rounded-full transition duration-500'>
-               <UserIndicator user='IA' />
-               <UserIndicator user='SA' />
-               <UserIndicator user='RD' />
-               <UserIndicator user='FM' state />
-               <UserIndicator user='CA' state />
-            </section>
+
+            <TimerUsers data={usersTimes} />
+
             <section className='bg-black/5 rounded-lg p-1 flex items-center'>
                <Button
                   disabled={pathname !== activity}
@@ -49,11 +66,13 @@ const NavBar = () => {
                   type='icon'
                   icon='fas fa-user-clock'
                   onClick={() => saveFilters({ payload: { entrabajo: filters.entrabajo === 2 ? '' : 2 } })} />
-               {/* <Button
-                  className='hover:bg-slate-200 rounded-lg text-slate-700'
+               <Button
+                  className='hover:bg-slate-200 rounded-lg text-slate-700 hidden md:block'
+                  title='Actualizar tiempos'
                   type='icon'
-                  icon='fas fa-sync-alt'
-                  onClick={() => saveFilters({ reset: true })} /> */}
+                  icon='fas fa-history'
+                  onClick={getTimes} />
+               <TimerUsers data={usersTimes} type='button' onClick={getTimes} />
                <Menu
                   direction='right'
                   overflow='auto'

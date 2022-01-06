@@ -14,6 +14,8 @@ const initFilters = {
   prioridad_ra: '',
   usuario_no_mostrar: '',
   entrabajo: '',
+  // offset: 0,
+  // limit: 10
 }
 
 export const ActivityContext = createContext()
@@ -24,6 +26,7 @@ function ActivityProvider({ children }) {
   const [optionsArray, setOptionsArray] = useState({})
   const [filters, setFilters] = useState(initFilters)
   const [order, setOrder] = useState({})
+  const [pager, setPager] = useState({ page: 1, limit: 10 })
 
   const login = async (email) => {
     try {
@@ -102,19 +105,6 @@ function ActivityProvider({ children }) {
     }
   }
 
-  const getTimes = async () => {
-    try {
-      const resp = await fetchToken('task/get-times')
-      const body = await resp.json()
-
-      if (body.ok) { }
-      else Alert({ icon: 'error', title: 'Error', content: 'Error al obtener los tiempos de los usuarios', timer: 3000, showCancelButton: false })
-
-    } catch (error) {
-      console.log("getTimes error: ", error)
-    }
-  }
-
   const value = {
     setIsLogin,
     isLogin,
@@ -125,7 +115,9 @@ function ActivityProvider({ children }) {
     filters,
     saveFilters,
     setOrder,
-    order
+    order,
+    setPager,
+    pager
   }
   return (
     <ActivityContext.Provider value={value}>

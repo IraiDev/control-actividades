@@ -7,18 +7,18 @@ import { fetchToken } from '../helpers/fetch'
 export const useActivity = () => {
   const { setIsLoading } = useContext(UiContext)
   const { filters, order } = useContext(ActivityContext)
-  const [activities, setActivities] = useState([])
+  const [{ data, total }, setActivities] = useState({ data: [], total: 0 })
 
   const fetchActivities = async () => {
     try {
       setIsLoading(true)
-      const resp = await fetchToken(`task/get-task-ra?id_actividad`, { ...filters, ...order }, 'POST')
+      const resp = await fetchToken(`task/get-task-ra`, { ...filters, ...order }, 'POST')
       const body = await resp.json()
-      const { ok, tareas } = body
+      const { ok, tareas, total_tareas } = body
 
-      // console.log(body)
+      console.log(body)
       setIsLoading(false)
-      if (ok) { setActivities(tareas) }
+      if (ok) { setActivities({ data: tareas, total: total_tareas }) }
       else { console.log('Error') }
 
     } catch (e) {
@@ -55,7 +55,7 @@ export const useActivity = () => {
       const body = await resp.json()
       setIsLoading(false)
       if (body.ok) {
-        setActivities(activities.map(act => act.id_det === id_actividad ? {
+        setActivities(data.map(act => act.id_det === id_actividad ? {
           ...act, notas: act.notas.map(note => note.id_nota === id_nota ?
             { ...note, desc_nota: description } : note)
         } : act)
@@ -83,7 +83,7 @@ export const useActivity = () => {
       const body = await resp.json()
       setIsLoading(false)
       if (body.ok) {
-        setActivities(activities.map(act => act.id_det === id_actividad ? { ...act, notas: act.notas.filter(note => note.id_nota !== id_nota) } : act))
+        setActivities(data.map(act => act.id_det === id_actividad ? { ...act, notas: act.notas.filter(note => note.id_nota !== id_nota) } : act))
       }
       else {
         Alert({
@@ -106,7 +106,7 @@ export const useActivity = () => {
       const body = await resp.json()
       setIsLoading(false)
       if (body.ok) {
-        setActivities(activities.map(act => act.id_det === id_actividad ? { ...act, prioridad_etiqueta: prioridad_numero } : act))
+        setActivities(data.map(act => act.id_det === id_actividad ? { ...act, prioridad_etiqueta: prioridad_numero } : act))
       }
       else {
         Alert({
@@ -171,5 +171,14 @@ export const useActivity = () => {
     // eslint-disable-next-line
   }, [filters, order])
 
-  return { activities, newNote, updateNote, deleteNote, updatePriority, onPlayPause, updatePriorityAndAddNote }
+  return {
+    activities: data,
+    total,
+    newNote,
+    updateNote,
+    deleteNote,
+    updatePriority,
+    onPlayPause,
+    updatePriorityAndAddNote
+  }
 }

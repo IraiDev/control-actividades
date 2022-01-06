@@ -5,15 +5,15 @@ const Timer = (props) => {
 
   const { time: t } = props
 
-  const [time, setTime] = useState({ ms: 0, s: t?.seconds, m: t?.minutes, h: t?.hours })
+  const [time, setTime] = useState({ s: t?.seconds, m: t?.minutes, h: t?.hours })
   const [interv, setInterv] = useState()
 
   const start = () => {
     run()
-    setInterv(setInterval(run, 1))
+    setInterv(setInterval(run, 1000))
   }
 
-  let updatedMs = time.ms, updatedS = time.s, updatedM = time.m, updatedH = time.h
+  let updatedS = time.s, updatedM = time.m, updatedH = time.h
 
   const run = () => {
     if (updatedM === 60) {
@@ -24,17 +24,11 @@ const Timer = (props) => {
       updatedM++
       updatedS = 0
     }
-    if (updatedMs === 100) {
-      updatedS++
-      updatedMs = 0
-    }
-    updatedMs++
-    return setTime({ ms: updatedMs, s: updatedS, m: updatedM, h: updatedH })
+    updatedS++
+    return setTime({ s: updatedS, m: updatedM, h: updatedH })
   }
 
-  const stop = () => {
-    clearInterval(interv)
-  }
+  const stop = () => clearInterval(interv)
 
   useEffect(() => {
     props.pause ? start() : stop()

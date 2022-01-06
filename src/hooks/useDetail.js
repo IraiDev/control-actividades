@@ -1,21 +1,23 @@
 import { useEffect, useState, useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { UiContext } from '../context/UiContext'
 import { Alert } from '../helpers/alerts'
 import { fetchToken, fetchTokenFile } from '../helpers/fetch'
+import { routes } from '../types/types'
 
 export const useDetail = (id) => {
 
+  const navigate = useNavigate()
   const { setIsLoading } = useContext(UiContext)
   const [activity, setActivity] = useState({})
 
   const fetchDetail = async () => {
     try {
       setIsLoading(true)
-      const resp = await fetchToken(`task/get-task-ra?id_actividad=${id}&es_detalle=true`, {}, 'POST')
+      const resp = await fetchToken('task/get-task-ra', { id_actividad: id, es_detalle: true }, 'POST')
       const body = await resp.json()
       const { ok, tareas } = body
 
-      console.log(body)
       setIsLoading(false)
       if (ok) { setActivity(tareas[0]) }
       else { console.log('Error') }
@@ -164,12 +166,14 @@ export const useDetail = (id) => {
       console.log(body)
 
       if (body.ok) {
+        fetchDetail()
         Alert({
           title: 'Actividad actualizada',
           content: 'Cambios guardados correctamente',
-          showCancelButton: false
+          showCancelButton: false,
+          showConfirmButton: false,
+          timer: 2000
         })
-        return body.ok
       } else {
         Alert({
           icon: 'error',
@@ -177,7 +181,6 @@ export const useDetail = (id) => {
           content: body.response,
           showCancelButton: false
         })
-        return body.ok
       }
     } catch (err) {
       console.log(err)
@@ -198,7 +201,9 @@ export const useDetail = (id) => {
         Alert({
           title: 'Actividad clonada',
           content: 'Actividad clonada correctamente',
-          showCancelButton: false
+          showCancelButton: false,
+          showConfirmButton: false,
+          timer: 2000
         })
         return body.ok
       } else {
@@ -216,6 +221,72 @@ export const useDetail = (id) => {
     }
   }
 
+  const deleteActivity = ({ id_actividad }) => {
+    const action = async () => {
+      try {
+        const resp = await fetchToken('task/delete-actividad', { id_actividad }, 'DELETE')
+        const body = await resp.json()
+
+        if (body.ok) { navigate(routes.activity, { replace: true }) }
+        else {
+          Alert({
+            icon: 'error',
+            title: 'Error',
+            content: 'Error al eliminar actividad',
+            showCancelButton: false
+          })
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    Alert({
+      icon: 'warn',
+      title: 'Atención',
+      content: '¿Está seguro que desea eliminar esta actividad?',
+      cancelText: 'No, cancelar',
+      confirmText: 'Si, eliminar',
+      action
+    })
+  }
+
+  const deleteDocument = ({ id_docum, doc_name }) => {
+
+    const action = async () => {
+      setIsLoading(true)
+      try {
+        const resp = await fetchToken('task/delete-docum', { id_docum }, 'DELETE')
+        const body = await resp.json()
+        setIsLoading(false)
+
+        if (body.ok) {
+          setActivity({ ...activity, tarea_documentos: activity.tarea_documentos.filter(doc => doc.id_docum !== id_docum) })
+        } else {
+          Alert({
+            icon: 'error',
+            title: 'Error',
+            content: body.msg,
+            showCancelButton: false
+          })
+        }
+      } catch (err) {
+        setIsLoading(false)
+        console.log(err)
+      }
+    }
+
+    Alert({
+      icon: 'warn',
+      title: 'Atención',
+      content: `¿Desea eliminar el siguiente documento: <strong>${doc_name}</strong> ?`,
+      confirmText: 'Si, eliminar',
+      cancelText: 'No, cancelar',
+      action
+    })
+
+  }
+
   useEffect(() => {
     fetchDetail()
     // eslint-disable-next-line
@@ -230,7 +301,9 @@ export const useDetail = (id) => {
     onPlayPause,
     updatePriorityAndAddNote,
     saveActivity,
-    cloneActivity
+    cloneActivity,
+    deleteDocument,
+    deleteActivity
   }
 
 }
