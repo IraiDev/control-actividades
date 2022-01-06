@@ -13,7 +13,6 @@ export const useNotify = () => {
 
       if (ok) {
         setNotify(notificaciones)
-        console.log(body)
       }
       else { console.log('Error') }
 

@@ -1,11 +1,10 @@
-import React from 'react'
 import { Login as MSFLogin } from '@microsoft/mgt-react'
 import logo25x25 from '../../assets/img/logo25x25.png'
 import login from '../../assets/img/login.jpg'
 
 const Login = () => {
    return (
-      <div className='flex items-center h-screen w-full relative'>
+      <main className='flex items-center h-screen w-full relative'>
          <div className='fixed top-0 right-0 left-0 bottom-0 z-10'>
             <img className='object-cover w-full h-full' src={login} alt='wall-login' />
          </div>
@@ -22,7 +21,7 @@ const Login = () => {
                <MSFLogin />
             </button>
          </section>
-      </div>
+      </main>
    )
 }
 

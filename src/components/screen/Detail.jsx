@@ -525,13 +525,13 @@ const Detail = () => {
                     <h5 className='text-sm font-semibold'>Notas (Informes): </h5>
                     <section className='flex gap-2'>
                       <Button
-                        className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg hover:shadow-lg hover:shadow-slate-300/20 w-max'
+                        className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg w-max'
                         type='icon'
                         icon='fas fa-plus'
                         onClick={() => toggleModalAdd(true)}
                       />
                       <Button
-                        className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg hover:shadow-lg hover:shadow-slate-300/20 w-max'
+                        className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg w-max'
                         type='icon'
                         icon='fas fa-pen'
                         onClick={() => toggleModalEdit(true)}
@@ -624,22 +624,23 @@ const Detail = () => {
               <footer className='flex flex-wrap justify-between mt-10'>
                 <aside className='flex gap-2'>
                   <Button
-                    className='text-red-400 bg-red-50 hover:bg-red-100 rounded-lg
-                   hover:shadow-lg hover:shadow-red-300/20 w-max'
+                    className='text-red-400 bg-red-50 hover:bg-red-100 rounded-lg w-max'
                     type='icon'
                     icon='fas fa-trash'
                     onClick={() => deleteActivity({ id_actividad: activity.id_det })}
                   />
                   <Button
-                    className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg
-                   hover:shadow-lg hover:shadow-slate-300/20 w-max'
+                    className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg w-max'
                     type='icon'
                     icon='fas fa-clone'
                     onClick={openModalClone}
                   />
                   <Button
                     disabled={activity.estado_play_pausa === 1}
-                    className={` rounded-lg hover:shadow-lg w-max ${activity.estado_play_pausa === 2 ? 'text-red-400 bg-red-50 hover:bg-red-100 hover:shadow-red-300/20' : 'text-emerald-400 bg-emerald-50 hover:bg-emerald-100 hover:shadow-emerald-300/20'}`}
+                    className={`
+                      ${activity.estado_play_pausa === 2 ? 'text-red-400 bg-red-50 hover:bg-red-100'
+                        : 'text-emerald-400 bg-emerald-50 hover:bg-emerald-100'}
+                      rounded-lg w-max`}
                     type='icon'
                     icon={activity.estado_play_pausa === 2 ? 'fas fa-pause fa-sm' : 'fas fa-play fa-sm'}
                     onClick={handleOnPlayPause}
@@ -648,15 +649,13 @@ const Detail = () => {
 
                 <aside>
                   <Button
-                    className='bg-red-400 hover:bg-red-500 text-white hover:shadow-lg hover:shadow-red-400/40 rounded-full mr-2'
+                    className='w-max text-red-500 hover:bg-red-100 rounded-full'
                     name='cancelar'
-                    icon='fas fa-trash'
                     onClick={() => navigate(routes.activity, { replace: true })}
                   />
                   <Button
-                    className='bg-emerald-400 hover:bg-emerald-500 text-white hover:shadow-lg hover:shadow-emerald-400/40 rounded-full'
-                    name='Guardar cambios'
-                    icon='fas fa-trash'
+                    className='w-max text-emerald-500 hover:bg-emerald-100 rounded-full place-self-end'
+                    name='Guardar'
                     onClick={onSave}
                   />
                 </aside>
@@ -708,9 +707,7 @@ const Detail = () => {
                 onChange={e => setValues({ ...values, desc: e.target.value })}
               />
               <Button
-                className='
-              w-max border border-blue-400 text-blue-400 hover:text-white hover:bg-blue-400 
-              hover:shadow-lg hover:shadow-blue-500/30 rounded-full place-self-end'
+                className='w-max text-blue-500 hover:bg-blue-100 rounded-full place-self-end'
                 name='modificar nota'
                 onClick={onUpdate}
               />
@@ -755,9 +752,7 @@ const Detail = () => {
                 onChange={e => setValues({ ...values, desc: e.target.value })}
               />
               <Button
-                className='
-              w-max border border-blue-400 text-blue-400 hover:text-white hover:bg-blue-400 
-              hover:shadow-lg hover:shadow-blue-500/30 rounded-full place-self-end'
+                className='w-max text-blue-500 hover:bg-blue-100 rounded-full place-self-end'
                 name='crear nota'
                 onClick={onAdd}
               />
@@ -806,16 +801,12 @@ const Detail = () => {
               />
               <footer className='flex items-center justify-between'>
                 <Button
-                  className='
-              w-max border border-blue-400 text-blue-400 hover:text-white hover:bg-blue-400 
-              hover:shadow-lg hover:shadow-blue-500/30 rounded-full'
+                  className='w-max text-blue-500 hover:bg-blue-100 rounded-full'
                   name='cancelar'
                   onClick={() => onCloseModals()}
                 />
                 <Button
-                  className='
-              w-max border border-red-400 text-red-400 hover:text-white hover:bg-red-400 
-              hover:shadow-lg hover:shadow-red-500/30 rounded-full'
+                  className='w-max text-red-500 hover:bg-red-100 rounded-full'
                   name='Pausar actividad'
                   onClick={onPause}
                 />
@@ -937,13 +928,13 @@ const Detail = () => {
                 />
                 <div className='place-self-end'>
                   <Button
-                    className='bg-red-400 hover:bg-red-500 text-white hover:shadow-lg hover:shadow-red-400/40 rounded-full mr-2'
+                    className='w-max text-red-500 hover:bg-red-100 rounded-full'
                     name='cancelar'
                     icon='fas fa-trash'
                     onClick={onCloseModals}
                   />
                   <Button
-                    className='bg-emerald-400 hover:bg-emerald-500 text-white hover:shadow-lg hover:shadow-emerald-400/40 rounded-full'
+                    className='w-max text-yellow-500 hover:bg-yellow-100 rounded-full place-self-end'
                     name='clonar actividad'
                     icon='fas fa-trash'
                     onClick={onClone}

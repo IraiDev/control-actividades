@@ -16,8 +16,6 @@ export const useActivity = () => {
       const resp = await fetchToken(`task/get-task-ra`, { ...filters, ...order }, 'POST')
       const body = await resp.json()
       const { ok, tareas, total_tareas } = body
-
-      console.log(body)
       setIsLoading(false)
       if (ok) {
         setActivities(tareas)

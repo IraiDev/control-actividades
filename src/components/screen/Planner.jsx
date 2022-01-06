@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { getFetch, updateFetchTask } from '../../helpers/fetchingGraph'
 import { ActivityContext } from '../../context/ActivityContext'
 import { UiContext } from '../../context/UiContext'
 import { Alert } from '../../helpers/alerts'
-import { getFetch, updateFetchTask } from '../../helpers/fetchingGraph'
 import PlannerCard from '../card/PlannerCard'
 
 const Planner = () => {

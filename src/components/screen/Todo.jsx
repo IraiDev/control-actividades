@@ -1,15 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useParams, useLocation } from 'react-router-dom'
-import TodoCard from '../card/TodoCard'
 import { deleteFetch, getFetch, postFetch, updateFetch } from '../../helpers/fetchingGraph'
+import { useToggle } from '../../hooks/useToggle'
+import { Alert } from '../../helpers/alerts'
+import { UiContext } from '../../context/UiContext'
 import queryString from 'query-string'
+import TodoCard from '../card/TodoCard'
 import Button from '../ui/Button'
 import Modal from '../ui/Modal'
 import Input from '../ui/Input'
 import TextArea from '../ui/TextArea'
-import { useToggle } from '../../hooks/useToggle'
-import { Alert } from '../../helpers/alerts'
-import { UiContext } from '../../context/UiContext'
 
 const initForm = {
    title: '',
@@ -28,9 +28,7 @@ const Todo = () => {
    const [showModalTodo, toggleModalTodo] = useToggle(false)
    const [values, setValues] = useState(initForm)
 
-   // destructuring
    const { title, desc, todo_id } = values
-   // destructuring
 
    const taskFetch = () => {
       getFetch(`/me/todo/lists/${id}/tasks`)
@@ -246,9 +244,7 @@ const Todo = () => {
                />
                <footer className='grid place-self-end'>
                   <Button
-                     className='
-                     border border-blue-400 text-blue-400 hover:bg-blue-400
-                     hover:text-white rounded-full w-max text-base'
+                     className='w-max text-blue-500 hover:bg-blue-100 rounded-full text-base place-self-end'
                      type='submit'
                      name={todo_id ? 'actualizar to-do' : 'crear to-do'}
                      onClick={todo_id ? handleUpdateTodo : handleNewTodo}

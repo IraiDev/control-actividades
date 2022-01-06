@@ -8,13 +8,13 @@ const InputFilter = ({ isNumber = false, field, value, name, onChange, filterUp,
       <Input field={field} isNumber={isNumber} name={name} value={value} onChange={onChange} />
       <Button
         className={`hover:text-blue-500 mt-5 ${upActive ? 'text-blue-500' : 'text-slate-600'}`}
-        icon='fas fa-chevron-up fa-sm'
+        icon='fas fa-angle-up text-lg'
         type='icon'
         onClick={filterUp}
       />
       <Button
         className={`hover:text-blue-500 mt-5 ${downActive ? 'text-blue-500' : 'text-slate-600'}`}
-        icon='fas fa-chevron-down fa-sm'
+        icon='fas fa-angle-down text-lg'
         type='icon'
         onClick={filterDown}
       />

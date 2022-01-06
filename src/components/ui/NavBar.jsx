@@ -11,17 +11,59 @@ import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu'
 import moment from 'moment'
 import { fetchToken } from '../../helpers/fetch'
 import TimerUsers from '../timer/TimerUsers'
+import Modal from './Modal'
+import CustomSelect from './CustomSelect'
+import Input from './Input'
+import TextArea from './TextArea'
+import { useForm } from '../../hooks/useForm'
+import { useDetail } from '../../hooks/useDetail'
+
+const initOptions = {
+   pr: { label: 'ninguno', value: null },
+   sp: { label: 'ninguno', value: null },
+   us: { label: 'ninguno', value: null },
+   ue: { label: 'ninguno', value: null },
+   ur: { label: 'ninguno', value: null },
+}
 
 const { activity } = routes
 
 const NavBar = () => {
 
+   const {
+      saveFilters,
+      filters,
+      optionsArray
+   } = useContext(ActivityContext)
+
    const { notify, markNotifications } = useNotify()
+   const { cloneActivity: createActivity } = useDetail()
    const { pathname } = useLocation()
-   const { saveFilters, filters } = useContext(ActivityContext)
+   const [usersTimes, setUsersTimes] = useState([])
+
    const [isMenuOpen, toggleMenu] = useToggle(null)
    const [isSideBarOpen, toggleSideBar] = useToggle(null)
-   const [usersTimes, setUsersTimes] = useState([])
+   const [modal, toggleModal] = useState(false)
+
+   const [files, setFiles] = useState([])
+   const [options, setOptions] = useState(initOptions)
+   const [{
+      title,
+      ticket,
+      priority,
+      time,
+      desc,
+      gloss
+   }, onChangeValues, reset] = useForm({
+      title: '',
+      ticket: '',
+      priority: '',
+      time: '',
+      desc: '',
+      gloss: ''
+   })
+
+   const { projects, subProjects, users } = optionsArray
 
    const getTimes = async () => {
       try {
@@ -30,12 +72,38 @@ const NavBar = () => {
 
          if (body.ok) {
             setUsersTimes(body.tiempos)
-            console.log(body)
          }
 
       } catch (error) {
          console.log("getTimes error: ", error)
       }
+   }
+
+   const onCreateActivity = async () => {
+      const formData = new FormData()
+      options?.pr && formData.append('proyecto', options.pr.value)
+      options?.sp && formData.append('sub_proyecto', options.sp.value)
+      options?.us && formData.append('solicita', options.us.value)
+      options?.ue && formData.append('encargado', options.ue.value)
+      options?.ur && formData.append('revisor', options.ur.value)
+      formData.append('prioridad', priority)
+      formData.append('ticket', ticket)
+      formData.append('tiempo_estimado', time)
+      formData.append('titulo', title)
+      formData.append('descripcion', desc)
+      formData.append('glosa', gloss)
+      files && formData.append('archivos', files)
+
+      const ok = await createActivity(formData)
+      if (!ok) return
+      onCloseModal()
+      saveFilters({})
+   }
+
+   const onCloseModal = () => {
+      reset()
+      toggleModal(false)
+      setOptions(initOptions)
    }
 
    useEffect(() => {
@@ -48,10 +116,10 @@ const NavBar = () => {
             {
                pathname === activity ?
                   <Button
-                     className='rounded-full bg-black/5 hover:bg-slate-200 hover:shadow-lg
-                        hover:shadow-slate-400/30 shadow'
+                     className='rounded-full bg-black/5 hover:bg-black/10'
                      type='iconText'
                      name='Filtros'
+                     icon='fas fa-filter'
                      onClick={toggleSideBar}
                   />
                   : <span />
@@ -62,10 +130,17 @@ const NavBar = () => {
             <section className='bg-black/5 rounded-lg p-1 flex items-center'>
                <Button
                   disabled={pathname !== activity}
+                  className='hover:bg-slate-200 rounded-lg text-slate-700'
+                  type='icon'
+                  icon='fas fa-plus'
+                  title='Nueva actividad'
+                  onClick={() => toggleModal(true)} />
+               <Button
+                  disabled={pathname !== activity}
                   className={`hover:bg-slate-200 rounded-lg ${filters.entrabajo === 2 ? 'text-blue-500' : 'text-slate-700'} `}
                   type='icon'
                   icon='fas fa-user-clock'
-                  onClick={() => saveFilters({ payload: { entrabajo: filters.entrabajo === 2 ? '' : 2 } })} />
+                  onClick={() => saveFilters({ payload: { entrabajo: filters.entrabajo === 2 ? '' : 2, limit: '', offset: 0 } })} />
                <Button
                   className='hover:bg-slate-200 rounded-lg text-slate-700 hidden md:block'
                   title='Actualizar tiempos'
@@ -135,6 +210,121 @@ const NavBar = () => {
 
          <NavMenu isOpen={isMenuOpen} toggleMenu={toggleMenu} />
          <SideBar isOpen={isSideBarOpen} toggleSideBar={toggleSideBar} />
+
+         {/* modal new activity */}
+         <Modal showModal={modal} isBlur={false} onClose={onCloseModal}
+            padding='p-7'
+         >
+            <div className='grid gap-5'>
+               <h1 className='capitalize text-xl font-semibold text-center'>
+                  Nueva actividad
+               </h1>
+               <header className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  <aside className='grid gap-1'>
+                     <CustomSelect
+                        label='proyecto'
+                        options={projects}
+                        value={options.pr}
+                        onChange={option => setOptions({ ...options, pr: option })}
+                     />
+                     <CustomSelect
+                        label='Sub proyecto'
+                        options={options.pr?.value ? subProjects?.filter(s => s.id === options.pr?.value) : subProjects}
+                        value={options.sp}
+                        onChange={option => setOptions({ ...options, sp: option })}
+                     />
+                     <CustomSelect
+                        label='Solicitante'
+                        options={users}
+                        value={options.us}
+                        onChange={option => setOptions({ ...options, us: option })}
+                     />
+                     <CustomSelect
+                        label='encargado'
+                        options={users}
+                        value={options.ue}
+                        onChange={option => setOptions({ ...options, ue: option })}
+                     />
+                     <CustomSelect
+                        label='revisor'
+                        options={users}
+                        value={options.ur}
+                        onChange={option => setOptions({ ...options, ur: option })}
+                     />
+                  </aside>
+
+                  <aside className='mt-0.5'>
+                     <Input
+                        field='titulo'
+                        name='title'
+                        value={title}
+                        onChange={onChangeValues}
+                     />
+                     <Input
+                        field='ticket'
+                        name='ticket'
+                        value={ticket}
+                        onChange={onChangeValues}
+                     />
+                     <Input
+                        field='prioridad'
+                        name='priority'
+                        value={priority}
+                        onChange={onChangeValues}
+                     />
+                     <Input
+                        field='T. estimado'
+                        name='time'
+                        value={time}
+                        onChange={onChangeValues}
+                     />
+                  </aside>
+               </header>
+
+               <section className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  <TextArea
+                     field='descripccion'
+                     name='desc'
+                     value={desc}
+                     onChange={onChangeValues}
+                  />
+                  <TextArea
+                     field='glosa'
+                     name='gloss'
+                     value={gloss}
+                     onChange={onChangeValues}
+                  />
+               </section>
+
+               <footer className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-10'>
+                  <input
+                     className='
+                        file:rounded-full file:bg-blue-50 file:py-2 file:px-4 file:text-sm
+                        file:hover:bg-blue-100 file:text-blue-400 file:border-none
+                        file:transition file:duration-500 file:cursor-pointer file:font-semibold
+                        text-slate-400 text-sm file:mt-5'
+                     type='file'
+                     name='file'
+                     onChange={e => setFiles(e.target.files[0])}
+                  />
+                  <div className='place-self-end'>
+                     <Button
+                        className='w-max text-red-500 hover:bg-red-100 rounded-full'
+                        name='cancelar'
+                        icon='fas fa-trash'
+                        onClick={onCloseModal}
+                     />
+                     <Button
+                        className='w-max text-emerald-500 hover:bg-emerald-100 rounded-full'
+                        name='crear actividad'
+                        icon='fas fa-trash'
+                        onClick={onCreateActivity}
+                     />
+                  </div>
+               </footer>
+            </div>
+         </Modal>
+
       </>
    )
 }

@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu'
 import { useForm } from '../../hooks/useForm'
 import LiNote from '../ui/LiNote'
-import moment from 'moment'
 import Modal from '../ui/Modal'
 import TextArea from '../ui/TextArea'
 import Button from '../ui/Button'
+import moment from 'moment'
 
 const defaultNotes = [
   { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -26,11 +26,6 @@ const defaultPauses = [
 
 const today = moment(new Date()).format('YYYY/MM/DD')
 
-let userStyles = {
-  priority: 'S/P',
-  styles: 'border bg-white text-slate-700 hover:border-gray-400'
-}
-
 const ActivityCard = (props) => {
 
   const {
@@ -48,6 +43,11 @@ const ActivityCard = (props) => {
     estado,
     estado_play_pausa
   } = props
+
+  let userStyles = {
+    priority: 'S/P',
+    styles: 'bg-white text-slate-700'
+  }
 
   switch (props.prioridad_etiqueta) {
     case 600:
@@ -100,7 +100,12 @@ const ActivityCard = (props) => {
   return (
     <>
       <main
-        className={`${userStyles.styles} p-4 rounded-lg shadow-md grid transition duration-200 hover:scale-95 transform text-sm shadow-slate-400/40 hover:shadow-xl hover:shadow-slate-400/40`}
+        className={`
+        ${userStyles.styles} 
+        ${estado_play_pausa === 2 && 'border-[5px] border-black/25'}
+        p-4 rounded-lg shadow-lg grid transition duration-200 hover:scale-98 transform 
+        text-sm shadow-zinc-400/40 hover:shadow-xl hover:shadow-zinc-400/40
+        `}
         onDoubleClick={() => navigate(`detalle-actividad/${props.id_det}`, { replace: true })}
       >
         <div>
@@ -186,9 +191,13 @@ const ActivityCard = (props) => {
           </section>
 
           <section
-            className={`${userStyles.priority === 'S/P' ? 'bg-opacity-5' : 'bg-opacity-10'} mt-2 bg-black bg-opacity-5 rounded-md p-1.5`}>
+            className={`
+            ${userStyles.priority === 'S/P' ? 'bg-opacity-5' : 'bg-opacity-10'} 
+            mt-2 bg-black bg-opacity-5 rounded-md p-1.5
+            `}
+          >
             <h5 className='font-semibold capitalize'>descripcion</h5>
-            <p className='max-h-36 overflow-custom whitespace-pre-wrap mix-blend-luminosity'>
+            <p className='h-36 overflow-custom whitespace-pre-wrap mix-blend-luminosity'>
               {props.func_objeto}
             </p>
           </section>
@@ -218,8 +227,7 @@ const ActivityCard = (props) => {
           </section>
         </div>
         <footer className='place-self-end flex justify-between items-center border-t w-full pt-2 mt-2'>
-          <span className='flex items-center gap-2'>
-            <p>estado</p>
+          {estado !== 1 ?
             <button onClick={estado_play_pausa === 2 ? () => toggleModalPause(true) : () => playActivity({ id_actividad: props.id_det })}>
               {
                 estado_play_pausa === 2 ?
@@ -227,7 +235,8 @@ const ActivityCard = (props) => {
                   : <i className='fas fa-play fa-sm' />
               }
             </button>
-          </span>
+            : <p>estado</p>
+          }
           <span>
             <Menu
               className={userStyles.menu}
@@ -322,9 +331,7 @@ const ActivityCard = (props) => {
             onChange={onChangeValues}
           />
           <Button
-            className='
-              w-max border border-blue-400 text-blue-400 hover:text-white hover:bg-blue-400 
-              hover:shadow-lg hover:shadow-blue-500/30 rounded-full place-self-end'
+            className='w-max text-blue-500 hover:bg-blue-100 rounded-full place-self-end'
             name='crear nota'
             onClick={() => {
               addNote({ id_actividad: props.id_det, description: desc })
@@ -382,9 +389,7 @@ const ActivityCard = (props) => {
             onChange={e => setValues({ ...values, desc: e.target.value })}
           />
           <Button
-            className='
-              w-max border border-blue-400 text-blue-400 hover:text-white hover:bg-blue-400 
-              hover:shadow-lg hover:shadow-blue-500/30 rounded-full place-self-end'
+            className='w-max text-blue-500 hover:bg-blue-100 rounded-full place-self-end'
             name='modificar nota'
             onClick={() => updateNote({ id_nota: values.id, description: values.desc, id_actividad: props.id_det })}
           />
@@ -433,16 +438,12 @@ const ActivityCard = (props) => {
           />
           <footer className='flex items-center justify-between'>
             <Button
-              className='
-              w-max border border-blue-400 text-blue-400 hover:text-white hover:bg-blue-400 
-              hover:shadow-lg hover:shadow-blue-500/30 rounded-full'
+              className='w-max text-blue-500 hover:bg-blue-100 rounded-full'
               name='cancelar'
               onClick={() => onCloseModals()}
             />
             <Button
-              className='
-              w-max border border-red-400 text-red-400 hover:text-white hover:bg-red-400 
-              hover:shadow-lg hover:shadow-red-500/30 rounded-full'
+              className='w-max text-red-500 hover:bg-red-100 rounded-full'
               name='Pausar actividad'
               onClick={() => {
                 pauseActivity({ flag: false, id_actividad: props.id_det, mensaje: values.desc })

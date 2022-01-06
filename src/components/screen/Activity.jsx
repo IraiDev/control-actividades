@@ -144,7 +144,7 @@ const Activity = () => {
                     <Button
                       className='ml-2'
                       type='icon'
-                      icon={multiline ? 'fas fa-chevron-up' : 'fas fa-chevron-down'}
+                      icon={multiline ? 'fas fa-angle-up' : 'fas fa-angle-down'}
                       onClick={() => setMultiline(!multiline)}
                     />
                   </Th>
@@ -153,7 +153,7 @@ const Activity = () => {
                     <Button
                       className='ml-2'
                       type='icon'
-                      icon={multiline ? 'fas fa-chevron-up' : 'fas fa-chevron-down'}
+                      icon={multiline ? 'fas fa-angle-up' : 'fas fa-angle-down'}
                       onClick={() => setMultiline(!multiline)}
                     />
                   </Th>
@@ -242,10 +242,10 @@ const Activity = () => {
           onChange={onChangePage}
           page={pager.page}
         />
-        <div>
+        <div className='flex gap-2'>
           <Button
             type='icon'
-            icon='fas fa-th'
+            icon='fas fa-border-all'
             className={`hover:text-blue-500 hover:bg-slate-200 rounded-lg ${view && 'text-blue-500'}`}
             onClick={() => setView(true)}
           />
@@ -262,7 +262,7 @@ const Activity = () => {
               setPager({ page: 1, limit: Number(e.target.value) })
               saveFilters({ payload: { limit: Number(e.target.value), offset: 0 } })
             }}>
-            <option value={total}>todos</option>
+            <option value=''>todos</option>
             <option value='10'>10</option>
             <option value='25'>25</option>
             <option value='50'>50</option>

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Person } from '@microsoft/mgt-react'
-import moment from 'moment'
 import { getFetch } from '../../helpers/fetchingGraph'
 import Button from '../ui/Button'
+import moment from 'moment'
 
 let state = ''
 
@@ -47,7 +47,7 @@ const PlannerCard = ({
     <div
       className='
       relative transition duration-300 w-full gap-2 p-4 bg-white
-      rounded-lg shadow-lg border hover:shadow-xl hover:scale-95 transform
+      rounded-lg shadow-lg border hover:shadow-xl hover:scale-98 transform
       text-sm hover:border-gray-400
     '>
       <h1 className='font-semibold capitalize mb-1 text-base'>{title}</h1>

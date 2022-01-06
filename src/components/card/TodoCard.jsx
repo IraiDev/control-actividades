@@ -1,4 +1,3 @@
-import React from 'react'
 import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu'
 
 const TodoCard = (props) => {
@@ -13,7 +12,7 @@ const TodoCard = (props) => {
          onDoubleClick={props.editTodo}
          className={`
             p-4 rounded-md shadow-md
-            hover:shadow-xl hover:scale-95 transform
+            hover:shadow-xl hover:scale-98 transform
             ${styles}
          `}>
          <header className='flex items-center justify-between mb-2'>

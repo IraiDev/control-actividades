@@ -163,8 +163,6 @@ export const useDetail = (id) => {
       const body = await resp.json()
       setIsLoading(false)
 
-      console.log(body)
-
       if (body.ok) {
         fetchDetail()
         Alert({
@@ -195,12 +193,10 @@ export const useDetail = (id) => {
       const body = await resp.json()
       setIsLoading(false)
 
-      console.log(body)
-
       if (body.ok) {
         Alert({
-          title: 'Actividad clonada',
-          content: 'Actividad clonada correctamente',
+          title: 'Atención',
+          content: 'Actividad creada!',
           showCancelButton: false,
           showConfirmButton: false,
           timer: 2000
