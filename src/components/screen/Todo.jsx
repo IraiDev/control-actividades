@@ -145,7 +145,7 @@ const Todo = () => {
          >
             <div className='flex items-center gap-2'>
                <h1 className='text-lg font-semibold text-gray-800'>
-                  <i className={icon_list}></i> {title_list}
+                  <i className={icon_list} /> {title_list}
                </h1>
                <label htmlFor='importance'>
                   <input
@@ -158,22 +158,23 @@ const Todo = () => {
                            : setImportant({ select: e.target.checked, value: '' })
                      }} />
                   <i className={`
+                     ${important.select ? 'fas fa-star text-yellow-500' : 'far fa-star'}
                      transition duration-500 cursor-pointer fa-lg hover:text-yellow-400
-                      ${important.select ? 'fas fa-star text-yellow-500' : 'far fa-star'}
                   `}
-                  ></i>
+                  />
                </label>
             </div>
             <Button
-               className='bg-blue-400 hover:bg-blue-500 text-white rounded-full'
+               className='w-max text-blue-500 hover:bg-blue-100 rounded-full'
                name='nuevo to-do'
                onClick={toggleModalTodo}
             />
          </header>
          <section
-            className='grid gap-4 px-10 pb-5 2xl:mx-36
-            grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
-         '>
+            className='
+               grid gap-4 container mx-auto
+               grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+         >
             {
                tasks.length > 0 ?
                   tasks.map(task => {

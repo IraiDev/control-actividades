@@ -189,7 +189,8 @@ const NavBar = () => {
                      : <MenuItem>No hay notificaciones...</MenuItem>
                   }
                   <MenuItem
-                     className='flex justify-between items-center hover:text-red-500'
+                     disabled={notify.length < 1}
+                     className={`flex justify-between items-center ${notify.length > 0 && 'hover:text-red-500'}`}
                      onClick={markNotifications}
                   >
                      Marcar como vistas <i className='fas fa-eye-slash fa-sm' />

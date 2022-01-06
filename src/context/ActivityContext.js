@@ -15,7 +15,7 @@ const initFilters = {
   usuario_no_mostrar: '',
   entrabajo: '',
   offset: 0,
-  limit: 10
+  limit: 12
 }
 
 export const ActivityContext = createContext()
@@ -26,7 +26,7 @@ function ActivityProvider({ children }) {
   const [optionsArray, setOptionsArray] = useState({})
   const [filters, setFilters] = useState(initFilters)
   const [order, setOrder] = useState({})
-  const [pager, setPager] = useState({ page: 1, limit: 10 })
+  const [pager, setPager] = useState({ page: 1, limit: 12 })
 
   const login = async (email) => {
     try {
@@ -43,10 +43,6 @@ function ActivityProvider({ children }) {
     } catch (error) {
       console.log("login error: ", error)
     }
-  }
-
-  const logout = () => {
-    localStorage.removeItem('tokenBackend')
   }
 
   const getFilters = async () => {
@@ -100,6 +96,7 @@ function ActivityProvider({ children }) {
   const saveFilters = ({ reset = false, payload }) => {
     if (reset) {
       setFilters(initFilters)
+      setPager({ page: 1, limit: 12 })
     } else {
       setFilters(Object.assign({}, filters, payload))
     }

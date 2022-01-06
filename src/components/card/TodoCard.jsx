@@ -17,14 +17,12 @@ const TodoCard = (props) => {
          `}>
          <header className='flex items-center justify-between mb-2'>
             <h1 className='font-semibold capitalize flex items-center gap-3'>
-               {importance === 'high' &&
-                  <i className='fas fa-star text-yellow-500'></i>
-               }
+               {importance === 'high' && <i className='fas fa-star text-yellow-500' />}
                {title}
             </h1>
             <span>
                <Menu
-                  direction='top'
+                  direction='bottom'
                   align='end'
                   className={styles}
                   menuButton={
@@ -41,7 +39,7 @@ const TodoCard = (props) => {
                   </MenuItem>
                   <MenuItem
                      className='hover:bg-gray-400 transition duration-200 hover:bg-opacity-30 font-semibold'
-                     onClick={props.editTodo}
+                     onClick={props.deleteTodo}
                   >
                      Eliminar
                   </MenuItem>
@@ -50,8 +48,8 @@ const TodoCard = (props) => {
          </header >
          <section className='max-h-60 overflow-custom'>
             <p className={`
-               whitespace-pre-wrap p-1.5 text-sm bg-black rounded-md
                ${importance === 'high' ? 'bg-opacity-10' : 'bg-opacity-5'}
+               whitespace-pre-wrap p-1.5 text-sm bg-black rounded-md
             `}>
                {body.content}
             </p>

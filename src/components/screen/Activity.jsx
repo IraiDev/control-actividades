@@ -103,7 +103,10 @@ const Activity = () => {
     <>
       {
         view ?
-          <section className='pt-10 pb-24 container mx-auto gap-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+          <section
+            className='pt-10 pb-24 container mx-auto gap-3 grid grid-cols-1 
+            sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+          >
             {
               activities.length > 0 ?
                 activities.map((act, i) => (
@@ -203,24 +206,24 @@ const Activity = () => {
                         playActivity={onPlayActivity}
                         {...act}
                       >
-                        <div className='flex gap-1.5 p-1.5 rounded-full bg-black/5'>
+                        <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
                           <span
                             className='h-3.5 w-3.5 rounded-full bg-slate-400 transition hover:border
                               duration-200 hover:scale-125 transform cursor-pointer'
                             onClick={() => updatePriority({ prioridad_numero: 1000, id_actividad: act.id_det })}
                           />
                           <span
-                            className='h-3.5 w-3.5 rounded-full bg-green-800/70 transition hover:border
+                            className='h-3.5 w-3.5 rounded-full bg-green-500/70 transition hover:border
                               duration-200 hover:scale-125 transform cursor-pointer'
                             onClick={() => updatePriority({ prioridad_numero: 600, id_actividad: act.id_det })}
                           />
                           <span
-                            className='h-3.5 w-3.5 rounded-full bg-yellow-600/80 transition hover:border
+                            className='h-3.5 w-3.5 rounded-full bg-yellow-500/80 transition hover:border
                               duration-200 hover:scale-125 transform cursor-pointer'
                             onClick={() => updatePriority({ prioridad_numero: 400, id_actividad: act.id_det })}
                           />
                           <span
-                            className='h-3.5 w-3.5 rounded-full bg-red-800/70 transition hover:border
+                            className='h-3.5 w-3.5 rounded-full bg-red-500/70 transition hover:border
                               duration-200 hover:scale-125 transform cursor-pointer'
                             onClick={() => updatePriority({ prioridad_numero: 100, id_actividad: act.id_det })}
                           />
@@ -263,7 +266,7 @@ const Activity = () => {
               saveFilters({ payload: { limit: Number(e.target.value), offset: 0 } })
             }}>
             <option value=''>todos</option>
-            <option value='10'>10</option>
+            <option value='12'>12</option>
             <option value='25'>25</option>
             <option value='50'>50</option>
             <option value='100'>100</option>

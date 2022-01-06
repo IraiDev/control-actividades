@@ -135,7 +135,10 @@ const Planner = () => {
                completadas
             </label>
          </header>
-         <section className='grid gap-4 px-10 pb-5 max-h-res overflow-custom grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+         <section className='
+            grid gap-4 pb-5 container mx-auto
+            grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+         >
             {
                tasks.length > 0 ?
                   tasks.map(task => {

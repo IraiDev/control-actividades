@@ -9,7 +9,14 @@ import { routes } from '../../types/types'
 
 const SideBar = ({ isOpen, toggleSideBar }) => {
 
-   const { optionsArray, saveFilters, setOrder, order, setPager, pager } = useContext(ActivityContext)
+   const {
+      optionsArray,
+      saveFilters,
+      setOrder,
+      order,
+      setPager,
+      pager
+   } = useContext(ActivityContext)
    const { pathname } = useLocation()
 
    const [userCheck, setUserCheck] = useState(false)
@@ -24,7 +31,13 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
       numPriority: ''
    })
 
-   const { projects, subProjects, users, status, priorities } = optionsArray
+   const {
+      projects,
+      subProjects,
+      users,
+      status,
+      priorities
+   } = optionsArray
 
    const onFilter = () => {
 
@@ -59,7 +72,6 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
       reset()
       setUserCheck({ select: false, value: '' })
       setOrder({})
-      setPager({ limit: 10, page: 1 })
    }
 
    const setActive = ({ param, value }) => {
