@@ -1,22 +1,22 @@
 import { useContext, useEffect, useState } from 'react'
-import moment from 'moment'
+import { ActivityContext } from '../../context/ActivityContext'
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { useDetail } from '../../hooks/useDetail'
+import { routes } from '../../types/types'
+import { Alert } from '../../helpers/alerts'
 import Button from '../ui/Button'
 import TextArea from '../ui/TextArea'
 import Input from '../ui/Input'
 import Select from 'react-select'
-import { Alert } from '../../helpers/alerts'
 import Modal from '../ui/Modal'
-import { ActivityContext } from '../../context/ActivityContext'
 import Timer from '../timer/Timer'
 import CustomSelect from '../ui/CustomSelect'
-import { routes } from '../../types/types'
 import TimerContainer from '../timer/TimerContainer'
+import moment from 'moment'
 
 const today = moment(new Date()).format('YYYY/MM/DD')
-const baseUrl = 'http://www.zcloud.cl/registro_avance/'
+const BASE_URL = 'http://www.zcloud.cl/registro_avance/'
 
 const defaultNotes = [
   { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -34,53 +34,76 @@ const defaultPauses = [
   { id: 1112424, desc: 'Salida a terreno...' }
 ]
 
+const initOptions = {
+  pr: { label: 'ninguno', value: null },
+  sp: { label: 'ninguno', value: null },
+  us: { label: 'ninguno', value: null },
+  ue: { label: 'ninguno', value: null },
+  ur: { label: 'ninguno', value: null },
+}
+
 const Detail = () => {
 
   const navigate = useNavigate()
   const { id } = useParams()
   const { optionsArray } = useContext(ActivityContext)
-  const { activity, newNote, updateNote, deleteNote, updatePriority, onPlayPause, deleteActivity,
-    updatePriorityAndAddNote, saveActivity, cloneActivity, deleteDocument } = useDetail(id)
+  const {
+    activity,
+    newNote,
+    updateNote,
+    deleteNote,
+    updatePriority,
+    onPlayPause,
+    deleteActivity,
+    updatePriorityAndAddNote,
+    saveActivity,
+    cloneActivity,
+    deleteDocument
+  } = useDetail(id)
 
+  // modals
   const [modalEdit, toggleModalEdit] = useState(false)
   const [modalAdd, toggleModalAdd] = useState(false)
   const [modalClone, toggleModalClone] = useState(false)
-
   const [modalPause, toggleModalPause] = useState(false)
-  const [options, setOptions] = useState({
-    pr: { label: 'ninguno', value: null },
-    sp: { label: 'ninguno', value: null },
-    us: { label: 'ninguno', value: null },
-    ue: { label: 'ninguno', value: null },
-    ur: { label: 'ninguno', value: null },
-  })
+
+  // options
+  const [options, setOptions] = useState(initOptions)
+  const [cloneOptions, setCloneOptions] = useState(initOptions)
+
+  // files
   const [files, setFiles] = useState(null)
-  const [values, setValues] = useState({ id: null, desc: '', content: '' })
+  const [cloneFiles, setCloneFiles] = useState(null)
+
+  // inputs values
+  const [values, setValues] = useState({
+    id: null,
+    desc: '',
+    content: ''
+  })
   const [fields, setFields] = useState({
-    title: '', description: '', priority: '', ticket: '', time: '', gloss: ''
+    title: '',
+    description: '',
+    priority: '',
+    ticket: '',
+    time: '',
+    gloss: ''
   })
 
-  // clone states
-  const [cloneOptions, setCloneOptions] = useState({
-    pr: { label: 'ninguno', value: null },
-    sp: { label: 'ninguno', value: null },
-    us: { label: 'ninguno', value: null },
-    ue: { label: 'ninguno', value: null },
-    ur: { label: 'ninguno', value: null },
-  })
-  const [cloneFiles, setCloneFiles] = useState(null)
   const [cloneFields, setCloneFields] = useState({
-    cTitle: '', cDescription: '', cPriority: '', cTicket: '', cTime: '', cGloss: ''
+    cTitle: '',
+    cDescription: '',
+    cPriority: '',
+    cTicket: '',
+    cTime: '',
+    cGloss: ''
   })
 
   // destructuring
-  const { pausas } = activity
   const { title, description, gloss, ticket, priority, time } = fields
   const { cTitle, cDescription, cPriority, cTicket, cTime, cGloss } = cloneFields
   const { projects, subProjects, users } = optionsArray
 
-  const date = moment(activity.fecha_tx)
-  const pausaState = pausas?.length > 0 && pausas.at(-1).boton === 2
   let userStyles = {
     priority: 'S/P',
     styles: 'bg-gray-200 hover:border-gray-400'
@@ -167,7 +190,7 @@ const Detail = () => {
   }
 
   const handleOnPlayPause = () => {
-    if (pausaState) {
+    if (activity.estado_play_pausa === 2) {
       toggleModalPause(true)
       setValues({
         ...values,
@@ -202,6 +225,7 @@ const Detail = () => {
       confirmButton: 'Si, eliminar',
       action: () => {
         deleteNote({ id_nota: id, id_actividad: activity.id_det })
+        setValues({ ...values, desc: '', id: null })
       }
     })
   }
@@ -311,7 +335,7 @@ const Detail = () => {
     }
 
     // eslint-disable-next-line
-  }, [activity])
+  }, [optionsArray, activity])
 
   return (
     <>
@@ -367,13 +391,13 @@ const Detail = () => {
                       <span className='font-semibold capitalize mr-1'>
                         Proyecto:
                       </span>
-                      {activity.proyecto_tarea.abrev}
+                      {activity.nombre_proyecto}
                     </p>
                     <p>
                       <span className='font-semibold capitalize mr-1'>
                         Sub proyecto:
                       </span>
-                      {activity.subproyectos_tareas ? activity.subproyectos_tareas.nombre_sub_proy : 'S/SP'}
+                      {activity.nombre_sub_proy ?? 'S/SP'}
                     </p>
                     <p>
                       <span className='font-semibold capitalize mr-1'>
@@ -405,14 +429,14 @@ const Detail = () => {
                       <span className='font-semibold mr-1'>
                         Fecha:
                       </span>
-                      {date.format('DD/MM/YYYY')}
+                      {moment(activity.fecha_tx).format('DD/MM/YYYY')}
                     </p>
                     <p>
                       <span className='font-semibold mr-1'>
                         Transcurridos:
                       </span>
                       {
-                        date.diff(today, 'days') - date.diff(today, 'days') * 2
+                        moment(activity.fecha_tx).diff(today, 'days') - moment(activity.fecha_tx).diff(today, 'days') * 2
                       }
                     </p>
                     <p className='flex items-center'>
@@ -501,36 +525,32 @@ const Detail = () => {
                     <h5 className='text-sm font-semibold'>Notas (Informes): </h5>
                     <section className='flex gap-2'>
                       <Button
-                        className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg
-                      hover:shadow-lg hover:shadow-slate-300/20 w-max'
+                        className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg hover:shadow-lg hover:shadow-slate-300/20 w-max'
                         type='icon'
                         icon='fas fa-plus'
                         onClick={() => toggleModalAdd(true)}
                       />
                       <Button
-                        className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg
-                      hover:shadow-lg hover:shadow-slate-300/20 w-max'
+                        className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg hover:shadow-lg hover:shadow-slate-300/20 w-max'
                         type='icon'
                         icon='fas fa-pen'
                         onClick={() => toggleModalEdit(true)}
                       />
                     </section>
                   </div>
-                  <ol className='max-h-[540px] overflow-custom'>
+                  <ul className='max-h-[540px] overflow-custom'>
                     {
                       activity.notas.length > 0 ?
                         activity.notas.map((note, i) => (
                           <li
                             key={note.id_nota}
-                            className='
-                          bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 
-                          shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200
-                      '>
-                            <i className='fas fa-list-ul mr-2'></i> {i + 1}. {note.desc_nota}
+                            className='bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'>
+                            <i className='fas fa-list-ul mr-2' />
+                            {i + 1}. {note.desc_nota}
                           </li>
                         )) : <li className='text-sm text-slate-400 ml-2'>No hay notas...</li>
                     }
-                  </ol>
+                  </ul>
                 </aside>
               </section>
 
@@ -550,7 +570,7 @@ const Detail = () => {
                             <a
                               className='text-slate-500 hover:text-blue-400 transition 
                                 duration-200 transform hover:scale-105 text-sm w-full truncate'
-                              href={baseUrl + file.ruta_docum}
+                              href={BASE_URL + file.ruta_docum}
                               rel='noreferrer'
                               target='_blank'
                             >
@@ -587,13 +607,13 @@ const Detail = () => {
                     </TimerContainer>
                     <TimerContainer subtitle='trabajado'>
                       <Timer
-                        pause={pausaState}
+                        pause={activity.estado_play_pausa === 2}
                         time={timeFormat(moment.duration(activity.tiempo_trabajado, 'hours')).section}
                       />
                     </TimerContainer>
                     <TimerContainer subtitle='hoy'>
                       <Timer
-                        pause={pausaState}
+                        pause={activity.estado_play_pausa === 2}
                         time={timeFormat(moment.duration(activity.tiempo_hoy, 'hours')).section}
                       />
                     </TimerContainer>
@@ -618,12 +638,10 @@ const Detail = () => {
                     onClick={openModalClone}
                   />
                   <Button
-                    className={` rounded-lg hover:shadow-lg  w-max
-                     ${pausaState ? 'text-red-400 bg-red-50 hover:bg-red-100 hover:shadow-red-300/20'
-                        : 'text-emerald-400 bg-emerald-50 hover:bg-emerald-100 hover:shadow-emerald-300/20'}
-                   `}
+                    disabled={activity.estado_play_pausa === 1}
+                    className={` rounded-lg hover:shadow-lg w-max ${activity.estado_play_pausa === 2 ? 'text-red-400 bg-red-50 hover:bg-red-100 hover:shadow-red-300/20' : 'text-emerald-400 bg-emerald-50 hover:bg-emerald-100 hover:shadow-emerald-300/20'}`}
                     type='icon'
-                    icon={pausaState ? 'fas fa-pause fa-sm' : 'fas fa-play fa-sm'}
+                    icon={activity.estado_play_pausa === 2 ? 'fas fa-pause fa-sm' : 'fas fa-play fa-sm'}
                     onClick={handleOnPlayPause}
                   />
                 </aside>
@@ -659,18 +677,14 @@ const Detail = () => {
                     activity.notas.map(note => (
                       <li
                         key={note.id_nota}
-                        className={`
-                      flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 cursor-pointer
-                      shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200
-                      ${values.id === note.id_nota && 'border-2 border-blue-400'}
-                      `}
+                        className={`flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 cursor-pointer shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200 ${values.id === note.id_nota && 'border-2 border-blue-400'}`}
                         onClick={() => {
                           setValues({ desc: note.desc_nota, id: note.id_nota })
                         }}
                       >
                         <span>
                           <h1>
-                            {note.user_crea_nota.abrev_user}
+                            {note.usuario.abrev_user}
                             <span className='text-gray-600 text-xs font-light ml-2'>{moment(note.date).format('DD/MM/yyyy, HH:mm')}</span>
                           </h1>
                           <p className='text-gray-600 text-sm'>{note.desc_nota}</p>
@@ -679,10 +693,11 @@ const Detail = () => {
                           className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
                           onClick={() => onDelete({ id: note.id_nota, desc: note.desc_nota })}
                         >
-                          <i className='fas fa-trash fa-sm'></i>
+                          <i className='fas fa-trash fa-sm' />
                         </button>
                       </li>
-                    )) : <li className='text-gray-500 text-sm ml-2'>No hay notas...</li>
+                    ))
+                    : <li className='text-gray-500 text-sm ml-2'>No hay notas...</li>
                 }
               </ul>
               <TextArea
@@ -833,7 +848,7 @@ const Detail = () => {
                     <Select
                       className='uppercase'
                       placeholder='Seleccione'
-                      options={options?.pr?.value ? subProjects?.filter(s => s.id === options?.pr?.value) : subProjects}
+                      options={options.pr?.value ? subProjects?.filter(s => s.id === options.pr?.value) : subProjects}
                       value={cloneOptions.sp}
                       onChange={option => setCloneOptions({ ...cloneOptions, sp: option })}
                     />
@@ -869,6 +884,7 @@ const Detail = () => {
                     />
                   </span>
                 </aside>
+
                 <aside className='mt-0.5'>
                   <Input
                     field='titulo'

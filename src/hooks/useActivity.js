@@ -7,7 +7,8 @@ import { fetchToken } from '../helpers/fetch'
 export const useActivity = () => {
   const { setIsLoading } = useContext(UiContext)
   const { filters, order } = useContext(ActivityContext)
-  const [{ data, total }, setActivities] = useState({ data: [], total: 0 })
+  const [activities, setActivities] = useState([])
+  const [total, setTotal] = useState(0)
 
   const fetchActivities = async () => {
     try {
@@ -18,7 +19,10 @@ export const useActivity = () => {
 
       console.log(body)
       setIsLoading(false)
-      if (ok) { setActivities({ data: tareas, total: total_tareas }) }
+      if (ok) {
+        setActivities(tareas)
+        setTotal(total_tareas)
+      }
       else { console.log('Error') }
 
     } catch (e) {
@@ -55,7 +59,7 @@ export const useActivity = () => {
       const body = await resp.json()
       setIsLoading(false)
       if (body.ok) {
-        setActivities(data.map(act => act.id_det === id_actividad ? {
+        setActivities(activities.map(act => act.id_det === id_actividad ? {
           ...act, notas: act.notas.map(note => note.id_nota === id_nota ?
             { ...note, desc_nota: description } : note)
         } : act)
@@ -83,7 +87,7 @@ export const useActivity = () => {
       const body = await resp.json()
       setIsLoading(false)
       if (body.ok) {
-        setActivities(data.map(act => act.id_det === id_actividad ? { ...act, notas: act.notas.filter(note => note.id_nota !== id_nota) } : act))
+        setActivities(activities.map(act => act.id_det === id_actividad ? { ...act, notas: act.notas.filter(note => note.id_nota !== id_nota) } : act))
       }
       else {
         Alert({
@@ -106,7 +110,7 @@ export const useActivity = () => {
       const body = await resp.json()
       setIsLoading(false)
       if (body.ok) {
-        setActivities(data.map(act => act.id_det === id_actividad ? { ...act, prioridad_etiqueta: prioridad_numero } : act))
+        setActivities(activities.map(act => act.id_det === id_actividad ? { ...act, prioridad_etiqueta: prioridad_numero } : act))
       }
       else {
         Alert({
@@ -172,7 +176,7 @@ export const useActivity = () => {
   }, [filters, order])
 
   return {
-    activities: data,
+    activities,
     total,
     newNote,
     updateNote,
