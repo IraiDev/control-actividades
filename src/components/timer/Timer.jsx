@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import { useEffect } from 'react/cjs/react.development'
+import { useState, useEffect } from 'react'
 
 const Timer = (props) => {
 
