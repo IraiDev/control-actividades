@@ -34,7 +34,7 @@ const arrayRevisor = [
    { value: 13, label: 'IA' },
 ]
 
-const { activity } = routes
+const { activity, home } = routes
 
 const NavBar = () => {
 
@@ -122,7 +122,7 @@ const NavBar = () => {
       <>
          <nav className='flex items-center justify-between bg-white shadow-md border h-16 px-10 sticky z-20 top-0'>
             {
-               pathname === activity ?
+               pathname === activity || pathname === home ?
                   <Button
                      className='rounded-full bg-black/5 hover:bg-black/10'
                      type='iconText'
@@ -137,14 +137,14 @@ const NavBar = () => {
 
             <section className='bg-black/5 rounded-lg p-1 flex items-center'>
                <Button
-                  disabled={pathname !== activity}
+                  disabled={pathname !== activity && pathname !== home}
                   className='hover:bg-slate-200 rounded-lg text-slate-700'
                   type='icon'
                   icon='fas fa-plus'
                   title='Nueva actividad'
                   onClick={() => toggleModal(true)} />
                <Button
-                  disabled={pathname !== activity}
+                  disabled={pathname !== activity && pathname !== home}
                   className={`hover:bg-slate-200 rounded-lg ${filters.entrabajo === 2 ? 'text-blue-500' : 'text-slate-700'} `}
                   type='icon'
                   icon='fas fa-user-clock'

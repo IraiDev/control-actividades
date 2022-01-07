@@ -182,9 +182,15 @@ const Activity = () => {
                     >
                       <Td bgcolor>
                         <span
-                          className="px-2 font-semibold leading-tight bg-indigo-300 text-indigo-600 rounded-md"
+                          className="px-2 font-semibold leading-tight bg-indigo-300 text-indigo-600 rounded-md relative"
                         >
                           {i + 1}
+                          {act.estado_play_pausa === 2 &&
+                            <>
+                              <span className='h-2 w-2 rounded-full bg-red-400 absolute z-40 -top-0.5 -left-1' />
+                              <span className='h-2 w-2 rounded-full bg-red-400 absolute z-40 -top-0.5 -left-1 animate-ping' />
+                            </>
+                          }
                         </span>
                       </Td>
                       <Td className='font-bold'>{act.id_det}</Td>
@@ -240,7 +246,7 @@ const Activity = () => {
         <span>{activities.length} Actividades</span>
         <Pagination
           size='small'
-          count={Math.ceil(Number(total) / Number(pager.limit === 0 ? total : pager.limit))}
+          count={pager.limit === '' ? 1 : Math.ceil(Number(total) / Number(pager.limit))}
           color='primary'
           onChange={onChangePage}
           page={pager.page}
@@ -262,8 +268,8 @@ const Activity = () => {
             className='rounded-lg bg-white p-1 border border-gray-300'
             value={pager.limit}
             onChange={e => {
-              setPager({ page: 1, limit: Number(e.target.value) })
-              saveFilters({ payload: { limit: Number(e.target.value), offset: 0 } })
+              setPager({ page: 1, limit: e.target.value })
+              saveFilters({ payload: { limit: e.target.value, offset: 0 } })
             }}>
             <option value=''>todos</option>
             <option value='12'>12</option>

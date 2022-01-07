@@ -7,7 +7,7 @@ const PublicRoutes = ({ children }) => {
 
    const { isLogin } = useContext(ActivityContext)
 
-   const lastPath = window.localStorage.getItem('to-do-lastPath') || routes.home
+   const lastPath = window.localStorage.getItem('to-do-lastPath') || routes.activity
 
    return isLogin ? <Navigate to={lastPath} /> : children
 }

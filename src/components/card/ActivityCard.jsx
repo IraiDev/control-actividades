@@ -102,12 +102,17 @@ const ActivityCard = (props) => {
       <main
         className={`
         ${userStyles.styles} 
-        ${estado_play_pausa === 2 && 'border-[5px] border-black/25'}
         p-4 rounded-lg shadow-lg grid transition duration-200 hover:scale-98 transform 
-        text-sm shadow-zinc-400/40 hover:shadow-xl hover:shadow-zinc-400/40
+        text-sm shadow-zinc-400/40 hover:shadow-xl hover:shadow-zinc-400/40 relative
         `}
         onDoubleClick={() => navigate(`detalle-actividad/${props.id_det}`, { replace: true })}
       >
+        {estado_play_pausa === 2 &&
+          <>
+            <span className='h-3.5 w-3.5 rounded-full bg-red-400 absolute -top-1 -left-1' />
+            <span className='h-3.5 w-3.5 rounded-full bg-red-400 absolute -top-1 -left-1 animate-ping' />
+          </>
+        }
         <div>
           <header className='flex items-start justify-between gap-3 capitalize font-semibold'>
             <h1 className='text-base'>

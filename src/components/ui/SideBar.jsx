@@ -7,6 +7,8 @@ import SelectFilter from '../filter/SelectFilter'
 import { ActivityContext } from '../../context/ActivityContext'
 import { routes } from '../../types/types'
 
+const { home, activity } = routes
+
 const SideBar = ({ isOpen, toggleSideBar }) => {
 
    const {
@@ -84,7 +86,7 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
       <nav className={`
          fixed top-0 left-0 border bg-white shadow-lg h-screen w-[310px]
          animate__animated animate__faster z-30 overflow-custom
-         ${pathname !== routes.activity && 'animate__slideOutLeft'}
+         ${pathname !== activity && pathname !== home && 'animate__slideOutLeft'}
          ${isOpen === null && 'hidden'}
          ${isOpen ? 'animate__slideInLeft' : 'animate__slideOutLeft'}
          `}>
