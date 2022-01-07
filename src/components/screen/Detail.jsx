@@ -42,6 +42,14 @@ const initOptions = {
   ur: { label: 'ninguno', value: null },
 }
 
+const arrayRevisor = [
+  { value: 4, label: 'FM' },
+  { value: 15, label: 'SA' },
+  { value: 1, label: 'RD' },
+  { value: 3, label: 'CA' },
+  { value: 13, label: 'IA' },
+]
+
 const Detail = () => {
 
   const navigate = useNavigate()
@@ -331,6 +339,7 @@ const Detail = () => {
         sp: subProjects?.find(s => s.id === activity.id_proy && s.value === activity.id_sub_proyecto),
         us: users?.find(u => u.value === activity.user_solicita),
         ue: users?.find(u => u.value === activity.encargado_actividad),
+        ur: arrayRevisor?.find(u => u.value === activity.id_revisor),
       })
     }
 
@@ -352,25 +361,25 @@ const Detail = () => {
                   onClick={() => navigate('/actividades', { replace: true })}
                 />
 
-                <div className='flex gap-1.5 p-1.5 rounded-full bg-black/5'>
+                <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
                   <span
-                    className='h-5 w-5 rounded-full bg-gray-300 transition 
-                      duration-200 hover:scale-125 transform cursor-pointer'
+                    className='h-5 w-5 rounded-full bg-slate-400 transition
+                              duration-200 hover:scale-125 transform cursor-pointer'
                     onClick={() => updatePriority({ prioridad_numero: 1000, id_actividad: activity.id_det })}
                   />
                   <span
-                    className='h-5 w-5 rounded-full bg-green-800/70 transition 
-                      duration-200 hover:scale-125 transform cursor-pointer'
+                    className='h-5 w-5 rounded-full bg-green-500/70 transition
+                              duration-200 hover:scale-125 transform cursor-pointer'
                     onClick={() => updatePriority({ prioridad_numero: 600, id_actividad: activity.id_det })}
                   />
                   <span
-                    className='h-5 w-5 rounded-full bg-yellow-500/80 transition 
-                      duration-200 hover:scale-125 transform cursor-pointer'
+                    className='h-5 w-5 rounded-full bg-yellow-500/80 transition
+                              duration-200 hover:scale-125 transform cursor-pointer'
                     onClick={() => updatePriority({ prioridad_numero: 400, id_actividad: activity.id_det })}
                   />
                   <span
-                    className='h-5 w-5 rounded-full bg-red-800/70 transition 
-                      duration-200 hover:scale-125 transform cursor-pointer'
+                    className='h-5 w-5 rounded-full bg-red-500/70 transition
+                              duration-200 hover:scale-125 transform cursor-pointer'
                     onClick={() => updatePriority({ prioridad_numero: 100, id_actividad: activity.id_det })}
                   />
                 </div>
@@ -478,7 +487,7 @@ const Detail = () => {
                     />
                     <CustomSelect
                       label='Revisor'
-                      options={users}
+                      options={arrayRevisor}
                       value={options.ur}
                       onChange={option => setOptions({ ...options, ur: option })}
                     />
@@ -621,7 +630,7 @@ const Detail = () => {
                 </aside>
               </section>
 
-              <footer className='flex flex-wrap justify-between mt-10'>
+              <footer className='flex flex-wrap justify-between mt-5'>
                 <aside className='flex gap-2'>
                   <Button
                     className='text-red-400 bg-red-50 hover:bg-red-100 rounded-lg w-max'
@@ -636,7 +645,7 @@ const Detail = () => {
                     onClick={openModalClone}
                   />
                   <Button
-                    disabled={activity.estado_play_pausa === 1}
+                    disabled={activity.estado === 1}
                     className={`
                       ${activity.estado_play_pausa === 2 ? 'text-red-400 bg-red-50 hover:bg-red-100'
                         : 'text-emerald-400 bg-emerald-50 hover:bg-emerald-100'}

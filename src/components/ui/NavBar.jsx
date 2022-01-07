@@ -26,6 +26,14 @@ const initOptions = {
    ur: { label: 'ninguno', value: null },
 }
 
+const arrayRevisor = [
+   { value: 4, label: 'FM' },
+   { value: 15, label: 'SA' },
+   { value: 1, label: 'RD' },
+   { value: 3, label: 'CA' },
+   { value: 13, label: 'IA' },
+]
+
 const { activity } = routes
 
 const NavBar = () => {
@@ -140,7 +148,7 @@ const NavBar = () => {
                   className={`hover:bg-slate-200 rounded-lg ${filters.entrabajo === 2 ? 'text-blue-500' : 'text-slate-700'} `}
                   type='icon'
                   icon='fas fa-user-clock'
-                  onClick={() => saveFilters({ payload: { entrabajo: filters.entrabajo === 2 ? '' : 2, limit: '', offset: 0 } })} />
+                  onClick={() => saveFilters({ payload: { entrabajo: filters.entrabajo === 2 ? '' : 2, offset: 0 } })} />
                <Button
                   className='hover:bg-slate-200 rounded-lg text-slate-700 hidden md:block'
                   title='Actualizar tiempos'
@@ -248,7 +256,7 @@ const NavBar = () => {
                      />
                      <CustomSelect
                         label='revisor'
-                        options={users}
+                        options={arrayRevisor}
                         value={options.ur}
                         onChange={option => setOptions({ ...options, ur: option })}
                      />

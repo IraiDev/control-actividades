@@ -240,7 +240,7 @@ const Activity = () => {
         <span>{activities.length} Actividades</span>
         <Pagination
           size='small'
-          count={Math.ceil(Number(total) / Number(pager.limit))}
+          count={Math.ceil(Number(total) / Number(pager.limit === 0 ? total : pager.limit))}
           color='primary'
           onChange={onChangePage}
           page={pager.page}

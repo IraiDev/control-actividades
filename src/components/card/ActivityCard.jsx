@@ -202,7 +202,7 @@ const ActivityCard = (props) => {
             </p>
           </section>
 
-          <section className='mt-2 p-1.5'>
+          <section className='mt-2'>
             <h5 className='font-semibold capitalize'>notas (informes)</h5>
             <ul className='max-h-36 overflow-custom whitespace-pre-wrap mix-blend-luminosity'>
               {

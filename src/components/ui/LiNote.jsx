@@ -3,7 +3,7 @@ import React from 'react'
 
 const LiNote = (props) => (
   <li
-    className='mt-2 mr-0.5'
+    className='mt-2 mr-3'
     key={props.id_nota}>
     <div className='flex justify-between'>
       <span className='font-bold'>{props.usuario.abrev_user}</span>
