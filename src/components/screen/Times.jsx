@@ -21,6 +21,8 @@ const Times = () => {
       const body = await resp.json()
       setIsLoading(false)
 
+      console.log(date);
+
       console.log(body)
 
     } catch (err) {

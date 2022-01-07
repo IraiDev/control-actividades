@@ -46,24 +46,27 @@ const ActivityCard = (props) => {
 
   let userStyles = {
     priority: 'S/P',
-    styles: 'bg-white text-slate-700'
+    styles: 'bg-white text-slate-700',
+    desc: 'bg-zinc-100',
   }
 
   switch (props.prioridad_etiqueta) {
     case 600:
       userStyles = {
         priority: 'Baja',
-        styles: 'text-white bg-green-800/70',
+        styles: 'text-white bg-green-700/70',
         menu: 'text-white bg-green-800',
         hoverMenu: 'hover:bg-green-700',
+        desc: 'bg-green-800/20',
       }
       break
     case 400:
       userStyles = {
         priority: 'Media',
-        styles: 'text-white bg-yellow-600/70',
+        styles: 'text-white bg-yellow-600/60',
         menu: 'text-white bg-yellow-500',
         hoverMenu: 'hover:bg-yellow-400',
+        desc: 'bg-yellow-600/20',
       }
       break
     case 100:
@@ -72,6 +75,7 @@ const ActivityCard = (props) => {
         styles: 'text-white bg-red-800/70',
         menu: 'text-white bg-red-800',
         hoverMenu: 'hover:bg-red-700',
+        desc: 'bg-red-800/20',
       }
       break
 
@@ -195,16 +199,14 @@ const ActivityCard = (props) => {
             </aside>
           </section>
 
-          <section
-            className={`
-            ${userStyles.priority === 'S/P' ? 'bg-opacity-5' : 'bg-opacity-10'} 
-            mt-2 bg-black bg-opacity-5 rounded-md p-1.5
-            `}
-          >
-            <h5 className='font-semibold capitalize'>descripcion</h5>
-            <p className='h-36 overflow-custom whitespace-pre-wrap mix-blend-luminosity'>
-              {props.func_objeto}
-            </p>
+          <section className='mt-2'>
+            <h5 className='font-semibold capitalize mb-2'>descripcion</h5>
+            <div className='overflow-custom max-h-36 mix-blend-luminosity'>
+              <p className={`${userStyles.desc} 
+                min-h-[144px] whitespace-pre-wrap rounded-md p-1.5`}>
+                {props.func_objeto}
+              </p>
+            </div>
           </section>
 
           <section className='mt-2'>
