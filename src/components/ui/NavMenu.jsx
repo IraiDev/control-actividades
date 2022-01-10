@@ -221,7 +221,7 @@ const NavMenu = ({ isOpen, toggleMenu }) => {
                />
                <footer className='grid place-self-end'>
                   <Button
-                     className='border border-blue-500 hover:bg-blue-500 text-blue-500 hover:text-white rounded-full w-max'
+                     className='w-max text-blue-500 hover:bg-blue-100 rounded-full'
                      name={id === null ? 'Crear lista' : 'Actualizar lista'}
                      onClick={() => id === null ? handleCreateList() : handleUpdateList()}
                   />
