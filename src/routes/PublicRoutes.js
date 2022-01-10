@@ -5,11 +5,11 @@ import { routes } from '../types/types'
 
 const PublicRoutes = ({ children }) => {
 
-   const { isLogin } = useContext(ActivityContext)
+   const { user } = useContext(ActivityContext)
 
    const lastPath = window.localStorage.getItem('to-do-lastPath') || routes.activity
 
-   return isLogin ? <Navigate to={lastPath} /> : children
+   return user.ok ? <Navigate to={lastPath} /> : children
 }
 
 export default PublicRoutes

@@ -6,17 +6,16 @@ import AppRouter from './routes/AppRouter'
 
 const App = () => {
 
-  const { login, setIsLogin } = useContext(ActivityContext)
+  const { login } = useContext(ActivityContext)
   const [isSigendIn] = useIsSignedIn()
 
   const onLogin = async () => {
     await getFetch('/me/').then(resp => {
-      login(resp.mail)
+      login({ email: resp.mail })
     })
   }
 
   useEffect(() => {
-    setIsLogin(isSigendIn)
     isSigendIn && onLogin()
     // eslint-disable-next-line
   }, [isSigendIn])

@@ -21,25 +21,38 @@ const initFilters = {
 export const ActivityContext = createContext()
 
 function ActivityProvider({ children }) {
-  const [isLogin, setIsLogin] = useState(false)
   const [user, setUser] = useState({ ok: false })
   const [optionsArray, setOptionsArray] = useState({})
   const [filters, setFilters] = useState(initFilters)
   const [order, setOrder] = useState({})
   const [pager, setPager] = useState({ page: 1, limit: 12 })
 
-  const login = async (email) => {
+  const login = async ({ email }) => {
     try {
       const resp = await fetchToken('auth/login', { email }, 'POST')
       const body = await resp.json()
 
       if (body.ok) {
         localStorage.setItem('tokenBackend', body.token)
-        setUser(body.usuario)
+        setUser({
+          ok: true,
+          name: body.usuario.nombre,
+          id: body.usuario.id,
+          email: body.usuario.email,
+          low_priority: body.usuario.color_prioridad_baja,
+          medium_priority: body.usuario.color_prioridad_media,
+          high_priority: body.usuario.color_prioridad_alta,
+        })
       } else {
-        Alert({ icon: 'error', content: body.msg, title: 'Error inicio de sesion', timer: 3000, showCancelButton: false })
+        Alert({
+          icon: 'error',
+          content: `Error al inciar sesion en el registro de avances, 
+                  no podras acceder a las funcionalidades del RA, por favor recarga la pagina, 
+                  si el error persiste comunicate con Ignacio, saludos.`,
+          title: 'Error inicio de sesion',
+          showCancelButton: false
+        })
       }
-      // UiFunc.setIsLoading(false)
     } catch (error) {
       console.log("login error: ", error)
     }
@@ -103,8 +116,6 @@ function ActivityProvider({ children }) {
   }
 
   const value = {
-    setIsLogin,
-    isLogin,
     login,
     user,
     getFilters,

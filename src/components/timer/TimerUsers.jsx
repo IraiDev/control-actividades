@@ -27,8 +27,8 @@ const timeFormat = (time) => {
 const Times = ({ time, pause, user }) => (
   <div
     className={`
+    ${pause ? 'border-red-400 text-red-400' : 'border-emerald-400 text-emerald-400'}
       flex items-center gap-2 rounded-full p-1 pr-3 shadow-md border font-semibold
-      ${pause ? 'border-red-400 text-red-400' : 'border-emerald-400 text-emerald-400'}
     `}>
     <span className={`
       h-9 w-9 rounded-full text-center p-1
@@ -43,7 +43,7 @@ const Times = ({ time, pause, user }) => (
   </div>
 )
 
-const TimerUsers = ({ data, type, onClick = () => { return false } }) => {
+const TimerUsers = ({ data, type, onClick = () => false }) => {
 
   const [show, setShow] = useState(false)
 

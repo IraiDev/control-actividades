@@ -7,6 +7,7 @@ import Modal from '../ui/Modal'
 import TextArea from '../ui/TextArea'
 import Button from '../ui/Button'
 import moment from 'moment'
+import P from '../ui/P'
 
 const defaultNotes = [
   { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -24,7 +25,45 @@ const defaultPauses = [
   { id: 1112424, desc: 'Salida a terreno...' }
 ]
 
-const today = moment(new Date()).format('YYYY/MM/DD')
+const TODAY = moment(new Date()).format('yyyy-MM-DD')
+
+const itemStyle = 'hover:bg-blue-400 hover:text-white flex items-center justify-between gap-2'
+
+const colors = (priority) => {
+
+  switch (priority) {
+    case 600:
+      return {
+        priority: 'Baja',
+        card: 'text-white bg-green-700/70',
+        menu: 'text-white bg-green-800',
+        desc: 'bg-green-800/20',
+      }
+    case 400:
+      return {
+        priority: 'Media',
+        card: 'text-white bg-yellow-600/60',
+        menu: 'text-white bg-yellow-500',
+        desc: 'bg-yellow-600/20',
+      }
+    case 100:
+      return {
+        priority: 'Alta',
+        card: 'text-white bg-red-800/70',
+        menu: 'text-white bg-red-800',
+        desc: 'bg-red-800/20',
+      }
+
+
+    default:
+      return {
+        priority: 'S/P',
+        card: 'bg-white text-slate-700',
+        menu: 'bg-white text-slate-700',
+        desc: 'bg-zinc-100'
+      }
+  }
+}
 
 const ActivityCard = (props) => {
 
@@ -41,47 +80,12 @@ const ActivityCard = (props) => {
     playActivity,
     pauseActivity,
     estado,
-    estado_play_pausa
+    estado_play_pausa,
+    prioridad_etiqueta,
+    fecha_tx
   } = props
 
-  let userStyles = {
-    priority: 'S/P',
-    styles: 'bg-white text-slate-700',
-    desc: 'bg-zinc-100',
-  }
-
-  switch (props.prioridad_etiqueta) {
-    case 600:
-      userStyles = {
-        priority: 'Baja',
-        styles: 'text-white bg-green-700/70',
-        menu: 'text-white bg-green-800',
-        hoverMenu: 'hover:bg-green-700',
-        desc: 'bg-green-800/20',
-      }
-      break
-    case 400:
-      userStyles = {
-        priority: 'Media',
-        styles: 'text-white bg-yellow-600/60',
-        menu: 'text-white bg-yellow-500',
-        hoverMenu: 'hover:bg-yellow-400',
-        desc: 'bg-yellow-600/20',
-      }
-      break
-    case 100:
-      userStyles = {
-        priority: 'Alta',
-        styles: 'text-white bg-red-800/70',
-        menu: 'text-white bg-red-800',
-        hoverMenu: 'hover:bg-red-700',
-        desc: 'bg-red-800/20',
-      }
-      break
-
-    default:
-      break
-  }
+  const date = moment(fecha_tx).format('yyyy-MM-DD')
 
   const navigate = useNavigate()
 
@@ -105,7 +109,7 @@ const ActivityCard = (props) => {
     <>
       <main
         className={`
-        ${userStyles.styles} 
+        ${colors(prioridad_etiqueta).card} 
         p-4 rounded-lg shadow-lg grid transition duration-200 hover:scale-98 transform 
         text-sm shadow-zinc-400/40 hover:shadow-xl hover:shadow-zinc-400/40 relative
         `}
@@ -129,80 +133,33 @@ const ActivityCard = (props) => {
 
           <section className='grid grid-cols-2 gap-2'>
             <aside className='capitalize'>
-              <p>
-                <span className='font-semibold capitalize mr-1'>
-                  encargado:
-                </span>
-                {props.encargado_actividad}
-              </p>
-              <p>
-                <span className='font-semibold capitalize mr-1'>
-                  proyecto:
-                </span>
-                {props.abrev}
-              </p>
-              <p>
-                <span className='font-semibold capitalize mr-1'>
-                  sub proyecto:
-                </span>
-                {props.nombre_sub_proy ?? 'S/SP'}
-              </p>
-              <p>
-                <span className='font-semibold capitalize mr-1'>
-                  solicitante:
-                </span>
-                {props.user_solicita}
-              </p>
-              <p>
-                <span className='font-semibold capitalize'>
-                  estado:
-                </span>
-                {
-                  estado === 1 ? ' pendiente' : ' en trabajo'
-                }
-              </p>
+              <P tag='encargado' value={props.encargado_actividad} />
+              <P tag='proyecto' value={props.abrev} />
+              <P tag='sub proyecto' value={props.nombre_sub_proy} />
+              <P tag='solicita' value={props.user_solicita} />
+              <P tag='estado' value={estado === 1 ? ' pendiente' : ' en trabajo'} />
             </aside>
 
             <aside className='capitalize'>
-              <p>
-                <span className='font-semibold mr-1'>
-                  ID:
-                </span>
-                {props.id_det}
-              </p>
-              <p>
-                <span className='font-semibold mr-1'>
-                  ticket:
-                </span>
-                {props.num_ticket_edit}
-              </p>
-              <p>
-                <span className='font-semibold mr-1'>
-                  fecha:
-                </span>
-                {moment(props.fecha_tx).format('DD/MM/YYYY')}
-              </p>
-              <p>
-                <span className='font-semibold mr-1'>
-                  transcurridos:
-                </span>
-                {
-                  moment(props.fecha_tx).diff(today, 'days') - moment(props.fecha_tx).diff(today, 'days') * 2
-                }
-              </p>
-              <p>
-                <span className='font-semibold mr-1'>
-                  prioridad:
-                </span>
-                {userStyles.priority} ({props.num_prioridad})
-              </p>
+              <P tag='ID' value={props.id_det} />
+              <P tag='ticket' value={props.num_ticket_edit} />
+              <P tag='fecha' value={moment(fecha_tx).format('DD-MM-YYYY')} />
+              <P
+                tag='transcurridos'
+                value={moment(date).diff(TODAY, 'days') - moment(date).diff(TODAY, 'days') * 2} />
+              <P
+                tag='ticket'
+                value={
+                  <>
+                    {colors(prioridad_etiqueta).priority} ({props.num_prioridad})
+                  </>} />
             </aside>
           </section>
 
           <section className='mt-2'>
             <h5 className='font-semibold capitalize mb-2'>descripcion</h5>
             <div className='overflow-custom max-h-36 mix-blend-luminosity'>
-              <p className={`${userStyles.desc} 
+              <p className={`${colors(prioridad_etiqueta).desc} 
                 min-h-[144px] whitespace-pre-wrap rounded-md p-1.5`}>
                 {props.func_objeto}
               </p>
@@ -218,14 +175,14 @@ const ActivityCard = (props) => {
                     <LiNote
                       key={note.id_nota}
                       numberNote={i + 1}
-                      className={userStyles.priority === 'S/P' ? 'text-slate-700/50'
+                      className={colors(prioridad_etiqueta).priority === 'S/P' ? 'text-slate-700/50'
                         : 'text-white/60'}
                       {...note}
                     />
                   ))
                   :
                   <li className={
-                    userStyles.priority === 'S/P' ? 'text-slate-700/50'
+                    colors(prioridad_etiqueta).priority === 'S/P' ? 'text-slate-700/50'
                       : 'text-white/60'}>
                     No hay notas...
                   </li>
@@ -235,7 +192,10 @@ const ActivityCard = (props) => {
         </div>
         <footer className='place-self-end flex justify-between items-center border-t w-full pt-2 mt-2'>
           {estado !== 1 ?
-            <button onClick={estado_play_pausa === 2 ? () => toggleModalPause(true) : () => playActivity({ id_actividad: props.id_det })}>
+            <button onClick={estado_play_pausa === 2 ?
+              () => toggleModalPause(true)
+              : () => playActivity({ id_actividad: props.id_det })
+            }>
               {
                 estado_play_pausa === 2 ?
                   <i className='fas fa-pause fa-sm' />
@@ -246,7 +206,7 @@ const ActivityCard = (props) => {
           }
           <span>
             <Menu
-              className={userStyles.menu}
+              className={colors(prioridad_etiqueta).menu}
               direction='top'
               align='end'
               menuButton={
@@ -255,42 +215,42 @@ const ActivityCard = (props) => {
                 </MenuButton>
               }>
               <MenuItem
-                className={userStyles.hoverMenu + ' flex items-center justify-between'}
+                className={itemStyle}
                 onClick={() => toggleModalAdd(true)}
               >
                 Nueva nota
                 <i className='fas fa-plus' />
               </MenuItem>
               <MenuItem
-                className={userStyles.hoverMenu + ' flex items-center justify-between'}
+                className={itemStyle}
                 onClick={() => toggleModalEdit(true)}
               >
                 Editar nota
                 <i className='fas fa-pen' />
               </MenuItem>
               <MenuItem
-                className={userStyles.hoverMenu + ' flex items-center justify-between'}
+                className={itemStyle}
                 onClick={highPriority}
               >
                 Prioridad alta
                 <span className='h-4 w-4 rounded-full bg-red-400' />
               </MenuItem>
               <MenuItem
-                className={userStyles.hoverMenu + ' flex items-center justify-between gap-2'}
+                className={itemStyle}
                 onClick={mediumPriority}
               >
                 Prioridad media
                 <span className='h-4 w-4 rounded-full bg-yellow-400' />
               </MenuItem>
               <MenuItem
-                className={userStyles.hoverMenu + ' flex items-center justify-between'}
+                className={itemStyle}
                 onClick={lowPriority}
               >
                 Prioridad baja
                 <span className='h-4 w-4 rounded-full bg-green-400' />
               </MenuItem>
               <MenuItem
-                className={userStyles.hoverMenu + ' flex items-center justify-between'}
+                className={itemStyle}
                 onClick={noPriority}
               >
                 Sin Prioridad

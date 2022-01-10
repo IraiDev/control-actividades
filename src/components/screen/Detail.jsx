@@ -13,9 +13,11 @@ import Modal from '../ui/Modal'
 import Timer from '../timer/Timer'
 import CustomSelect from '../ui/CustomSelect'
 import TimerContainer from '../timer/TimerContainer'
+import P from '../ui/P'
 import moment from 'moment'
 
-const today = moment(new Date()).format('YYYY/MM/DD')
+const TODAY = moment(new Date()).format('yyyy-MM-DD')
+
 const BASE_URL = 'http://www.zcloud.cl/registro_avance/'
 
 const defaultNotes = [
@@ -50,6 +52,14 @@ const arrayRevisor = [
   { value: 13, label: 'IA' },
 ]
 
+const PrioritySelector = ({ onClick, color = 'bg-slate-400' }) => (
+  <span
+    className={`h-5 w-5 rounded-full ${color} transition
+      duration-200 hover:scale-125 transform cursor-pointer`}
+    onClick={onClick}
+  />
+)
+
 const Detail = () => {
 
   const navigate = useNavigate()
@@ -68,6 +78,8 @@ const Detail = () => {
     cloneActivity,
     deleteDocument
   } = useDetail(id)
+
+  const date = moment(activity.fecha_tx).format('yyyy-MM-DD')
 
   // modals
   const [modalEdit, toggleModalEdit] = useState(false)
@@ -114,14 +126,14 @@ const Detail = () => {
 
   let userStyles = {
     priority: 'S/P',
-    styles: 'bg-gray-200 hover:border-gray-400'
+    styles: 'bg-slate-400 hover:border-gray-400'
   }
 
   switch (activity.prioridad_etiqueta) {
     case 600:
       userStyles = {
         priority: 'Baja',
-        styles: 'text-white bg-green-800/70',
+        styles: 'text-white bg-green-500/70',
         menu: 'text-white bg-green-800',
         hoverMenu: 'hover:bg-green-700',
       }
@@ -137,7 +149,7 @@ const Detail = () => {
     case 100:
       userStyles = {
         priority: 'Alta',
-        styles: 'text-white bg-red-800/70',
+        styles: 'text-white bg-red-500/70',
         menu: 'text-white bg-red-800',
         hoverMenu: 'hover:bg-red-700',
       }
@@ -362,26 +374,17 @@ const Detail = () => {
                 />
 
                 <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
-                  <span
-                    className='h-5 w-5 rounded-full bg-slate-400 transition
-                              duration-200 hover:scale-125 transform cursor-pointer'
-                    onClick={() => updatePriority({ prioridad_numero: 1000, id_actividad: activity.id_det })}
-                  />
-                  <span
-                    className='h-5 w-5 rounded-full bg-green-500/70 transition
-                              duration-200 hover:scale-125 transform cursor-pointer'
-                    onClick={() => updatePriority({ prioridad_numero: 600, id_actividad: activity.id_det })}
-                  />
-                  <span
-                    className='h-5 w-5 rounded-full bg-yellow-500/80 transition
-                              duration-200 hover:scale-125 transform cursor-pointer'
-                    onClick={() => updatePriority({ prioridad_numero: 400, id_actividad: activity.id_det })}
-                  />
-                  <span
-                    className='h-5 w-5 rounded-full bg-red-500/70 transition
-                              duration-200 hover:scale-125 transform cursor-pointer'
-                    onClick={() => updatePriority({ prioridad_numero: 100, id_actividad: activity.id_det })}
-                  />
+                  <PrioritySelector
+                    onClick={() => updatePriority({ prioridad_numero: 1000, id_actividad: activity.id_det })} />
+                  <PrioritySelector
+                    color='bg-green-500/70'
+                    onClick={() => updatePriority({ prioridad_numero: 600, id_actividad: activity.id_det })} />
+                  <PrioritySelector
+                    color='bg-yellow-500/80'
+                    onClick={() => updatePriority({ prioridad_numero: 400, id_actividad: activity.id_det })} />
+                  <PrioritySelector
+                    color='bg-red-500/70'
+                    onClick={() => updatePriority({ prioridad_numero: 100, id_actividad: activity.id_det })} />
                 </div>
               </header>
 
@@ -390,72 +393,21 @@ const Detail = () => {
               <section className='grid grid-cols-1 lg:grid-cols-8 gap-5 '>
                 <aside className='col-span-1 md:col-span-2'>
                   <header className='text-sm'>
-                    <p>
-                      <span className='font-semibold capitalize mr-1'>
-                        Encargado:
-                      </span>
-                      {activity.encargado_actividad}
-                    </p>
-                    <p>
-                      <span className='font-semibold capitalize mr-1'>
-                        Proyecto:
-                      </span>
-                      {activity.nombre_proyecto}
-                    </p>
-                    <p>
-                      <span className='font-semibold capitalize mr-1'>
-                        Sub proyecto:
-                      </span>
-                      {activity.nombre_sub_proy ?? 'S/SP'}
-                    </p>
-                    <p>
-                      <span className='font-semibold capitalize mr-1'>
-                        Solicitante:
-                      </span>
-                      {activity.user_solicita}
-                    </p>
-                    <p>
-                      <span className='font-semibold capitalize'>
-                        Estado:
-                      </span>
-                      {
-                        activity.estado === 1 ? ' pendiente' : ' en trabajo'
-                      }
-                    </p>
-                    <p>
-                      <span className='font-semibold mr-1'>
-                        ID:
-                      </span>
-                      {activity.id_det}
-                    </p>
-                    <p>
-                      <span className='font-semibold mr-1'>
-                        Ticket:
-                      </span>
-                      {activity.num_ticket_edit}
-                    </p>
-                    <p>
-                      <span className='font-semibold mr-1'>
-                        Fecha:
-                      </span>
-                      {moment(activity.fecha_tx).format('DD/MM/YYYY')}
-                    </p>
-                    <p>
-                      <span className='font-semibold mr-1'>
-                        Transcurridos:
-                      </span>
-                      {
-                        moment(activity.fecha_tx).diff(today, 'days') - moment(activity.fecha_tx).diff(today, 'days') * 2
-                      }
-                    </p>
-                    <p className='flex items-center'>
-                      <span className='font-semibold mr-1'>
-                        Prioridad:
-                      </span>
-                      {userStyles.priority}
-                      <span className={`h-4 w-4 rounded-full mx-1 ${userStyles.styles}`} />
-                      ({activity.num_prioridad})
-                    </p>
+                    <P tag='Encargado' value={activity.encargado_actividad} />
+                    <P tag='Proyecto' value={activity.nombre_proyecto} />
+                    <P tag='Sub proyecto' value={activity.nombre_sub_proy ?? 'S/SP'} />
+                    <P tag='Solicitante' value={activity.user_solicita} />
+                    <P tag='Estado' value={activity.estado === 1 ? ' pendiente' : ' en trabajo'} />
+                    <P tag='ID' value={activity.id_det} />
+                    <P tag='Ticket' value={activity.num_ticket_edit} />
+                    <P tag='Fecha' value={moment(activity.fecha_tx).format('DD/MM/YYYY')} />
+                    <P tag='Transcurridos' value={moment(date).diff(TODAY, 'days') - moment(date).diff(TODAY, 'days') * 2} />
+                    <P tag='Prioridad' value={
+                      <>
+                        <span className={`h-4 w-4 rounded-full mx-1 inline-block align-middle ${userStyles.styles}`} />
+                        {userStyles.priority} ({activity.num_prioridad})
+                      </>
+                    } />
                   </header>
 
                   <hr className='my-5' />
@@ -494,7 +446,7 @@ const Detail = () => {
                   </section>
                 </aside>
 
-                <aside className='col-span-1 md:col-span-3 grid gap-2'>
+                <section className='col-span-1 md:col-span-3 grid gap-2'>
                   <Input
                     field='titulo'
                     value={title}
@@ -527,7 +479,7 @@ const Detail = () => {
                       onChange={e => setFields({ ...fields, time: e.target.value })}
                     />
                   </div>
-                </aside>
+                </section>
 
                 <aside className='col-span-1 md:col-span-3'>
                   <div className='flex justify-between items-center mb-3'>
@@ -553,7 +505,7 @@ const Detail = () => {
                         activity.notas.map((note, i) => (
                           <li
                             key={note.id_nota}
-                            className='bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'>
+                            className='bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 mb-2.5 shadow-md shadow-gray-400/20 hover:bg-black/10 transition duration-200'>
                             <i className='fas fa-list-ul mr-2' />
                             {i + 1}. {note.desc_nota}
                           </li>

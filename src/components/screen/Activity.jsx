@@ -14,6 +14,14 @@ import Th from '../table/Th'
 import Td from '../table/Td'
 import moment from 'moment'
 
+const PrioritySelector = ({ onClick, color = 'bg-slate-400' }) => (
+  <span
+    className={`h-3.5 w-3.5 rounded-full ${color} transition hover:border
+      duration-200 hover:scale-150 transform cursor-pointer`}
+    onClick={onClick}
+  />
+)
+
 const Activity = () => {
 
   const navigate = useNavigate()
@@ -129,19 +137,19 @@ const Activity = () => {
             }
           </section>
           :
-          <section className='px-5'>
+          <section className='px-5 xl:px-20'>
             <Table>
               <THead>
                 <tr className='text-center capitalize text-white bg-slate-700'>
-                  <Th>Nᵒ</Th>
+                  <Th className='bg-slate-600'>Nᵒ</Th>
                   <Th>ID</Th>
-                  <Th>ticket</Th>
+                  <Th className='bg-slate-600'>ticket</Th>
                   <Th>proyecto</Th>
-                  <Th>sub proyecto</Th>
+                  <Th className='bg-slate-600'>sub proyecto</Th>
                   <Th>solicitante</Th>
-                  <Th>encargado</Th>
+                  <Th className='bg-slate-600'>encargado</Th>
                   <Th>prioridad</Th>
-                  <Th>fecha</Th>
+                  <Th className='bg-slate-600'>fecha</Th>
                   <Th>
                     actividad
                     <Button
@@ -151,7 +159,7 @@ const Activity = () => {
                       onClick={() => setMultiline(!multiline)}
                     />
                   </Th>
-                  <Th>
+                  <Th className='bg-slate-600'>
                     descripcion
                     <Button
                       className='ml-2'
@@ -161,7 +169,7 @@ const Activity = () => {
                     />
                   </Th>
                   <Th>estado</Th>
-                  <Th></Th>
+                  <Th className='bg-slate-600'></Th>
                 </tr>
               </THead>
               <TBody>
@@ -172,8 +180,9 @@ const Activity = () => {
                       onDoubleClick={() => navigate(`detalle-actividad/${act.id_det}`, { replace: true })}
                       key={act.id_det}
                       className={`
-                      text-sm border-b border-gray-500 text-gray-800
+                      text-sm text-gray-800
                       transition duration-300 cursor-pointer
+                      ${i !== activities.length - 1 && 'border-b border-gray-500'}
                       ${act.prioridad_etiqueta === 600 ? 'bg-green-400/40 hover:bg-green-400/90' :
                           act.prioridad_etiqueta === 400 ? 'bg-yellow-400/40 hover:bg-yellow-400/90' :
                             act.prioridad_etiqueta === 100 ? 'bg-red-400/40 hover:bg-red-400/90' :
@@ -205,7 +214,7 @@ const Activity = () => {
                       <Td isMultiLine={multiline} bgcolor align='text-left'>{act.func_objeto}</Td>
                       <Td className='font-bold'>{act.estado === 1 ? 'Pendiente' : 'En trabajo'}</Td>
                       <Td
-                        className='flex items-center justify-between gap-2'
+                        className='flex items-center justify-around gap-2'
                         bgcolor
                         isModal
                         pauseActivity={onPauseActivity}
@@ -213,26 +222,17 @@ const Activity = () => {
                         {...act}
                       >
                         <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
-                          <span
-                            className='h-3.5 w-3.5 rounded-full bg-slate-400 transition hover:border
-                              duration-200 hover:scale-125 transform cursor-pointer'
-                            onClick={() => updatePriority({ prioridad_numero: 1000, id_actividad: act.id_det })}
-                          />
-                          <span
-                            className='h-3.5 w-3.5 rounded-full bg-green-500/70 transition hover:border
-                              duration-200 hover:scale-125 transform cursor-pointer'
-                            onClick={() => updatePriority({ prioridad_numero: 600, id_actividad: act.id_det })}
-                          />
-                          <span
-                            className='h-3.5 w-3.5 rounded-full bg-yellow-500/80 transition hover:border
-                              duration-200 hover:scale-125 transform cursor-pointer'
-                            onClick={() => updatePriority({ prioridad_numero: 400, id_actividad: act.id_det })}
-                          />
-                          <span
-                            className='h-3.5 w-3.5 rounded-full bg-red-500/70 transition hover:border
-                              duration-200 hover:scale-125 transform cursor-pointer'
-                            onClick={() => updatePriority({ prioridad_numero: 100, id_actividad: act.id_det })}
-                          />
+                          <PrioritySelector
+                            onClick={() => updatePriority({ prioridad_numero: 1000, id_actividad: act.id_det })} />
+                          <PrioritySelector
+                            color='bg-green-500/70'
+                            onClick={() => updatePriority({ prioridad_numero: 600, id_actividad: act.id_det })} />
+                          <PrioritySelector
+                            color='bg-yellow-500/80'
+                            onClick={() => updatePriority({ prioridad_numero: 400, id_actividad: act.id_det })} />
+                          <PrioritySelector
+                            color='bg-red-500/70'
+                            onClick={() => updatePriority({ prioridad_numero: 100, id_actividad: act.id_det })} />
                         </div>
                       </Td>
                     </tr>
@@ -242,7 +242,9 @@ const Activity = () => {
           </section >
       }
 
-      <footer className='fixed bottom-0 h-11 bg-zinc-100 text-slate-700 border w-full flex items-center justify-around'>
+      <footer
+        className='fixed bottom-0 h-11 bg-zinc-100 text-slate-700 
+          border w-full flex items-center justify-around'>
         <span>{activities.length} Actividades</span>
         <Pagination
           size='small'
