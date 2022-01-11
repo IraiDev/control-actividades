@@ -6,8 +6,8 @@ import LiNote from '../ui/LiNote'
 import Modal from '../ui/Modal'
 import TextArea from '../ui/TextArea'
 import Button from '../ui/Button'
-import moment from 'moment'
 import P from '../ui/P'
+import moment from 'moment'
 
 const defaultNotes = [
   { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -42,9 +42,9 @@ const colors = (priority) => {
     case 400:
       return {
         priority: 'Media',
-        card: 'text-white bg-yellow-600/60',
+        card: 'text-white bg-yellow-600/70',
         menu: 'text-white bg-yellow-500',
-        desc: 'bg-yellow-600/20',
+        desc: 'bg-yellow-600/30',
       }
     case 100:
       return {
@@ -53,13 +53,11 @@ const colors = (priority) => {
         menu: 'text-white bg-red-800',
         desc: 'bg-red-800/20',
       }
-
-
     default:
       return {
         priority: 'S/P',
-        card: 'bg-white text-slate-700',
-        menu: 'bg-white text-slate-700',
+        card: 'bg-white text-slate-600',
+        menu: 'bg-white text-slate-600',
         desc: 'bg-zinc-100'
       }
   }
@@ -109,24 +107,19 @@ const ActivityCard = (props) => {
     <>
       <main
         className={`
-        ${colors(prioridad_etiqueta).card} 
-        p-4 rounded-lg shadow-lg grid transition duration-200 hover:scale-98 transform 
+        ${colors(prioridad_etiqueta).card}
+        border border-black/10
+        p-4 rounded-xl shadow-lg grid transition duration-200 hover:scale-98 transform 
         text-sm shadow-zinc-400/40 hover:shadow-xl hover:shadow-zinc-400/40 relative
         `}
         onDoubleClick={() => navigate(`detalle-actividad/${props.id_det}`, { replace: true })}
       >
-        {estado_play_pausa === 2 &&
-          <>
-            <span className='h-3.5 w-3.5 rounded-full bg-red-400 absolute -top-1 -left-1' />
-            <span className='h-3.5 w-3.5 rounded-full bg-red-400 absolute -top-1 -left-1 animate-ping' />
-          </>
-        }
         <div>
           <header className='flex items-start justify-between gap-3 capitalize font-semibold'>
             <h1 className='text-base'>
               {props.actividad || 'Sin Titulo'}
             </h1>
-            <span className='bg-indigo-300 text-indigo-600 rounded-md py-0.5 px-2.5 mb-2'>
+            <span className='bg-amber-200/80 text-amber-600 shadow rounded py-0.5 px-2.5 mb-2'>
               {numberCard}
             </span>
           </header>
@@ -259,6 +252,14 @@ const ActivityCard = (props) => {
             </Menu>
           </span>
         </footer>
+
+        {estado_play_pausa === 2 &&
+          <>
+            <span className='h-3.5 w-3.5 rounded-full bg-red-400 absolute -top-1 -left-1' />
+            <span className='h-3.5 w-3.5 rounded-full bg-red-400 absolute -top-1 -left-1 animate-ping' />
+          </>
+        }
+
       </main >
 
       {/* modal add */}

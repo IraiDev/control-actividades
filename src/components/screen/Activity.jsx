@@ -25,7 +25,7 @@ const PrioritySelector = ({ onClick, color = 'bg-slate-400' }) => (
 const Activity = () => {
 
   const navigate = useNavigate()
-  const { view, setView } = useContext(UiContext)
+  const { view, setView, setIsLoading } = useContext(UiContext)
   const { saveFilters, pager, setPager } = useContext(ActivityContext)
   const [multiline, setMultiline] = useState(false)
 
@@ -39,6 +39,14 @@ const Activity = () => {
     onPlayPause,
     updatePriorityAndAddNote
   } = useActivity()
+
+  const toggleView = (state, time = 1000) => {
+    setIsLoading(true)
+    setTimeout(() => {
+      setView(state)
+      setIsLoading(false)
+    }, time)
+  }
 
   const onPauseActivity = ({ flag, id_actividad, mensaje }) => {
 
@@ -140,16 +148,16 @@ const Activity = () => {
           <section className='px-5 xl:px-20'>
             <Table>
               <THead>
-                <tr className='text-center capitalize text-white bg-slate-700'>
-                  <Th className='bg-slate-600'>Nᵒ</Th>
+                <tr className='text-center capitalize text-white bg-slate-600'>
+                  <Th className='bg-slate-700'>Nᵒ</Th>
                   <Th>ID</Th>
-                  <Th className='bg-slate-600'>ticket</Th>
+                  <Th className='bg-slate-700'>ticket</Th>
                   <Th>proyecto</Th>
-                  <Th className='bg-slate-600'>sub proyecto</Th>
+                  <Th className='bg-slate-700'>sub proyecto</Th>
                   <Th>solicitante</Th>
-                  <Th className='bg-slate-600'>encargado</Th>
+                  <Th className='bg-slate-700'>encargado</Th>
                   <Th>prioridad</Th>
-                  <Th className='bg-slate-600'>fecha</Th>
+                  <Th className='bg-slate-700'>fecha</Th>
                   <Th>
                     actividad
                     <Button
@@ -159,7 +167,7 @@ const Activity = () => {
                       onClick={() => setMultiline(!multiline)}
                     />
                   </Th>
-                  <Th className='bg-slate-600'>
+                  <Th className='bg-slate-700'>
                     descripcion
                     <Button
                       className='ml-2'
@@ -169,7 +177,7 @@ const Activity = () => {
                     />
                   </Th>
                   <Th>estado</Th>
-                  <Th className='bg-slate-600'></Th>
+                  <Th className='bg-slate-700'></Th>
                 </tr>
               </THead>
               <TBody>
@@ -191,7 +199,7 @@ const Activity = () => {
                     >
                       <Td bgcolor>
                         <span
-                          className="px-2 font-semibold leading-tight bg-indigo-300 text-indigo-600 rounded-md relative"
+                          className="px-2 font-semibold leading-tight bg-amber-200 text-amber-600 shadow rounded-md relative"
                         >
                           {i + 1}
                           {act.estado_play_pausa === 2 &&
@@ -243,8 +251,8 @@ const Activity = () => {
       }
 
       <footer
-        className='fixed bottom-0 h-11 bg-zinc-100 text-slate-700 
-          border w-full flex items-center justify-around'>
+        className='fixed bottom-0 h-11 bg-white text-slate-700 
+          border w-full flex items-center justify-around shadow'>
         <span>{activities.length} Actividades</span>
         <Pagination
           size='small'
@@ -258,13 +266,13 @@ const Activity = () => {
             type='icon'
             icon='fas fa-border-all'
             className={`hover:text-blue-500 hover:bg-slate-200 rounded-lg ${view && 'text-blue-500'}`}
-            onClick={() => setView(true)}
+            onClick={() => toggleView(true)}
           />
           <Button
             type='icon'
             icon='fas fa-th-list'
             className={`hover:text-blue-500 hover:bg-slate-200 rounded-lg ${!view && 'text-blue-500'}`}
-            onClick={() => setView(false)}
+            onClick={() => toggleView(false)}
           />
           <select
             className='rounded-lg bg-white p-1 border border-gray-300'

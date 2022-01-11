@@ -40,7 +40,7 @@ const Td = (props) => {
             ${align} ${isMultiLine ? 'whitespace-pre-wrap' : 'truncate'} 
             ${className} ${width} ${bgcolor && 'bg-black/5'}
             animate__animated animate__fadeIn animate__faster 
-            px-2 py-3`}
+            px-2 py-2`}
          >
             {
                props.estado !== 1 && isModal ?

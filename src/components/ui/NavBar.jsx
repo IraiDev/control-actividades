@@ -120,7 +120,7 @@ const NavBar = () => {
 
    return (
       <>
-         <nav className='flex items-center justify-between bg-white shadow-md border h-16 px-10 sticky z-20 top-0'>
+         <nav className='flex items-center justify-between bg-white shadow border h-16 px-10 sticky z-20 top-0'>
             {
                pathname === activity || pathname === home ?
                   <Button

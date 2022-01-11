@@ -2,7 +2,7 @@ import React from 'react'
 
 const Th = ({ children, className, width }) => {
    return (
-      <th className={`px-2 py-3 ${className} ${width}`}>
+      <th className={`px-2 py-1.5 ${className} ${width}`}>
          {children}
       </th>
    )

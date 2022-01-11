@@ -21,7 +21,7 @@ const DashRoutes = () => {
    }, [])
 
    return (
-      <main className='bg-slate-50 min-h-screen w-full'>
+      <main className='bg-neutral-100 min-h-screen w-full'>
          <NavBar />
          <Routes>
             <Route path={activity} element={<Activity />} />
