@@ -109,7 +109,7 @@ const ActivityCard = (props) => {
         className={`
         ${colors(prioridad_etiqueta).card}
         border border-black/10
-        p-4 rounded-xl shadow-lg grid transition duration-200 hover:scale-98 transform 
+        p-4 rounded-xl shadow-lg grid content-between transition duration-200 hover:scale-98 transform 
         text-sm shadow-zinc-400/40 hover:shadow-xl hover:shadow-zinc-400/40 relative
         `}
         onDoubleClick={() => navigate(`detalle-actividad/${props.id_det}`, { replace: true })}
@@ -141,7 +141,7 @@ const ActivityCard = (props) => {
                 tag='transcurridos'
                 value={moment(date).diff(TODAY, 'days') - moment(date).diff(TODAY, 'days') * 2} />
               <P
-                tag='ticket'
+                tag='Prioridad'
                 value={
                   <>
                     {colors(prioridad_etiqueta).priority} ({props.num_prioridad})
@@ -183,7 +183,7 @@ const ActivityCard = (props) => {
             </ul>
           </section>
         </div>
-        <footer className='place-self-end flex justify-between items-center border-t w-full pt-2 mt-2'>
+        <footer className='flex justify-between items-center border-t w-full pt-2 mt-2'>
           {estado !== 1 ?
             <button onClick={estado_play_pausa === 2 ?
               () => toggleModalPause(true)
@@ -254,10 +254,10 @@ const ActivityCard = (props) => {
         </footer>
 
         {estado_play_pausa === 2 &&
-          <>
-            <span className='h-3.5 w-3.5 rounded-full bg-red-400 absolute -top-1 -left-1' />
-            <span className='h-3.5 w-3.5 rounded-full bg-red-400 absolute -top-1 -left-1 animate-ping' />
-          </>
+          <div className='absolute -top-1 -left-1' title='Trabajando en esta actividad'>
+            <span className='h-3.5 w-3.5 rounded-full bg-red-400' />
+            <span className='h-3.5 w-3.5 rounded-full bg-red-400 animate-ping' />
+          </div>
         }
 
       </main >

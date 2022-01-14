@@ -44,14 +44,6 @@ const initOptions = {
   ur: { label: 'ninguno', value: null },
 }
 
-const arrayRevisor = [
-  { value: 4, label: 'FM' },
-  { value: 15, label: 'SA' },
-  { value: 1, label: 'RD' },
-  { value: 3, label: 'CA' },
-  { value: 13, label: 'IA' },
-]
-
 const PrioritySelector = ({ onClick, color = 'bg-slate-400' }) => (
   <span
     className={`h-5 w-5 rounded-full ${color} transition
@@ -279,8 +271,8 @@ const Detail = () => {
     const formData = new FormData()
     options?.pr && formData.append('proyecto', options.pr.value)
     options?.sp && formData.append('sub_proyecto', options.sp.value)
-    options?.us && formData.append('solicita', options.us.value)
-    options?.ue && formData.append('encargado', options.ue.value)
+    options?.us && formData.append('solicita', options.us.label)
+    options?.ue && formData.append('encargado', options.ue.label)
     options?.ur && formData.append('revisor', options.ur.value)
     formData.append('prioridad', priority)
     formData.append('ticket', ticket)
@@ -298,8 +290,8 @@ const Detail = () => {
     const formData = new FormData()
     cloneOptions?.pr && formData.append('proyecto', cloneOptions.pr.value)
     cloneOptions?.sp && formData.append('sub_proyecto', cloneOptions.sp.value)
-    cloneOptions?.us && formData.append('solicita', cloneOptions.us.value)
-    cloneOptions?.ue && formData.append('encargado', cloneOptions.ue.value)
+    cloneOptions?.us && formData.append('solicita', cloneOptions.us.label)
+    cloneOptions?.ue && formData.append('encargado', cloneOptions.ue.label)
     cloneOptions?.ur && formData.append('revisor', cloneOptions.ur.value)
     formData.append('prioridad', cPriority)
     formData.append('ticket', cTicket)
@@ -349,9 +341,9 @@ const Detail = () => {
       setOptions({
         pr: projects?.find(p => p.value === activity.id_proy),
         sp: subProjects?.find(s => s.id === activity.id_proy && s.value === activity.id_sub_proyecto),
-        us: users?.find(u => u.value === activity.user_solicita),
-        ue: users?.find(u => u.value === activity.encargado_actividad),
-        ur: arrayRevisor?.find(u => u.value === activity.id_revisor),
+        us: users?.find(u => u.label === activity.user_solicita),
+        ue: users?.find(u => u.label === activity.encargado_actividad),
+        ur: users?.find(u => u.value === activity.id_revisor),
       })
     }
 
@@ -439,7 +431,7 @@ const Detail = () => {
                     />
                     <CustomSelect
                       label='Revisor'
-                      options={arrayRevisor}
+                      options={users}
                       value={options.ur}
                       onChange={option => setOptions({ ...options, ur: option })}
                     />
@@ -596,6 +588,15 @@ const Detail = () => {
                     icon='fas fa-clone'
                     onClick={openModalClone}
                   />
+                  <a
+                    className='text-blue-600 bg-blue-100 hover:bg-blue-200 rounded-lg h-8 w-8 text-center block pt-1'
+                    target='_blank'
+                    rel='noreferrer'
+                    title='Eventos'
+                    href={`https://tickets.zproduccion.cl/#/in/${activity.num_ticket_edit}`}
+                  >
+                    <i className="fas fa-ticket-alt" />
+                  </a>
                   <Button
                     disabled={activity.estado === 1}
                     className={`

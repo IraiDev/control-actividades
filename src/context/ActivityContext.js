@@ -94,7 +94,7 @@ function ActivityProvider({ children }) {
           users: body.usuarios.map(item => {
             return {
               label: item.abrev_user,
-              value: item.abrev_user
+              value: item.id_user
             }
           })
         })
