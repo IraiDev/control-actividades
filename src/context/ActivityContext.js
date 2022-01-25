@@ -15,7 +15,7 @@ const initFilters = {
   usuario_no_mostrar: '',
   entrabajo: '',
   offset: 0,
-  limit: 12
+  limit: 12,
 }
 
 export const ActivityContext = createContext()
@@ -50,11 +50,11 @@ function ActivityProvider({ children }) {
                   no podras acceder a las funcionalidades del RA, por favor recarga la pagina, 
                   si el error persiste comunicate con Ignacio, saludos.`,
           title: 'Error inicio de sesion',
-          showCancelButton: false
+          showCancelButton: false,
         })
       }
     } catch (error) {
-      console.log("login error: ", error)
+      console.log('login error: ', error)
     }
   }
 
@@ -64,42 +64,46 @@ function ActivityProvider({ children }) {
       const body = await resp.json()
 
       if (body.ok) {
-
         setOptionsArray({
           subProjects: body.subproyectos.map(item => {
             return {
               label: item.nombre_sub_proy,
               value: item.id_sub_proyecto,
-              id: item.id_proyecto
+              id: item.id_proyecto,
             }
           }),
           projects: body.proyectos.map(item => {
             return {
               label: item.abrev,
-              value: item.id_proy
+              value: item.id_proy,
             }
           }),
           priorities: body.prioridades.map(item => {
             return {
               label: item.nombre,
-              value: item.color
+              value: item.color,
             }
           }),
           status: body.estados.map(item => {
             return {
               label: item.desc_estado,
-              value: item.id_estado
+              value: item.id_estado,
             }
           }),
           users: body.usuarios.map(item => {
             return {
               label: item.abrev_user,
-              value: item.id_user
+              value: item.abrev_user,
             }
-          })
+          }),
         })
       } else {
-        Alert({ icon: 'error', title: 'Error', content: 'Error al obtener los filtros', showCancelButton: false })
+        Alert({
+          icon: 'error',
+          title: 'Error',
+          content: 'Error al obtener los filtros',
+          showCancelButton: false,
+        })
       }
     } catch (err) {
       console.log(err)
@@ -125,7 +129,7 @@ function ActivityProvider({ children }) {
     setOrder,
     order,
     setPager,
-    pager
+    pager,
   }
   return (
     <ActivityContext.Provider value={value}>
