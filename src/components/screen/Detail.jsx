@@ -363,7 +363,7 @@ const Detail = () => {
       {Object.keys(activity).length > 0 && (
         <>
           <div className='xl:container  mx-auto px-2 py-10'>
-            <main className='bg-white p-5 xl:p-8 rounded-lg shadow-lg shadow-gray-600/10 border grid gap-5'>
+            <main className='bg-white p-4 md:p-6 rounded-lg shadow-lg shadow-gray-600/10 border grid gap-5'>
               <header className='flex flex-wrap items-center justify-between'>
                 <Button
                   type='icon'
@@ -411,9 +411,9 @@ const Detail = () => {
                 </div>
               </header>
 
-              <h2 className='text-xl text-center font-semibold capitalize truncate'>
-                {activity.actividad}
-              </h2>
+              <h1 className='text-xl text-center font-semibold capitalize truncate'>
+                {activity.actividad || 'Sin titulo'}
+              </h1>
 
               <section className='grid grid-cols-1 lg:grid-cols-8 gap-5 '>
                 <aside className='col-span-1 md:col-span-2'>
@@ -687,8 +687,8 @@ const Detail = () => {
                 </aside>
               </section>
 
-              <footer className='flex flex-wrap justify-between mt-5'>
-                <aside className='flex gap-2'>
+              <footer className='grid grid-cols-2 gap-2 justify-between mt-5'>
+                <section className='flex gap-2'>
                   <Button
                     className='text-red-400 bg-red-50 hover:bg-red-100 rounded-lg w-max'
                     type='icon'
@@ -729,9 +729,9 @@ const Detail = () => {
                     }
                     onClick={handleOnPlayPause}
                   />
-                </aside>
+                </section>
 
-                <aside>
+                <section className='flex justify-end'>
                   <Button
                     className='w-max text-red-500 hover:bg-red-100 rounded-full'
                     name='cancelar'
@@ -742,7 +742,7 @@ const Detail = () => {
                     name='Guardar'
                     onClick={onSave}
                   />
-                </aside>
+                </section>
               </footer>
             </main>
           </div>
