@@ -237,11 +237,9 @@ const Todo = () => {
         isBlur={false}
         className='max-w-2xl text-sm'
         padding='p-4 md:p-6'
+        title={todo_id ? 'Actualizar to-do' : 'Nuevo to-do'}
       >
         <div className='grid gap-6'>
-          <h1 className='text-lg font-semibold'>
-            {todo_id ? 'Actualizar to-do' : 'Nuevo to-do'}
-          </h1>
           <section className='flex items-center justify-between gap-4'>
             <Input
               className='w-full'

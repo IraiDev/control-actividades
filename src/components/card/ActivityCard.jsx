@@ -281,9 +281,9 @@ const ActivityCard = props => {
         onClose={onCloseModals}
         className='max-w-2xl'
         padding='p-4 md:p-6'
+        title='crear Notas'
       >
         <div className='grid gap-5'>
-          <h1 className='text-xl font-semibold capitalize'>crear Notas</h1>
           <h5 className='text-sm'>Notas rapidas: </h5>
           <ul className='max-h-56 overflow-custom'>
             {defaultNotes.map(note => (
@@ -334,9 +334,9 @@ const ActivityCard = props => {
         onClose={onCloseModals}
         className='max-w-2xl'
         padding='p-4 md:p-6'
+        title='Modificar Notas'
       >
         <div className='grid gap-5'>
-          <h1 className='text-xl font-semibold capitalize'>Modificar Notas</h1>
           <h5 className='text-sm'>Notas actuales: </h5>
           <ul className='max-h-56 overflow-custom'>
             {props.notas.length > 0 ? (
@@ -408,11 +408,11 @@ const ActivityCard = props => {
         onClose={onCloseModals}
         className='max-w-2xl'
         padding='p-4 md:p-6'
+        title={`Pausar actividad: ${props.actividad || 'Sin titulo'}, ${
+          props.id_det
+        }`}
       >
         <div className='grid gap-5'>
-          <h1 className='text-xl font-semibold capitalize'>
-            Pausar actividad: {props.actividad || 'Sin titulo'}, {props.id_det}
-          </h1>
           <h5 className='text-sm'>Descripcion actividad: </h5>
           <p className='text-sm whitespace-pre-wrap max-h-44 overflow-custom p-1.5 rounded-lg bg-black/5'>
             {props.func_objeto}

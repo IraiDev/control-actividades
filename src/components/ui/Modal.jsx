@@ -10,6 +10,7 @@ const Modal = ({
   isBlur = true,
   className = 'max-w-4xl',
   padding = 'p-10',
+  title,
 }) => {
   const onBlur = () => {
     if (isBlur) onClose()
@@ -48,7 +49,9 @@ const Modal = ({
             >
               <i className='fas fa-times fa-lg' />
             </button>
-            <span className='w-full h-6 block'></span>
+            <h1 className='w-full text-center my-3 px-4 text-xl font-semibold capitalize'>
+              {title}
+            </h1>
             {children}
           </section>
         </div>

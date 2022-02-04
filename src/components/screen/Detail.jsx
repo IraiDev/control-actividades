@@ -754,11 +754,9 @@ const Detail = () => {
             onClose={onCloseModals}
             className='max-w-2xl'
             padding='p-4 md:p-6'
+            title='Modificar Notas'
           >
             <div className='grid gap-5'>
-              <h1 className='text-xl font-semibold capitalize'>
-                Modificar Notas
-              </h1>
               <h5 className='text-sm'>Notas actuales: </h5>
               <ul className='max-h-56 overflow-custom'>
                 {activity.notas.length > 0 ? (
@@ -821,9 +819,9 @@ const Detail = () => {
             onClose={onCloseModals}
             className='max-w-2xl'
             padding='p-4 md:p-6'
+            title='crear Notas'
           >
             <div className='grid gap-5'>
-              <h1 className='text-xl font-semibold capitalize'>crear Notas</h1>
               <h5 className='text-sm'>Notas rapidas: </h5>
               <ul className='max-h-56 overflow-custom'>
                 {defaultNotes.map(note => (
@@ -876,11 +874,9 @@ const Detail = () => {
             onClose={onCloseModals}
             className='max-w-2xl'
             padding='p-4 md:p-6'
+            title={`Pausar actividad: ${activity.actividad}, ${activity.id_det}`}
           >
             <div className='grid gap-5'>
-              <h1 className='text-xl font-semibold capitalize'>
-                Pausar actividad: {activity.actividad}, {activity.id_det}
-              </h1>
               <h5 className='text-sm'>Descripcion actividad: </h5>
               <p className='text-sm whitespace-pre-wrap max-h-44 overflow-custom p-1.5 rounded-lg bg-black/5'>
                 {values.content}
@@ -934,11 +930,11 @@ const Detail = () => {
             isBlur={false}
             onClose={onCloseModals}
             padding='p-4 md:p-6'
+            title={`Clonar actividad: ${activity.id_det}, ${
+              activity.actividad || 'Sin titulo'
+            }`}
           >
             <div className='grid gap-5'>
-              <h1 className='capitalize text-xl font-semibold text-center'>
-                Clonar actividad: {activity.id_det}, {activity.actividad}
-              </h1>
               <header className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 <aside>
                   <span className='grid gap-2 capitalize text-sm'>

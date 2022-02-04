@@ -105,7 +105,7 @@ const NavBar = () => {
 
   return (
     <>
-      <nav className='flex items-center justify-between bg-white shadow border h-16 px-10 sticky z-20 top-0'>
+      <nav className='flex items-center justify-between bg-white shadow border h-16 px-2 lg:px-10 sticky z-20 top-0'>
         {pathname === activity || pathname === home ? (
           <Button
             className='rounded-full bg-black/5 hover:bg-black/10'
@@ -238,12 +238,10 @@ const NavBar = () => {
         showModal={modal}
         isBlur={false}
         onClose={onCloseModal}
-        padding='p-7'
+        padding='p-4 md:p-6'
+        title='Nueva actividad'
       >
         <div className='grid gap-5'>
-          <h1 className='capitalize text-xl font-semibold text-center'>
-            Nueva actividad
-          </h1>
           <header className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <aside className='grid gap-1'>
               <CustomSelect

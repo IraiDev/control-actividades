@@ -228,12 +228,10 @@ const NavMenu = ({ isOpen, toggleMenu }) => {
         showModal={showModalList}
         onClose={closeModalList}
         className='max-w-md'
-        padding='p-6'
+        padding='p-4 md:p-6'
+        title={id === null ? 'Crear lista' : 'Actualizar lista'}
       >
         <div className='grid gap-4'>
-          <h1 className='font-semibold text-lg'>
-            {id === null ? 'Crear lista' : 'Actualizar lista'}
-          </h1>
           <Input
             field='nombre lista'
             value={title}

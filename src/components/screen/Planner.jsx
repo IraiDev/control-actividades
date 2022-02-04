@@ -5,6 +5,24 @@ import { UiContext } from '../../context/UiContext'
 import { Alert } from '../../helpers/alerts'
 import PlannerCard from '../card/PlannerCard'
 
+const CheckBox = ({ state, id, onChange, name }) => (
+  <label
+    className={`flex items-center gap-3 capitalize cursor-pointer ${
+      state && 'text-blue-400'
+    }`}
+    htmlFor={id}
+  >
+    <input
+      id={id}
+      className='cursor-pointer'
+      type='checkbox'
+      checked={state}
+      onChange={onChange}
+    />
+    {name}
+  </label>
+)
+
 const Planner = () => {
   const { addTaskToRA } = useContext(ActivityContext)
   const { setIsLoading } = useContext(UiContext)
@@ -76,76 +94,49 @@ const Planner = () => {
 
   return (
     <>
-      <header className='flex items-center justify-around bg-white p-4 m-5 rounded-lg border shadow-lg'>
-        <label
-          className={`flex items-center gap-3 capitalize cursor-pointer ${
-            penddig && 'text-blue-400'
-          }`}
-          htmlFor='penddig'
-        >
-          <input
-            id='penddig'
-            className='cursor-pointer'
-            type='checkbox'
-            checked={penddig}
-            onChange={() => {
-              setIsLoading(true)
-              setPenddig(!penddig)
-              setAtwork(false)
-              setComplete(false)
-              setTimeout(() => {
-                setIsLoading(false)
-              }, [1000])
-            }}
-          />
-          Pendientes
-        </label>
-        <label
-          className={`flex items-center gap-3 capitalize cursor-pointer ${
-            atWork && 'text-blue-400'
-          }`}
-          htmlFor='atWork'
-        >
-          <input
-            id='atWork'
-            className='cursor-pointer'
-            type='checkbox'
-            checked={atWork}
-            onChange={() => {
-              setIsLoading(true)
-              setAtwork(!atWork)
-              setPenddig(false)
-              setComplete(false)
-              setTimeout(() => {
-                setIsLoading(false)
-              }, [1000])
-            }}
-          />
-          en trabajo
-        </label>
-        <label
-          className={`flex items-center gap-3 capitalize cursor-pointer ${
-            complete && 'text-blue-400'
-          }`}
-          htmlFor='complete'
-        >
-          <input
-            id='complete'
-            className='cursor-pointer'
-            type='checkbox'
-            checked={complete}
-            onChange={() => {
-              setIsLoading(true)
-              setComplete(!complete)
-              setPenddig(false)
-              setAtwork(false)
-              setTimeout(() => {
-                setIsLoading(false)
-              }, [1000])
-            }}
-          />
-          completadas
-        </label>
+      <header className='grid grid-cols-2 md:grid-cols-3 md:place-items-center bg-white p-4 m-2 rounded-lg border shadow-lg'>
+        <CheckBox
+          state={penddig}
+          id='pending-id'
+          name='Pendientes'
+          onChange={() => {
+            setIsLoading(true)
+            setPenddig(!penddig)
+            setAtwork(false)
+            setComplete(false)
+            setTimeout(() => {
+              setIsLoading(false)
+            }, [1000])
+          }}
+        />
+        <CheckBox
+          state={atWork}
+          id='atWork-id'
+          name='En trabajo'
+          onChange={() => {
+            setIsLoading(true)
+            setPenddig(false)
+            setAtwork(!atWork)
+            setComplete(false)
+            setTimeout(() => {
+              setIsLoading(false)
+            }, [1000])
+          }}
+        />
+        <CheckBox
+          state={complete}
+          id='complete-id'
+          name='Completadas'
+          onChange={() => {
+            setIsLoading(true)
+            setPenddig(false)
+            setAtwork(false)
+            setComplete(!complete)
+            setTimeout(() => {
+              setIsLoading(false)
+            }, [1000])
+          }}
+        />
       </header>
       <section
         className='
