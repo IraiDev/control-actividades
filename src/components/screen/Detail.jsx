@@ -26,14 +26,14 @@ const defaultNotes = [
   { id: 11123, desc: 'esperando actividad...' },
   { id: 11124, desc: 'trabajando...' },
   { id: 11125, desc: 'sin avance' },
-  { id: 11126, desc: 'en cola' }
+  { id: 11126, desc: 'en cola' },
 ]
 
 const defaultPauses = [
   { id: 1112121, desc: 'Hora de colacion...' },
   { id: 1112223, desc: 'Para ver otra actividad...' },
   { id: 1112322, desc: 'Por reunion de trabajo...' },
-  { id: 1112424, desc: 'Salida a terreno...' }
+  { id: 1112424, desc: 'Salida a terreno...' },
 ]
 
 const initOptions = {
@@ -53,7 +53,6 @@ const PrioritySelector = ({ onClick, color = 'bg-slate-400' }) => (
 )
 
 const Detail = () => {
-
   const navigate = useNavigate()
   const { id } = useParams()
   const { optionsArray } = useContext(ActivityContext)
@@ -68,7 +67,7 @@ const Detail = () => {
     updatePriorityAndAddNote,
     saveActivity,
     cloneActivity,
-    deleteDocument
+    deleteDocument,
   } = useDetail(id)
 
   const date = moment(activity.fecha_tx).format('yyyy-MM-DD')
@@ -91,7 +90,7 @@ const Detail = () => {
   const [values, setValues] = useState({
     id: null,
     desc: '',
-    content: ''
+    content: '',
   })
   const [fields, setFields] = useState({
     title: '',
@@ -99,7 +98,7 @@ const Detail = () => {
     priority: '',
     ticket: '',
     time: '',
-    gloss: ''
+    gloss: '',
   })
 
   const [cloneFields, setCloneFields] = useState({
@@ -108,17 +107,18 @@ const Detail = () => {
     cPriority: '',
     cTicket: '',
     cTime: '',
-    cGloss: ''
+    cGloss: '',
   })
 
   // destructuring
   const { title, description, gloss, ticket, priority, time } = fields
-  const { cTitle, cDescription, cPriority, cTicket, cTime, cGloss } = cloneFields
+  const { cTitle, cDescription, cPriority, cTicket, cTime, cGloss } =
+    cloneFields
   const { projects, subProjects, users } = optionsArray
 
   let userStyles = {
     priority: 'S/P',
-    styles: 'bg-slate-400 hover:border-gray-400'
+    styles: 'bg-slate-400 hover:border-gray-400',
   }
 
   switch (activity.prioridad_etiqueta) {
@@ -160,7 +160,6 @@ const Detail = () => {
   }
 
   const openModalClone = () => {
-
     const setFieldsData = (ticket = 0) => {
       setCloneFields({
         cTicket: ticket,
@@ -168,14 +167,17 @@ const Detail = () => {
         cDescription: description,
         cPriority: priority,
         cTime: time,
-        cGloss: gloss
+        cGloss: gloss,
       })
 
       setCloneOptions({
         pr: projects.find(p => p.value === activity.id_proy),
-        sp: subProjects.find(s => s.id === activity.id_proy && s.value === activity.id_sub_proyecto),
+        sp: subProjects.find(
+          s => s.id === activity.id_proy && s.value === activity.id_sub_proyecto
+        ),
         us: users.find(u => u.value === activity.user_solicita),
         ue: users.find(u => u.value === activity.encargado_actividad),
+        ur: users?.find(u => u.id === activity.id_revisor),
       })
     }
 
@@ -197,7 +199,7 @@ const Detail = () => {
       action: () => {
         setFieldsData(ticket)
         toggleModalClone(true)
-      }
+      },
     })
   }
 
@@ -208,10 +210,11 @@ const Detail = () => {
         ...values,
         id_ref: activity.id_det,
         title: activity.actividad || 'Sin titulo',
-        content: activity.func_objeto || 'Sin descripcion'
+        content: activity.func_objeto || 'Sin descripcion',
       })
+    } else {
+      onPlayPause({ id_actividad: activity.id_det })
     }
-    else { onPlayPause({ id_actividad: activity.id_det }) }
   }
 
   const onPause = () => {
@@ -238,7 +241,7 @@ const Detail = () => {
       action: () => {
         deleteNote({ id_nota: id, id_actividad: activity.id_det })
         setValues({ ...values, desc: '', id: null })
-      }
+      },
     })
   }
 
@@ -251,7 +254,11 @@ const Detail = () => {
       })
       return
     }
-    updateNote({ id_nota: values.id, description: values.desc, id_actividad: activity.id_det })
+    updateNote({
+      id_nota: values.id,
+      description: values.desc,
+      id_actividad: activity.id_det,
+    })
   }
 
   const onAdd = () => {
@@ -273,7 +280,7 @@ const Detail = () => {
     options?.sp && formData.append('sub_proyecto', options.sp.value)
     options?.us && formData.append('solicita', options.us.label)
     options?.ue && formData.append('encargado', options.ue.label)
-    options?.ur && formData.append('revisor', options.ur.value)
+    options?.ur && formData.append('revisor', options.ur.id)
     formData.append('prioridad', priority)
     formData.append('ticket', ticket)
     formData.append('tiempo_estimado', time)
@@ -292,7 +299,7 @@ const Detail = () => {
     cloneOptions?.sp && formData.append('sub_proyecto', cloneOptions.sp.value)
     cloneOptions?.us && formData.append('solicita', cloneOptions.us.label)
     cloneOptions?.ue && formData.append('encargado', cloneOptions.ue.label)
-    cloneOptions?.ur && formData.append('revisor', cloneOptions.ur.value)
+    cloneOptions?.ur && formData.append('revisor', cloneOptions.ur.id)
     formData.append('prioridad', cPriority)
     formData.append('ticket', cTicket)
     formData.append('tiempo_estimado', cTime)
@@ -307,7 +314,7 @@ const Detail = () => {
     navigate(routes.activity)
   }
 
-  const timeFormat = (time) => {
+  const timeFormat = time => {
     let hours = time._data.hours
     let minutes = time._data.minutes
     let seconds = time._data.seconds
@@ -315,14 +322,13 @@ const Detail = () => {
     if (minutes < 10) minutes = '0' + minutes
     if (seconds < 10) seconds = '0' + seconds
 
-
     return {
       complete: hours + ':' + minutes + ':' + seconds,
       section: {
         hours: time._data.hours,
         minutes: time._data.minutes,
-        seconds: time._data.seconds
-      }
+        seconds: time._data.seconds,
+      },
     }
   }
 
@@ -335,15 +341,17 @@ const Detail = () => {
         gloss: activity.glosa_explicativa,
         ticket: activity.num_ticket_edit,
         priority: activity.num_prioridad,
-        time: activity.tiempo_estimado
+        time: activity.tiempo_estimado,
       })
 
       setOptions({
         pr: projects?.find(p => p.value === activity.id_proy),
-        sp: subProjects?.find(s => s.id === activity.id_proy && s.value === activity.id_sub_proyecto),
+        sp: subProjects?.find(
+          s => s.id === activity.id_proy && s.value === activity.id_sub_proyecto
+        ),
         us: users?.find(u => u.label === activity.user_solicita),
         ue: users?.find(u => u.label === activity.encargado_actividad),
-        ur: users?.find(u => u.value === activity.id_revisor),
+        ur: users?.find(u => u.id === activity.id_revisor),
       })
     }
 
@@ -352,8 +360,7 @@ const Detail = () => {
 
   return (
     <>
-      {
-        Object.keys(activity).length > 0 &&
+      {Object.keys(activity).length > 0 && (
         <>
           <div className='xl:container  mx-auto px-2 py-10'>
             <main className='bg-white p-5 xl:p-8 rounded-lg shadow-lg shadow-gray-600/10 border grid gap-5'>
@@ -367,39 +374,87 @@ const Detail = () => {
 
                 <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
                   <PrioritySelector
-                    onClick={() => updatePriority({ prioridad_numero: 1000, id_actividad: activity.id_det })} />
+                    onClick={() =>
+                      updatePriority({
+                        prioridad_numero: 1000,
+                        id_actividad: activity.id_det,
+                      })
+                    }
+                  />
                   <PrioritySelector
                     color='bg-green-500/70'
-                    onClick={() => updatePriority({ prioridad_numero: 600, id_actividad: activity.id_det })} />
+                    onClick={() =>
+                      updatePriority({
+                        prioridad_numero: 600,
+                        id_actividad: activity.id_det,
+                      })
+                    }
+                  />
                   <PrioritySelector
                     color='bg-yellow-500/80'
-                    onClick={() => updatePriority({ prioridad_numero: 400, id_actividad: activity.id_det })} />
+                    onClick={() =>
+                      updatePriority({
+                        prioridad_numero: 400,
+                        id_actividad: activity.id_det,
+                      })
+                    }
+                  />
                   <PrioritySelector
                     color='bg-red-500/70'
-                    onClick={() => updatePriority({ prioridad_numero: 100, id_actividad: activity.id_det })} />
+                    onClick={() =>
+                      updatePriority({
+                        prioridad_numero: 100,
+                        id_actividad: activity.id_det,
+                      })
+                    }
+                  />
                 </div>
               </header>
 
-              <h2 className='text-xl text-center font-semibold capitalize truncate'>{activity.actividad}</h2>
+              <h2 className='text-xl text-center font-semibold capitalize truncate'>
+                {activity.actividad}
+              </h2>
 
               <section className='grid grid-cols-1 lg:grid-cols-8 gap-5 '>
                 <aside className='col-span-1 md:col-span-2'>
                   <header className='text-sm'>
                     <P tag='Encargado' value={activity.encargado_actividad} />
                     <P tag='Proyecto' value={activity.nombre_proyecto} />
-                    <P tag='Sub proyecto' value={activity.nombre_sub_proy ?? 'S/SP'} />
+                    <P
+                      tag='Sub proyecto'
+                      value={activity.nombre_sub_proy ?? 'S/SP'}
+                    />
                     <P tag='Solicitante' value={activity.user_solicita} />
-                    <P tag='Estado' value={activity.estado === 1 ? ' pendiente' : ' en trabajo'} />
+                    <P
+                      tag='Estado'
+                      value={
+                        activity.estado === 1 ? ' pendiente' : ' en trabajo'
+                      }
+                    />
                     <P tag='ID' value={activity.id_det} />
                     <P tag='Ticket' value={activity.num_ticket_edit} />
-                    <P tag='Fecha' value={moment(activity.fecha_tx).format('DD/MM/YYYY')} />
-                    <P tag='Transcurridos' value={moment(date).diff(TODAY, 'days') - moment(date).diff(TODAY, 'days') * 2} />
-                    <P tag='Prioridad' value={
-                      <>
-                        <span className={`h-4 w-4 rounded-full mx-1 inline-block align-middle ${userStyles.styles}`} />
-                        {userStyles.priority} ({activity.num_prioridad})
-                      </>
-                    } />
+                    <P
+                      tag='Fecha'
+                      value={moment(activity.fecha_tx).format('DD/MM/YYYY')}
+                    />
+                    <P
+                      tag='Transcurridos'
+                      value={
+                        moment(date).diff(TODAY, 'days') -
+                        moment(date).diff(TODAY, 'days') * 2
+                      }
+                    />
+                    <P
+                      tag='Prioridad'
+                      value={
+                        <>
+                          <span
+                            className={`h-4 w-4 rounded-full mx-1 inline-block align-middle ${userStyles.styles}`}
+                          />
+                          {userStyles.priority} ({activity.num_prioridad})
+                        </>
+                      }
+                    />
                   </header>
 
                   <hr className='my-5' />
@@ -409,31 +464,47 @@ const Detail = () => {
                       label='Proyecto'
                       options={projects}
                       value={options.pr}
-                      onChange={option => setOptions({ ...options, pr: option })}
+                      onChange={option =>
+                        setOptions({ ...options, pr: option })
+                      }
                     />
                     <CustomSelect
                       label='Sub proyecto'
-                      options={options?.pr?.value ? subProjects?.filter(s => s.id === options?.pr?.value) : subProjects}
+                      options={
+                        options?.pr?.value
+                          ? subProjects?.filter(
+                              s => s.id === options?.pr?.value
+                            )
+                          : subProjects
+                      }
                       value={options.sp}
-                      onChange={option => setOptions({ ...options, sp: option })}
+                      onChange={option =>
+                        setOptions({ ...options, sp: option })
+                      }
                     />
                     <CustomSelect
                       label='Solicitante'
                       options={users}
                       value={options.us}
-                      onChange={option => setOptions({ ...options, us: option })}
+                      onChange={option =>
+                        setOptions({ ...options, us: option })
+                      }
                     />
                     <CustomSelect
                       label='Encargado'
                       options={users}
                       value={options.ue}
-                      onChange={option => setOptions({ ...options, ue: option })}
+                      onChange={option =>
+                        setOptions({ ...options, ue: option })
+                      }
                     />
                     <CustomSelect
                       label='Revisor'
                       options={users}
                       value={options.ur}
-                      onChange={option => setOptions({ ...options, ur: option })}
+                      onChange={option =>
+                        setOptions({ ...options, ur: option })
+                      }
                     />
                   </section>
                 </aside>
@@ -442,40 +513,54 @@ const Detail = () => {
                   <Input
                     field='titulo'
                     value={title}
-                    onChange={e => setFields({ ...fields, title: e.target.value })}
+                    onChange={e =>
+                      setFields({ ...fields, title: e.target.value })
+                    }
                   />
                   <TextArea
                     field='descripccion'
                     value={description}
-                    onChange={e => setFields({ ...fields, description: e.target.value })}
+                    onChange={e =>
+                      setFields({ ...fields, description: e.target.value })
+                    }
                   />
                   <TextArea
                     field='glosa'
                     value={gloss}
-                    onChange={e => setFields({ ...fields, gloss: e.target.value })}
+                    onChange={e =>
+                      setFields({ ...fields, gloss: e.target.value })
+                    }
                   />
                   <div className='grid grid-cols-1 lg:grid-cols-3 gap-2'>
                     <Input
                       field='ticket'
                       value={ticket}
-                      onChange={e => setFields({ ...fields, ticket: e.target.value })}
+                      onChange={e =>
+                        setFields({ ...fields, ticket: e.target.value })
+                      }
                     />
                     <Input
                       field='prioridad'
                       value={priority}
-                      onChange={e => setFields({ ...fields, priority: e.target.value })}
+                      onChange={e =>
+                        setFields({ ...fields, priority: e.target.value })
+                      }
                     />
                     <Input
                       field='T. estimado'
                       value={time}
-                      onChange={e => setFields({ ...fields, time: e.target.value })}
+                      onChange={e =>
+                        setFields({ ...fields, time: e.target.value })
+                      }
                     />
                   </div>
                 </section>
 
                 <aside className='col-span-1 md:col-span-3'>
                   <div className='flex justify-between items-center mb-3'>
-                    <h5 className='text-sm font-semibold'>Notas (Informes): </h5>
+                    <h5 className='text-sm font-semibold'>
+                      Notas (Informes):{' '}
+                    </h5>
                     <section className='flex gap-2'>
                       <Button
                         className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg w-max'
@@ -492,17 +577,21 @@ const Detail = () => {
                     </section>
                   </div>
                   <ul className='max-h-[540px] overflow-custom'>
-                    {
-                      activity.notas.length > 0 ?
-                        activity.notas.map((note, i) => (
-                          <li
-                            key={note.id_nota}
-                            className='bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 mb-2.5 shadow-md shadow-gray-400/20 hover:bg-black/10 transition duration-200'>
-                            <i className='fas fa-list-ul mr-2' />
-                            {i + 1}. {note.desc_nota}
-                          </li>
-                        )) : <li className='text-sm text-slate-400 ml-2'>No hay notas...</li>
-                    }
+                    {activity.notas.length > 0 ? (
+                      activity.notas.map((note, i) => (
+                        <li
+                          key={note.id_nota}
+                          className='bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 mb-2.5 shadow-md shadow-gray-400/20 hover:bg-black/10 transition duration-200'
+                        >
+                          <i className='fas fa-list-ul mr-2' />
+                          {i + 1}. {note.desc_nota}
+                        </li>
+                      ))
+                    ) : (
+                      <li className='text-sm text-slate-400 ml-2'>
+                        No hay notas...
+                      </li>
+                    )}
                   </ul>
                 </aside>
               </section>
@@ -513,31 +602,41 @@ const Detail = () => {
                 <aside>
                   <h5 className='text-sm mb-3 font-semibold'>Archivos: </h5>
                   <ul className='h-28 overflow-custom border-x p-1.5'>
-                    {
-                      activity.tarea_documentos.length > 0 ?
-                        activity.tarea_documentos.map((file, i) => (
-                          <li
-                            key={file.id_docum}
-                            className='p-2 bg-white 
-                            border-t flex items-center justify-between'>
-                            <a
-                              className='text-slate-500 hover:text-blue-400 transition 
+                    {activity.tarea_documentos.length > 0 ? (
+                      activity.tarea_documentos.map((file, i) => (
+                        <li
+                          key={file.id_docum}
+                          className='p-2 bg-white 
+                            border-t flex items-center justify-between'
+                        >
+                          <a
+                            className='text-slate-500 hover:text-blue-400 transition 
                                 duration-200 transform hover:scale-105 text-sm w-full truncate'
-                              href={BASE_URL + file.ruta_docum}
-                              rel='noreferrer'
-                              target='_blank'
-                            >
-                              {i + 1}. <i className='fas fa-file'></i> {file.nom_docum}
-                            </a>
-                            <button
-                              className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
-                              onClick={() => deleteDocument({ id_docum: file.id_docum, doc_name: file.nom_docum })}
-                            >
-                              <i className='fas fa-trash fa-sm'></i>
-                            </button>
-                          </li>
-                        )) : <li className='text-sm text-slate-400 ml-2'>No hay archivos...</li>
-                    }
+                            href={BASE_URL + file.ruta_docum}
+                            rel='noreferrer'
+                            target='_blank'
+                          >
+                            {i + 1}. <i className='fas fa-file'></i>{' '}
+                            {file.nom_docum}
+                          </a>
+                          <button
+                            className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
+                            onClick={() =>
+                              deleteDocument({
+                                id_docum: file.id_docum,
+                                doc_name: file.nom_docum,
+                              })
+                            }
+                          >
+                            <i className='fas fa-trash fa-sm'></i>
+                          </button>
+                        </li>
+                      ))
+                    ) : (
+                      <li className='text-sm text-slate-400 ml-2'>
+                        No hay archivos...
+                      </li>
+                    )}
                   </ul>
                   <input
                     className='
@@ -553,21 +652,35 @@ const Detail = () => {
                 </aside>
 
                 <aside>
-                  <h5 className='text-sm mb-5 text-center font-semibold'>Tiempos de la actividad: </h5>
+                  <h5 className='text-sm mb-5 text-center font-semibold'>
+                    Tiempos de la actividad:{' '}
+                  </h5>
                   <div className='grid grid-cols-3 content-center place-content-center'>
                     <TimerContainer subtitle='estimado'>
-                      {timeFormat(moment.duration(activity.tiempo_estimado, 'hours')).complete}
+                      {
+                        timeFormat(
+                          moment.duration(activity.tiempo_estimado, 'hours')
+                        ).complete
+                      }
                     </TimerContainer>
                     <TimerContainer subtitle='trabajado'>
                       <Timer
                         pause={activity.estado_play_pausa === 2}
-                        time={timeFormat(moment.duration(activity.tiempo_trabajado, 'hours')).section}
+                        time={
+                          timeFormat(
+                            moment.duration(activity.tiempo_trabajado, 'hours')
+                          ).section
+                        }
                       />
                     </TimerContainer>
                     <TimerContainer subtitle='hoy'>
                       <Timer
                         pause={activity.estado_play_pausa === 2}
-                        time={timeFormat(moment.duration(activity.tiempo_hoy, 'hours')).section}
+                        time={
+                          timeFormat(
+                            moment.duration(activity.tiempo_hoy, 'hours')
+                          ).section
+                        }
                       />
                     </TimerContainer>
                   </div>
@@ -580,7 +693,9 @@ const Detail = () => {
                     className='text-red-400 bg-red-50 hover:bg-red-100 rounded-lg w-max'
                     type='icon'
                     icon='fas fa-trash'
-                    onClick={() => deleteActivity({ id_actividad: activity.id_det })}
+                    onClick={() =>
+                      deleteActivity({ id_actividad: activity.id_det })
+                    }
                   />
                   <Button
                     className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg w-max'
@@ -589,22 +704,29 @@ const Detail = () => {
                     onClick={openModalClone}
                   />
                   <a
-                    className='text-blue-600 bg-blue-100 hover:bg-blue-200 rounded-lg h-8 w-8 text-center block pt-1'
+                    className='text-blue-600 bg-blue-100 hover:bg-blue-200 rounded-lg h-8 w-8 text-center block pt-1 transition duration-500'
                     target='_blank'
                     rel='noreferrer'
                     title='Eventos'
                     href={`https://tickets.zproduccion.cl/#/in/${activity.num_ticket_edit}`}
                   >
-                    <i className="fas fa-ticket-alt" />
+                    <i className='fas fa-ticket-alt' />
                   </a>
                   <Button
                     disabled={activity.estado === 1}
                     className={`
-                      ${activity.estado_play_pausa === 2 ? 'text-red-400 bg-red-50 hover:bg-red-100'
-                        : 'text-emerald-400 bg-emerald-50 hover:bg-emerald-100'}
+                      ${
+                        activity.estado_play_pausa === 2
+                          ? 'text-red-400 bg-red-50 hover:bg-red-100'
+                          : 'text-emerald-400 bg-emerald-50 hover:bg-emerald-100'
+                      }
                       rounded-lg w-max`}
                     type='icon'
-                    icon={activity.estado_play_pausa === 2 ? 'fas fa-pause fa-sm' : 'fas fa-play fa-sm'}
+                    icon={
+                      activity.estado_play_pausa === 2
+                        ? 'fas fa-pause fa-sm'
+                        : 'fas fa-play fa-sm'
+                    }
                     onClick={handleOnPlayPause}
                   />
                 </aside>
@@ -626,40 +748,56 @@ const Detail = () => {
           </div>
 
           {/* modal edit */}
-          <Modal showModal={modalEdit} isBlur={false} onClose={onCloseModals}
-            className='max-w-2xl' padding='p-5'
+          <Modal
+            showModal={modalEdit}
+            isBlur={false}
+            onClose={onCloseModals}
+            className='max-w-2xl'
+            padding='p-4 md:p-6'
           >
             <div className='grid gap-5'>
-              <h1 className='text-xl font-semibold capitalize'>Modificar Notas</h1>
+              <h1 className='text-xl font-semibold capitalize'>
+                Modificar Notas
+              </h1>
               <h5 className='text-sm'>Notas actuales: </h5>
               <ul className='max-h-56 overflow-custom'>
-                {
-                  activity.notas.length > 0 ?
-                    activity.notas.map(note => (
-                      <li
-                        key={note.id_nota}
-                        className={`flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 cursor-pointer shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200 ${values.id === note.id_nota && 'border-2 border-blue-400'}`}
-                        onClick={() => {
-                          setValues({ desc: note.desc_nota, id: note.id_nota })
-                        }}
+                {activity.notas.length > 0 ? (
+                  activity.notas.map(note => (
+                    <li
+                      key={note.id_nota}
+                      className={`flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 cursor-pointer shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200 ${
+                        values.id === note.id_nota && 'border-2 border-blue-400'
+                      }`}
+                      onClick={() => {
+                        setValues({ desc: note.desc_nota, id: note.id_nota })
+                      }}
+                    >
+                      <span>
+                        <h1>
+                          {note.usuario.abrev_user}
+                          <span className='text-gray-600 text-xs font-light ml-2'>
+                            {moment(note.date).format('DD/MM/yyyy, HH:mm')}
+                          </span>
+                        </h1>
+                        <p className='text-gray-600 text-sm'>
+                          {note.desc_nota}
+                        </p>
+                      </span>
+                      <button
+                        className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
+                        onClick={() =>
+                          onDelete({ id: note.id_nota, desc: note.desc_nota })
+                        }
                       >
-                        <span>
-                          <h1>
-                            {note.usuario.abrev_user}
-                            <span className='text-gray-600 text-xs font-light ml-2'>{moment(note.date).format('DD/MM/yyyy, HH:mm')}</span>
-                          </h1>
-                          <p className='text-gray-600 text-sm'>{note.desc_nota}</p>
-                        </span>
-                        <button
-                          className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
-                          onClick={() => onDelete({ id: note.id_nota, desc: note.desc_nota })}
-                        >
-                          <i className='fas fa-trash fa-sm' />
-                        </button>
-                      </li>
-                    ))
-                    : <li className='text-gray-500 text-sm ml-2'>No hay notas...</li>
-                }
+                        <i className='fas fa-trash fa-sm' />
+                      </button>
+                    </li>
+                  ))
+                ) : (
+                  <li className='text-gray-500 text-sm ml-2'>
+                    No hay notas...
+                  </li>
+                )}
               </ul>
               <TextArea
                 disabled={values.id === null}
@@ -677,36 +815,46 @@ const Detail = () => {
           </Modal>
 
           {/* modal add */}
-          <Modal showModal={modalAdd} isBlur={false} onClose={onCloseModals}
-            className='max-w-2xl' padding='p-5'
+          <Modal
+            showModal={modalAdd}
+            isBlur={false}
+            onClose={onCloseModals}
+            className='max-w-2xl'
+            padding='p-4 md:p-6'
           >
             <div className='grid gap-5'>
               <h1 className='text-xl font-semibold capitalize'>crear Notas</h1>
               <h5 className='text-sm'>Notas rapidas: </h5>
               <ul className='max-h-56 overflow-custom'>
-                {
-                  defaultNotes.map(note => (
-                    <li
-                      key={note.id}
-                      className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 
+                {defaultNotes.map(note => (
+                  <li
+                    key={note.id}
+                    className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 
                         mr-1.5 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'
+                  >
+                    <span>
+                      <p className='text-gray-600 text-sm'>{note.desc}</p>
+                    </span>
+                    <button
+                      className='ml-2 text-blue-400 hover:text-blue-600 transition duration-200 transform hover:hover:scale-125'
+                      onClick={() => {
+                        note.id === 11121
+                          ? updatePriorityAndAddNote({
+                              prioridad_numero: 100,
+                              id_actividad: activity.id_det,
+                              description: note.desc,
+                            })
+                          : newNote({
+                              id_actividad: activity.id_det,
+                              description: note.desc,
+                            })
+                        onCloseModals()
+                      }}
                     >
-                      <span>
-                        <p className='text-gray-600 text-sm'>{note.desc}</p>
-                      </span>
-                      <button
-                        className='ml-2 text-blue-400 hover:text-blue-600 transition duration-200 transform hover:hover:scale-125'
-                        onClick={() => {
-                          note.id === 11121 ? updatePriorityAndAddNote({ prioridad_numero: 100, id_actividad: activity.id_det, description: note.desc })
-                            : newNote({ id_actividad: activity.id_det, description: note.desc })
-                          onCloseModals()
-                        }}
-                      >
-                        <i className='fas fa-tag fa-sm'></i>
-                      </button>
-                    </li>
-                  ))
-                }
+                      <i className='fas fa-tag fa-sm'></i>
+                    </button>
+                  </li>
+                ))}
               </ul>
               <TextArea
                 field='descripcion'
@@ -722,8 +870,12 @@ const Detail = () => {
           </Modal>
 
           {/* modal pause */}
-          <Modal showModal={modalPause} isBlur={false} onClose={onCloseModals}
-            className='max-w-2xl' padding='p-5'
+          <Modal
+            showModal={modalPause}
+            isBlur={false}
+            onClose={onCloseModals}
+            className='max-w-2xl'
+            padding='p-4 md:p-6'
           >
             <div className='grid gap-5'>
               <h1 className='text-xl font-semibold capitalize'>
@@ -735,26 +887,26 @@ const Detail = () => {
               </p>
               <h5 className='text-sm'>Pausas rapidas: </h5>
               <ul className='max-h-56 overflow-custom'>
-                {
-                  defaultPauses.map(pause => (
-                    <li
-                      key={pause.id}
-                      className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'
+                {defaultPauses.map(pause => (
+                  <li
+                    key={pause.id}
+                    className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'
+                  >
+                    <p className='text-gray-600 text-sm'>{pause.desc}</p>
+                    <button
+                      className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
+                      onClick={() => {
+                        onPlayPause({
+                          id_actividad: activity.id_det,
+                          mensaje: pause.desc,
+                        })
+                        onCloseModals()
+                      }}
                     >
-                      <p className='text-gray-600 text-sm'>{pause.desc}</p>
-                      <button
-                        className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
-                        onClick={() => {
-                          onPlayPause({ id_actividad: activity.id_det, mensaje: pause.desc })
-                          onCloseModals()
-                        }}
-                      >
-                        <i className='fas fa-pause fa-sm' />
-                      </button>
-
-                    </li>
-                  ))
-                }
+                      <i className='fas fa-pause fa-sm' />
+                    </button>
+                  </li>
+                ))}
               </ul>
               <TextArea
                 field='Mensaje pausa'
@@ -777,8 +929,11 @@ const Detail = () => {
           </Modal>
 
           {/* modal clone */}
-          <Modal showModal={modalClone} isBlur={false} onClose={onCloseModals}
-            padding='p-7'
+          <Modal
+            showModal={modalClone}
+            isBlur={false}
+            onClose={onCloseModals}
+            padding='p-4 md:p-6'
           >
             <div className='grid gap-5'>
               <h1 className='capitalize text-xl font-semibold text-center'>
@@ -793,7 +948,9 @@ const Detail = () => {
                       placeholder='Seleccione'
                       options={projects}
                       value={cloneOptions.pr}
-                      onChange={option => setCloneOptions({ ...cloneOptions, pr: option })}
+                      onChange={option =>
+                        setCloneOptions({ ...cloneOptions, pr: option })
+                      }
                     />
                   </span>
                   <span className='grid gap-2 capitalize text-sm'>
@@ -801,9 +958,15 @@ const Detail = () => {
                     <Select
                       className='uppercase'
                       placeholder='Seleccione'
-                      options={options.pr?.value ? subProjects?.filter(s => s.id === options.pr?.value) : subProjects}
+                      options={
+                        options.pr?.value
+                          ? subProjects?.filter(s => s.id === options.pr?.value)
+                          : subProjects
+                      }
                       value={cloneOptions.sp}
-                      onChange={option => setCloneOptions({ ...cloneOptions, sp: option })}
+                      onChange={option =>
+                        setCloneOptions({ ...cloneOptions, sp: option })
+                      }
                     />
                   </span>
                   <span className='grid gap-2 capitalize text-sm'>
@@ -813,7 +976,9 @@ const Detail = () => {
                       placeholder='Seleccione'
                       options={users}
                       value={cloneOptions.us}
-                      onChange={option => setCloneOptions({ ...cloneOptions, us: option })}
+                      onChange={option =>
+                        setCloneOptions({ ...cloneOptions, us: option })
+                      }
                     />
                   </span>
                   <span className='grid gap-2 capitalize text-sm'>
@@ -823,7 +988,9 @@ const Detail = () => {
                       placeholder='Seleccione'
                       options={users}
                       value={cloneOptions.ue}
-                      onChange={option => setCloneOptions({ ...cloneOptions, ue: option })}
+                      onChange={option =>
+                        setCloneOptions({ ...cloneOptions, ue: option })
+                      }
                     />
                   </span>
                   <span className='grid gap-2 capitalize text-sm'>
@@ -833,7 +1000,9 @@ const Detail = () => {
                       placeholder='Seleccione'
                       options={users}
                       value={cloneOptions.ur}
-                      onChange={option => setCloneOptions({ ...cloneOptions, ur: option })}
+                      onChange={option =>
+                        setCloneOptions({ ...cloneOptions, ur: option })
+                      }
                     />
                   </span>
                 </aside>
@@ -842,22 +1011,36 @@ const Detail = () => {
                   <Input
                     field='titulo'
                     value={cTitle}
-                    onChange={e => setCloneFields({ ...cloneFields, cTitle: e.target.value })}
+                    onChange={e =>
+                      setCloneFields({ ...cloneFields, cTitle: e.target.value })
+                    }
                   />
                   <Input
                     field='ticket'
                     value={cTicket}
-                    onChange={e => setCloneFields({ ...cloneFields, cTicket: e.target.value })}
+                    onChange={e =>
+                      setCloneFields({
+                        ...cloneFields,
+                        cTicket: e.target.value,
+                      })
+                    }
                   />
                   <Input
                     field='prioridad'
                     value={cPriority}
-                    onChange={e => setCloneFields({ ...cloneFields, cPriority: e.target.value })}
+                    onChange={e =>
+                      setCloneFields({
+                        ...cloneFields,
+                        cPriority: e.target.value,
+                      })
+                    }
                   />
                   <Input
                     field='T. estimado'
                     value={cTime}
-                    onChange={e => setCloneFields({ ...cloneFields, cTime: e.target.value })}
+                    onChange={e =>
+                      setCloneFields({ ...cloneFields, cTime: e.target.value })
+                    }
                   />
                 </aside>
               </header>
@@ -866,12 +1049,19 @@ const Detail = () => {
                 <TextArea
                   field='descripccion'
                   value={cDescription}
-                  onChange={e => setCloneFields({ ...cloneFields, cDescription: e.target.value })}
+                  onChange={e =>
+                    setCloneFields({
+                      ...cloneFields,
+                      cDescription: e.target.value,
+                    })
+                  }
                 />
                 <TextArea
                   field='glosa'
                   value={cGloss}
-                  onChange={e => setCloneFields({ ...cloneFields, cGloss: e.target.value })}
+                  onChange={e =>
+                    setCloneFields({ ...cloneFields, cGloss: e.target.value })
+                  }
                 />
               </section>
 
@@ -905,9 +1095,8 @@ const Detail = () => {
               </footer>
             </div>
           </Modal>
-
         </>
-      }
+      )}
     </>
   )
 }

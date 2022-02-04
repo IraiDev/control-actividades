@@ -94,6 +94,7 @@ function ActivityProvider({ children }) {
             return {
               label: item.abrev_user,
               value: item.abrev_user,
+              id: item.id_user,
             }
           }),
         })

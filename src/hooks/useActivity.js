@@ -13,16 +13,20 @@ export const useActivity = () => {
   const fetchActivities = async () => {
     try {
       setIsLoading(true)
-      const resp = await fetchToken(`task/get-task-ra`, { ...filters, ...order }, 'POST')
+      const resp = await fetchToken(
+        `task/get-task-ra`,
+        { ...filters, ...order },
+        'POST'
+      )
       const body = await resp.json()
       const { ok, tareas, total_tareas } = body
       setIsLoading(false)
       if (ok) {
         setActivities(tareas)
         setTotal(total_tareas)
+      } else {
+        console.log('Error')
       }
-      else { console.log('Error') }
-
     } catch (e) {
       console.log(e)
       setIsLoading(false)
@@ -32,15 +36,20 @@ export const useActivity = () => {
   const newNote = async ({ id_actividad, description }) => {
     setIsLoading(true)
     try {
-      const resp = await fetchToken('task/create-note', { id_actividad, description }, 'POST')
+      const resp = await fetchToken(
+        'task/create-note',
+        { id_actividad, description },
+        'POST'
+      )
       const body = await resp.json()
-      if (body.ok) { fetchActivities() }
-      else {
+      if (body.ok) {
+        fetchActivities()
+      } else {
         Alert({
           icon: 'error',
           title: 'Error',
           content: 'Error al crear nota',
-          showCancelButton: false
+          showCancelButton: false,
         })
         setIsLoading(false)
       }
@@ -53,23 +62,34 @@ export const useActivity = () => {
   const updateNote = async ({ id_nota, description, id_actividad }) => {
     setIsLoading(true)
     try {
-      const resp = await fetchToken('task/update-note', { id_nota, description, id_actividad }, 'PUT')
+      const resp = await fetchToken(
+        'task/update-note',
+        { id_nota, description, id_actividad },
+        'PUT'
+      )
       const body = await resp.json()
       setIsLoading(false)
       if (body.ok) {
-        setActivities(activities.map(act => act.id_det === id_actividad ? {
-          ...act, notas: act.notas.map(note => note.id_nota === id_nota ?
-            { ...note, desc_nota: description } : note)
-        } : act)
+        setActivities(
+          activities.map(act =>
+            act.id_det === id_actividad
+              ? {
+                  ...act,
+                  notas: act.notas.map(note =>
+                    note.id_nota === id_nota
+                      ? { ...note, desc_nota: description }
+                      : note
+                  ),
+                }
+              : act
+          )
         )
-      }
-
-      else {
+      } else {
         Alert({
           icon: 'error',
           title: 'Error',
           content: 'Error al modificar nota',
-          showCancelButton: false
+          showCancelButton: false,
         })
       }
     } catch (err) {
@@ -85,14 +105,22 @@ export const useActivity = () => {
       const body = await resp.json()
       setIsLoading(false)
       if (body.ok) {
-        setActivities(activities.map(act => act.id_det === id_actividad ? { ...act, notas: act.notas.filter(note => note.id_nota !== id_nota) } : act))
-      }
-      else {
+        setActivities(
+          activities.map(act =>
+            act.id_det === id_actividad
+              ? {
+                  ...act,
+                  notas: act.notas.filter(note => note.id_nota !== id_nota),
+                }
+              : act
+          )
+        )
+      } else {
         Alert({
           icon: 'error',
           title: 'Error',
           content: 'Error al eliminar nota',
-          showCancelButton: false
+          showCancelButton: false,
         })
       }
     } catch (err) {
@@ -104,18 +132,27 @@ export const useActivity = () => {
   const updatePriority = async ({ prioridad_numero, id_actividad }) => {
     setIsLoading(true)
     try {
-      const resp = await fetchToken('task/update-priority', { prioridad_numero, id_actividad }, 'POST')
+      const resp = await fetchToken(
+        'task/update-priority',
+        { prioridad_numero, id_actividad },
+        'POST'
+      )
       const body = await resp.json()
       setIsLoading(false)
       if (body.ok) {
-        setActivities(activities.map(act => act.id_det === id_actividad ? { ...act, prioridad_etiqueta: prioridad_numero } : act))
-      }
-      else {
+        setActivities(
+          activities.map(act =>
+            act.id_det === id_actividad
+              ? { ...act, prioridad_etiqueta: prioridad_numero }
+              : act
+          )
+        )
+      } else {
         Alert({
           icon: 'error',
           title: 'Error',
           content: 'Error al actualziar prioridad de actividad',
-          showCancelButton: false
+          showCancelButton: false,
         })
       }
     } catch (err) {
@@ -124,21 +161,34 @@ export const useActivity = () => {
     }
   }
 
-  const updatePriorityAndAddNote = async ({ prioridad_numero, id_actividad, description }) => {
+  const updatePriorityAndAddNote = async ({
+    prioridad_numero,
+    id_actividad,
+    description,
+  }) => {
     setIsLoading(true)
     try {
-      const resp = await fetchToken('task/update-priority', { prioridad_numero, id_actividad }, 'POST')
+      const resp = await fetchToken(
+        'task/update-priority',
+        { prioridad_numero, id_actividad },
+        'POST'
+      )
       const body = await resp.json()
-      const resp2 = await fetchToken('task/create-note', { id_actividad, description }, 'POST')
+      const resp2 = await fetchToken(
+        'task/create-note',
+        { id_actividad, description },
+        'POST'
+      )
       const body2 = await resp2.json()
       setIsLoading(false)
-      if (body.ok && body2.ok) { fetchActivities() }
-      else {
+      if (body.ok && body2.ok) {
+        fetchActivities()
+      } else {
         Alert({
           icon: 'error',
           title: 'Error',
           content: 'Error al actualziar prioridad de actividad y agregar nota',
-          showCancelButton: false
+          showCancelButton: false,
         })
       }
     } catch (err) {
@@ -150,16 +200,21 @@ export const useActivity = () => {
   const onPlayPause = async ({ id_actividad, mensaje }) => {
     setIsLoading(true)
     try {
-      const resp = await fetchToken('task/play-pause', { id_actividad, mensaje }, 'POST')
+      const resp = await fetchToken(
+        'task/play-pause',
+        { id_actividad, mensaje },
+        'POST'
+      )
       const body = await resp.json()
       setIsLoading(false)
-      if (body.ok) { fetchActivities() }
-      else {
+      if (body.ok) {
+        fetchActivities()
+      } else {
         Alert({
           icon: 'error',
           title: 'Error',
           content: 'Error al pausar/reanudar actividad',
-          showCancelButton: false
+          showCancelButton: false,
         })
       }
     } catch (err) {
@@ -181,6 +236,7 @@ export const useActivity = () => {
     deleteNote,
     updatePriority,
     onPlayPause,
-    updatePriorityAndAddNote
+    updatePriorityAndAddNote,
+    getActivities: fetchActivities,
   }
 }

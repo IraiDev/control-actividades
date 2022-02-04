@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { UiContext } from '../../context/UiContext'
 import { ActivityContext } from '../../context/ActivityContext'
 import { useActivity } from '../../hooks/useActivity'
+import { useWindowSize } from '../../hooks/useWindowSize'
 import { Alert } from '../../helpers/alerts'
 import ActivityCard from '../card/ActivityCard'
 import Button from '../ui/Button'
@@ -23,11 +24,11 @@ const PrioritySelector = ({ onClick, color = 'bg-slate-400' }) => (
 )
 
 const Activity = () => {
-
   const navigate = useNavigate()
   const { view, setView, setIsLoading } = useContext(UiContext)
   const { saveFilters, pager, setPager } = useContext(ActivityContext)
   const [multiline, setMultiline] = useState(false)
+  const size = useWindowSize()
 
   const {
     activities,
@@ -37,7 +38,7 @@ const Activity = () => {
     total,
     updatePriority,
     onPlayPause,
-    updatePriorityAndAddNote
+    updatePriorityAndAddNote,
   } = useActivity()
 
   const toggleView = (state, time = 1000) => {
@@ -49,9 +50,9 @@ const Activity = () => {
   }
 
   const onPauseActivity = ({ flag, id_actividad, mensaje }) => {
-
-    if (flag) { onPlayPause({ id_actividad, mensaje }) }
-    else {
+    if (flag) {
+      onPlayPause({ id_actividad, mensaje })
+    } else {
       if (mensaje.trim() === '') {
         Alert({
           icon: 'warn',
@@ -76,7 +77,7 @@ const Activity = () => {
       content: `¿Estas seguro de eliminar la siguiente nota: <strong>${description}</strong>?`,
       cancelButton: 'No, cancelar',
       confirmButton: 'Si, eliminar',
-      action: () => deleteNote({ id_nota, id_actividad })
+      action: () => deleteNote({ id_nota, id_actividad }),
     })
   }
 
@@ -105,7 +106,12 @@ const Activity = () => {
   }
 
   const onAddDefaultNote = ({ flag, id_actividad, description }) => {
-    flag ? updatePriorityAndAddNote({ prioridad_numero: 100, id_actividad, description })
+    flag
+      ? updatePriorityAndAddNote({
+          prioridad_numero: 100,
+          id_actividad,
+          description,
+        })
       : newNote({ id_actividad, description })
   }
 
@@ -117,146 +123,226 @@ const Activity = () => {
 
   return (
     <>
-      {
-        view ?
-          <section
-            className='pt-10 pb-24 container mx-auto gap-3 grid grid-cols-1 
+      {view ? (
+        <section
+          className='pt-10 pb-24 container mx-auto gap-3 grid grid-cols-1 px-2 
             sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-          >
-            {
-              activities.length > 0 ?
-                activities.map((act, i) => (
-                  <ActivityCard
-                    key={i}
-                    numberCard={i + 1}
-                    highPriority={() => updatePriority({ prioridad_numero: 100, id_actividad: act.id_det })}
-                    mediumPriority={() => updatePriority({ prioridad_numero: 400, id_actividad: act.id_det })}
-                    lowPriority={() => updatePriority({ prioridad_numero: 600, id_actividad: act.id_det })}
-                    noPriority={() => updatePriority({ prioridad_numero: 1000, id_actividad: act.id_det })}
-                    addNote={onAddNote}
-                    addDefaultNote={onAddDefaultNote}
-                    updateNote={onUpdateNote}
-                    deleteNote={onDeleteNote}
-                    pauseActivity={onPauseActivity}
-                    playActivity={onPlayActivity}
-                    {...act}
+        >
+          {activities.length > 0 ? (
+            activities.map((act, i) => (
+              <ActivityCard
+                key={i}
+                numberCard={i + 1}
+                highPriority={() =>
+                  updatePriority({
+                    prioridad_numero: 100,
+                    id_actividad: act.id_det,
+                  })
+                }
+                mediumPriority={() =>
+                  updatePriority({
+                    prioridad_numero: 400,
+                    id_actividad: act.id_det,
+                  })
+                }
+                lowPriority={() =>
+                  updatePriority({
+                    prioridad_numero: 600,
+                    id_actividad: act.id_det,
+                  })
+                }
+                noPriority={() =>
+                  updatePriority({
+                    prioridad_numero: 1000,
+                    id_actividad: act.id_det,
+                  })
+                }
+                addNote={onAddNote}
+                addDefaultNote={onAddDefaultNote}
+                updateNote={onUpdateNote}
+                deleteNote={onDeleteNote}
+                pauseActivity={onPauseActivity}
+                playActivity={onPlayActivity}
+                {...act}
+              />
+            ))
+          ) : (
+            <div className='text-center col-span-4 text-slate-400'>
+              No hay actividades...
+            </div>
+          )}
+        </section>
+      ) : (
+        <section className='px-2 xl:px-20'>
+          <Table>
+            <THead>
+              <tr className='text-center capitalize text-white bg-slate-600'>
+                <Th className='bg-slate-700'>Nᵒ</Th>
+                <Th>ID</Th>
+                <Th className='bg-slate-700'>ticket</Th>
+                <Th>proyecto</Th>
+                <Th className='bg-slate-700'>sub proyecto</Th>
+                <Th>solicitante</Th>
+                <Th className='bg-slate-700'>encargado</Th>
+                <Th>prioridad</Th>
+                <Th className='bg-slate-700'>fecha</Th>
+                <Th>
+                  actividad
+                  <Button
+                    className='ml-2'
+                    type='icon'
+                    icon={multiline ? 'fas fa-angle-up' : 'fas fa-angle-down'}
+                    onClick={() => setMultiline(!multiline)}
                   />
-                )) : <div className='text-center col-span-4 text-slate-400'>No hay actividades...</div>
-            }
-          </section>
-          :
-          <section className='px-5 xl:px-20'>
-            <Table>
-              <THead>
-                <tr className='text-center capitalize text-white bg-slate-600'>
-                  <Th className='bg-slate-700'>Nᵒ</Th>
-                  <Th>ID</Th>
-                  <Th className='bg-slate-700'>ticket</Th>
-                  <Th>proyecto</Th>
-                  <Th className='bg-slate-700'>sub proyecto</Th>
-                  <Th>solicitante</Th>
-                  <Th className='bg-slate-700'>encargado</Th>
-                  <Th>prioridad</Th>
-                  <Th className='bg-slate-700'>fecha</Th>
-                  <Th>
-                    actividad
-                    <Button
-                      className='ml-2'
-                      type='icon'
-                      icon={multiline ? 'fas fa-angle-up' : 'fas fa-angle-down'}
-                      onClick={() => setMultiline(!multiline)}
-                    />
-                  </Th>
-                  <Th className='bg-slate-700'>
-                    descripcion
-                    <Button
-                      className='ml-2'
-                      type='icon'
-                      icon={multiline ? 'fas fa-angle-up' : 'fas fa-angle-down'}
-                      onClick={() => setMultiline(!multiline)}
-                    />
-                  </Th>
-                  <Th>estado</Th>
-                  <Th className='bg-slate-700'></Th>
-                </tr>
-              </THead>
-              <TBody>
-                {
-                  activities.length > 0 &&
-                  activities.map((act, i) => (
-                    <tr
-                      onDoubleClick={() => navigate(`detalle-actividad/${act.id_det}`, { replace: true })}
-                      key={act.id_det}
-                      className={`
+                </Th>
+                <Th className='bg-slate-700'>
+                  descripcion
+                  <Button
+                    className='ml-2'
+                    type='icon'
+                    icon={multiline ? 'fas fa-angle-up' : 'fas fa-angle-down'}
+                    onClick={() => setMultiline(!multiline)}
+                  />
+                </Th>
+                <Th>estado</Th>
+                <Th className='bg-slate-700'></Th>
+              </tr>
+            </THead>
+            <TBody>
+              {activities.length > 0 &&
+                activities.map((act, i) => (
+                  <tr
+                    onDoubleClick={() =>
+                      navigate(`detalle-actividad/${act.id_det}`, {
+                        replace: true,
+                      })
+                    }
+                    key={act.id_det}
+                    className={`
                       text-sm text-gray-800
                       transition duration-300 cursor-pointer
-                      ${i !== activities.length - 1 && 'border-b border-gray-500'}
-                      ${act.prioridad_etiqueta === 600 ? 'bg-green-400/40 hover:bg-green-400/90' :
-                          act.prioridad_etiqueta === 400 ? 'bg-yellow-400/40 hover:bg-yellow-400/90' :
-                            act.prioridad_etiqueta === 100 ? 'bg-red-400/40 hover:bg-red-400/90' :
-                              'bg-white hover:bg-black/10'}
+                      ${
+                        i !== activities.length - 1 &&
+                        'border-b border-gray-500'
+                      }
+                      ${
+                        act.prioridad_etiqueta === 600
+                          ? 'bg-green-400/40 hover:bg-green-400/90'
+                          : act.prioridad_etiqueta === 400
+                          ? 'bg-yellow-400/40 hover:bg-yellow-400/90'
+                          : act.prioridad_etiqueta === 100
+                          ? 'bg-red-400/40 hover:bg-red-400/90'
+                          : 'bg-white hover:bg-black/10'
+                      }
                       `}
+                  >
+                    <Td bgcolor>
+                      <span className='px-2 font-semibold leading-tight bg-amber-200 text-amber-600 shadow rounded-md relative'>
+                        {i + 1}
+                        {act.estado_play_pausa === 2 && (
+                          <>
+                            <span className='h-2 w-2 rounded-full bg-red-400 absolute z-40 -top-0.5 -left-1' />
+                            <span className='h-2 w-2 rounded-full bg-red-400 absolute z-40 -top-0.5 -left-1 animate-ping' />
+                          </>
+                        )}
+                      </span>
+                    </Td>
+                    <Td className='font-bold'>{act.id_det}</Td>
+                    <Td
+                      className={act.num_ticket_edit ? 'font-bold' : ''}
+                      bgcolor
                     >
-                      <Td bgcolor>
-                        <span
-                          className="px-2 font-semibold leading-tight bg-amber-200 text-amber-600 shadow rounded-md relative"
-                        >
-                          {i + 1}
-                          {act.estado_play_pausa === 2 &&
-                            <>
-                              <span className='h-2 w-2 rounded-full bg-red-400 absolute z-40 -top-0.5 -left-1' />
-                              <span className='h-2 w-2 rounded-full bg-red-400 absolute z-40 -top-0.5 -left-1 animate-ping' />
-                            </>
+                      {act.num_ticket_edit || '--'}
+                    </Td>
+                    <Td className='font-bold'>{act.abrev}</Td>
+                    <Td bgcolor>{act.nombre_sub_proy ?? '--'}</Td>
+                    <Td>{act.user_solicita}</Td>
+                    <Td className='font-bold' bgcolor>
+                      {act.encargado_actividad}
+                    </Td>
+                    <Td className='font-bold'>{act.num_prioridad}</Td>
+                    <Td bgcolor>{moment(act.fecha_tx).format('DD/MM/yyyy')}</Td>
+                    <Td
+                      isMultiLine={multiline}
+                      className='font-bold'
+                      width='max-w-[150px]'
+                      align='text-left'
+                    >
+                      {act.actividad || 'Sin Titulo'}
+                    </Td>
+                    <Td isMultiLine={multiline} bgcolor align='text-left'>
+                      {act.func_objeto}
+                    </Td>
+                    <Td className='font-bold'>
+                      {act.estado === 1 ? 'Pendiente' : 'En trabajo'}
+                    </Td>
+                    <Td
+                      className='flex items-center justify-around gap-2'
+                      bgcolor
+                      isModal
+                      pauseActivity={onPauseActivity}
+                      playActivity={onPlayActivity}
+                      {...act}
+                    >
+                      <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
+                        <PrioritySelector
+                          onClick={() =>
+                            updatePriority({
+                              prioridad_numero: 1000,
+                              id_actividad: act.id_det,
+                            })
                           }
-                        </span>
-                      </Td>
-                      <Td className='font-bold'>{act.id_det}</Td>
-                      <Td className={act.num_ticket_edit ? 'font-bold' : ''} bgcolor>{act.num_ticket_edit || '--'}</Td>
-                      <Td className='font-bold'>{act.abrev}</Td>
-                      <Td bgcolor>{act.nombre_sub_proy ?? '--'}</Td>
-                      <Td>{act.user_solicita}</Td>
-                      <Td className='font-bold' bgcolor>{act.encargado_actividad}</Td>
-                      <Td className='font-bold'>{act.num_prioridad}</Td>
-                      <Td bgcolor>{moment(act.fecha_tx).format('DD/MM/yyyy')}</Td>
-                      <Td isMultiLine={multiline} className='font-bold' width='max-w-[150px]' align='text-left'>{act.actividad || 'Sin Titulo'}</Td>
-                      <Td isMultiLine={multiline} bgcolor align='text-left'>{act.func_objeto}</Td>
-                      <Td className='font-bold'>{act.estado === 1 ? 'Pendiente' : 'En trabajo'}</Td>
-                      <Td
-                        className='flex items-center justify-around gap-2'
-                        bgcolor
-                        isModal
-                        pauseActivity={onPauseActivity}
-                        playActivity={onPlayActivity}
-                        {...act}
-                      >
-                        <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
-                          <PrioritySelector
-                            onClick={() => updatePriority({ prioridad_numero: 1000, id_actividad: act.id_det })} />
-                          <PrioritySelector
-                            color='bg-green-500/70'
-                            onClick={() => updatePriority({ prioridad_numero: 600, id_actividad: act.id_det })} />
-                          <PrioritySelector
-                            color='bg-yellow-500/80'
-                            onClick={() => updatePriority({ prioridad_numero: 400, id_actividad: act.id_det })} />
-                          <PrioritySelector
-                            color='bg-red-500/70'
-                            onClick={() => updatePriority({ prioridad_numero: 100, id_actividad: act.id_det })} />
-                        </div>
-                      </Td>
-                    </tr>
-                  ))}
-              </TBody>
-            </Table>
-          </section >
-      }
+                        />
+                        <PrioritySelector
+                          color='bg-green-500/70'
+                          onClick={() =>
+                            updatePriority({
+                              prioridad_numero: 600,
+                              id_actividad: act.id_det,
+                            })
+                          }
+                        />
+                        <PrioritySelector
+                          color='bg-yellow-500/80'
+                          onClick={() =>
+                            updatePriority({
+                              prioridad_numero: 400,
+                              id_actividad: act.id_det,
+                            })
+                          }
+                        />
+                        <PrioritySelector
+                          color='bg-red-500/70'
+                          onClick={() =>
+                            updatePriority({
+                              prioridad_numero: 100,
+                              id_actividad: act.id_det,
+                            })
+                          }
+                        />
+                      </div>
+                    </Td>
+                  </tr>
+                ))}
+            </TBody>
+          </Table>
+        </section>
+      )}
 
       <footer
         className='fixed bottom-0 h-11 bg-white text-slate-700 
-          border w-full flex items-center justify-around shadow'>
-        <span>{activities.length} Actividades</span>
+          border w-full flex items-center justify-around shadow'
+      >
+        <span className='hidden md:block'>{activities.length} Actividades</span>
         <Pagination
+          siblingCount={size.width < 480 ? 0 : 1}
+          boundaryCount={size.width < 480 ? 0 : 1}
           size='small'
-          count={pager.limit === '' ? 1 : Math.ceil(Number(total) / Number(pager.limit))}
+          count={
+            pager.limit === ''
+              ? 1
+              : Math.ceil(Number(total) / Number(pager.limit))
+          }
           color='primary'
           onChange={onChangePage}
           page={pager.page}
@@ -265,13 +351,17 @@ const Activity = () => {
           <Button
             type='icon'
             icon='fas fa-border-all'
-            className={`hover:text-blue-500 hover:bg-slate-200 rounded-lg ${view && 'text-blue-500'}`}
+            className={`hover:text-blue-500 hover:bg-slate-200 rounded-lg ${
+              view && 'text-blue-500'
+            }`}
             onClick={() => toggleView(true)}
           />
           <Button
             type='icon'
             icon='fas fa-th-list'
-            className={`hover:text-blue-500 hover:bg-slate-200 rounded-lg ${!view && 'text-blue-500'}`}
+            className={`hover:text-blue-500 hover:bg-slate-200 rounded-lg ${
+              !view && 'text-blue-500'
+            }`}
             onClick={() => toggleView(false)}
           />
           <select
@@ -280,7 +370,8 @@ const Activity = () => {
             onChange={e => {
               setPager({ page: 1, limit: e.target.value })
               saveFilters({ payload: { limit: e.target.value, offset: 0 } })
-            }}>
+            }}
+          >
             <option value=''>todos</option>
             <option value='12'>12</option>
             <option value='25'>25</option>
@@ -289,7 +380,6 @@ const Activity = () => {
           </select>
         </div>
       </footer>
-
     </>
   )
 }
