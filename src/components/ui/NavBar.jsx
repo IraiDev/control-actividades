@@ -50,11 +50,22 @@ const NavBar = () => {
   ] = useForm({
     title: '',
     ticket: '',
-    priority: '',
+    priority: 150,
     time: '',
     desc: '',
     gloss: '',
   })
+
+  const vTitle = title === ''
+  const vTime = time === ''
+  const vDesc = desc === ''
+  const vPriority = priority === ''
+  const vPr = options.pr.value === null
+  const vUs = options.us.value === null
+  const vUe = options.ue.value === null
+
+  const onCreateValidation =
+    vTitle || vTime || vDesc || vPriority || vPr || vUs || vUe
 
   const { projects, subProjects, users } = optionsArray
 
@@ -250,11 +261,18 @@ const NavBar = () => {
         padding='p-4 md:p-6'
         title='Nueva actividad'
       >
+        <span
+          className={`rounded-md text-red-500 text-sm py-1 px-2.5 block w-max mx-auto my-2 h-7
+          ${onCreateValidation ? 'bg-red-100' : 'bg-transparent'}`}
+        >
+          {onCreateValidation &&
+            'completa los campos requeridos para crear una nueva actividad, campos requeridos (*)'}
+        </span>
         <div className='grid gap-5'>
           <header className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <aside className='grid gap-1'>
               <CustomSelect
-                label='proyecto'
+                label='proyecto (*)'
                 options={projects}
                 value={options.pr}
                 onChange={option => setOptions({ ...options, pr: option })}
@@ -270,13 +288,13 @@ const NavBar = () => {
                 onChange={option => setOptions({ ...options, sp: option })}
               />
               <CustomSelect
-                label='Solicitante'
+                label='Solicitante (*)'
                 options={users}
                 value={options.us}
                 onChange={option => setOptions({ ...options, us: option })}
               />
               <CustomSelect
-                label='encargado'
+                label='encargado (*)'
                 options={users}
                 value={options.ue}
                 onChange={option => setOptions({ ...options, ue: option })}
@@ -291,7 +309,7 @@ const NavBar = () => {
 
             <aside className='mt-0.5'>
               <Input
-                field='titulo'
+                field='titulo (*)'
                 name='title'
                 value={title}
                 onChange={onChangeValues}
@@ -303,13 +321,13 @@ const NavBar = () => {
                 onChange={onChangeValues}
               />
               <Input
-                field='prioridad'
+                field='prioridad (*)'
                 name='priority'
                 value={priority}
                 onChange={onChangeValues}
               />
               <Input
-                field='T. estimado'
+                field='T. estimado (*)'
                 name='time'
                 value={time}
                 onChange={onChangeValues}
@@ -319,7 +337,7 @@ const NavBar = () => {
 
           <section className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <TextArea
-              field='descripccion'
+              field='descripccion (*)'
               name='desc'
               value={desc}
               onChange={onChangeValues}
@@ -351,6 +369,7 @@ const NavBar = () => {
                 onClick={onCloseModal}
               />
               <Button
+                disabled={onCreateValidation}
                 className='w-max text-emerald-500 hover:bg-emerald-100 rounded-full'
                 name='crear actividad'
                 icon='fas fa-trash'
