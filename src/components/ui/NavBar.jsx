@@ -2,22 +2,22 @@ import { useContext, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { ActivityContext } from '../../context/ActivityContext'
 import { useToggle } from '../../hooks/useToggle'
-import Button from './Button'
-import NavMenu from './NavMenu'
-import SideBar from './SideBar'
+import { useForm } from '../../hooks/useForm'
+import { useDetail } from '../../hooks/useDetail'
+import { useActivity } from '../../hooks/useActivity'
 import { routes } from '../../types/types'
 import { useNotify } from '../../hooks/useNotify'
 import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu'
-import moment from 'moment'
 import { fetchToken } from '../../helpers/fetch'
+import Button from './Button'
+import NavMenu from './NavMenu'
+import SideBar from './SideBar'
 import TimerUsers from '../timer/TimerUsers'
 import Modal from './Modal'
 import CustomSelect from './CustomSelect'
 import Input from './Input'
 import TextArea from './TextArea'
-import { useForm } from '../../hooks/useForm'
-import { useDetail } from '../../hooks/useDetail'
-import { useActivity } from '../../hooks/useActivity'
+import moment from 'moment'
 
 const initOptions = {
   pr: { label: 'ninguno', value: null },
@@ -34,7 +34,6 @@ const NavBar = () => {
 
   const { notify, markNotifications } = useNotify()
   const { cloneActivity: createActivity } = useDetail()
-  const { getActivities } = useActivity()
   const { pathname } = useLocation()
   const [usersTimes, setUsersTimes] = useState([])
 
@@ -44,6 +43,7 @@ const NavBar = () => {
 
   const [files, setFiles] = useState([])
   const [options, setOptions] = useState(initOptions)
+  const [reload, setReload] = useState(false)
   const [
     { title, ticket, priority, time, desc, gloss },
     onChangeValues,
@@ -122,7 +122,7 @@ const NavBar = () => {
 
         <section className='bg-black/5 rounded-lg p-1 flex items-center'>
           <Button
-            disabled={pathname !== activity && pathname !== home}
+            hidden={pathname !== activity && pathname !== home}
             className='hover:bg-slate-200 rounded-lg text-slate-700'
             type='icon'
             icon='fas fa-plus'
@@ -130,7 +130,7 @@ const NavBar = () => {
             onClick={() => toggleModal(true)}
           />
           <Button
-            disabled={pathname !== activity && pathname !== home}
+            hidden={pathname !== activity && pathname !== home}
             className={`hover:bg-slate-200 rounded-lg ${
               filters.entrabajo === 2 ? 'text-blue-500' : 'text-slate-700'
             } `}
@@ -148,12 +148,22 @@ const NavBar = () => {
           />
           <Button
             className='hover:bg-slate-200 rounded-lg text-slate-700 hidden md:block'
-            title='Actualizar actividades y tiempos'
+            title={`Actualizar tiempos ${
+              (pathname === activity || pathname === home) && 'y actividades'
+            }`}
             type='icon'
             icon='fas fa-history'
             onClick={() => {
               getTimes()
-              if (pathname === activity || pathname === home) getActivities()
+              if (pathname === activity || pathname === home) {
+                setReload(!reload)
+                saveFilters({
+                  payload: {
+                    offset: 0,
+                    reload,
+                  },
+                })
+              }
             }}
           />
           <TimerUsers data={usersTimes} type='button' onClick={getTimes} />
@@ -216,7 +226,7 @@ const NavBar = () => {
             </MenuItem>
           </Menu>
           <Button
-            disabled
+            hidden
             className='hover:bg-slate-200 rounded-lg text-slate-700'
             type='icon'
             icon='fas fa-paint-brush'

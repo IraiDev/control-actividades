@@ -12,10 +12,9 @@ const SelectFilter = ({
   filterDown,
   defaultLabel = 'todos',
   upActive,
-  downActive
+  downActive,
 }) => (
   <span className='flex justify-between items-center pl-5 pr-3 gap-1'>
-
     <span className='w-full'>
       <p className='text-xs ml-4 capitalize mb-1'>{field}</p>
       <Select
@@ -29,13 +28,19 @@ const SelectFilter = ({
       />
     </span>
     <Button
-      className={`hover:text-blue-500 mt-5 ${upActive ? 'text-blue-500' : 'text-gray-500'}`}
+      disabled={upActive}
+      className={`hover:text-blue-500 mt-5 ${
+        upActive ? 'text-blue-500' : 'text-gray-700'
+      }`}
       icon='fas fa-angle-up text-lg'
       type='icon'
       onClick={filterUp}
     />
     <Button
-      className={`hover:text-blue-500 mt-5 ${downActive ? 'text-blue-500' : 'text-gray-500'}`}
+      disabled={downActive}
+      className={`hover:text-blue-500 mt-5 ${
+        downActive ? 'text-blue-500' : 'text-gray-700'
+      }`}
       icon='fas fa-angle-down text-lg'
       type='icon'
       onClick={filterDown}

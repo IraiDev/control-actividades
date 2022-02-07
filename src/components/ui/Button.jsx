@@ -10,19 +10,25 @@ const Button = ({
   type,
   disabled = false,
   iconFirst = false,
-  title
+  title,
+  hidden = false,
 }) => {
-
-  if (disabled) {
+  if (hidden) {
     return null
   }
 
   if (type === 'icon') {
     return (
       <button
+        disabled={disabled}
         title={title}
         onClick={onClick}
-        className={`focus:outline-none transition duration-500 h-8 w-8 ${className} ${shadow && 'shadow-xl'}`}>
+        className={`focus:outline-none transition duration-500 h-8 w-8 
+        ${className} 
+        ${shadow && 'shadow-xl'}
+        ${disabled && 'opacity-50 disabled:bg-transparent'}
+        `}
+      >
         <i className={icon}></i>
       </button>
     )
@@ -31,29 +37,41 @@ const Button = ({
   if (type === 'iconText') {
     return (
       <button
+        disabled={disabled}
         onClick={onClick}
-        className={`focus:outline-none transition duration-500 capitalize py-1.5 px-4 font-semibold ${className} ${shadow && 'shadow-xl'} ${block && 'block w-full'}`}
+        className={`focus:outline-none transition duration-500 capitalize py-1.5 px-4 font-semibold 
+          ${className} 
+          ${shadow && 'shadow-xl'} 
+          ${block && 'block w-full'}
+          ${disabled && 'opacity-50 disabled:bg-transparent'}
+          `}
       >
-        {iconFirst ?
+        {iconFirst ? (
           <>
             <i className={`${icon} mr-2`}></i>
             {name}
           </>
-          :
+        ) : (
           <>
             {name}
             <i className={`${icon} ml-2`}></i>
           </>
-        }
-
+        )}
       </button>
     )
   }
 
   return (
     <button
+      disabled={disabled}
       onClick={onClick}
-      className={`focus:outline-none transition duration-500 capitalize py-1.5 px-4 font-semibold ${className} ${shadow && 'shadow-xl'}  ${block && 'block w-full'}`}>
+      className={`focus:outline-none transition duration-500 capitalize py-1.5 px-4 font-semibold 
+      ${className} 
+      ${shadow && 'shadow-xl'} 
+      ${block && 'block w-full'}
+      ${disabled && 'opacity-50 disabled:bg-transparent'}
+      `}
+    >
       {name}
     </button>
   )

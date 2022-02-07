@@ -116,6 +116,51 @@ const Detail = () => {
     cloneFields
   const { projects, subProjects, users } = optionsArray
 
+  const vTitle = title === activity.actividad
+  const vDesc = description === activity.func_objeto
+  const vPriority = Number(priority) === activity.num_prioridad
+  const vTicket = Number(ticket) === activity.num_ticket_edit
+  const vTime = Number(time) === activity.tiempo_estimado
+  const vGloss = gloss === activity.glosa_explicativa
+  const vFiles = files === null
+  const vProject = options.pr?.value === activity.id_proy
+  const vSubProy =
+    options.sp?.value === activity.id_sub_proyecto ||
+    options.sp?.value === undefined
+  const vSolicita = options.us?.value === activity.user_solicita
+  const vEncargado = options.ue?.value === activity.encargado_actividad
+  const vRevisor =
+    options.ur?.id === activity.id_revisor || options.ur?.id === undefined
+
+  console.log(
+    vTitle,
+    vDesc,
+    vPriority,
+    vTicket,
+    vTime,
+    vGloss,
+    vFiles,
+    vProject,
+    vSubProy,
+    vSolicita,
+    vEncargado,
+    vRevisor
+  )
+
+  const onSaveValidation =
+    vTitle &&
+    vDesc &&
+    vPriority &&
+    vTicket &&
+    vTime &&
+    vGloss &&
+    vFiles &&
+    vProject &&
+    vSubProy &&
+    vSolicita &&
+    vEncargado &&
+    vRevisor
+
   let userStyles = {
     priority: 'S/P',
     styles: 'bg-slate-400 hover:border-gray-400',
@@ -569,6 +614,7 @@ const Detail = () => {
                         onClick={() => toggleModalAdd(true)}
                       />
                       <Button
+                        disabled={activity.notas.length === 0}
                         className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg w-max'
                         type='icon'
                         icon='fas fa-pen'
@@ -703,17 +749,19 @@ const Detail = () => {
                     icon='fas fa-clone'
                     onClick={openModalClone}
                   />
-                  <a
-                    className='text-blue-600 bg-blue-100 hover:bg-blue-200 rounded-lg h-8 w-8 text-center block pt-1 transition duration-500'
-                    target='_blank'
-                    rel='noreferrer'
-                    title='Eventos'
-                    href={`https://tickets.zproduccion.cl/#/in/${activity.num_ticket_edit}`}
-                  >
-                    <i className='fas fa-ticket-alt' />
-                  </a>
+                  {activity.num_ticket_edit !== 0 && (
+                    <a
+                      className='text-blue-600 bg-blue-100 hover:bg-blue-200 rounded-lg h-8 w-8 text-center block pt-1 transition duration-500'
+                      target='_blank'
+                      rel='noreferrer'
+                      title='Eventos'
+                      href={`https://tickets.zproduccion.cl/#/in/${activity.num_ticket_edit}`}
+                    >
+                      <i className='fas fa-ticket-alt' />
+                    </a>
+                  )}
                   <Button
-                    disabled={activity.estado === 1}
+                    hidden={activity.estado === 1}
                     className={`
                       ${
                         activity.estado_play_pausa === 2
@@ -738,6 +786,7 @@ const Detail = () => {
                     onClick={() => navigate(routes.activity, { replace: true })}
                   />
                   <Button
+                    disabled={onSaveValidation}
                     className='w-max text-emerald-500 hover:bg-emerald-100 rounded-full place-self-end'
                     name='Guardar'
                     onClick={onSave}

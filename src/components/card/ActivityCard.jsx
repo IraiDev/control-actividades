@@ -80,6 +80,7 @@ const ActivityCard = props => {
     estado_play_pausa,
     prioridad_etiqueta,
     fecha_tx,
+    notas,
   } = props
 
   const date = moment(fecha_tx).format('yyyy-MM-DD')
@@ -237,25 +238,60 @@ const ActivityCard = props => {
                 <i className='fas fa-plus' />
               </MenuItem>
               <MenuItem
-                className={itemStyle}
+                disabled={notas.length === 0}
+                className={`
+                ${itemStyle} 
+                ${
+                  notas.length === 0 &&
+                  'hover:bg-transparent hover:text-zinc-400/90'
+                }`}
                 onClick={() => toggleModalEdit(true)}
               >
                 Editar nota
                 <i className='fas fa-pen' />
               </MenuItem>
-              <MenuItem className={itemStyle} onClick={highPriority}>
+              <MenuItem
+                disabled={prioridad_etiqueta === 100}
+                className={`${itemStyle} 
+                ${
+                  prioridad_etiqueta === 100 &&
+                  'hover:bg-transparent hover:text-white/70 text-white/70'
+                }`}
+                onClick={highPriority}
+              >
                 Prioridad alta
                 <span className='h-4 w-4 rounded-full bg-red-400' />
               </MenuItem>
-              <MenuItem className={itemStyle} onClick={mediumPriority}>
+              <MenuItem
+                disabled={prioridad_etiqueta === 400}
+                className={`${itemStyle} ${
+                  prioridad_etiqueta === 400 &&
+                  'hover:bg-transparent hover:text-white/70 text-white/70'
+                }`}
+                onClick={mediumPriority}
+              >
                 Prioridad media
                 <span className='h-4 w-4 rounded-full bg-yellow-400' />
               </MenuItem>
-              <MenuItem className={itemStyle} onClick={lowPriority}>
+              <MenuItem
+                disabled={prioridad_etiqueta === 600}
+                className={`${itemStyle} ${
+                  prioridad_etiqueta === 600 &&
+                  'hover:bg-transparent hover:text-white/70 text-white/70'
+                }`}
+                onClick={lowPriority}
+              >
                 Prioridad baja
                 <span className='h-4 w-4 rounded-full bg-green-400' />
               </MenuItem>
-              <MenuItem className={itemStyle} onClick={noPriority}>
+              <MenuItem
+                disabled={prioridad_etiqueta === 1000}
+                className={`${itemStyle} ${
+                  prioridad_etiqueta === 1000 &&
+                  'hover:bg-transparent hover:text-zinc-400/90 text-zinc-400/90'
+                }`}
+                onClick={noPriority}
+              >
                 Sin Prioridad
                 <span className='h-4 w-4 rounded-full bg-gray-300' />
               </MenuItem>

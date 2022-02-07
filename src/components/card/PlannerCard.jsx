@@ -47,7 +47,7 @@ const PlannerCard = ({
       className='
       relative transition duration-300 w-full gap-2 p-4 bg-white
       rounded-lg shadow-lg border hover:shadow-xl hover:scale-98 transform
-      text-sm max-h-96
+      text-sm
     '
     >
       <h1 className='font-semibold capitalize mb-1 text-base'>{title}</h1>
@@ -100,7 +100,7 @@ const PlannerCard = ({
           {description === '' ? 'No hay descripcion...' : description}
         </p>
       </section>
-      <ul className='w-full'>
+      <ul className='w-full overflow-custom max-h-20'>
         <h5 className=' capitalize font-semibold mb-1'>archivos</h5>
         {Object.entries(references).length > 0 ? (
           Object.entries(references).map((r, i) => (
@@ -121,6 +121,7 @@ const PlannerCard = ({
           <p className='text-gray-400 mb-1 pl-2'>No hay archivos...</p>
         )}
       </ul>
+      <span className='h-10 w-full block' />
       {percentComplete === 0 && (
         <Button
           className='h-8 w-8 hover:bg-gray-200 rounded-full absolute bottom-3 right-3'
