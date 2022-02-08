@@ -4,5 +4,6 @@ export const routes = {
   activity: '/actividades',
   planner: '/planner',
   times: '/informe-tiempos',
-  todo: '/to-do/:id'
+  todo: '/to-do/:id',
+  plataforma_clientes: 'https://tickets.zproduccion.cl',
 }

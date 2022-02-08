@@ -15,8 +15,9 @@ import { useToggle } from '../../hooks/useToggle'
 import Input from './Input'
 import { UiContext } from '../../context/UiContext'
 import { routes } from '../../types/types'
+import LiLink from './LiLink'
 
-const { activity, planner, times } = routes
+const { activity, planner, times, plataforma_clientes } = routes
 
 const initForm = { id: null, title: '', idRef: null }
 
@@ -155,6 +156,13 @@ const NavMenu = ({ isOpen, toggleMenu }) => {
           <LiNav onClick={toggleMenu} to={times} name='informe de tiempos' />
           <LiNav onClick={toggleMenu} to={activity} name='actividades' />
           <LiNav onClick={toggleMenu} to={planner} name='planner' />
+          <LiLink
+            onClick={toggleMenu}
+            to={plataforma_clientes}
+            name='Plataforma clientes'
+            icon='fas fa-ticket-alt'
+            target='_blank'
+          />
         </ul>
         <div className='mx-5 border-t border-gray-300 my-5' />
         <section className='px-5 flex items-center justify-between'>

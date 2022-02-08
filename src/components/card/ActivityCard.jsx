@@ -242,9 +242,12 @@ const ActivityCard = props => {
                 className={`
                 ${itemStyle} 
                 ${
-                  notas.length === 0 &&
-                  'hover:bg-transparent hover:text-zinc-400/90'
-                }`}
+                  prioridad_etiqueta === 1000
+                    ? 'hover:bg-transparent hover:text-zinc-400 text-zinc-400'
+                    : notas.length === 0 &&
+                      'hover:bg-transparent hover:text-white/70 text-white/70'
+                }
+                `}
                 onClick={() => toggleModalEdit(true)}
               >
                 Editar nota
