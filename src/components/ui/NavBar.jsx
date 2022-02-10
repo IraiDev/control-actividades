@@ -159,7 +159,7 @@ const NavBar = () => {
           <Button
             className='hover:bg-slate-200 rounded-lg text-slate-700 hidden md:block'
             title={`Actualizar tiempos ${
-              (pathname === activity || pathname === home) && 'y actividades'
+              pathname === activity || pathname === home ? 'y actividades' : ''
             }`}
             type='icon'
             icon='fas fa-history'

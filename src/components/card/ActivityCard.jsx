@@ -217,7 +217,7 @@ const ActivityCard = props => {
               )}
             </button>
           ) : (
-            <p>estado</p>
+            <p>Pendiente</p>
           )}
           <span>
             <Menu
@@ -307,8 +307,8 @@ const ActivityCard = props => {
             className='absolute -top-1 -left-1'
             title='Trabajando en esta actividad'
           >
-            <span className='h-3.5 w-3.5 rounded-full bg-red-400' />
-            <span className='h-3.5 w-3.5 rounded-full bg-red-400 animate-ping' />
+            <span className='h-3.5 w-3.5 rounded-full bg-red-400 fixed' />
+            <span className='h-3.5 w-3.5 rounded-full bg-red-400 animate-ping fixed' />
           </div>
         )}
       </main>

@@ -44,12 +44,18 @@ const initOptions = {
   ur: { label: 'ninguno', value: null },
 }
 
-const PrioritySelector = ({ onClick, color = 'bg-slate-400' }) => (
-  <span
-    className={`h-5 w-5 rounded-full ${color} transition
-      duration-200 hover:scale-125 transform cursor-pointer`}
+const PrioritySelector = ({
+  onClick,
+  color = 'bg-slate-400',
+  disabled = false,
+}) => (
+  <button
+    disabled={disabled}
+    className={`h-5 w-5 rounded-full ${color} transition duration-200 transform
+      ${disabled ? 'hidden' : 'hover:scale-125'}
+    `}
     onClick={onClick}
-  />
+  ></button>
 )
 
 const Detail = () => {
@@ -419,6 +425,7 @@ const Detail = () => {
 
                 <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
                   <PrioritySelector
+                    disabled={activity.prioridad_etiqueta === 1000}
                     onClick={() =>
                       updatePriority({
                         prioridad_numero: 1000,
@@ -427,6 +434,7 @@ const Detail = () => {
                     }
                   />
                   <PrioritySelector
+                    disabled={activity.prioridad_etiqueta === 600}
                     color='bg-green-500/70'
                     onClick={() =>
                       updatePriority({
@@ -436,6 +444,7 @@ const Detail = () => {
                     }
                   />
                   <PrioritySelector
+                    disabled={activity.prioridad_etiqueta === 400}
                     color='bg-yellow-500/80'
                     onClick={() =>
                       updatePriority({
@@ -445,6 +454,7 @@ const Detail = () => {
                     }
                   />
                   <PrioritySelector
+                    disabled={activity.prioridad_etiqueta === 100}
                     color='bg-red-500/70'
                     onClick={() =>
                       updatePriority({
