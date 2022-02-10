@@ -16,6 +16,8 @@ import TimerContainer from '../timer/TimerContainer'
 import P from '../ui/P'
 import moment from 'moment'
 
+const arrTemp = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
 const BASE_URL = 'http://www.zcloud.cl/registro_avance/'
@@ -58,6 +60,12 @@ const PrioritySelector = ({
   ></button>
 )
 
+const RowContainer = ({ children }) => (
+  <section className='grid grid-cols-6 gap-3 items-baseline bg-white rounded-md shadow p-2 pt-0 transition duration-200 transform hover:scale-[0.99]'>
+    {children}
+  </section>
+)
+
 const Detail = () => {
   const navigate = useNavigate()
   const { id } = useParams()
@@ -83,6 +91,7 @@ const Detail = () => {
   const [modalAdd, toggleModalAdd] = useState(false)
   const [modalClone, toggleModalClone] = useState(false)
   const [modalPause, toggleModalPause] = useState(false)
+  const [modalTimer, toggleModalTimer] = useState(false)
 
   // options
   const [options, setOptions] = useState(initOptions)
@@ -207,6 +216,7 @@ const Detail = () => {
     toggleModalAdd(false)
     toggleModalPause(false)
     toggleModalClone(false)
+    toggleModalTimer(false)
     setValues({ desc: '', id: null, id_ref: null })
   }
 
@@ -719,7 +729,7 @@ const Detail = () => {
                         ).complete
                       }
                     </TimerContainer>
-                    <TimerContainer subtitle='trabajado'>
+                    <TimerContainer subtitle='trabajado' color='orange'>
                       <Timer
                         pause={activity.estado_play_pausa === 2}
                         time={
@@ -729,7 +739,10 @@ const Detail = () => {
                         }
                       />
                     </TimerContainer>
-                    <TimerContainer subtitle='hoy'>
+                    <TimerContainer
+                      subtitle='hoy'
+                      color={activity.estado_play_pausa === 2 ? 'red' : 'green'}
+                    >
                       <Timer
                         pause={activity.estado_play_pausa === 2}
                         time={
@@ -739,6 +752,16 @@ const Detail = () => {
                         }
                       />
                     </TimerContainer>
+                  </div>
+                  <div className='flex justify-center mt-5 '>
+                    <Button
+                      className='bg-orange-50 hover:bg-orange-100 text-orange-500 rounded-full'
+                      iconFirst
+                      type='iconText'
+                      icon='far fa-clock'
+                      name='Modificar tiempos'
+                      onClick={() => toggleModalTimer(true)}
+                    />
                   </div>
                 </aside>
               </section>
@@ -798,13 +821,86 @@ const Detail = () => {
                   <Button
                     disabled={onSaveValidation}
                     className='w-max text-emerald-500 hover:bg-emerald-100 rounded-full place-self-end'
-                    name='Guardar'
+                    name='Guardar cambios'
                     onClick={onSave}
                   />
                 </section>
               </footer>
             </main>
           </div>
+
+          {/* modal timer */}
+          <Modal
+            showModal={modalTimer}
+            isBlur={false}
+            onClose={onCloseModals}
+            className='max-w-7xl'
+            padding='p-4 md:p-6'
+            title='Modificar tiempos de actividad'
+          >
+            <main className='grid gap-1 bg-zinc-100 rounded-md p-2 mt-10 shadow w-[1216px] overflow-auto'>
+              <header className='grid grid-cols-3 gap-1 text-center capitalize font-semibold border-b'>
+                <span className='py-1.5 border-r'>desde</span>
+                <span className='py-1.5 border-r'>hasta</span>
+                <span className='py-1.5'>control</span>
+              </header>
+              <section className='grid grid-cols-6 gap-1 text-center capitalize font-semibold'>
+                <div className='flex gap-4 py-1.5 border-r'>
+                  <span className='ml-2'>Nº</span>{' '}
+                  <span className='text-center w-full mr-3'>fecha</span>
+                </div>
+                <span className='py-1.5 border-r'>hora</span>
+                <span className='py-1.5 border-r'>fecha</span>
+                <span className='py-1.5 border-r'>hora</span>
+                <span className='py-1.5'>tiempo</span>
+                <span />
+              </section>
+              <RowContainer>
+                <div className='flex items-baseline gap-4'>
+                  <span className='block w-10' />
+                  <Input type='date' />
+                </div>
+                <Input />
+                <Input type='date' />
+                <Input />
+                <span className='text-center'>6.3</span>
+                <div className='flex justify-center gap-2 border-l'>
+                  <Button
+                    className='rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
+                    name='agregar'
+                  />
+                </div>
+              </RowContainer>
+              <div className='max-h-72 overflow-custom grid gap-1'>
+                {arrTemp.map((item, i) => (
+                  <RowContainer key={item}>
+                    <div className='flex items-baseline gap-1.5'>
+                      <span className='rounded-lg bg-amber-200/80 text-amber-600 py-0.5 px-2 shadow font-semibold'>
+                        {i + 1}
+                      </span>
+                      <Input type='date' />
+                    </div>
+                    <Input />
+                    <Input type='date' />
+                    <Input />
+                    <span className='text-center'>6.3</span>
+                    <div className='flex justify-center gap-2 border-l'>
+                      <Button
+                        type='icon'
+                        className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 rounded-md'
+                        icon='fas fa-check'
+                      />
+                      <Button
+                        type='icon'
+                        className='bg-red-100 hover:bg-red-200 text-red-500 rounded-md'
+                        icon='fas fa-trash'
+                      />
+                    </div>
+                  </RowContainer>
+                ))}
+              </div>
+            </main>
+          </Modal>
 
           {/* modal edit */}
           <Modal
