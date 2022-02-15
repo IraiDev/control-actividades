@@ -109,7 +109,7 @@ const ActivityCard = props => {
         className={`
         ${colors(prioridad_etiqueta).card}
         border border-black/10
-        p-4 rounded-xl shadow-lg grid content-between transition duration-200 hover:scale-98 transform 
+        p-4 rounded-xl shadow-lg grid content-between transition duration-200 hover:scale-[0.985] transform 
         text-sm shadow-zinc-400/40 hover:shadow-xl hover:shadow-zinc-400/40 relative
         `}
         onDoubleClick={() =>

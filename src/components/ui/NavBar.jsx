@@ -18,6 +18,8 @@ import Input from './Input'
 import TextArea from './TextArea'
 import moment from 'moment'
 
+const env = process.env.REACT_APP_ENVIOREMENT
+
 const initOptions = {
   pr: { label: 'ninguno', value: null },
   sp: { label: 'ninguno', value: null },
@@ -25,6 +27,20 @@ const initOptions = {
   ue: { label: 'ninguno', value: null },
   ur: { label: 'ninguno', value: null },
 }
+
+const EnvType = ({ env, isHide = false }) => (
+  <>
+    {env.length > 0 && (
+      <h5
+        className={`text-lg text-red-400 font-semibold ${
+          isHide && 'hidden md:block'
+        }`}
+      >
+        Serv: {env}
+      </h5>
+    )}
+  </>
+)
 
 const { activity, home } = routes
 
@@ -128,7 +144,11 @@ const NavBar = () => {
           <span />
         )}
 
+        <EnvType env={env} />
+
         <TimerUsers data={usersTimes} />
+
+        <EnvType env={env} isHide />
 
         <section className='bg-black/5 rounded-lg p-1 flex items-center'>
           <Button

@@ -229,7 +229,10 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
             type='iconText'
             name='filtrar'
             icon='fas fa-filter'
-            onClick={onFilter}
+            onClick={() => {
+              onFilter()
+              toggleSideBar()
+            }}
           />
         </div>
       </footer>

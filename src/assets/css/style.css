@@ -1,5 +1,4 @@
-
-.overflow-custom {
+/* .overflow-custom {
    overflow-y: auto;
    overflow-x: auto;
    scroll-behavior: auto;
@@ -18,4 +17,43 @@
  
  .overflow-custom::-webkit-scrollbar-corner {
    background: transparent;
- }
+ } */
+
+.overflow-custom {
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+/* Estilos para motores Webkit y blink (Chrome, Safari, Opera... )*/
+
+.overflow-custom::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+.overflow-custom::-webkit-scrollbar:vertical {
+  width: 6px;
+}
+
+.overflow-custom::-webkit-scrollbar-button:increment,
+.overflow-custom::-webkit-scrollbar-button {
+  display: none;
+}
+
+.overflow-custom::-webkit-scrollbar:horizontal {
+  height: 6px;
+}
+
+.overflow-custom::-webkit-scrollbar-thumb {
+  background-color: #797979;
+  border-radius: 20px;
+}
+
+.overflow-custom::-webkit-scrollbar-track {
+  border-radius: 5px;
+}
+
+.overflow-custom {
+  /*Estilos estándar experimentales (Principalmente Firefox)*/
+  scrollbar-color: rgba(77, 74, 74, 0.5) rgba(0, 0, 0, 0);
+  scrollbar-width: thin;
+}
