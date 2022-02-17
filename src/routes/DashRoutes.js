@@ -2,12 +2,12 @@ import { useEffect, useContext } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { routes } from '../types/types'
 import { ActivityContext } from '../context/ActivityContext';
-import Activity from '../components/screen/Activity'
-import Detail from '../components/screen/Detail'
-import Planner from '../components/screen/Planner'
-import Times from '../components/screen/Times'
-import Todo from '../components/screen/Todo'
+import Detail from '../pages/Detail'
+import Planner from '../pages/Planner'
+import Times from '../pages/Times'
+import Todo from '../pages/Todo'
 import NavBar from '../components/ui/NavBar'
+import Activity from '../pages/Activity';
 
 const { home, activity, planner, times, todo } = routes
 

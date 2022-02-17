@@ -1,5 +1,5 @@
 import { HashRouter, Route, Routes } from 'react-router-dom'
-import Login from '../components/screen/Login'
+import Login from '../pages/Login'
 import DashRoutes from './DashRoutes'
 import PrivateRoutes from './PrivateRoutes'
 import PublicRoutes from './PublicRoutes'
