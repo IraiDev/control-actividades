@@ -10,7 +10,6 @@ const Card = ({
    return (
       <main
          className={`
-         border-[1.5px] border-black/10
          p-4 rounded-xl shadow-lg grid content-between transition duration-200 hover:scale-[0.985] transform 
          text-sm shadow-zinc-400/40 hover:shadow-xl hover:shadow-zinc-400/40 relative
          ${
@@ -25,8 +24,7 @@ const Card = ({
                : 'bg-white text-slate-600'
          }
          `}
-         onDoubleClick={onDoubleClick}
-      >
+         onDoubleClick={onDoubleClick}>
          {children}
 
          {showPing && <PingIndicator />}

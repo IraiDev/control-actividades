@@ -245,8 +245,8 @@ const ActivityCard = props => {
                      direction='top'
                      align='end'
                      menuButton={
-                        <MenuButton>
-                           <i className='fas fa-bars' />
+                        <MenuButton className='pl-4'>
+                           <i className='fas fa-ellipsis-v' />
                         </MenuButton>
                      }>
                      <MenuItem

@@ -1,5 +1,6 @@
 import { useEffect, useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ActivityContext } from '../context/ActivityContext'
 import { UiContext } from '../context/UiContext'
 import { Alert } from '../helpers/alerts'
 import { fetchToken, fetchTokenFile } from '../helpers/fetch'
@@ -8,6 +9,7 @@ import { routes } from '../types/types'
 export const useDetail = id => {
    const navigate = useNavigate()
    const { setIsLoading } = useContext(UiContext)
+   const { filters, saveFilters } = useContext(ActivityContext)
    const [activity, setActivity] = useState({})
    const [detentions, setDetentions] = useState({})
 
@@ -26,10 +28,19 @@ export const useDetail = id => {
          if (ok) {
             setActivity(tareas[0])
          } else {
-            console.log('Error')
+            navigate(routes.activity, { replace: true })
+            Alert({
+               icon: 'warn',
+               title: 'Atención',
+               content: 'La actividad apuntada no se encuentra disponible',
+               showCancelButton: false,
+               showConfirmButton: false,
+               timer: 3000,
+            })
          }
       } catch (e) {
-         console.log(e)
+         navigate(routes.activity, { replace: true })
+         console.log('error fetch detail', e)
          setIsLoading(false)
       }
    }
@@ -382,7 +393,14 @@ export const useDetail = id => {
          const body = await resp.json()
 
          if (body.ok) {
-            fetchDetail()
+            saveFilters({ payload: { reload: !filters.reload } })
+            Alert({
+               title: 'Actividad actualizada',
+               content: `La actividad: <strong>${id}</strong> paso a : <strong>P.R</strong>`,
+               showCancelButton: false,
+               showConfirmButton: false,
+               timer: 3000,
+            })
          } else {
             Alert({
                icon: 'error',
@@ -399,6 +417,8 @@ export const useDetail = id => {
    useEffect(() => {
       id && fetchDetail()
       id && getDetentions({ id_actividad: id })
+
+      return () => null
       // eslint-disable-next-line
    }, [])
 

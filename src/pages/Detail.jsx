@@ -93,6 +93,7 @@ const Detail = () => {
    const [modalClone, toggleModalClone] = useState(false)
    const [modalPause, toggleModalPause] = useState(false)
    const [modalTimer, toggleModalTimer] = useState(false)
+   const [modalPR, toggleModalPR] = useState(false)
 
    // options
    const [options, setOptions] = useState(initOptions)
@@ -203,6 +204,7 @@ const Detail = () => {
       toggleModalPause(false)
       toggleModalClone(false)
       toggleModalTimer(false)
+      toggleModalPR(false)
       setValues({ desc: '', id: null, id_ref: null })
    }
 
@@ -379,6 +381,21 @@ const Detail = () => {
             seconds: time._data.seconds,
          },
       }
+   }
+
+   const handleUpdateState = () => {
+      Alert({
+         icon: 'warn',
+         title: 'Atención',
+         content:
+            '¿Estas seguro de cambiar el estado a: <strong>PARA REVISIÓN</strong>?',
+         confirmButton: 'Si, actualizar',
+         cancelButton: 'No, cancelar',
+         action: () => {
+            navigate(routes.activity, { replace: true })
+            toggleState({})
+         },
+      })
    }
 
    useEffect(() => {
@@ -849,13 +866,11 @@ const Detail = () => {
                            />
                            <Button
                               hidden={activity.estado !== 2}
+                              title='Pasar actividad a revisión'
                               type='icon'
                               icon='fas fa-eye'
                               className='text-orange-400 bg-orange-50 hover:bg-orange-100 rounded-lg w-max'
-                              onClick={() => {
-                                 navigate(routes.activity, { replace: true })
-                                 toggleState({})
-                              }}
+                              onClick={() => toggleModalPR(true)}
                            />
                         </section>
 
@@ -877,6 +892,29 @@ const Detail = () => {
                      </footer>
                   </main>
                </div>
+
+               {/* modal PR */}
+               <Modal
+                  showModal={modalPR}
+                  isBlur={false}
+                  onClose={onCloseModals}
+                  className='max-w-xl'
+                  padding='p-4 md:p-6'
+                  title='Mensaje opcional para Cliente'>
+                  <TextArea field='mensaje' />
+                  <div className='flex justify-between mt-5'>
+                     <Button
+                        className='text-red-500 hover:bg-red-100 rounded-full'
+                        name='cancelar'
+                        onClick={onCloseModals}
+                     />
+                     <Button
+                        className='text-emerald-500 hover:bg-emerald-100 rounded-full'
+                        name='aceptar'
+                        onClick={handleUpdateState}
+                     />
+                  </div>
+               </Modal>
 
                {/* modal timer */}
                <Modal

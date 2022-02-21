@@ -57,7 +57,6 @@ const NavBar = () => {
 
    const [files, setFiles] = useState([])
    const [options, setOptions] = useState(initOptions)
-   const [reload, setReload] = useState(false)
    const [
       { title, ticket, priority, time, desc, gloss },
       onChangeValues,
@@ -189,11 +188,10 @@ const NavBar = () => {
                   onClick={() => {
                      getTimes()
                      if (pathname === activity || pathname === home) {
-                        setReload(!reload)
                         saveFilters({
                            payload: {
                               offset: 0,
-                              reload,
+                              reload: !filters.reload,
                            },
                         })
                      }
