@@ -12,12 +12,12 @@ import TBody from '../components/table/TBody'
 import THead from '../components/table/THead'
 import Th from '../components/table/Th'
 import Td from '../components/table/Td'
-import moment from 'moment'
 import ActivityCard from '../components/card/customCard/ActivityCard'
 import Container from '../components/ui/Container'
 import FooterPage from '../components/ui/FooterPage'
 import FooterCounter from '../components/ui/FooterCounter'
 import PingIndicator from '../components/ui/PingIndicator'
+import moment from 'moment'
 
 const PrioritySelector = ({ onClick, color = 'bg-slate-400' }) => (
    <span
@@ -58,6 +58,7 @@ const Activity = () => {
       updatePriority,
       onPlayPause,
       updatePriorityAndAddNote,
+      toggleState,
    } = useActivity()
 
    const toggleView = (state, time = 1000) => {
@@ -178,6 +179,13 @@ const Activity = () => {
                            updatePriority({
                               prioridad_numero: 1000,
                               id_actividad: act.id_det,
+                           })
+                        }
+                        toggleState={({ tiempo_estimado }) =>
+                           toggleState({
+                              id_actividad: act.id_det,
+                              estado: 2,
+                              tiempo_estimado,
                            })
                         }
                         addNote={onAddNote}

@@ -230,6 +230,30 @@ export const useActivity = () => {
       }
    }
 
+   const toggleState = async ({ id_actividad, estado, tiempo_estimado }) => {
+      try {
+         const resp = await fetchToken(
+            'task/change-activity-state',
+            { id_actividad, estado, tiempo_estimado },
+            'POST'
+         )
+         const body = await resp.json()
+
+         if (body.ok) {
+            fetchActivities()
+         } else {
+            Alert({
+               icon: 'error',
+               title: 'Atención',
+               content: body.response,
+               showCancelButton: false,
+            })
+         }
+      } catch (err) {
+         console.log(err)
+      }
+   }
+
    useEffect(() => {
       fetchActivities()
       // eslint-disable-next-line
@@ -245,5 +269,6 @@ export const useActivity = () => {
       onPlayPause,
       updatePriorityAndAddNote,
       getActivities: fetchActivities,
+      toggleState,
    }
 }
