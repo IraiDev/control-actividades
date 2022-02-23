@@ -44,7 +44,7 @@ const Modal = ({
                   className={`rounded-md bg-white shadow-xl relative w-full max-h-full overflow-custom ${padding}`}>
                   <Button
                      onClick={onClose}
-                     className='absolute z-50 right-4 top-4 hover:bg-zinc-100 text-slate-700'>
+                     className='absolute z-50 right-4 top-4 text-slate-700 hover:text-red-500'>
                      <i className='fas fa-times fa-lg' />
                   </Button>
                   <h1 className='w-full text-center my-3 px-4 text-xl font-semibold capitalize'>
