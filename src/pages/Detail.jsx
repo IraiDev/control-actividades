@@ -671,6 +671,7 @@ const Detail = () => {
                               <Input
                                  field='T. estimado (*)'
                                  value={time}
+                                 isNumber
                                  onChange={e =>
                                     setFields({
                                        ...fields,
@@ -1320,6 +1321,7 @@ const Detail = () => {
                            <Input
                               field='T. estimado (*)'
                               value={cTime}
+                              isNumber
                               onChange={e =>
                                  setCloneFields({
                                     ...cloneFields,

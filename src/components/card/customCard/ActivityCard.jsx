@@ -12,6 +12,7 @@ import CardSection from '../CardSection'
 import CardFooter from '../CardFooter'
 import CardContent from '../CardContent'
 import OnOutsiceClick from 'react-outclick'
+import { Alert } from '../../../helpers/alerts'
 import moment from 'moment'
 
 const defaultNotes = [
@@ -32,8 +33,11 @@ const defaultPauses = [
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
-const CustomMenu = ({ name, value, onChange, onClick }) => {
+const CustomMenu = ({ name, value, onChange, onClick, reset }) => {
    const [showContextMenu, setShowContextMenu] = useState(false)
+
+   const validation = value === '' || value === '0'
+
    return (
       <main className='relative z-40'>
          <Button
@@ -45,7 +49,11 @@ const CustomMenu = ({ name, value, onChange, onClick }) => {
             <i className='fas fa-chevron-right fa-sm' />
          </Button>
          {showContextMenu && (
-            <OnOutsiceClick onOutsideClick={() => setShowContextMenu(false)}>
+            <OnOutsiceClick
+               onOutsideClick={() => {
+                  setShowContextMenu(false)
+                  reset()
+               }}>
                <div className='p-4 pb-2.5 bg-white absolute bottom-8 left-5 text-slate-600 rounded-md shadow-lg border z-40'>
                   <h1 className='text-xs font-semibold'>
                      Ingrese tiempo estimado
@@ -53,27 +61,40 @@ const CustomMenu = ({ name, value, onChange, onClick }) => {
                   <p className='text-xs text-slate-400 my-3'>
                      (Por defecto 1 hora)
                   </p>
-                  <input
-                     type='text'
-                     className='border-b outline-none p-1 focus:border-blue-500'
-                     placeholder='EJ: 2.4'
-                     name={name}
-                     value={value}
-                     onChange={onChange}
-                     onKeyPress={e => {
-                        if (!/[0-9]/.test(e.key)) {
-                           e.preventDefault()
-                        }
-                     }}
-                  />
-                  <footer className='flex items-baseline gap-2 mt-2'>
+                  <div className='relative'>
+                     <input
+                        type='text'
+                        className={`border-b outline-none p-1 ${
+                           validation
+                              ? 'focus:border-red-500 border-red-500'
+                              : 'focus:border-blue-500'
+                        }`}
+                        placeholder='EJ: 2.4'
+                        name={name}
+                        value={value}
+                        onChange={onChange}
+                        onKeyPress={e => {
+                           if (!/[\d.]/.test(e.key)) {
+                              // Allow only numbers and dots
+                              e.preventDefault()
+                           }
+                        }}
+                     />
+                     {validation && (
+                        <span className='text-red-500 absolute -bottom-5 right-4'>
+                           valor no valido
+                        </span>
+                     )}
+                  </div>
+                  <footer className='flex items-baseline gap-2 mt-4'>
                      <Button
                         className='text-red-500 hover:bg-red-100 rounded-full'
                         onClick={() => setShowContextMenu(false)}>
                         Cancelar
                      </Button>
                      <Button
-                        className='text-emerald-500 hover:bg-emerald-100 rounded-full'
+                        disabled={validation}
+                        className='text-emerald-500 hover:bg-emerald-100 rounded-full disabled:hover:bg-transparent'
                         onClick={() => {
                            onClick()
                            setShowContextMenu(false)
@@ -114,7 +135,7 @@ const ActivityCard = props => {
 
    const [{ desc, time }, onChangeValues, reset] = useForm({
       desc: '',
-      time: 1,
+      time: props.tiempo_estimado,
    })
    const [values, setValues] = useState({ desc: '', id: null })
 
@@ -148,6 +169,22 @@ const ActivityCard = props => {
 
    const handleNavigate = () => {
       navigate(`detalle-actividad/${props.id_det}`, { replace: true })
+   }
+
+   const handleUpdateState = () => {
+      if (time === '' || time === '0') {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content:
+               'Ingrese un tiempo estimado valido (Campo no debe estar vacio ni debe ser 0)',
+            showCancelButton: false,
+         })
+         return
+      }
+
+      toggleState({ tiempo_estimado: time })
+      reset()
    }
 
    return (
@@ -222,10 +259,8 @@ const ActivityCard = props => {
                      name='time'
                      value={time}
                      onChange={onChangeValues}
-                     onClick={() => {
-                        toggleState({ tiempo_estimado: time })
-                        reset()
-                     }}
+                     onClick={handleUpdateState}
+                     reset={reset}
                   />
                ) : (
                   <Button

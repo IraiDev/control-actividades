@@ -364,6 +364,7 @@ const NavBar = () => {
                      <Input
                         field='T. estimado (*)'
                         name='time'
+                        isNumber
                         value={time}
                         onChange={onChangeValues}
                      />

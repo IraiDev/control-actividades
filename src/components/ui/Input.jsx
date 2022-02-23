@@ -12,11 +12,11 @@ const Input = ({
    disabled = false,
    tooltip,
    isNumber = false,
-   className
+   className,
 }) => {
    return (
       <div className={className}>
-         <p className="px-4 py-1 capitalize text-xs">{field}</p>
+         <p className='px-4 py-1 capitalize text-xs'>{field}</p>
          <input
             id={id}
             name={name}
@@ -27,12 +27,13 @@ const Input = ({
             type={type}
             className={`px-4 py-2 rounded-md bg-black/5 focus:bg-white transition duration-200 focus:ring-2 focus:shadow-lg ${width}`}
             placeholder={placeholder}
-            onKeyPress={(event) => {
+            onKeyPress={event => {
                if (!isNumber) return
-               if (!/[0-9]/.test(event.key)) {
-                  event.preventDefault();
+               if (!/[\d.]/.test(event.key)) {
+                  event.preventDefault()
                }
-            }} />
+            }}
+         />
       </div>
    )
 }
