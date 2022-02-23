@@ -15,6 +15,7 @@ import TimerContainer from '../components/timer/TimerContainer'
 import P from '../components/ui/P'
 import Numerator from '../components/ui/Numerator'
 import moment from 'moment'
+import AlertBar from '../components/ui/AlertBar'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
@@ -102,6 +103,7 @@ const Detail = () => {
    // files
    const [files, setFiles] = useState(null)
    const [cloneFiles, setCloneFiles] = useState(null)
+   const [cleanFile, onCleanFile] = useState(Math.random().toString(36))
 
    // inputs values
    const [values, setValues] = useState({
@@ -133,35 +135,46 @@ const Detail = () => {
       cloneFields
    const { projects, subProjects, users } = optionsArray
 
-   const vTitle = title === activity.actividad
-   const vDesc = description === activity.func_objeto
-   const vPriority = Number(priority) === activity.num_prioridad
-   const vTicket = Number(ticket) === activity.num_ticket_edit
-   const vTime = Number(time) === activity.tiempo_estimado
-   const vGloss = gloss === activity.glosa_explicativa
-   const vFiles = files === null
-   const vProject = options.pr?.value === activity.id_proy
-   const vSubProy =
-      options.sp?.value === activity.id_sub_proyecto ||
-      options.sp?.value === undefined
-   const vSolicita = options.us?.value === activity.user_solicita
-   const vEncargado = options.ue?.value === activity.encargado_actividad
-   const vRevisor =
-      options.ur?.id === activity.id_revisor || options.ur?.id === undefined
+   const validation = () => {
+      const vTitle = title.trim() === ''
+      const vDesc = description.trim() === ''
+      const vPriority = priority.toString().trim() === ''
+      const vTime = time.toString().trim() === ''
+      const vProject = options.pr?.value === null
+      const vSolicita = options.us?.value === null
+      const vEncargado = options.ue?.value === null
 
-   const onSaveValidation =
-      vTitle &&
-      vDesc &&
-      vPriority &&
-      vTicket &&
-      vTime &&
-      vGloss &&
-      vFiles &&
-      vProject &&
-      vSubProy &&
-      vSolicita &&
-      vEncargado &&
-      vRevisor
+      const onSaveValidation =
+         vTitle ||
+         vDesc ||
+         vPriority ||
+         vTime ||
+         vProject ||
+         vSolicita ||
+         vEncargado
+
+      const vTitleC = cTitle.trim() === ''
+      const vDescC = cDescription.trim() === ''
+      const vPriorityC = cPriority.toString().trim() === ''
+      const vTimeC = cTime.toString().trim() === ''
+      const vProjectC = cloneOptions.pr?.value === null
+      const vSolicitaC = cloneOptions.us?.value === null
+      const vEncargadoC = cloneOptions.ue?.value === null
+
+      const onCloneValidation =
+         vTitleC ||
+         vDescC ||
+         vPriorityC ||
+         vTimeC ||
+         vProjectC ||
+         vSolicitaC ||
+         vEncargadoC
+
+      return {
+         isSave: onSaveValidation,
+         isClone: onCloneValidation,
+      }
+   }
 
    let userStyles = {
       priority: 'S/P',
@@ -342,6 +355,9 @@ const Detail = () => {
       files && formData.append('archivos', files)
 
       await saveActivity(formData)
+
+      setFiles(null)
+      onCleanFile(Math.random().toString(36))
    }
 
    const onClone = async () => {
@@ -363,6 +379,8 @@ const Detail = () => {
       if (!ok) return
       onCloseModals()
       navigate(routes.activity)
+      setCloneFiles(null)
+      onCleanFile(Math.random().toString(36))
    }
 
    const timeFormat = time => {
@@ -432,8 +450,8 @@ const Detail = () => {
       <>
          {Object.keys(activity).length > 0 && (
             <>
-               <div className='xl:container  mx-auto px-2 py-10'>
-                  <main className='bg-white p-4 md:p-6 rounded-lg shadow-lg shadow-gray-600/10 border grid gap-5'>
+               <main className='xl:container  mx-auto px-2 py-10'>
+                  <div className='bg-white p-4 md:p-6 rounded-lg shadow-lg shadow-gray-600/10 border grid gap-5'>
                      <header className='flex flex-wrap items-center justify-between'>
                         <Button
                            type='icon'
@@ -490,6 +508,8 @@ const Detail = () => {
                      <h1 className='text-xl text-center font-semibold capitalize truncate'>
                         {activity.actividad || 'Sin titulo'}
                      </h1>
+
+                     <AlertBar validation={validation().isSave} />
 
                      <section className='grid grid-cols-1 lg:grid-cols-8 gap-5 '>
                         <aside className='col-span-1 md:col-span-2'>
@@ -554,7 +574,7 @@ const Detail = () => {
 
                            <section className='grid gap-2'>
                               <CustomSelect
-                                 label='Proyecto'
+                                 label='Proyecto (*)'
                                  options={projects}
                                  value={options.pr}
                                  onChange={option =>
@@ -576,7 +596,7 @@ const Detail = () => {
                                  }
                               />
                               <CustomSelect
-                                 label='Solicitante'
+                                 label='Solicitante (*)'
                                  options={users}
                                  value={options.us}
                                  onChange={option =>
@@ -584,7 +604,7 @@ const Detail = () => {
                                  }
                               />
                               <CustomSelect
-                                 label='Encargado'
+                                 label='Encargado (*)'
                                  options={users}
                                  value={options.ue}
                                  onChange={option =>
@@ -604,14 +624,14 @@ const Detail = () => {
 
                         <section className='col-span-1 md:col-span-3 grid gap-2'>
                            <Input
-                              field='titulo'
+                              field='titulo (*)'
                               value={title}
                               onChange={e =>
                                  setFields({ ...fields, title: e.target.value })
                               }
                            />
                            <TextArea
-                              field='descripccion'
+                              field='descripccion (*)'
                               value={description}
                               onChange={e =>
                                  setFields({
@@ -631,6 +651,7 @@ const Detail = () => {
                               <Input
                                  field='ticket'
                                  value={ticket}
+                                 isNumber
                                  onChange={e =>
                                     setFields({
                                        ...fields,
@@ -639,8 +660,9 @@ const Detail = () => {
                                  }
                               />
                               <Input
-                                 field='prioridad'
+                                 field='prioridad (*)'
                                  value={priority}
+                                 isNumber
                                  onChange={e =>
                                     setFields({
                                        ...fields,
@@ -649,7 +671,7 @@ const Detail = () => {
                                  }
                               />
                               <Input
-                                 field='T. estimado'
+                                 field='T. estimado (*)'
                                  value={time}
                                  onChange={e =>
                                     setFields({
@@ -714,10 +736,10 @@ const Detail = () => {
                                     <li
                                        key={file.id_docum}
                                        className='p-2 bg-white 
-                            border-t flex items-center justify-between'>
+                                          border-t flex items-center justify-between'>
                                        <a
                                           className='text-slate-500 hover:text-blue-400 transition 
-                                duration-200 transform hover:scale-105 text-sm w-full truncate'
+                                             duration-200 transform hover:scale-105 text-sm w-full truncate'
                                           href={BASE_URL + file.ruta_docum}
                                           rel='noreferrer'
                                           target='_blank'>
@@ -744,12 +766,13 @@ const Detail = () => {
                               )}
                            </ul>
                            <input
+                              key={cleanFile}
                               className='
-                      file:rounded-full file:bg-blue-50 file:py-2 file:px-4 file:text-sm
-                      file:hover:bg-blue-100 file:text-blue-400 file:border-none
-                      file:transition file:duration-500 file:cursor-pointer file:font-semibold
-                      file:hover:shadow-lg file:hover:shadow-blue-400/20 text-slate-400 text-sm
-                      file:mt-5'
+                                 file:rounded-full file:bg-blue-50 file:py-2 file:px-4 file:text-sm
+                                 file:hover:bg-blue-100 file:text-blue-400 file:border-none
+                                 file:transition file:duration-500 file:cursor-pointer file:font-semibold
+                                 file:hover:shadow-lg file:hover:shadow-blue-400/20 text-slate-400 text-sm
+                                 file:mt-5 max-w-max'
                               type='file'
                               name='file'
                               onChange={e => setFiles(e.target.files[0])}
@@ -883,15 +906,15 @@ const Detail = () => {
                               }
                            />
                            <Button
-                              disabled={onSaveValidation}
+                              disabled={validation().isSave}
                               className='w-max text-emerald-500 hover:bg-emerald-100 rounded-full place-self-end'
                               name='Guardar cambios'
                               onClick={onSave}
                            />
                         </section>
                      </footer>
-                  </main>
-               </div>
+                  </div>
+               </main>
 
                {/* modal PR */}
                <Modal
@@ -1188,11 +1211,12 @@ const Detail = () => {
                   title={`Clonar actividad: ${activity.id_det}, ${
                      activity.actividad || 'Sin titulo'
                   }`}>
+                  <AlertBar validation={validation().isClone} />
                   <div className='grid gap-5'>
                      <header className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         <aside>
                            <span className='grid gap-2 capitalize text-sm'>
-                              proyecto:
+                              proyecto (*):
                               <Select
                                  className='uppercase'
                                  placeholder='Seleccione'
@@ -1228,7 +1252,7 @@ const Detail = () => {
                               />
                            </span>
                            <span className='grid gap-2 capitalize text-sm'>
-                              Solicitante:
+                              Solicitante (*):
                               <Select
                                  className='uppercase'
                                  placeholder='Seleccione'
@@ -1243,7 +1267,7 @@ const Detail = () => {
                               />
                            </span>
                            <span className='grid gap-2 capitalize text-sm'>
-                              encargado:
+                              encargado (*):
                               <Select
                                  className='uppercase'
                                  placeholder='Seleccione'
@@ -1276,7 +1300,7 @@ const Detail = () => {
 
                         <aside className='mt-0.5'>
                            <Input
-                              field='titulo'
+                              field='titulo (*)'
                               value={cTitle}
                               onChange={e =>
                                  setCloneFields({
@@ -1287,6 +1311,7 @@ const Detail = () => {
                            />
                            <Input
                               field='ticket'
+                              isNumber
                               value={cTicket}
                               onChange={e =>
                                  setCloneFields({
@@ -1296,7 +1321,8 @@ const Detail = () => {
                               }
                            />
                            <Input
-                              field='prioridad'
+                              field='prioridad (*)'
+                              isNumber
                               value={cPriority}
                               onChange={e =>
                                  setCloneFields({
@@ -1306,7 +1332,7 @@ const Detail = () => {
                               }
                            />
                            <Input
-                              field='T. estimado'
+                              field='T. estimado (*)'
                               value={cTime}
                               onChange={e =>
                                  setCloneFields({
@@ -1320,7 +1346,7 @@ const Detail = () => {
 
                      <section className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         <TextArea
-                           field='descripccion'
+                           field='descripccion (*)'
                            value={cDescription}
                            onChange={e =>
                               setCloneFields({
@@ -1343,13 +1369,13 @@ const Detail = () => {
 
                      <footer className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-10'>
                         <input
+                           key={cleanFile}
                            className='
-                  file:rounded-full file:bg-blue-50 file:py-2 file:px-4 file:text-sm
-                  file:hover:bg-blue-100 file:text-blue-400 file:border-none
-                  file:transition file:duration-500 file:cursor-pointer file:font-semibold
-                  file:hover:shadow-lg file:hover:shadow-blue-400/20 text-slate-400 text-sm
-                  file:mt-5
-                  '
+                              file:rounded-full file:bg-blue-50 file:py-2 file:px-4 file:text-sm
+                              file:hover:bg-blue-100 file:text-blue-400 file:border-none
+                              file:transition file:duration-500 file:cursor-pointer file:font-semibold
+                              file:hover:shadow-lg file:hover:shadow-blue-400/20 text-slate-400 text-sm
+                              file:mt-5 max-w-max'
                            type='file'
                            name='cloneFile'
                            onChange={e => setCloneFiles(e.target.files[0])}
@@ -1362,6 +1388,7 @@ const Detail = () => {
                               onClick={onCloseModals}
                            />
                            <Button
+                              disabled={validation().isClone}
                               className='w-max text-yellow-500 hover:bg-yellow-100 rounded-full place-self-end'
                               name='clonar actividad'
                               icon='fas fa-trash'

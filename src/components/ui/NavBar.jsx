@@ -17,6 +17,7 @@ import CustomSelect from './CustomSelect'
 import Input from './Input'
 import TextArea from './TextArea'
 import moment from 'moment'
+import AlertBar from './AlertBar'
 
 const env = process.env.REACT_APP_ENVIOREMENT
 
@@ -64,22 +65,22 @@ const NavBar = () => {
    ] = useForm({
       title: '',
       ticket: '',
-      priority: 150,
+      priority: '150',
       time: '',
       desc: '',
       gloss: '',
    })
 
-   const vTitle = title === ''
-   const vTime = time === ''
-   const vDesc = desc === ''
-   const vPriority = priority === ''
+   const vTitle = title.trim() === ''
+   const vDesc = desc.trim() === ''
+   const vPriority = priority.trim() === ''
+   const vTime = time.trim() === ''
    const vPr = options.pr.value === null
    const vUs = options.us.value === null
    const vUe = options.ue.value === null
 
    const onCreateValidation =
-      vTitle || vTime || vDesc || vPriority || vPr || vUs || vUe
+      vTitle || vDesc || vTime || vPriority || vPr || vUs || vUe
 
    const { projects, subProjects, users } = optionsArray
 
@@ -282,12 +283,7 @@ const NavBar = () => {
             onClose={onCloseModal}
             padding='p-4 md:p-6'
             title='Nueva actividad'>
-            <span
-               className={`rounded-md text-red-500 text-sm py-1 px-2.5 block w-max mx-auto my-2 h-7
-          ${onCreateValidation ? 'bg-red-100' : 'bg-transparent'}`}>
-               {onCreateValidation &&
-                  'completa los campos requeridos para crear una nueva actividad, campos requeridos (*)'}
-            </span>
+            <AlertBar validation={onCreateValidation} />
             <div className='grid gap-5'>
                <header className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <aside className='grid gap-1'>
@@ -351,12 +347,14 @@ const NavBar = () => {
                         name='ticket'
                         value={ticket}
                         onChange={onChangeValues}
+                        isNumber
                      />
                      <Input
                         field='prioridad (*)'
                         name='priority'
                         value={priority}
                         onChange={onChangeValues}
+                        isNumber
                      />
                      <Input
                         field='T. estimado (*)'
@@ -388,7 +386,7 @@ const NavBar = () => {
                         file:rounded-full file:bg-blue-50 file:py-2 file:px-4 file:text-sm
                         file:hover:bg-blue-100 file:text-blue-400 file:border-none
                         file:transition file:duration-500 file:cursor-pointer file:font-semibold
-                        text-slate-400 text-sm file:mt-5'
+                        text-slate-400 text-sm file:mt-5 max-w-max'
                      type='file'
                      name='file'
                      onChange={e => setFiles(e.target.files[0])}

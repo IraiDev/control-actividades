@@ -37,9 +37,10 @@ const CustomMenu = ({ name, value, onChange, onClick }) => {
    return (
       <div className='relative z-40'>
          <button
+            title='pasa actividad a E.T'
             className='bg-transparent hover:bg-black/5 rounded-md py-0.5 px-1.5'
             onClick={() => setShowContextMenu(true)}>
-            <i className='fas fa-play fa-sm' /> + En trabajo
+            <i className='fas fa-hammer fa-sm' />
          </button>
          {showContextMenu && (
             <OnOutsiceClick onOutsideClick={() => setShowContextMenu(false)}>

@@ -226,11 +226,11 @@ export const useDetail = id => {
          if (body.ok) {
             fetchDetail()
             Alert({
-               title: 'Actividad actualizada',
-               content: 'Cambios guardados correctamente',
+               content: 'Actividad actualizada',
                showCancelButton: false,
                showConfirmButton: false,
-               timer: 2000,
+               statusIcon: 'success',
+               timer: 1500,
             })
          } else {
             Alert({
@@ -259,11 +259,11 @@ export const useDetail = id => {
 
          if (body.ok) {
             Alert({
-               title: 'Atención',
-               content: 'Actividad creada!',
+               content: 'Actividad clonada',
+               statusIcon: 'success',
                showCancelButton: false,
                showConfirmButton: false,
-               timer: 2000,
+               timer: 1500,
             })
             return body.ok
          } else {
@@ -293,6 +293,13 @@ export const useDetail = id => {
 
             if (body.ok) {
                navigate(routes.activity, { replace: true })
+               Alert({
+                  content: 'Actividad eliminada!',
+                  statusIcon: 'success',
+                  showCancelButton: false,
+                  showConfirmButton: false,
+                  timer: 1500,
+               })
             } else {
                Alert({
                   icon: 'error',
@@ -395,8 +402,8 @@ export const useDetail = id => {
          if (body.ok) {
             saveFilters({ payload: { reload: !filters.reload } })
             Alert({
-               title: 'Actividad actualizada',
                content: `La actividad: <strong>${id}</strong> paso a : <strong>P.R</strong>`,
+               statusIcon: 'success',
                showCancelButton: false,
                showConfirmButton: false,
                timer: 3000,
