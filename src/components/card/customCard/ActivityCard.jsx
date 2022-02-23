@@ -35,19 +35,21 @@ const TODAY = moment(new Date()).format('yyyy-MM-DD')
 const CustomMenu = ({ name, value, onChange, onClick }) => {
    const [showContextMenu, setShowContextMenu] = useState(false)
    return (
-      <div className='relative z-40'>
-         <button
+      <main className='relative z-40'>
+         <Button
+            size='w-11 h-7'
             title='pasa actividad a E.T'
-            className='bg-transparent hover:bg-black/5 rounded-md py-0.5 px-1.5'
+            className='hover:bg-black/5'
             onClick={() => setShowContextMenu(true)}>
             <i className='fas fa-hammer fa-sm' />
-         </button>
+            <i className='fas fa-chevron-right fa-sm' />
+         </Button>
          {showContextMenu && (
             <OnOutsiceClick onOutsideClick={() => setShowContextMenu(false)}>
                <div className='p-4 pb-2.5 bg-white absolute bottom-8 left-5 text-slate-600 rounded-md shadow-lg border z-40'>
-                  <p className='text-xs font-semibold'>
+                  <h1 className='text-xs font-semibold'>
                      Ingrese tiempo estimado
-                  </p>
+                  </h1>
                   <p className='text-xs text-slate-400 my-3'>
                      (Por defecto 1 hora)
                   </p>
@@ -64,26 +66,26 @@ const CustomMenu = ({ name, value, onChange, onClick }) => {
                         }
                      }}
                   />
-                  <div className='flex items-baseline gap-2 mt-2'>
+                  <footer className='flex items-baseline gap-2 mt-2'>
                      <Button
-                        onClick={() => setShowContextMenu(false)}
                         className='text-red-500 hover:bg-red-100 rounded-full'
-                        name='cancelar'
-                     />
+                        onClick={() => setShowContextMenu(false)}>
+                        Cancelar
+                     </Button>
                      <Button
                         className='text-emerald-500 hover:bg-emerald-100 rounded-full'
-                        name='aceptar'
                         onClick={() => {
                            onClick()
                            setShowContextMenu(false)
-                        }}
-                     />
-                  </div>
+                        }}>
+                        Aceptar
+                     </Button>
+                  </footer>
                   <div className='w-4 h-4 bg-white absolute -bottom-1 left-3 transform rotate-45 z-10' />
                </div>
             </OnOutsiceClick>
          )}
-      </div>
+      </main>
    )
 }
 
@@ -226,7 +228,9 @@ const ActivityCard = props => {
                      }}
                   />
                ) : (
-                  <button
+                  <Button
+                     className='hover:bg-black/5'
+                     size='w-7 h-7'
                      onClick={
                         ESTADO_play
                            ? () => toggleModalPause(true)
@@ -239,7 +243,7 @@ const ActivityCard = props => {
                               : 'fas fa-play fa-sm'
                         }
                      />
-                  </button>
+                  </Button>
                )}
                <div>
                   <Menu
@@ -341,13 +345,13 @@ const ActivityCard = props => {
                   onChange={onChangeValues}
                />
                <Button
-                  className='w-max text-blue-500 hover:bg-blue-100 rounded-full place-self-end'
-                  name='crear nota'
+                  className='text-blue-500 hover:bg-blue-100 place-self-end'
                   onClick={() => {
                      addNote({ id_actividad: props.id_det, description: desc })
                      onCloseModals()
-                  }}
-               />
+                  }}>
+                  crear nota
+               </Button>
             </div>
          </Modal>
 
@@ -416,7 +420,7 @@ const ActivityCard = props => {
                   onChange={e => setValues({ ...values, desc: e.target.value })}
                />
                <Button
-                  className='w-max text-blue-500 hover:bg-blue-100 rounded-full place-self-end'
+                  className='text-blue-500 hover:bg-blue-100 place-self-end'
                   name='modificar nota'
                   onClick={() =>
                      updateNote({
@@ -424,8 +428,9 @@ const ActivityCard = props => {
                         description: values.desc,
                         id_actividad: props.id_det,
                      })
-                  }
-               />
+                  }>
+                  modificar nota
+               </Button>
             </div>
          </Modal>
 
@@ -473,13 +478,13 @@ const ActivityCard = props => {
                />
                <footer className='flex items-center justify-between'>
                   <Button
-                     className='w-max text-blue-500 hover:bg-blue-100 rounded-full'
+                     className='text-blue-500 hover:bg-blue-100 place-self-end'
                      name='cancelar'
-                     onClick={() => onCloseModals()}
-                  />
+                     onClick={() => onCloseModals()}>
+                     cancelar
+                  </Button>
                   <Button
-                     className='w-max text-red-500 hover:bg-red-100 rounded-full'
-                     name='Pausar actividad'
+                     className='text-red-500 hover:bg-red-100 place-self-end'
                      onClick={() => {
                         pauseActivity({
                            flag: false,
@@ -487,8 +492,9 @@ const ActivityCard = props => {
                            mensaje: values.desc,
                         })
                         onCloseModals()
-                     }}
-                  />
+                     }}>
+                     pausar actividad
+                  </Button>
                </footer>
             </div>
          </Modal>

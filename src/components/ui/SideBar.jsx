@@ -83,13 +83,11 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
          `}>
          <header className='flex items-center justify-between p-5'>
             <h1 className='capitalize text-gray-500'>Filtros</h1>
-            <Button
-               className='rounded-lg hover:bg-slate-200 text-slate-700'
-               type='icon'
-               icon='fas fa-times'
-               onClick={toggleSideBar}
-            />
+            <Button onClick={toggleSideBar} className='hover:bg-zinc-100'>
+               <i className='fas fa-times' />
+            </Button>
          </header>
+
          <section>
             <InputFilter
                isNumber
@@ -132,7 +130,9 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
                })}
             />
          </section>
+
          <hr className='mx-3 my-4' />
+
          <section className='grid gap-3'>
             <SelectFilter
                value={options.ue}
@@ -226,6 +226,7 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
                })}
             />
          </section>
+
          <footer className='pl-5 pr-3 mt-5'>
             <label htmlFor='iduserca' className='w-max cursor-pointer'>
                <input
@@ -246,26 +247,22 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
                />
                Ocultar usuario: CA
             </label>
-            <div className='flex justify-between mt-5 mb-28'>
+            <div className='flex justify-between mt-5 mb-28 px-4'>
                <Button
-                  className='rounded-full bg-slate-100 hover:bg-slate-200 hover:shadow-lg
-                hover:shadow-slate-400/30 shadow text-slate-700'
-                  type='iconText'
-                  name='limpiar'
-                  icon='fas fa-eraser'
-                  onClick={onClear}
-               />
+                  className='bg-zinc-100 hover:bg-zinc-200'
+                  isShadow
+                  onClick={onClear}>
+                  Limpiar <i className='fas fa-eraser' />
+               </Button>
                <Button
-                  className='rounded-full bg-blue-500 hover:bg-blue-600 hover:shadow-lg
-                hover:shadow-blue-400/40 shadow text-white'
-                  type='iconText'
-                  name='filtrar'
-                  icon='fas fa-filter'
+                  className='bg-blue-500 hover:bg-blue-600 text-white'
+                  isShadow
                   onClick={() => {
                      onFilter()
                      toggleSideBar()
-                  }}
-               />
+                  }}>
+                  filtrar <i className='fas fa-filter' />
+               </Button>
             </div>
          </footer>
       </nav>

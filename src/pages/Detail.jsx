@@ -14,8 +14,8 @@ import CustomSelect from '../components/ui/CustomSelect'
 import TimerContainer from '../components/timer/TimerContainer'
 import P from '../components/ui/P'
 import Numerator from '../components/ui/Numerator'
-import moment from 'moment'
 import AlertBar from '../components/ui/AlertBar'
+import moment from 'moment'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
@@ -403,7 +403,6 @@ const Detail = () => {
 
    const handleUpdateState = () => {
       Alert({
-         icon: 'warn',
          title: 'Atención',
          content:
             '¿Estas seguro de cambiar el estado a: <strong>PARA REVISIÓN</strong>?',
@@ -450,17 +449,16 @@ const Detail = () => {
       <>
          {Object.keys(activity).length > 0 && (
             <>
-               <main className='xl:container  mx-auto px-2 py-10'>
+               <main className='xl:container mx-auto px-2 py-8'>
                   <div className='bg-white p-4 md:p-6 rounded-lg shadow-lg shadow-gray-600/10 border grid gap-5'>
                      <header className='flex flex-wrap items-center justify-between'>
                         <Button
-                           type='icon'
-                           icon='fas fa-arrow-left fa-lg'
                            className='hover:text-blue-500'
                            onClick={() =>
                               navigate('/actividades', { replace: true })
-                           }
-                        />
+                           }>
+                           <i className='fas fa-arrow-left fa-lg' />
+                        </Button>
 
                         <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
                            <PrioritySelector
@@ -690,18 +688,16 @@ const Detail = () => {
                               </h5>
                               <section className='flex gap-2'>
                                  <Button
-                                    className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg w-max'
-                                    type='icon'
-                                    icon='fas fa-plus'
-                                    onClick={() => toggleModalAdd(true)}
-                                 />
+                                    className='text-slate-600 bg-slate-100 hover:bg-slate-200'
+                                    onClick={() => toggleModalAdd(true)}>
+                                    <i className='fas fa-plus' />
+                                 </Button>
                                  <Button
                                     disabled={activity.notas.length === 0}
-                                    className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg w-max'
-                                    type='icon'
-                                    icon='fas fa-pen'
-                                    onClick={() => toggleModalEdit(true)}
-                                 />
+                                    className='text-slate-600 bg-slate-100 hover:bg-slate-200 disabled:hover:bg-slate-200/50'
+                                    onClick={() => toggleModalEdit(true)}>
+                                    <i className='fas fa-pen' />
+                                 </Button>
                               </section>
                            </div>
                            <ul className='max-h-[540px] overflow-custom'>
@@ -739,7 +735,7 @@ const Detail = () => {
                                           border-t flex items-center justify-between'>
                                        <a
                                           className='text-slate-500 hover:text-blue-400 transition 
-                                             duration-200 transform hover:scale-105 text-sm w-full truncate'
+                                             duration-200 transform hover:scale-[1.02] text-sm w-full truncate'
                                           href={BASE_URL + file.ruta_docum}
                                           rel='noreferrer'
                                           target='_blank'>
@@ -831,13 +827,11 @@ const Detail = () => {
                            </div>
                            <div className='flex justify-center mt-5 '>
                               <Button
-                                 className='bg-orange-50 hover:bg-orange-100 text-orange-500 rounded-full'
-                                 iconFirst
-                                 type='iconText'
-                                 icon='far fa-clock'
-                                 name='Modificar tiempos'
-                                 onClick={() => toggleModalTimer(true)}
-                              />
+                                 className='bg-orange-50 hover:bg-orange-100 text-orange-500'
+                                 onClick={() => toggleModalTimer(true)}>
+                                 <i className='far fa-clock' /> Modificar
+                                 tiempos
+                              </Button>
                            </div>
                         </aside>
                      </section>
@@ -845,24 +839,22 @@ const Detail = () => {
                      <footer className='grid grid-cols-2 gap-2 justify-between mt-5'>
                         <section className='flex gap-2'>
                            <Button
-                              className='text-red-400 bg-red-50 hover:bg-red-100 rounded-lg w-max'
-                              type='icon'
-                              icon='fas fa-trash'
+                              className='text-red-400 bg-red-50 hover:bg-red-100'
                               onClick={() =>
                                  deleteActivity({
                                     id_actividad: activity.id_det,
                                  })
-                              }
-                           />
+                              }>
+                              <i className='fas fa-trash' />
+                           </Button>
                            <Button
-                              className='text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg w-max'
-                              type='icon'
-                              icon='fas fa-clone'
-                              onClick={openModalClone}
-                           />
+                              className='text-slate-600 bg-slate-100 hover:bg-slate-200'
+                              onClick={openModalClone}>
+                              <i className='fas fa-clone' />
+                           </Button>
                            {activity.num_ticket_edit !== 0 && (
                               <a
-                                 className='text-blue-600 bg-blue-100 hover:bg-blue-200 rounded-lg h-8 w-8 text-center block pt-1 transition duration-500'
+                                 className='text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg h-9 px-2.5 text-center block pt-1.5 transition duration-300'
                                  target='_blank'
                                  rel='noreferrer'
                                  title='Eventos'
@@ -872,45 +864,44 @@ const Detail = () => {
                            )}
                            <Button
                               hidden={activity.estado === 1}
-                              className={`
-                                 ${
-                                    activity.estado_play_pausa === 2
-                                       ? 'text-red-400 bg-red-50 hover:bg-red-100'
-                                       : 'text-emerald-400 bg-emerald-50 hover:bg-emerald-100'
-                                 }
-                                 rounded-lg w-max`}
-                              type='icon'
-                              icon={
+                              className={
                                  activity.estado_play_pausa === 2
-                                    ? 'fas fa-pause fa-sm'
-                                    : 'fas fa-play fa-sm'
+                                    ? 'text-red-400 bg-red-50 hover:bg-red-100'
+                                    : 'text-emerald-400 bg-emerald-50 hover:bg-emerald-100'
                               }
-                              onClick={handleOnPlayPause}
-                           />
+                              onClick={handleOnPlayPause}>
+                              <i
+                                 className={
+                                    activity.estado_play_pausa === 2
+                                       ? 'fas fa-pause fa-sm'
+                                       : 'fas fa-play fa-sm'
+                                 }
+                              />
+                           </Button>
                            <Button
                               hidden={activity.estado !== 2}
                               title='Pasar actividad a revisión'
-                              type='icon'
-                              icon='fas fa-eye'
-                              className='text-orange-400 bg-orange-50 hover:bg-orange-100 rounded-lg w-max'
-                              onClick={() => toggleModalPR(true)}
-                           />
+                              className='text-orange-400 bg-orange-50 hover:bg-orange-100'
+                              // onClick={() => toggleModalPR(true)}
+                              onClick={handleUpdateState}>
+                              <i className='fas fa-eye' />
+                           </Button>
                         </section>
 
-                        <section className='flex justify-end'>
+                        <section className='flex justify-end gap-2'>
                            <Button
-                              className='w-max text-red-500 hover:bg-red-100 rounded-full'
-                              name='cancelar'
+                              className='text-red-500 hover:bg-red-100'
                               onClick={() =>
                                  navigate(routes.activity, { replace: true })
-                              }
-                           />
+                              }>
+                              Cancelar
+                           </Button>
                            <Button
                               disabled={validation().isSave}
-                              className='w-max text-emerald-500 hover:bg-emerald-100 rounded-full place-self-end'
-                              name='Guardar cambios'
-                              onClick={onSave}
-                           />
+                              className='text-emerald-500 hover:bg-emerald-100 place-self-end'
+                              onClick={onSave}>
+                              Guardar
+                           </Button>
                         </section>
                      </footer>
                   </div>
@@ -927,15 +918,15 @@ const Detail = () => {
                   <TextArea field='mensaje' />
                   <div className='flex justify-between mt-5'>
                      <Button
-                        className='text-red-500 hover:bg-red-100 rounded-full'
-                        name='cancelar'
-                        onClick={onCloseModals}
-                     />
+                        className='text-red-500 hover:bg-red-100'
+                        onClick={onCloseModals}>
+                        Cancelar
+                     </Button>
                      <Button
-                        className='text-emerald-500 hover:bg-emerald-100 rounded-full'
-                        name='aceptar'
-                        onClick={handleUpdateState}
-                     />
+                        className='text-emerald-500 hover:bg-emerald-100'
+                        onClick={handleUpdateState}>
+                        Aceptar
+                     </Button>
                   </div>
                </Modal>
 
@@ -976,10 +967,9 @@ const Detail = () => {
                         <Input />
                         <span className='text-center'>6.3</span>
                         <div className='flex justify-center gap-2 border-l'>
-                           <Button
-                              className='rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
-                              name='agregar'
-                           />
+                           <Button className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'>
+                              agregar
+                           </Button>
                         </div>
                      </RowContainer>
                      <div className='max-h-72 overflow-custom grid gap-1'>
@@ -998,16 +988,12 @@ const Detail = () => {
                                  <Input />
                                  <span className='text-center'>6.3</span>
                                  <div className='flex justify-center gap-2 border-l'>
-                                    <Button
-                                       type='icon'
-                                       className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 rounded-md'
-                                       icon='fas fa-check'
-                                    />
-                                    <Button
-                                       type='icon'
-                                       className='bg-red-100 hover:bg-red-200 text-red-500 rounded-md'
-                                       icon='fas fa-trash'
-                                    />
+                                    <Button className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'>
+                                       <i className='fas fa-check' />
+                                    </Button>
+                                    <Button className='bg-red-100 hover:bg-red-200 text-red-500'>
+                                       <i className='fas fa-trash' />
+                                    </Button>
                                  </div>
                               </RowContainer>
                            ))}
@@ -1081,10 +1067,10 @@ const Detail = () => {
                         }
                      />
                      <Button
-                        className='w-max text-blue-500 hover:bg-blue-100 rounded-full place-self-end'
-                        name='modificar nota'
-                        onClick={onUpdate}
-                     />
+                        className='text-blue-500 hover:bg-blue-100 place-self-end'
+                        onClick={onUpdate}>
+                        modificar nota
+                     </Button>
                   </div>
                </Modal>
 
@@ -1103,7 +1089,7 @@ const Detail = () => {
                            <li
                               key={note.id}
                               className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 
-                        mr-1.5 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'>
+                                 mr-1.5 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'>
                               <span>
                                  <p className='text-gray-600 text-sm'>
                                     {note.desc}
@@ -1137,10 +1123,10 @@ const Detail = () => {
                         }
                      />
                      <Button
-                        className='w-max text-blue-500 hover:bg-blue-100 rounded-full place-self-end'
-                        name='crear nota'
-                        onClick={onAdd}
-                     />
+                        className='text-blue-500 hover:bg-blue-100 place-self-end'
+                        onClick={onAdd}>
+                        crear nota
+                     </Button>
                   </div>
                </Modal>
 
@@ -1189,15 +1175,15 @@ const Detail = () => {
                      />
                      <footer className='flex items-center justify-between'>
                         <Button
-                           className='w-max text-blue-500 hover:bg-blue-100 rounded-full'
-                           name='cancelar'
-                           onClick={() => onCloseModals()}
-                        />
+                           className='w-max text-blue-500 hover:bg-blue-100'
+                           onClick={() => onCloseModals()}>
+                           cancelar
+                        </Button>
                         <Button
-                           className='w-max text-red-500 hover:bg-red-100 rounded-full'
-                           name='Pausar actividad'
-                           onClick={onPause}
-                        />
+                           className='w-max text-red-500 hover:bg-red-100'
+                           onClick={onPause}>
+                           Pausar actividad
+                        </Button>
                      </footer>
                   </div>
                </Modal>
@@ -1380,20 +1366,18 @@ const Detail = () => {
                            name='cloneFile'
                            onChange={e => setCloneFiles(e.target.files[0])}
                         />
-                        <div className='place-self-end'>
+                        <div className='place-self-end flex gap-2'>
                            <Button
-                              className='w-max text-red-500 hover:bg-red-100 rounded-full'
-                              name='cancelar'
-                              icon='fas fa-trash'
-                              onClick={onCloseModals}
-                           />
+                              className='text-red-500 hover:bg-red-100'
+                              onClick={onCloseModals}>
+                              Cancelar
+                           </Button>
                            <Button
                               disabled={validation().isClone}
-                              className='w-max text-yellow-500 hover:bg-yellow-100 rounded-full place-self-end'
-                              name='clonar actividad'
-                              icon='fas fa-trash'
-                              onClick={onClone}
-                           />
+                              className='text-yellow-500 hover:bg-yellow-100 place-self-end disabled:hover:bg-transparent'
+                              onClick={onClone}>
+                              clonar actividad
+                           </Button>
                         </div>
                      </footer>
                   </div>

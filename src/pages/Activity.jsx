@@ -387,21 +387,21 @@ const Activity = () => {
 
             <div className='flex gap-2'>
                <Button
-                  type='icon'
-                  icon='fas fa-border-all'
-                  className={`hover:text-blue-500 hover:bg-slate-200 rounded-lg ${
+                  disabled={view}
+                  className={`hover:text-blue-500 hover:bg-zinc-100 ${
                      view && 'text-blue-500'
                   }`}
-                  onClick={() => toggleView(true)}
-               />
+                  onClick={() => toggleView(true)}>
+                  <i className='fas fa-border-all' />
+               </Button>
                <Button
-                  type='icon'
-                  icon='fas fa-th-list'
-                  className={`hover:text-blue-500 hover:bg-slate-200 rounded-lg ${
+                  disabled={!view}
+                  className={`hover:text-blue-500 hover:bg-zinc-100 ${
                      !view && 'text-blue-500'
                   }`}
-                  onClick={() => toggleView(false)}
-               />
+                  onClick={() => toggleView(false)}>
+                  <i className='fas fa-th-list' />
+               </Button>
                <CustomSelect value={pager.limit} onChange={onChangeSelect} />
             </div>
          </FooterPage>

@@ -18,6 +18,7 @@ import Input from './Input'
 import TextArea from './TextArea'
 import moment from 'moment'
 import AlertBar from './AlertBar'
+import queryString from 'query-string'
 
 const env = process.env.REACT_APP_ENVIOREMENT
 
@@ -44,12 +45,30 @@ const EnvType = ({ env, isHide = false }) => (
 
 const { activity, home } = routes
 
+const MenuContent = ({ content }) => {
+   return (
+      <div className='grid text-slate-700 max-w-[150px]'>
+         <span className='text-xs'>
+            <strong>Fecha:</strong>{' '}
+            {moment(content.fecha_hora_crea).format('DD/MM/yyyy, HH:mm')}
+         </span>
+         <span className='text-xs truncate'>
+            <strong>Desc.:</strong> {content.desc_nota}
+         </span>
+         <span className='text-xs'>
+            <strong>Por:</strong> {content.user_crea_nota.abrev_user}
+         </span>
+      </div>
+   )
+}
+
 const NavBar = () => {
    const { saveFilters, filters, optionsArray } = useContext(ActivityContext)
 
    const { notify, markNotifications } = useNotify()
    const { cloneActivity: createActivity } = useDetail(null)
-   const { pathname } = useLocation()
+   const { pathname, search } = useLocation()
+   const { title_list = '', icon_list = '' } = queryString.parse(search)
    const [usersTimes, setUsersTimes] = useState([])
 
    const [isMenuOpen, toggleMenu] = useToggle(null)
@@ -71,16 +90,19 @@ const NavBar = () => {
       gloss: '',
    })
 
-   const vTitle = title.trim() === ''
-   const vDesc = desc.trim() === ''
-   const vPriority = priority.trim() === ''
-   const vTime = time.trim() === ''
-   const vPr = options.pr.value === null
-   const vUs = options.us.value === null
-   const vUe = options.ue.value === null
+   const validations = () => {
+      const vTitle = title.trim() === ''
+      const vDesc = desc.trim() === ''
+      const vPriority = priority.trim() === ''
+      const vTime = time.trim() === ''
+      const vPr = options.pr.value === null
+      const vUs = options.us.value === null
+      const vUe = options.ue.value === null
 
-   const onCreateValidation =
-      vTitle || vDesc || vTime || vPriority || vPr || vUs || vUe
+      const onCreateValidation =
+         vTitle || vDesc || vTime || vPriority || vPr || vUs || vUe
+      return { isCreate: onCreateValidation }
+   }
 
    const { projects, subProjects, users } = optionsArray
 
@@ -124,23 +146,46 @@ const NavBar = () => {
       setOptions(initOptions)
    }
 
+   const handleToggleShowActivities = () => {
+      saveFilters({
+         payload: {
+            entrabajo: filters.entrabajo === 2 ? '' : 2,
+            offset: 0,
+         },
+      })
+      getTimes()
+   }
+
+   const handleRefresh = () => {
+      getTimes()
+      if (pathname === activity || pathname === home) {
+         saveFilters({
+            payload: {
+               offset: 0,
+               reload: !filters.reload,
+            },
+         })
+      }
+   }
+
    useEffect(() => {
       getTimes()
    }, [])
 
    return (
       <>
-         <nav className='flex items-center justify-between bg-white shadow border h-16 px-2 lg:px-10 sticky z-20 top-0'>
+         <nav className='flex items-center justify-between bg-white shadow border h-16 px-2 lg:px-10 sticky z-20 top-0 text-slate-700'>
             {pathname === activity || pathname === home ? (
                <Button
-                  className='rounded-full bg-black/5 hover:bg-black/10'
-                  type='iconText'
-                  name='Filtros'
-                  icon='fas fa-filter'
-                  onClick={toggleSideBar}
-               />
+                  className='bg-zinc-100 hover:bg-zinc-200'
+                  isShadow
+                  onClick={toggleSideBar}>
+                  Filtros <i className='fas fa-filter' />
+               </Button>
             ) : (
-               <span />
+               <section className='font-semibold flex gap-2 items-baseline'>
+                  <i className={icon_list} /> <h1>{title_list}</h1>
+               </section>
             )}
 
             <EnvType env={env} />
@@ -149,62 +194,40 @@ const NavBar = () => {
 
             <EnvType env={env} isHide />
 
-            <section className='bg-black/5 rounded-lg p-1 flex items-center'>
+            <section className='bg-zinc-100 rounded-lg p-1 flex items-center'>
                <Button
                   hidden={pathname !== activity && pathname !== home}
-                  className='hover:bg-slate-200 rounded-lg text-slate-700'
-                  type='icon'
-                  icon='fas fa-plus'
                   title='Nueva actividad'
-                  onClick={() => toggleModal(true)}
-               />
+                  onClick={() => toggleModal(true)}>
+                  <i className='fas fa-plus' />
+               </Button>
+
                <Button
                   hidden={pathname !== activity && pathname !== home}
-                  className={`hover:bg-slate-200 rounded-lg ${
+                  className={
                      filters.entrabajo === 2
-                        ? 'text-blue-500'
-                        : 'text-slate-700'
-                  } `}
-                  type='icon'
-                  icon='fas fa-user-clock'
-                  onClick={() => {
-                     saveFilters({
-                        payload: {
-                           entrabajo: filters.entrabajo === 2 ? '' : 2,
-                           offset: 0,
-                        },
-                     })
-                     getTimes()
-                  }}
-               />
+                        ? ' text-blue-500'
+                        : ' text-slate-700' && ' hover:bg-zinc-200'
+                  }
+                  onClick={handleToggleShowActivities}>
+                  <i className='fas fa-user-clock' />
+               </Button>
+
                <Button
-                  className='hover:bg-slate-200 rounded-lg text-slate-700 hidden md:block'
-                  title={`Actualizar tiempos ${
-                     pathname === activity || pathname === home
-                        ? 'y actividades'
-                        : ''
-                  }`}
-                  type='icon'
-                  icon='fas fa-history'
-                  onClick={() => {
-                     getTimes()
-                     if (pathname === activity || pathname === home) {
-                        saveFilters({
-                           payload: {
-                              offset: 0,
-                              reload: !filters.reload,
-                           },
-                        })
-                     }
-                  }}
-               />
+                  className='hover:bg-zinc-200 hidden md:block'
+                  title='Actualizar'
+                  onClick={handleRefresh}>
+                  <i className='fas fa-history' />
+               </Button>
+
                <TimerUsers data={usersTimes} type='button' onClick={getTimes} />
+
                <Menu
                   direction='right'
                   overflow='auto'
                   position='anchor'
                   menuButton={
-                     <MenuButton className='text-slate-700 hover:bg-slate-200 rounded-lg h-8 w-8 transition duration-500 relative'>
+                     <MenuButton className='text-slate-700 hover:bg-zinc-200 rounded-lg h-9 px-2.5 transition duration-500 relative'>
                         <span
                            className={`h-4 min-w-[16px] bg-red-400 text-white rounded-full 
                               absolute top-0 right-0 text-xs ${
@@ -221,21 +244,7 @@ const NavBar = () => {
                         <MenuItem
                            key={noti.id_nota}
                            className='text-transparent hover:text-slate-800 flex items-center justify-between'>
-                           <div className='grid text-slate-800 max-w-[150px]'>
-                              <span className='text-xs'>
-                                 <strong>Fecha:</strong>{' '}
-                                 {moment(noti.fecha_hora_crea).format(
-                                    'DD/MM/yyyy, HH:mm'
-                                 )}
-                              </span>
-                              <span className='text-xs truncate'>
-                                 <strong>Desc.:</strong> {noti.desc_nota}
-                              </span>
-                              <span className='text-xs'>
-                                 <strong>Por:</strong>{' '}
-                                 {noti.user_crea_nota.abrev_user}
-                              </span>
-                           </div>
+                           <MenuContent content={noti} />
                            <Button
                               className='outline-none focus:outline-none hover:text-red-500'
                               type='icon'
@@ -258,18 +267,14 @@ const NavBar = () => {
                      Marcar como vistas <i className='fas fa-eye-slash fa-sm' />
                   </MenuItem>
                </Menu>
-               <Button
-                  hidden
-                  className='hover:bg-slate-200 rounded-lg text-slate-700'
-                  type='icon'
-                  icon='fas fa-paint-brush'
-                  onClick={toggleMenu}
-               />
-               <Button
-                  className='hover:bg-slate-200 rounded-lg text-slate-700'
-                  type='icon'
-                  onClick={toggleMenu}
-               />
+
+               <Button hidden onClick={toggleMenu}>
+                  <i className='fas fa-history' />
+               </Button>
+
+               <Button onClick={toggleMenu}>
+                  <i className='fas fa-bars' />
+               </Button>
             </section>
          </nav>
 
@@ -283,7 +288,7 @@ const NavBar = () => {
             onClose={onCloseModal}
             padding='p-4 md:p-6'
             title='Nueva actividad'>
-            <AlertBar validation={onCreateValidation} />
+            <AlertBar validation={validations().isCreate} />
             <div className='grid gap-5'>
                <header className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <aside className='grid gap-1'>
@@ -391,20 +396,18 @@ const NavBar = () => {
                      name='file'
                      onChange={e => setFiles(e.target.files[0])}
                   />
-                  <div className='place-self-end'>
+                  <div className='place-self-end flex justify-between'>
                      <Button
-                        className='w-max text-red-500 hover:bg-red-100 rounded-full'
-                        name='cancelar'
-                        icon='fas fa-trash'
-                        onClick={onCloseModal}
-                     />
+                        className='text-red-500 hover:bg-red-100'
+                        onClick={onCloseModal}>
+                        cancelar
+                     </Button>
                      <Button
-                        disabled={onCreateValidation}
-                        className='w-max text-emerald-500 hover:bg-emerald-100 rounded-full'
-                        name='crear actividad'
-                        icon='fas fa-trash'
-                        onClick={onCreateActivity}
-                     />
+                        disabled={validations().isCreate}
+                        className='text-emerald-500 hover:bg-emerald-100 disabled:hover:bg-transparent'
+                        onClick={onCreateActivity}>
+                        crear actividad
+                     </Button>
                   </div>
                </footer>
             </div>
