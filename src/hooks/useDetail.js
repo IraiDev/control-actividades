@@ -11,7 +11,7 @@ export const useDetail = id => {
    const { setIsLoading } = useContext(UiContext)
    const { filters, saveFilters } = useContext(ActivityContext)
    const [activity, setActivity] = useState({})
-   const [detentions, setDetentions] = useState({})
+   const [detentions, setDetentions] = useState([])
 
    const fetchDetail = async () => {
       try {
@@ -198,6 +198,7 @@ export const useDetail = id => {
          setIsLoading(false)
          if (body.ok) {
             fetchDetail()
+            getDetentions({ id_actividad: id })
          } else {
             Alert({
                icon: 'error',
@@ -390,6 +391,123 @@ export const useDetail = id => {
       }
    }
 
+   const createDetention = async ({
+      id_det = id,
+      fecha_inicio,
+      fecha_detencion,
+      hora_inicio,
+      hora_detencion,
+   }) => {
+      try {
+         const resp = await fetchToken(
+            'task/create-pause',
+            {
+               id_det,
+               fecha_inicio,
+               fecha_detencion,
+               hora_inicio,
+               hora_detencion,
+            },
+            'POST'
+         )
+         const body = await resp.json()
+
+         if (body.ok) {
+            getDetentions({ id_actividad: id })
+            Alert({
+               content: 'Detención creada',
+               statusIcon: 'success',
+               showCancelButton: false,
+               showConfirmButton: false,
+               timer: 1500,
+            })
+         } else {
+            Alert({
+               icon: 'error',
+               title: 'Atención',
+               content: body.response,
+               showCancelButton: false,
+            })
+         }
+      } catch (err) {
+         console.log(err)
+      }
+   }
+
+   const updateDetention = async ({
+      id_pausa,
+      fecha_inicio,
+      fecha_detencion,
+      hora_inicio,
+      hora_detencion,
+   }) => {
+      try {
+         const resp = await fetchToken(
+            'task/update-pause',
+            {
+               id_pausa,
+               fecha_inicio,
+               fecha_detencion,
+               hora_inicio,
+               hora_detencion,
+            },
+            'PUT'
+         )
+         const body = await resp.json()
+
+         if (body.ok) {
+            getDetentions({ id_actividad: id })
+            Alert({
+               content: 'Detención actualizada',
+               statusIcon: 'success',
+               showCancelButton: false,
+               showConfirmButton: false,
+               timer: 1500,
+            })
+         } else {
+            Alert({
+               icon: 'error',
+               title: 'Atención',
+               content: body.response,
+               showCancelButton: false,
+            })
+         }
+      } catch (err) {
+         console.log(err)
+      }
+   }
+
+   const deleteDetention = async ({ id_pausa }) => {
+      try {
+         const resp = await fetchToken(
+            'task/delete-pause',
+            { id_pausa },
+            'DELETE'
+         )
+         const body = await resp.json()
+
+         if (body.ok) {
+            getDetentions({ id_actividad: id })
+            Alert({
+               content: 'Detención eliminada',
+               statusIcon: 'success',
+               showCancelButton: false,
+               showConfirmButton: false,
+               timer: 1500,
+            })
+         } else {
+            Alert({
+               icon: 'error',
+               title: 'Atención',
+               content: body.response,
+               showCancelButton: false,
+            })
+         }
+      } catch (err) {
+         console.log(err)
+      }
+   }
+
    const toggleState = async ({ id_actividad = id, estado = 3 }) => {
       try {
          const resp = await fetchToken(
@@ -427,7 +545,7 @@ export const useDetail = id => {
 
       return () => null
       // eslint-disable-next-line
-   }, [])
+   }, [id])
 
    return {
       activity,
@@ -442,6 +560,9 @@ export const useDetail = id => {
       cloneActivity,
       deleteDocument,
       deleteActivity,
+      createDetention,
+      updateDetention,
+      deleteDetention,
       toggleState,
    }
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Alert } from '../../helpers/alerts'
 import { useForm } from '../../hooks/useForm'
 import Button from '../ui/Button'
 import Modal from '../ui/Modal'
@@ -22,6 +23,7 @@ const Td = props => {
       isModal = false,
       pauseActivity,
       playActivity,
+      callback,
    } = props
 
    const [modalPause, toggleModalPause] = useState(false)
@@ -32,6 +34,16 @@ const Td = props => {
       toggleModalPause(false)
    }
 
+   const handleToggleStsate = () => {
+      Alert({
+         title: 'Atención',
+         content: '¿Estas seguro de pasar a revision esta actividad?',
+         confirmText: 'Si, aceptar',
+         cancelText: 'No, cancelar',
+         action: callback,
+      })
+   }
+
    return (
       <>
          <td
@@ -40,21 +52,37 @@ const Td = props => {
             ${className} ${width} ${bgcolor && 'bg-black/5'}
             animate__animated animate__fadeIn animate__faster 
             px-2 py-2`}>
-            {props.estado !== 1 && isModal ? (
-               <button
-                  onClick={
-                     props.estado_play_pausa === 2
-                        ? () => toggleModalPause(true)
-                        : () => playActivity({ id_actividad: props.id_det })
-                  }>
-                  {props.estado_play_pausa === 2 ? (
-                     <i className='fas fa-pause fa-sm' />
+            {isModal && (
+               <>
+                  {props.estado === 1 ? (
+                     <Button
+                        size='w-11 h-7'
+                        title='pasa actividad a E.T'
+                        className='hover:bg-black/5'
+                        onClick={handleToggleStsate}>
+                        <i className='fas fa-hammer fa-sm' />
+                        <i className='fas fa-chevron-right fa-sm' />
+                     </Button>
                   ) : (
-                     <i className='fas fa-play fa-sm' />
+                     <Button
+                        className='hover:bg-black/5'
+                        size='w-7 h-7'
+                        onClick={
+                           props.estado_play_pausa === 2
+                              ? () => toggleModalPause(true)
+                              : () =>
+                                   playActivity({ id_actividad: props.id_det })
+                        }>
+                        <i
+                           className={
+                              props.estado_play_pausa === 2
+                                 ? 'fas fa-pause fa-sm'
+                                 : 'fas fa-play fa-sm'
+                           }
+                        />
+                     </Button>
                   )}
-               </button>
-            ) : (
-               <span />
+               </>
             )}
             {children}
          </td>

@@ -1,7 +1,9 @@
 import { useContext, useEffect, useState } from 'react'
 import { ActivityContext } from '../context/ActivityContext'
 import { useNavigate, useParams } from 'react-router-dom'
+import { validateDate } from '../helpers/helpersFunc'
 import { useDetail } from '../hooks/useDetail'
+import { useForm } from '../hooks/useForm'
 import { routes } from '../types/types'
 import { Alert } from '../helpers/alerts'
 import Button from '../components/ui/Button'
@@ -15,6 +17,7 @@ import TimerContainer from '../components/timer/TimerContainer'
 import P from '../components/ui/P'
 import Numerator from '../components/ui/Numerator'
 import AlertBar from '../components/ui/AlertBar'
+import InputMask from 'react-input-mask'
 import moment from 'moment'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
@@ -45,6 +48,13 @@ const initOptions = {
    ur: { label: 'ninguno', value: null },
 }
 
+const initDates = {
+   hinicio: moment(new Date()).format('HH:mm:ss'),
+   hdetencion: '',
+   finicio: moment(new Date()).format('YYYY-MM-DD'),
+   fdetencion: moment(new Date()).format('YYYY-MM-DD'),
+}
+
 const PrioritySelector = ({
    onClick,
    color = 'bg-slate-400',
@@ -60,8 +70,11 @@ const PrioritySelector = ({
    )
 }
 
-const RowContainer = ({ children }) => (
-   <section className='grid grid-cols-6 gap-3 items-baseline bg-white rounded-md shadow p-2 pt-0 transition duration-200 transform hover:scale-[0.99]'>
+const RowContainer = ({ children, isScale = true }) => (
+   <section
+      className={`grid grid-cols-7 gap-3 items-baseline bg-white rounded-md shadow p-2 pt-0
+         ${isScale && 'transition duration-200 transform hover:scale-[0.99]'}
+      `}>
       {children}
    </section>
 )
@@ -84,6 +97,9 @@ const Detail = () => {
       cloneActivity,
       deleteDocument,
       toggleState,
+      createDetention,
+      updateDetention,
+      deleteDetention,
    } = useDetail(id)
 
    const date = moment(activity.fecha_tx).format('yyyy-MM-DD')
@@ -111,6 +127,7 @@ const Detail = () => {
       desc: '',
       content: '',
    })
+
    const [fields, setFields] = useState({
       title: '',
       description: '',
@@ -128,6 +145,11 @@ const Detail = () => {
       cTime: '',
       cGloss: '',
    })
+
+   const [timeValues, setTimeValues] = useState([])
+
+   const [{ hinicio, hdetencion, finicio, fdetencion }, onChangeValues, reset] =
+      useForm(initDates)
 
    // destructuring
    const { title, description, gloss, ticket, priority, time } = fields
@@ -219,6 +241,7 @@ const Detail = () => {
       toggleModalTimer(false)
       toggleModalPR(false)
       setValues({ desc: '', id: null, id_ref: null })
+      reset()
    }
 
    const openModalClone = () => {
@@ -415,6 +438,90 @@ const Detail = () => {
       })
    }
 
+   const handleCreateDetention = () => {
+      // funcion helper, para validar las fechas y si los campos hora estan llenos
+      const validate = validateDate({
+         finicio,
+         fdetencion,
+         hinicio,
+         hdetencion,
+      })
+
+      if (!validate) {
+         reset()
+         return
+      }
+
+      createDetention({
+         fecha_inicio: finicio,
+         fecha_detencion: fdetencion,
+         hora_inicio: hinicio,
+         hora_detencion: hdetencion,
+      })
+
+      reset()
+   }
+
+   const handleUpdateDetention = ({
+      id_pausa,
+      fecha_inicio,
+      fecha_detencion,
+      hora_inicio,
+      hora_detencion,
+   }) => {
+      // funcion helper, para validar las fechas y si los campos hora estan llenos
+      const validate = validateDate({
+         finicio: fecha_inicio,
+         fdetencion: fecha_detencion,
+         hinicio: hora_inicio,
+         hdetencion: hora_detencion,
+      })
+
+      if (!validate) {
+         setTimeValues(
+            timeValues.map(t =>
+               t.id === id_pausa
+                  ? {
+                       ...t,
+                       [`hini${id_pausa}`]: detentions.find(
+                          d => d.id_pausa === id_pausa
+                       ).hora_inicio,
+                       [`hdet${id_pausa}`]: detentions.find(
+                          d => d.id_pausa === id_pausa
+                       ).hora_detencion,
+                       [`ini${id_pausa}`]: detentions.find(
+                          d => d.id_pausa === id_pausa
+                       ).fecha_inicio,
+                       [`det${id_pausa}`]: detentions.find(
+                          d => d.id_pausa === id_pausa
+                       ).fecha_detencion,
+                    }
+                  : t
+            )
+         )
+         console.log('se cancelo el update detention')
+         return
+      }
+
+      updateDetention({
+         id_pausa,
+         fecha_inicio,
+         fecha_detencion,
+         hora_inicio,
+         hora_detencion,
+      })
+   }
+
+   const handleDeleteDetention = id_pausa => {
+      Alert({
+         title: 'Atención',
+         content: '¿Estas seguro de eliminar esta detención?',
+         confirmButton: 'Si, eliminar',
+         cancelButton: 'No, cancelar',
+         action: () => deleteDetention({ id_pausa }),
+      })
+   }
+
    useEffect(() => {
       if (Object.keys(activity).length > 0) {
          setFields({
@@ -438,12 +545,24 @@ const Detail = () => {
             ue: users?.find(u => u.label === activity.encargado_actividad),
             ur: users?.find(u => u.id === activity.id_revisor),
          })
+
+         setTimeValues(
+            detentions?.map(d => {
+               return {
+                  id: d.id_pausa,
+                  [`det${d.id_pausa}`]: d.fecha_detencion,
+                  [`ini${d.id_pausa}`]: d.fecha_inicio,
+                  [`hdet${d.id_pausa}`]: d.hora_detencion,
+                  [`hini${d.id_pausa}`]: d.hora_inicio,
+               }
+            })
+         )
       }
 
       return () => null
 
       // eslint-disable-next-line
-   }, [optionsArray, activity])
+   }, [optionsArray, activity, detentions])
 
    return (
       <>
@@ -828,6 +947,7 @@ const Detail = () => {
                            </div>
                            <div className='flex justify-center mt-5 '>
                               <Button
+                                 hidden={detentions.length === 0}
                                  className='bg-orange-50 hover:bg-orange-100 text-orange-500'
                                  onClick={() => toggleModalTimer(true)}>
                                  <i className='far fa-clock' /> Modificar
@@ -931,7 +1051,7 @@ const Detail = () => {
                   </div>
                </Modal>
 
-               {/* modal timer */}
+               {/* modal detentions */}
                <Modal
                   showModal={modalTimer}
                   isBlur={false}
@@ -940,13 +1060,17 @@ const Detail = () => {
                   padding='p-4 md:p-6'
                   title='Modificar tiempos de actividad'>
                   <main className='grid gap-1 bg-zinc-100 rounded-md p-2 mt-10 shadow w-[1216px] overflow-auto'>
-                     <header className='grid grid-cols-3 gap-1 text-center capitalize font-semibold border-b'>
-                        <span className='py-1.5 border-r'>desde</span>
-                        <span className='py-1.5 border-r'>hasta</span>
-                        <span className='py-1.5'>control</span>
+                     <header className='grid grid-cols-7 gap-1 text-center capitalize font-semibold border-b'>
+                        <span className='py-1.5 border-r col-span-3'>
+                           desde
+                        </span>
+                        <span className='py-1.5 border-r col-span-2'>
+                           hasta
+                        </span>
+                        <span className='py-1.5 col-span-2'>control</span>
                      </header>
-                     <section className='grid grid-cols-6 gap-1 text-center capitalize font-semibold'>
-                        <div className='flex gap-4 py-1.5 border-r'>
+                     <section className='grid grid-cols-7 gap-1 text-center capitalize font-semibold'>
+                        <div className='flex gap-4 col-span-2 py-1.5 border-r'>
                            <span className='ml-2'>Nº</span>{' '}
                            <span className='text-center w-full mr-3'>
                               fecha
@@ -955,44 +1079,233 @@ const Detail = () => {
                         <span className='py-1.5 border-r'>hora</span>
                         <span className='py-1.5 border-r'>fecha</span>
                         <span className='py-1.5 border-r'>hora</span>
-                        <span className='py-1.5'>tiempo</span>
+                        <span className='py-1.5'>tiempo (hrs)</span>
                         <span />
                      </section>
-                     <RowContainer>
-                        <div className='grid grid-cols-4 items-baseline gap-2'>
-                           <span className='col-span-1' />
-                           <Input className='col-span-3' type='date' />
+                     <RowContainer isScale={false}>
+                        <div className='grid grid-cols-5 col-span-2 items-baseline gap-2'>
+                           <span className='col-span-2' />
+                           <Input
+                              className='col-span-3'
+                              type='date'
+                              name='finicio'
+                              value={finicio}
+                              onChange={onChangeValues}
+                           />
                         </div>
-                        <Input />
-                        <Input type='date' />
-                        <Input />
-                        <span className='text-center'>6.3</span>
+                        <InputMask
+                           mask='99:99:99'
+                           maskChar=''
+                           name='hinicio'
+                           value={hinicio}
+                           onChange={onChangeValues}>
+                           {inputProps => (
+                              <Input
+                                 name={inputProps.name}
+                                 onChange={inputProps.onChange}
+                                 value={inputProps.value}
+                              />
+                           )}
+                        </InputMask>
+                        <Input
+                           type='date'
+                           name='fdetencion'
+                           value={fdetencion}
+                           onChange={onChangeValues}
+                        />
+                        <InputMask
+                           mask='99:99:99'
+                           maskChar=''
+                           name='hdetencion'
+                           value={hdetencion}
+                           onChange={onChangeValues}>
+                           {inputProps => (
+                              <Input
+                                 name={inputProps.name}
+                                 onChange={inputProps.onChange}
+                                 value={inputProps.value}
+                              />
+                           )}
+                        </InputMask>
+                        <span className='text-center'></span>
                         <div className='flex justify-center gap-2 border-l'>
-                           <Button className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'>
+                           <Button
+                              className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
+                              onClick={handleCreateDetention}>
                               agregar
                            </Button>
                         </div>
                      </RowContainer>
-                     <div className='max-h-72 overflow-custom grid gap-1'>
+                     <h5 className='py-3 px-3'>Detenciones</h5>
+                     <div className='max-h-72 overflow-custom grid gap-1 border-t'>
                         {detentions.length > 0 &&
-                           detentions.map((item, i) => (
-                              <RowContainer key={item.id_pausa}>
-                                 <div className='grid grid-cols-4 items-baseline gap-2'>
+                           detentions.map((d, i) => (
+                              <RowContainer key={d.id_pausa}>
+                                 <div className='grid grid-cols-5 col-span-2 items-baseline gap-2'>
                                     <Numerator
-                                       className='col-span-1 max-w-max'
+                                       className='col-span-2 max-w-max'
                                        number={i + 1}
                                     />
-                                    <Input className='col-span-3' type='date' />
+                                    <Input
+                                       className='col-span-3'
+                                       type='date'
+                                       value={
+                                          timeValues[i]?.[`ini${d.id_pausa}`] ||
+                                          ''
+                                       }
+                                       onChange={e =>
+                                          setTimeValues(
+                                             timeValues.map(t =>
+                                                t.id === d.id_pausa
+                                                   ? {
+                                                        ...t,
+                                                        [`ini${d.id_pausa}`]:
+                                                           e.target.value,
+                                                     }
+                                                   : t
+                                             )
+                                          )
+                                       }
+                                    />
                                  </div>
-                                 <Input />
-                                 <Input type='date' />
-                                 <Input />
-                                 <span className='text-center'>6.3</span>
+
+                                 <InputMask
+                                    mask='99:99:99'
+                                    maskChar=''
+                                    value={
+                                       timeValues[i]?.[`hini${d.id_pausa}`] ||
+                                       ''
+                                    }
+                                    onChange={e =>
+                                       setTimeValues(
+                                          timeValues.map(t =>
+                                             t.id === d.id_pausa
+                                                ? {
+                                                     ...t,
+                                                     [`hini${d.id_pausa}`]:
+                                                        e.target.value,
+                                                  }
+                                                : t
+                                          )
+                                       )
+                                    }>
+                                    {inputProps => (
+                                       <Input
+                                          onChange={inputProps.onChange}
+                                          value={inputProps.value}
+                                       />
+                                    )}
+                                 </InputMask>
+
+                                 <Input
+                                    type='date'
+                                    value={
+                                       timeValues[i]?.[`det${d.id_pausa}`] || ''
+                                    }
+                                    onChange={e =>
+                                       setTimeValues(
+                                          timeValues.map(t =>
+                                             t.id === d.id_pausa
+                                                ? {
+                                                     ...t,
+                                                     [`det${d.id_pausa}`]:
+                                                        e.target.value,
+                                                  }
+                                                : t
+                                          )
+                                       )
+                                    }
+                                 />
+
+                                 <InputMask
+                                    mask='99:99:99'
+                                    maskChar=''
+                                    value={
+                                       timeValues[i]?.[`hdet${d.id_pausa}`] ||
+                                       ''
+                                    }
+                                    onChange={e =>
+                                       setTimeValues(
+                                          timeValues.map(t =>
+                                             t.id === d.id_pausa
+                                                ? {
+                                                     ...t,
+                                                     [`hdet${d.id_pausa}`]:
+                                                        e.target.value,
+                                                  }
+                                                : t
+                                          )
+                                       )
+                                    }>
+                                    {inputProps => (
+                                       <Input
+                                          onChange={inputProps.onChange}
+                                          value={inputProps.value}
+                                       />
+                                    )}
+                                 </InputMask>
+
+                                 <span className='text-center'>
+                                    {moment(
+                                       `${d.fecha_detencion} ${d.hora_detencion}`
+                                    ).isValid() && (
+                                       <>
+                                          {Number.parseFloat(
+                                             moment(
+                                                `${d.fecha_detencion} ${d.hora_detencion}`
+                                             ).diff(
+                                                moment(
+                                                   `${d.fecha_inicio} ${d.hora_inicio}`
+                                                ),
+                                                'hours',
+                                                true
+                                             )
+                                          ).toFixed(2)}
+                                       </>
+                                    )}
+                                 </span>
+
                                  <div className='flex justify-center gap-2 border-l'>
-                                    <Button className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'>
+                                    <Button
+                                       disabled={
+                                          !moment(
+                                             `${d.fecha_detencion} ${d.hora_detencion}`
+                                          ).isValid()
+                                       }
+                                       className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 disabled:hover:bg-emerald-200/50'
+                                       onClick={() =>
+                                          handleUpdateDetention({
+                                             id_pausa: d.id_pausa,
+                                             fecha_inicio:
+                                                timeValues[i]?.[
+                                                   `ini${d.id_pausa}`
+                                                ],
+                                             fecha_detencion:
+                                                timeValues[i]?.[
+                                                   `det${d.id_pausa}`
+                                                ],
+                                             hora_inicio:
+                                                timeValues[i]?.[
+                                                   `hini${d.id_pausa}`
+                                                ],
+                                             hora_detencion:
+                                                timeValues[i]?.[
+                                                   `hdet${d.id_pausa}`
+                                                ],
+                                          })
+                                       }>
                                        <i className='fas fa-check' />
                                     </Button>
-                                    <Button className='bg-red-100 hover:bg-red-200 text-red-500'>
+                                    <Button
+                                       disabled={
+                                          !moment(
+                                             `${d.fecha_detencion} ${d.hora_detencion}`
+                                          ).isValid()
+                                       }
+                                       className='bg-red-100 hover:bg-red-200 text-red-500 disabled:hover:bg-red-200/50'
+                                       onClick={() =>
+                                          handleDeleteDetention(d.id_pausa)
+                                       }>
                                        <i className='fas fa-trash' />
                                     </Button>
                                  </div>

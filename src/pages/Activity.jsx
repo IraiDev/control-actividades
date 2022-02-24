@@ -218,30 +218,36 @@ const Activity = () => {
                         <Th>prioridad</Th>
                         <Th className='bg-slate-700'>fecha</Th>
                         <Th>
-                           actividad
-                           <Button
-                              className='ml-2'
-                              type='icon'
-                              icon={
-                                 multiline
-                                    ? 'fas fa-angle-up'
-                                    : 'fas fa-angle-down'
-                              }
-                              onClick={() => setMultiline(!multiline)}
-                           />
+                           <div className='flex items-baseline justify-center gap-2'>
+                              actividad
+                              <Button
+                                 className='hover:bg-white/5'
+                                 onClick={() => setMultiline(!multiline)}>
+                                 <i
+                                    className={
+                                       multiline
+                                          ? 'fas fa-angle-up'
+                                          : 'fas fa-angle-down'
+                                    }
+                                 />
+                              </Button>
+                           </div>
                         </Th>
                         <Th className='bg-slate-700'>
-                           descripcion
-                           <Button
-                              className='ml-2'
-                              type='icon'
-                              icon={
-                                 multiline
-                                    ? 'fas fa-angle-up'
-                                    : 'fas fa-angle-down'
-                              }
-                              onClick={() => setMultiline(!multiline)}
-                           />
+                           <div className='flex items-baseline justify-center gap-2'>
+                              descripcion
+                              <Button
+                                 className='hover:bg-white/5'
+                                 onClick={() => setMultiline(!multiline)}>
+                                 <i
+                                    className={
+                                       multiline
+                                          ? 'fas fa-angle-up'
+                                          : 'fas fa-angle-down'
+                                    }
+                                 />
+                              </Button>
+                           </div>
                         </Th>
                         <Th>estado</Th>
                         <Th className='bg-slate-700'></Th>
@@ -322,6 +328,13 @@ const Activity = () => {
                                  isModal
                                  pauseActivity={onPauseActivity}
                                  playActivity={onPlayActivity}
+                                 callback={() =>
+                                    toggleState({
+                                       id_actividad: act.id_det,
+                                       estado: 2,
+                                       tiempo_estimado: 1,
+                                    })
+                                 }
                                  {...act}>
                                  <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
                                     <PrioritySelector
