@@ -70,9 +70,6 @@ export const validateDate = ({ finicio, fdetencion, hinicio, hdetencion }) => {
    const i = moment(`${finicio} ${hinicio}`).format('YYYY-MM-DD HH:mm:ss')
    const d = moment(`${fdetencion} ${hdetencion}`).format('YYYY-MM-DD HH:mm:ss')
 
-   console.log(moment(d).isValid())
-   console.log(moment(i).isValid())
-
    if (moment(i).isSameOrAfter(d)) {
       Alert({
          icon: 'warn',

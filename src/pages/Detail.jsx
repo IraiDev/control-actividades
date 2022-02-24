@@ -19,6 +19,10 @@ import Numerator from '../components/ui/Numerator'
 import AlertBar from '../components/ui/AlertBar'
 import InputMask from 'react-input-mask'
 import moment from 'moment'
+import ViewContainer from '../components/view/ViewContainer'
+import View from '../components/view/View'
+import ViewSection from '../components/view/ViewSection'
+import ViewFooter from '../components/view/ViewFooter'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
@@ -522,6 +526,13 @@ const Detail = () => {
       })
    }
 
+   const onChangePriority = (number, id) => {
+      updatePriority({
+         prioridad_numero: number,
+         id_actividad: id,
+      })
+   }
+
    useEffect(() => {
       if (Object.keys(activity).length > 0) {
          setFields({
@@ -568,67 +579,17 @@ const Detail = () => {
       <>
          {Object.keys(activity).length > 0 && (
             <>
-               <main className='xl:container mx-auto px-2 py-8'>
-                  <div className='bg-white p-4 md:p-6 rounded-lg shadow-lg shadow-gray-600/10 border grid gap-5'>
-                     <header className='flex flex-wrap items-center justify-between'>
-                        <Button
-                           className='hover:text-blue-500'
-                           onClick={() =>
-                              navigate('/actividades', { replace: true })
-                           }>
-                           <i className='fas fa-arrow-left fa-lg' />
-                        </Button>
-
-                        <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
-                           <PrioritySelector
-                              disabled={activity.prioridad_etiqueta === 1000}
-                              onClick={() =>
-                                 updatePriority({
-                                    prioridad_numero: 1000,
-                                    id_actividad: activity.id_det,
-                                 })
-                              }
-                           />
-                           <PrioritySelector
-                              disabled={activity.prioridad_etiqueta === 600}
-                              color='bg-green-500/70'
-                              onClick={() =>
-                                 updatePriority({
-                                    prioridad_numero: 600,
-                                    id_actividad: activity.id_det,
-                                 })
-                              }
-                           />
-                           <PrioritySelector
-                              disabled={activity.prioridad_etiqueta === 400}
-                              color='bg-yellow-500/80'
-                              onClick={() =>
-                                 updatePriority({
-                                    prioridad_numero: 400,
-                                    id_actividad: activity.id_det,
-                                 })
-                              }
-                           />
-                           <PrioritySelector
-                              disabled={activity.prioridad_etiqueta === 100}
-                              color='bg-red-500/70'
-                              onClick={() =>
-                                 updatePriority({
-                                    prioridad_numero: 100,
-                                    id_actividad: activity.id_det,
-                                 })
-                              }
-                           />
-                        </div>
-                     </header>
-
-                     <h1 className='text-xl text-center font-semibold capitalize truncate'>
-                        {activity.actividad || 'Sin titulo'}
-                     </h1>
-
+               <ViewContainer>
+                  <View
+                     title={activity.actividad}
+                     priority={activity.prioridad_etiqueta}
+                     onHigh={() => onChangePriority(100, activity.id_det)}
+                     onMid={() => onChangePriority(400, activity.id_det)}
+                     onLow={() => onChangePriority(600, activity.id_det)}
+                     onNone={() => onChangePriority(1000, activity.id_det)}>
                      <AlertBar validation={validation().isSave} />
 
-                     <section className='grid grid-cols-1 lg:grid-cols-8 gap-5 '>
+                     <ViewSection lg cols={8}>
                         <aside className='col-span-1 md:col-span-2'>
                            <header className='text-sm'>
                               <P
@@ -801,7 +762,7 @@ const Detail = () => {
                            </div>
                         </section>
 
-                        <aside className='col-span-1 md:col-span-3'>
+                        <aside className='col-span-1 md:col-span-3 mt-5 md:mt-0'>
                            <div className='flex justify-between items-center mb-3'>
                               <h5 className='text-sm font-semibold'>
                                  Notas (Informes):{' '}
@@ -837,11 +798,11 @@ const Detail = () => {
                               )}
                            </ul>
                         </aside>
-                     </section>
+                     </ViewSection>
 
                      <hr className='my-5' />
 
-                     <section className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+                     <ViewSection md cols={2}>
                         <aside>
                            <h5 className='text-sm mb-3 font-semibold'>
                               Archivos:{' '}
@@ -955,9 +916,9 @@ const Detail = () => {
                               </Button>
                            </div>
                         </aside>
-                     </section>
+                     </ViewSection>
 
-                     <footer className='grid grid-cols-2 gap-2 justify-between mt-5'>
+                     <ViewFooter>
                         <section className='flex gap-2'>
                            <Button
                               className='text-red-400 bg-red-50 hover:bg-red-100'
@@ -1024,9 +985,9 @@ const Detail = () => {
                               Guardar
                            </Button>
                         </section>
-                     </footer>
-                  </div>
-               </main>
+                     </ViewFooter>
+                  </View>
+               </ViewContainer>
 
                {/* modal PR */}
                <Modal
