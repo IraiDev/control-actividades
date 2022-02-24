@@ -59,21 +59,6 @@ const initDates = {
    fdetencion: moment(new Date()).format('YYYY-MM-DD'),
 }
 
-const PrioritySelector = ({
-   onClick,
-   color = 'bg-slate-400',
-   disabled = false,
-}) => {
-   return (
-      <button
-         disabled={disabled}
-         className={`h-5 w-5 rounded-full ${color} transition duration-200 transform
-      ${disabled ? 'hidden' : 'hover:scale-125'}
-    `}
-         onClick={onClick}></button>
-   )
-}
-
 const RowContainer = ({ children, isScale = true }) => (
    <section
       className={`grid grid-cols-7 gap-3 items-baseline bg-white rounded-md shadow p-2 pt-0
