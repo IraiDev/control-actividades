@@ -70,6 +70,9 @@ export const validateDate = ({ finicio, fdetencion, hinicio, hdetencion }) => {
    const i = moment(`${finicio} ${hinicio}`).format('YYYY-MM-DD HH:mm:ss')
    const d = moment(`${fdetencion} ${hdetencion}`).format('YYYY-MM-DD HH:mm:ss')
 
+   console.log(moment(d).isValid())
+   console.log(moment(i).isValid())
+
    if (moment(i).isSameOrAfter(d)) {
       Alert({
          icon: 'warn',
@@ -81,11 +84,11 @@ export const validateDate = ({ finicio, fdetencion, hinicio, hdetencion }) => {
       return false
    }
 
-   if (moment(d).isValid() || moment(i).isValid()) {
+   if (!moment(d).isValid() || !moment(i).isValid()) {
       Alert({
          icon: 'warn',
          title: 'Atención',
-         content: 'La(s) fecha(s) no son validas, por favor verifique',
+         content: 'Fechas ingresadas no validas',
          showCancelButton: false,
       })
       return false
@@ -95,7 +98,7 @@ export const validateDate = ({ finicio, fdetencion, hinicio, hdetencion }) => {
       Alert({
          icon: 'warn',
          title: 'Atención',
-         content: 'Los campos hora inicio y hora detencion no deben ser vacios',
+         content: 'Todos los campos son obligatorios',
          showCancelButton: false,
       })
       return false
