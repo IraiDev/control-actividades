@@ -508,11 +508,15 @@ export const useDetail = id => {
       }
    }
 
-   const toggleState = async ({ id_actividad = id, estado = 3 }) => {
+   const toggleState = async ({
+      id_actividad = id,
+      estado = 3,
+      mensaje_revision,
+   }) => {
       try {
          const resp = await fetchToken(
             'task/change-activity-state',
-            { id_actividad, estado },
+            { id_actividad, estado, mensaje_revision },
             'POST'
          )
          const body = await resp.json()

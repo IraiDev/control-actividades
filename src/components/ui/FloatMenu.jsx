@@ -13,7 +13,10 @@ const FloatMenu = ({ name, value, onChange, onClick, reset }) => {
             size='w-11 h-7'
             title='pasa actividad a E.T'
             className='hover:bg-black/5'
-            onClick={() => setShowContextMenu(true)}>
+            onClick={() => {
+               reset()
+               setShowContextMenu(true)
+            }}>
             <i className='fas fa-hammer fa-sm' />
             <i className='fas fa-chevron-right fa-sm' />
          </Button>

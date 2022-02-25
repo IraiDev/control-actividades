@@ -137,7 +137,12 @@ const NavBar = () => {
       const ok = await createActivity(formData)
       if (!ok) return
       onCloseModal()
-      saveFilters({})
+      saveFilters({
+         payload: {
+            offset: 0,
+            reload: !filters.reload,
+         },
+      })
    }
 
    const onCloseModal = () => {

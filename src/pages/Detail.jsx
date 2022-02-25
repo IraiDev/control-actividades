@@ -57,6 +57,7 @@ const initDates = {
    hdetencion: '',
    finicio: moment(new Date()).format('YYYY-MM-DD'),
    fdetencion: moment(new Date()).format('YYYY-MM-DD'),
+   msg_revision: '',
 }
 
 const RowContainer = ({ children, isScale = true }) => (
@@ -67,6 +68,31 @@ const RowContainer = ({ children, isScale = true }) => (
       {children}
    </section>
 )
+
+const CheckBox = ({ value, onChange }) => {
+   return (
+      <label
+         htmlFor='id'
+         className={`flex gap-2 items-baseline capitalize px-2.5 py-1.5 border 
+            rounded-full transition duration-200 cursor-pointer
+            ${
+               value
+                  ? 'border-red-500 text-red-500 hover:bg-red-50'
+                  : 'border-blue-500 text-blue-500 hover:bg-blue-50'
+            }
+            `}>
+         {value ? 'quitar' : 'agregar'}
+         <input
+            className='hidden'
+            id='id'
+            type='checkbox'
+            value={value}
+            onChange={onChange}
+         />
+         <i className={value ? 'fas fa-times' : 'fas fa-check'} />
+      </label>
+   )
+}
 
 const Detail = () => {
    const navigate = useNavigate()
@@ -92,6 +118,8 @@ const Detail = () => {
    } = useDetail(id)
 
    const date = moment(activity.fecha_tx).format('yyyy-MM-DD')
+   const isTicket = activity.num_ticket_edit !== 0
+   const [showContent, setshowContent] = useState(false)
 
    // modals
    const [modalEdit, toggleModalEdit] = useState(false)
@@ -137,8 +165,11 @@ const Detail = () => {
 
    const [timeValues, setTimeValues] = useState([])
 
-   const [{ hinicio, hdetencion, finicio, fdetencion }, onChangeValues, reset] =
-      useForm(initDates)
+   const [
+      { hinicio, hdetencion, finicio, fdetencion, msg_revision },
+      onChangeValues,
+      reset,
+   ] = useForm(initDates)
 
    // destructuring
    const { title, description, gloss, ticket, priority, time } = fields
@@ -413,16 +444,24 @@ const Detail = () => {
       }
    }
 
-   const handleUpdateState = () => {
+   const handleUpdateState = isTicket => {
+      if (isTicket) {
+         navigate(routes.activity, { replace: true })
+         toggleState({ mensaje_revision: msg_revision })
+         reset()
+         return
+      }
+
       Alert({
          title: 'Atención',
          content:
-            '¿Estas seguro de cambiar el estado a: <strong>PARA REVISIÓN</strong>?',
+            '¿Estas seguro de cambiar el estado a: <strong>REVISIÓN</strong>?',
          confirmButton: 'Si, actualizar',
          cancelButton: 'No, cancelar',
          action: () => {
             navigate(routes.activity, { replace: true })
             toggleState({})
+            reset()
          },
       })
    }
@@ -949,8 +988,12 @@ const Detail = () => {
                               hidden={activity.estado !== 2}
                               title='Pasar actividad a revisión'
                               className='text-orange-400 bg-orange-50 hover:bg-orange-100'
-                              // onClick={() => toggleModalPR(true)}
-                              onClick={handleUpdateState}>
+                              onClick={
+                                 isTicket
+                                    ? () => toggleModalPR(true)
+                                    : () => handleUpdateState(isTicket)
+                              }>
+                              {/* onClick={handleUpdateState}> */}
                               <i className='fas fa-eye' />
                            </Button>
                         </section>
@@ -981,19 +1024,38 @@ const Detail = () => {
                   onClose={onCloseModals}
                   className='max-w-xl'
                   padding='p-4 md:p-6'
-                  title='Mensaje opcional para Cliente'>
-                  <TextArea field='mensaje' />
-                  <div className='flex justify-between mt-5'>
-                     <Button
-                        className='text-red-500 hover:bg-red-100'
-                        onClick={onCloseModals}>
-                        Cancelar
-                     </Button>
-                     <Button
-                        className='text-emerald-500 hover:bg-emerald-100'
-                        onClick={handleUpdateState}>
-                        Aceptar
-                     </Button>
+                  title='Pasar a revisión'>
+                  <div>
+                     <section className='flex gap-2 justify-between items-baseline'>
+                        <p className='text-sm text-gray-600'>
+                           ¿Desea agregar un mensaje a la actividad al pasar a
+                           revisión?
+                        </p>
+                        <CheckBox
+                           value={showContent}
+                           onChange={e => setshowContent(e.target.checked)}
+                        />
+                     </section>
+                     {showContent && (
+                        <TextArea
+                           field='mensaje'
+                           name='msg_revision'
+                           value={msg_revision}
+                           onChange={onChangeValues}
+                        />
+                     )}
+                     <section className='flex justify-between mt-5'>
+                        <Button
+                           className='text-red-500 hover:bg-red-100'
+                           onClick={onCloseModals}>
+                           Cancelar
+                        </Button>
+                        <Button
+                           className='text-emerald-500 hover:bg-emerald-100'
+                           onClick={handleUpdateState}>
+                           pasar a revisión
+                        </Button>
+                     </section>
                   </div>
                </Modal>
 

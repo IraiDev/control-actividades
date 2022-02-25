@@ -14,6 +14,7 @@ import CardFooter from '../CardFooter'
 import CardContent from '../CardContent'
 import moment from 'moment'
 import FloatMenu from '../../ui/FloatMenu'
+import { useEffect } from 'react'
 
 const defaultNotes = [
    { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -183,7 +184,10 @@ const ActivityCard = props => {
                      name='time'
                      value={time}
                      onChange={onChangeValues}
-                     onClick={handleUpdateState}
+                     onClick={() => {
+                        reset()
+                        handleUpdateState()
+                     }}
                      reset={reset}
                   />
                ) : (
