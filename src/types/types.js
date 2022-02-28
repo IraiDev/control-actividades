@@ -7,5 +7,6 @@ export const routes = {
    planner: '/planner',
    times: '/informe-tiempos',
    todo: '/to-do/:id',
+   revision: 'revision-actividades',
    plataforma_clientes: TICKET_URL,
 }

@@ -14,6 +14,8 @@ import CardFooter from '../CardFooter'
 import CardContent from '../CardContent'
 import moment from 'moment'
 import FloatMenu from '../../ui/FloatMenu'
+import { useContext } from 'react'
+import { ActivityContext } from '../../../context/ActivityContext'
 
 const defaultNotes = [
    { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -30,8 +32,6 @@ const defaultPauses = [
    { id: 1112322, desc: 'Por reunion de trabajo...' },
    { id: 1112424, desc: 'Salida a terreno...' },
 ]
-
-const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
 const ActivityCard = props => {
    const {
@@ -57,6 +57,8 @@ const ActivityCard = props => {
 
    const navigate = useNavigate()
 
+   const { optionsArray } = useContext(ActivityContext)
+
    const [{ desc, time }, onChangeValues, reset] = useForm({
       desc: '',
       time: props.tiempo_estimado,
@@ -72,17 +74,6 @@ const ActivityCard = props => {
    // variables
    const ESTADO_PAUSA = estado === 1
    const ESTADO_play = estado_play_pausa === 2
-   const DATE = moment(fecha_tx).format('yyyy-MM-DD')
-   const TRANSCURRIDOS =
-      moment(DATE).diff(TODAY, 'days') - moment(DATE).diff(TODAY, 'days') * 2
-   const PRIORIDAD =
-      prioridad_etiqueta === 600
-         ? 'Baja'
-         : prioridad_etiqueta === 400
-         ? 'Media'
-         : prioridad_etiqueta === 100
-         ? 'Alta'
-         : 'S/P'
 
    const onCloseModals = () => {
       reset()
@@ -119,33 +110,50 @@ const ActivityCard = props => {
             priority={props.prioridad_etiqueta}
             onDoubleClick={handleNavigate}>
             <CardContent title={props.actividad} cardNum={numberCard}>
-               <CardSection colCount={2}>
+               <CardSection colCount={3}>
                   <aside className='capitalize'>
-                     <P tag='encargado' value={props.encargado_actividad} />
-                     <P tag='proyecto' value={props.abrev} />
-                     <P tag='sub proyecto' value={props.nombre_sub_proy} />
                      <P tag='solicita' value={props.user_solicita} />
+
+                     <P tag='proy' value={props.abrev} />
+
+                     <P tag='ID' value={props.id_det} />
+
                      <P
-                        tag='estado'
-                        value={ESTADO_PAUSA ? ' pendiente' : ' en trabajo'}
+                        tag='ticket'
+                        value={
+                           props.num_ticket_edit === 0
+                              ? '- -'
+                              : props.num_ticket_edit
+                        }
                      />
                   </aside>
 
+                  <section className='capitalize'>
+                     <P tag='encargado' value={props.encargado_actividad} />
+
+                     <P tag='sub p' value={props.nombre_sub_proy || '- -'} />
+
+                     <P tag='Prioridad' value={props.num_prioridad} />
+                  </section>
+
                   <aside className='capitalize'>
-                     <P tag='ID' value={props.id_det} />
-                     <P tag='ticket' value={props.num_ticket_edit} />
+                     <P
+                        tag='revisor'
+                        value={
+                           optionsArray?.users?.find(
+                              p => props?.id_revisor === p?.id
+                           )?.label || '- -'
+                        }
+                     />
+
                      <P
                         tag='fecha'
-                        value={moment(fecha_tx).format('DD-MM-YYYY')}
+                        value={moment(fecha_tx).format('DD-MM-YY')}
                      />
-                     <P tag='transcurridos' value={TRANSCURRIDOS} />
+
                      <P
-                        tag='Prioridad'
-                        value={
-                           <>
-                              {PRIORIDAD} ({props.num_prioridad})
-                           </>
-                        }
+                        tag='estado'
+                        value={ESTADO_PAUSA ? ' pendiente' : ' en trabajo'}
                      />
                   </aside>
                </CardSection>

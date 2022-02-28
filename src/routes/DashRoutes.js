@@ -8,8 +8,9 @@ import Times from '../pages/Times'
 import Todo from '../pages/Todo'
 import NavBar from '../components/ui/NavBar'
 import Activity from '../pages/Activity'
+import Revision from '../pages/Revision'
 
-const { home, activity, planner, times, todo } = routes
+const { home, activity, planner, times, todo, revision } = routes
 
 const DashRoutes = () => {
    const { getFilters } = useContext(ActivityContext)
@@ -35,6 +36,7 @@ const DashRoutes = () => {
             <Route path={times} element={<Times />} />
             <Route path={planner} element={<Planner />} />
             <Route path={todo} element={<Todo />} />
+            <Route path={revision} element={<Revision />} />
             <Route path={home} element={<Activity />} />
          </Routes>
       </main>
