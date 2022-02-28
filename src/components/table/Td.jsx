@@ -17,13 +17,14 @@ const Td = props => {
       children,
       align = 'text-center',
       isMultiLine = false,
-      width = 'max-w-md',
+      width = 'max-w-sm',
       className,
       bgcolor,
       isModal = false,
       pauseActivity,
       playActivity,
       callback,
+      time,
    } = props
 
    const [modalPause, toggleModalPause] = useState(false)
@@ -37,7 +38,7 @@ const Td = props => {
    const handleToggleStsate = () => {
       Alert({
          title: 'Atención',
-         content: '¿Estas seguro de pasar a revision esta actividad?',
+         content: `La  actividad se pondra en trabajo con el siguiente tiempo: <strong>${time}</strong> hrs`,
          confirmText: 'Si, aceptar',
          cancelText: 'No, cancelar',
          action: callback,

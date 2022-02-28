@@ -254,6 +254,37 @@ export const useActivity = () => {
       }
    }
 
+   const deleteActivity = async ({ id_actividad }) => {
+      try {
+         const resp = await fetchToken(
+            'task/delete-actividad',
+            { id_actividad },
+            'DELETE'
+         )
+         const body = await resp.json()
+
+         if (body.ok) {
+            fetchActivities()
+            Alert({
+               content: 'Actividad eliminada!',
+               statusIcon: 'success',
+               showCancelButton: false,
+               showConfirmButton: false,
+               timer: 1500,
+            })
+         } else {
+            Alert({
+               icon: 'error',
+               title: 'Error',
+               content: 'Error al eliminar actividad',
+               showCancelButton: false,
+            })
+         }
+      } catch (err) {
+         console.log(err)
+      }
+   }
+
    useEffect(() => {
       fetchActivities()
       // eslint-disable-next-line
@@ -270,5 +301,6 @@ export const useActivity = () => {
       updatePriorityAndAddNote,
       getActivities: fetchActivities,
       toggleState,
+      deleteActivity,
    }
 }

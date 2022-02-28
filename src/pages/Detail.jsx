@@ -52,12 +52,18 @@ const initOptions = {
    ur: { label: 'ninguno', value: null },
 }
 
-const initDates = {
+const initForm = {
    hinicio: moment(new Date()).format('HH:mm:ss'),
    hdetencion: '',
    finicio: moment(new Date()).format('YYYY-MM-DD'),
    fdetencion: moment(new Date()).format('YYYY-MM-DD'),
    msg_revision: '',
+   etTicket: '',
+   etEncargado: '',
+   etRecibe: '',
+   etDesc: '',
+   etZionit: '',
+   etCliente: '',
 }
 
 const RowContainer = ({ children, isScale = true }) => (
@@ -128,6 +134,7 @@ const Detail = () => {
    const [modalPause, toggleModalPause] = useState(false)
    const [modalTimer, toggleModalTimer] = useState(false)
    const [modalPR, toggleModalPR] = useState(false)
+   const [modalET, toggleModalET] = useState(false)
 
    // options
    const [options, setOptions] = useState(initOptions)
@@ -166,10 +173,22 @@ const Detail = () => {
    const [timeValues, setTimeValues] = useState([])
 
    const [
-      { hinicio, hdetencion, finicio, fdetencion, msg_revision },
+      {
+         hinicio,
+         hdetencion,
+         finicio,
+         fdetencion,
+         msg_revision,
+         etTicket,
+         etEncargado,
+         etRecibe,
+         etDesc,
+         etZionit,
+         etCliente,
+      },
       onChangeValues,
       reset,
-   ] = useForm(initDates)
+   ] = useForm(initForm)
 
    // destructuring
    const { title, description, gloss, ticket, priority, time } = fields
@@ -260,6 +279,7 @@ const Detail = () => {
       toggleModalClone(false)
       toggleModalTimer(false)
       toggleModalPR(false)
+      toggleModalET(false)
       setValues({ desc: '', id: null, id_ref: null })
       reset()
    }
@@ -455,7 +475,7 @@ const Detail = () => {
       Alert({
          title: 'Atención',
          content:
-            '¿Estas seguro de cambiar el estado a: <strong>REVISIÓN</strong>?',
+            '¿Estas seguro de cambiar el estado a <strong>REVISIÓN</strong>?',
          confirmButton: 'Si, actualizar',
          cancelButton: 'No, cancelar',
          action: () => {
@@ -557,6 +577,13 @@ const Detail = () => {
       })
    }
 
+   const handleToggleET = () => {
+      const glosa = `- N º Ticket: ${etTicket}\n- Entrego: ${etEncargado}\n- Recibe: ${etRecibe}\n- Descripción: ${etDesc}\n- Tiempo Zionit: ${etZionit}\n- Tiempo Cliente: ${etCliente}`
+      setFields({ ...fields, gloss: '' })
+      setFields({ ...fields, gloss: glosa })
+      onCloseModals()
+   }
+
    useEffect(() => {
       if (Object.keys(activity).length > 0) {
          setFields({
@@ -611,6 +638,7 @@ const Detail = () => {
                      onMid={() => onChangePriority(400, activity.id_det)}
                      onLow={() => onChangePriority(600, activity.id_det)}
                      onNone={() => onChangePriority(1000, activity.id_det)}>
+                     {/*  */}
                      <AlertBar validation={validation().isSave} />
 
                      <ViewSection lg cols={8}>
@@ -993,9 +1021,15 @@ const Detail = () => {
                                     ? () => toggleModalPR(true)
                                     : () => handleUpdateState(isTicket)
                               }>
-                              {/* onClick={handleUpdateState}> */}
                               <i className='fas fa-eye' />
                            </Button>
+                           {/* <Button
+                              hidden={activity.estado !== 2}
+                              title='Pasar actividad a entregado'
+                              className='text-indigo-400 bg-indigo-50 hover:bg-indigo-100'
+                              onClick={() => toggleModalET(true)}>
+                              <i className='fas fa-handshake' />
+                           </Button> */}
                         </section>
 
                         <section className='flex justify-end gap-2'>
@@ -1016,6 +1050,70 @@ const Detail = () => {
                      </ViewFooter>
                   </View>
                </ViewContainer>
+
+               {/* modal PR */}
+               <Modal
+                  showModal={modalET}
+                  isBlur={false}
+                  onClose={onCloseModals}
+                  className='max-w-3xl'
+                  padding='p-4 md:p-6'
+                  title='Formulario pre paso a entregado'>
+                  <div className='grid gap-3'>
+                     <section className='grid grid-cols-1 md:grid-cols-3 gap-3'>
+                        <Input
+                           field='N ticket'
+                           name='etTicket'
+                           value={etTicket}
+                           onChange={onChangeValues}
+                        />
+                        <Input
+                           field='Encargado'
+                           name='etEncargado'
+                           value={etEncargado}
+                           onChange={onChangeValues}
+                        />
+                        <Input
+                           field='recibe'
+                           name='etRecibe'
+                           value={etRecibe}
+                           onChange={onChangeValues}
+                        />
+                     </section>
+                     <TextArea
+                        field='descripción'
+                        name='etDesc'
+                        value={etDesc}
+                        onChange={onChangeValues}
+                     />
+                     <section className='grid grid-cols-2 gap-3'>
+                        <Input
+                           field='tiempo zionit'
+                           name='etZionit'
+                           value={etZionit}
+                           onChange={onChangeValues}
+                        />
+                        <Input
+                           field='tiempo cliente'
+                           name='etCliente'
+                           value={etCliente}
+                           onChange={onChangeValues}
+                        />
+                     </section>
+                  </div>
+                  <footer className='mt-5 flex justify-between'>
+                     <Button
+                        className='text-red-500 bg-red-50 hover:bg-red-100'
+                        onClick={onCloseModals}>
+                        cancelar
+                     </Button>
+                     <Button
+                        className='text-emerald-500 bg-emerald-50 hover:bg-emerald-100'
+                        onClick={handleToggleET}>
+                        pasar a entregado
+                     </Button>
+                  </footer>
+               </Modal>
 
                {/* modal PR */}
                <Modal

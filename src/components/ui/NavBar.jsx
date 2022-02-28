@@ -19,6 +19,7 @@ import TextArea from './TextArea'
 import moment from 'moment'
 import AlertBar from './AlertBar'
 import queryString from 'query-string'
+import { UiContext } from '../../context/UiContext'
 
 const env = process.env.REACT_APP_ENVIOREMENT
 
@@ -64,6 +65,7 @@ const MenuContent = ({ content }) => {
 
 const NavBar = () => {
    const { saveFilters, filters, optionsArray } = useContext(ActivityContext)
+   const { view } = useContext(UiContext)
 
    const { notify, markNotifications } = useNotify()
    const { cloneActivity: createActivity } = useDetail(null)
@@ -181,12 +183,18 @@ const NavBar = () => {
       <>
          <nav className='flex items-center justify-between bg-white shadow border h-16 px-2 lg:px-10 sticky z-20 top-0 text-slate-700'>
             {pathname === activity || pathname === home ? (
-               <Button
-                  className='bg-zinc-100 hover:bg-zinc-200'
-                  isShadow
-                  onClick={toggleSideBar}>
-                  Filtros <i className='fas fa-filter' />
-               </Button>
+               <>
+                  {view ? (
+                     <Button
+                        className='bg-zinc-100 hover:bg-zinc-200'
+                        isShadow
+                        onClick={toggleSideBar}>
+                        Filtros <i className='fas fa-filter' />
+                     </Button>
+                  ) : (
+                     <span />
+                  )}
+               </>
             ) : (
                <section className='font-semibold flex gap-2 items-baseline'>
                   <i className={icon_list} /> <h1>{title_list}</h1>

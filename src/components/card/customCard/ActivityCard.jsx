@@ -39,6 +39,7 @@ const ActivityCard = props => {
       addNote,
       updateNote,
       deleteNote,
+      deleteActivity,
       lowPriority,
       mediumPriority,
       highPriority,
@@ -229,6 +230,13 @@ const ActivityCard = props => {
                         onClick={() => toggleModalEdit(true)}>
                         Editar nota
                         <i className='fas fa-pen' />
+                     </MenuItem>
+
+                     <MenuItem
+                        className='flex justify-between items-center gap-2'
+                        onClick={deleteActivity}>
+                        Eliminar Actividad
+                        <i className='fas fa-trash-alt' />
                      </MenuItem>
 
                      <MenuItem

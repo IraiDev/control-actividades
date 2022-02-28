@@ -13,6 +13,7 @@ const Input = ({
    tooltip,
    isNumber = false,
    className,
+   padding = 'px-4 py-2',
 }) => {
    return (
       <div className={className}>
@@ -28,7 +29,7 @@ const Input = ({
                e.target.select()
             }}
             type={type}
-            className={`px-4 py-2 rounded-md bg-black/5 focus:bg-white transition duration-200 focus:ring-2 focus:shadow-lg ${width}`}
+            className={`${padding} rounded-md bg-black/5 focus:bg-white transition duration-200 focus:ring-2 focus:shadow-lg ${width}`}
             placeholder={placeholder}
             onKeyPress={event => {
                if (!isNumber) return

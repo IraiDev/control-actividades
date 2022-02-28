@@ -10,7 +10,7 @@ const FloatButton = ({
 }) => {
    return (
       <button
-         className={`shadow-lg fixed z-40
+         className={`shadow-lg fixed z-20
             rounded-full transition duration-300
             ${size} ${position} ${className}
             `}

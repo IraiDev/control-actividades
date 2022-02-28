@@ -17,15 +17,23 @@ import Container from '../components/ui/Container'
 import FooterPage from '../components/ui/FooterPage'
 import FooterCounter from '../components/ui/FooterCounter'
 import PingIndicator from '../components/ui/PingIndicator'
-import moment from 'moment'
+import InputFilter from '../components/filter/InputFilter'
+import SelectFilter from '../components/filter/SelectFilter'
+import { useForm } from '../hooks/useForm'
 
-const PrioritySelector = ({ onClick, color = 'bg-slate-400' }) => (
-   <span
-      className={`h-3.5 w-3.5 rounded-full ${color} transition hover:border
+const PrioritySelector = ({ onClick, color = 'bg-slate-400', disabled }) => {
+   return (
+      <>
+         {!disabled && (
+            <span
+               className={`h-3.5 w-3.5 rounded-full ${color} transition hover:border
       duration-200 hover:scale-150 transform cursor-pointer`}
-      onClick={onClick}
-   />
-)
+               onClick={onClick}
+            />
+         )}
+      </>
+   )
+}
 
 const CustomSelect = ({ value, onChange }) => {
    return (
@@ -45,7 +53,8 @@ const CustomSelect = ({ value, onChange }) => {
 const Activity = () => {
    const navigate = useNavigate()
    const { view, setView, setIsLoading } = useContext(UiContext)
-   const { saveFilters, pager, setPager } = useContext(ActivityContext)
+   const { optionsArray, saveFilters, pager, setPager, setOrder, order } =
+      useContext(ActivityContext)
    const [multiline, setMultiline] = useState(false)
    const size = useWindowSize()
 
@@ -59,7 +68,63 @@ const Activity = () => {
       onPlayPause,
       updatePriorityAndAddNote,
       toggleState,
+      deleteActivity,
    } = useActivity()
+
+   const [options, setOptions] = useState({})
+   const [{ id, title, numPriority, desc, ticket }, onChangeValues, reset] =
+      useForm({
+         id: '',
+         title: '',
+         numPriority: '',
+         desc: '',
+         ticket: '',
+      })
+
+   const { projects, subProjects, users, status } = optionsArray
+
+   const onFilter = () => {
+      const filters = {
+         estado: options.st?.value || '',
+         proyecto:
+            options.pr?.length > 0 ? options.pr.map(item => item.value) : [],
+         encargado:
+            options.ue?.length > 0 ? options.ue.map(item => item.label) : [],
+         solicitante:
+            options.us?.length > 0 ? options.us.map(item => item.label) : [],
+         subProy:
+            options.sp?.length > 0 ? options.sp.map(item => item.value) : [],
+         color: options.pi?.value || '',
+         id_actividad: id,
+         titulo: title,
+         prioridad_ra: numPriority,
+         offset: 0,
+      }
+
+      setPager({ ...pager, page: 1 })
+
+      saveFilters({ payload: filters })
+   }
+
+   const onClear = () => {
+      saveFilters({ reset: true })
+      setOptions({
+         st: '',
+         pr: [],
+         ue: [],
+         us: [],
+         sp: [],
+         pi: '',
+      })
+      reset()
+      setOrder({})
+   }
+
+   const setActive = ({ param, value }) => {
+      const k = Object.keys(order).some(k => k === param)
+      const v = Object.values(order).some(v => v === value)
+      return k && v
+   }
 
    const toggleView = (state, time = 1000) => {
       setIsLoading(true)
@@ -88,6 +153,17 @@ const Activity = () => {
 
    const onPlayActivity = ({ id_actividad }) => {
       onPlayPause({ id_actividad })
+   }
+
+   const onDeleteActivity = ({ id_actividad, title = 'sin titulo' }) => {
+      Alert({
+         icon: 'warn',
+         title: 'Atención',
+         content: `¿Estás seguro de eliminar la siguiente actividad: <strong>${title}</strong>, id: <strong>${id_actividad}</strong>?`,
+         confirmText: 'Si, eliminar',
+         cancelText: 'No, cancelar',
+         action: () => deleteActivity({ id_actividad }),
+      })
    }
 
    const onDeleteNote = ({ id_nota, id_actividad, description }) => {
@@ -188,6 +264,12 @@ const Activity = () => {
                               tiempo_estimado,
                            })
                         }
+                        deleteActivity={() =>
+                           onDeleteActivity({
+                              id_actividad: act.id_det,
+                              title: act.actividad,
+                           })
+                        }
                         addNote={onAddNote}
                         addDefaultNote={onAddDefaultNote}
                         updateNote={onUpdateNote}
@@ -207,6 +289,227 @@ const Activity = () => {
             <Container type='table'>
                <Table>
                   <THead>
+                     <tr className='text-center capitalize bg-white'>
+                        <Th className='bg-zinc-100'></Th>
+                        <Th>
+                           <InputFilter
+                              type='table'
+                              width='w-16'
+                              isNumber
+                              name='id'
+                              value={id}
+                              onChange={onChangeValues}
+                              filterDown={() => setOrder({ orden_id: 'desc' })}
+                              filterUp={() => setOrder({ orden_id: 'asc' })}
+                              upActive={setActive({
+                                 param: 'orden_id',
+                                 value: 'asc',
+                              })}
+                              downActive={setActive({
+                                 param: 'orden_id',
+                                 value: 'desc',
+                              })}
+                           />
+                        </Th>
+                        <Th className='bg-zinc-100'>
+                           <InputFilter
+                              type='table'
+                              width='w-16'
+                              name='ticket'
+                              value={ticket}
+                              onChange={onChangeValues}
+                           />
+                        </Th>
+                        <Th>
+                           <SelectFilter
+                              type='table'
+                              value={options.pr}
+                              options={projects}
+                              isMulti
+                              onChange={option =>
+                                 setOptions({ ...options, pr: option })
+                              }
+                              filterDown={() =>
+                                 setOrder({ orden_proyecto: 'desc' })
+                              }
+                              filterUp={() =>
+                                 setOrder({ orden_proyecto: 'asc' })
+                              }
+                              upActive={setActive({
+                                 param: 'orden_proyecto',
+                                 value: 'asc',
+                              })}
+                              downActive={setActive({
+                                 param: 'orden_proyecto',
+                                 value: 'desc',
+                              })}
+                           />
+                        </Th>
+                        <Th className='bg-zinc-100'>
+                           <SelectFilter
+                              type='table'
+                              value={options.sp}
+                              options={
+                                 options.pr?.length > 1
+                                    ? []
+                                    : options.pr?.length > 0
+                                    ? subProjects?.filter(
+                                         s => s.id === options.pr[0]?.value
+                                      )
+                                    : subProjects
+                              }
+                              isMulti
+                              isOrder={false}
+                              onChange={option =>
+                                 setOptions({ ...options, sp: option })
+                              }
+                           />
+                        </Th>
+                        <Th>
+                           <SelectFilter
+                              type='table'
+                              value={options.us}
+                              options={users}
+                              isMulti
+                              onChange={option =>
+                                 setOptions({ ...options, us: option })
+                              }
+                              filterDown={() =>
+                                 setOrder({ orden_solicitante: 'desc' })
+                              }
+                              filterUp={() =>
+                                 setOrder({ orden_solicitante: 'asc' })
+                              }
+                              upActive={setActive({
+                                 param: 'orden_solicitante',
+                                 value: 'asc',
+                              })}
+                              downActive={setActive({
+                                 param: 'orden_solicitante',
+                                 value: 'desc',
+                              })}
+                           />
+                        </Th>
+                        <Th className='bg-zinc-100'>
+                           <SelectFilter
+                              type='table'
+                              value={options.ue}
+                              options={users}
+                              isMulti
+                              onChange={option =>
+                                 setOptions({ ...options, ue: option })
+                              }
+                              filterDown={() =>
+                                 setOrder({ orden_encargado: 'desc' })
+                              }
+                              filterUp={() =>
+                                 setOrder({ orden_encargado: 'asc' })
+                              }
+                              upActive={setActive({
+                                 param: 'orden_encargado',
+                                 value: 'asc',
+                              })}
+                              downActive={setActive({
+                                 param: 'orden_encargado',
+                                 value: 'desc',
+                              })}
+                           />
+                        </Th>
+                        <Th>
+                           <InputFilter
+                              type='table'
+                              width='w-14'
+                              name='numPriority'
+                              value={numPriority}
+                              onChange={onChangeValues}
+                              filterDown={() =>
+                                 setOrder({ orden_prioridad_ra: 'desc' })
+                              }
+                              filterUp={() =>
+                                 setOrder({ orden_prioridad_ra: 'asc' })
+                              }
+                              upActive={setActive({
+                                 param: 'orden_prioridad_ra',
+                                 value: 'asc',
+                              })}
+                              downActive={setActive({
+                                 param: 'orden_prioridad_ra',
+                                 value: 'desc',
+                              })}
+                           />
+                        </Th>
+                        {/* <Th className='bg-zinc-100'></Th> */}
+                        <Th className='bg-zinc-100'>
+                           <InputFilter
+                              type='table'
+                              width='w-28'
+                              name='title'
+                              value={title}
+                              onChange={onChangeValues}
+                              filterDown={() =>
+                                 setOrder({ orden_actividad: 'desc' })
+                              }
+                              filterUp={() =>
+                                 setOrder({ orden_actividad: 'asc' })
+                              }
+                              upActive={setActive({
+                                 param: 'orden_actividad',
+                                 value: 'asc',
+                              })}
+                              downActive={setActive({
+                                 param: 'orden_actividad',
+                                 value: 'desc',
+                              })}
+                           />
+                        </Th>
+                        <Th>
+                           <InputFilter
+                              type='table'
+                              width='w-96'
+                              name='desc'
+                              value={desc}
+                              onChange={onChangeValues}
+                              isOrder={false}
+                           />
+                        </Th>
+                        <Th className='bg-zinc-100'>
+                           <SelectFilter
+                              type='table'
+                              value={options.st}
+                              options={status}
+                              onChange={option =>
+                                 setOptions({ ...options, st: option })
+                              }
+                              filterDown={() =>
+                                 setOrder({ orden_estado: 'desc' })
+                              }
+                              filterUp={() => setOrder({ orden_estado: 'asc' })}
+                              upActive={setActive({
+                                 param: 'orden_estado',
+                                 value: 'asc',
+                              })}
+                              downActive={setActive({
+                                 param: 'orden_estado',
+                                 value: 'desc',
+                              })}
+                           />
+                        </Th>
+                        <Th className='flex justify-around pt-3'>
+                           <Button
+                              className='bg-zinc-100 hover:bg-zinc-200'
+                              title='Limpiar filtros'
+                              isShadow
+                              onClick={onClear}>
+                              <i className='fas fa-eraser' />
+                           </Button>
+                           <Button
+                              className='bg-blue-500 hover:bg-blue-600 text-white'
+                              isShadow
+                              onClick={onFilter}>
+                              filtrar <i className='fas fa-filter' />
+                           </Button>
+                        </Th>
+                     </tr>
                      <tr className='text-center capitalize text-white bg-slate-600'>
                         <Th className='bg-slate-700'>Nᵒ</Th>
                         <Th>ID</Th>
@@ -216,8 +519,8 @@ const Activity = () => {
                         <Th>solicitante</Th>
                         <Th className='bg-slate-700'>encargado</Th>
                         <Th>prioridad</Th>
-                        <Th className='bg-slate-700'>fecha</Th>
-                        <Th>
+                        {/* <Th className='bg-slate-700'>fecha</Th> */}
+                        <Th className='bg-slate-700'>
                            <div className='flex items-baseline justify-center gap-2'>
                               actividad
                               <Button
@@ -233,7 +536,7 @@ const Activity = () => {
                               </Button>
                            </div>
                         </Th>
-                        <Th className='bg-slate-700'>
+                        <Th>
                            <div className='flex items-baseline justify-center gap-2'>
                               descripcion
                               <Button
@@ -249,8 +552,8 @@ const Activity = () => {
                               </Button>
                            </div>
                         </Th>
-                        <Th>estado</Th>
-                        <Th className='bg-slate-700'></Th>
+                        <Th className='bg-slate-700'>estado</Th>
+                        <Th></Th>
                      </tr>
                   </THead>
                   <TBody>
@@ -303,31 +606,29 @@ const Activity = () => {
                                  {act.encargado_actividad}
                               </Td>
                               <Td className='font-bold'>{act.num_prioridad}</Td>
-                              <Td bgcolor>
+                              {/* <Td bgcolor>
                                  {moment(act.fecha_tx).format('DD/MM/yyyy')}
-                              </Td>
+                              </Td> */}
                               <Td
+                                 bgcolor
                                  isMultiLine={multiline}
                                  className='font-bold'
                                  width='max-w-[150px]'
                                  align='text-left'>
                                  {act.actividad || 'Sin Titulo'}
                               </Td>
-                              <Td
-                                 isMultiLine={multiline}
-                                 bgcolor
-                                 align='text-left'>
+                              <Td isMultiLine={multiline} align='text-left'>
                                  {act.func_objeto}
                               </Td>
-                              <Td className='font-bold'>
+                              <Td bgcolor className='font-bold'>
                                  {act.estado === 1 ? 'Pendiente' : 'En trabajo'}
                               </Td>
                               <Td
-                                 className='flex items-center justify-around gap-2'
-                                 bgcolor
+                                 className='flex items-center justify-between gap-2'
                                  isModal
                                  pauseActivity={onPauseActivity}
                                  playActivity={onPlayActivity}
+                                 time={act.tiempo_estimado}
                                  callback={() =>
                                     toggleState({
                                        id_actividad: act.id_det,
@@ -338,6 +639,9 @@ const Activity = () => {
                                  {...act}>
                                  <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
                                     <PrioritySelector
+                                       disabled={
+                                          act.prioridad_etiqueta === 1000
+                                       }
                                        onClick={() =>
                                           updatePriority({
                                              prioridad_numero: 1000,
@@ -346,6 +650,7 @@ const Activity = () => {
                                        }
                                     />
                                     <PrioritySelector
+                                       disabled={act.prioridad_etiqueta === 600}
                                        color='bg-green-500/70'
                                        onClick={() =>
                                           updatePriority({
@@ -355,6 +660,7 @@ const Activity = () => {
                                        }
                                     />
                                     <PrioritySelector
+                                       disabled={act.prioridad_etiqueta === 400}
                                        color='bg-yellow-500/80'
                                        onClick={() =>
                                           updatePriority({
@@ -364,6 +670,7 @@ const Activity = () => {
                                        }
                                     />
                                     <PrioritySelector
+                                       disabled={act.prioridad_etiqueta === 100}
                                        color='bg-red-500/70'
                                        onClick={() =>
                                           updatePriority({

@@ -10,7 +10,7 @@ const Card = ({
    return (
       <main
          className={`
-         p-4 pb-2 rounded-xl shadow-lg grid content-between transition duration-200 hover:scale-[0.985] transform 
+         p-4 pb-2 rounded-xl shadow-lg grid content-between transition duration-200 hover:scale-[1.01] transform 
          text-sm shadow-zinc-400/40 hover:shadow-xl hover:shadow-zinc-400/40 relative
          ${
             priority === 1000
