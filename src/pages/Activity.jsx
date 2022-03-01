@@ -62,12 +62,6 @@ const CustomSelect = ({ value, onChange }) => {
 
 const Activity = () => {
    const navigate = useNavigate()
-   const { view, setView, setIsLoading } = useContext(UiContext)
-   const { optionsArray, saveFilters, pager, setPager, setOrder, order } =
-      useContext(ActivityContext)
-   const [multiline, setMultiline] = useState(false)
-   const [color, setColor] = useState([])
-   const size = useWindowSize()
 
    const {
       activities,
@@ -82,16 +76,45 @@ const Activity = () => {
       deleteActivity,
    } = useActivity()
 
-   const [options, setOptions] = useState({})
-   const [{ id, title, numPriority, desc, ticket }, onChangeValues, reset] =
-      useForm({
-         id: '',
-         title: '',
-         numPriority: '',
-         desc: '',
-         ticket: '',
-      })
+   // constext
+   const { 
+      view, 
+      setView, 
+      setIsLoading 
+   } = useContext(UiContext)
 
+   const { 
+      optionsArray, 
+      saveFilters, 
+      pager, 
+      setPager, 
+      setOrder, 
+      order 
+   } = useContext(ActivityContext)
+
+   // states
+   const [multiline, setMultiline] = useState(false)
+   const [color, setColor] = useState([])
+   const [options, setOptions] = useState({})
+
+   // hooks
+   const size = useWindowSize()
+   const [{ 
+      id, 
+      title, 
+      numPriority, 
+      desc, 
+      ticket 
+   }, onChangeValues, reset] =
+   useForm({
+      id: '',
+      title: '',
+      numPriority: '',
+      desc: '',
+      ticket: '',
+   })
+
+   // destructuring
    const { projects, subProjects, users, status } = optionsArray
 
    const onFilter = () => {

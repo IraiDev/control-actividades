@@ -17,7 +17,8 @@ const TextArea = ({
             onChange={onChange}
             type={type}
             className='scroll-row px-4 text-sm h-40 overflow-custom py-2 text-justify rounded-md bg-black/5 
-             focus:bg-white w-full resize-none transition duration-200 focus:ring-2 focus:shadow-lg'
+             focus:bg-white w-full resize-none transition duration-200 focus:ring-2 focus:shadow-lg
+             border border-zinc-300'
             placeholder={placeholder}></textarea>
       </div>
    )

@@ -31,7 +31,7 @@ const Input = ({
                e.target.select()
             }}
             type={type}
-            className={`${padding} rounded-md bg-zinc-100 focus:bg-white text-slate-700 transition duration-200 focus:ring-2 focus:shadow-lg ${width}`}
+            className={`${padding} rounded-md bg-white text-slate-700 border border-zinc-300 transition duration-200 focus:ring-2 focus:shadow-lg ${width}`}
             placeholder={placeholder}
             onKeyPress={event => {
                if (!isNumber) return

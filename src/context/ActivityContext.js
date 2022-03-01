@@ -19,6 +19,21 @@ const initFilters = {
    reload: false,
 }
 
+const initPRFilters = {
+   estado: [],
+   proyecto: [],
+   encargado: [],
+   solicitante: [],
+   subProy: [],
+   numero_ticket: '',
+   id_actividad: '',
+   descripcion: '',
+   titulo: '',
+   offset: 0,
+   limit: 20,
+   reload: false,
+}
+
 export const ActivityContext = createContext()
 
 function ActivityProvider({ children }) {
@@ -27,6 +42,9 @@ function ActivityProvider({ children }) {
    const [filters, setFilters] = useState(initFilters)
    const [order, setOrder] = useState({})
    const [pager, setPager] = useState({ page: 1, limit: 12 })
+   const [prFilters, setPRFilters] = useState(initFilters)
+   const [prOrder, setPROrder] = useState({})
+   const [prPager, setPRPager] = useState({ page: 1, limit: 12 })
 
    const login = async ({ email }) => {
       try {
@@ -120,6 +138,15 @@ function ActivityProvider({ children }) {
          setFilters(Object.assign({}, filters, payload))
       }
    }
+   
+   const savePRFilters = ({ reset = false, payload }) => {
+      if (reset) {
+         setPRFilters(initPRFilters)
+         setPager({ page: 1, limit: 20 })
+      } else {
+         setPRFilters(Object.assign({}, prFilters, payload))
+      }
+   }
 
    const value = {
       login,
@@ -127,11 +154,17 @@ function ActivityProvider({ children }) {
       getFilters,
       optionsArray,
       filters,
+      prFilters,
       saveFilters,
       setOrder,
       order,
       setPager,
       pager,
+      savePRFilters,
+      prPager,
+      setPRPager,
+      setPROrder,
+      prOrder,
    }
    return (
       <ActivityContext.Provider value={value}>

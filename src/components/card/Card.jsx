@@ -1,6 +1,6 @@
 import PingIndicator from '../ui/PingIndicator'
 
-const ChildIndicator = ({content, color}) => {
+const Indicator = ({content, color, isChild}) => {
    return (
       <span className={`
          flex items-center gap-2 absolute -top-3 left-6 text-white font-semibold 
@@ -8,8 +8,13 @@ const ChildIndicator = ({content, color}) => {
          ${color}
          `}
       >
-         <i className='fas fa-handshake' />
-         {content}
+         {isChild ? 
+            <>
+               <i className='fas fa-child' />
+               {content}
+            </>
+            : <i className='fas fa-hat-cowboy' />
+         }
       </span>
    )
 }
@@ -51,7 +56,20 @@ const Card = (props) => {
          {children}
 
          {showPing && <PingIndicator />}
-         {isChildren && <ChildIndicator content={props?.id_det_padre} color={props?.colors?.find(c => c?.id === props?.id_det_padre)?.bg} />}
+
+         {isChildren && 
+            <Indicator 
+               isChild
+               content={props?.id_det_padre} 
+               color={props?.colors?.find(c => c?.id === props?.id_det_padre)?.bg} 
+            />
+         }
+
+         {isFather && 
+            <Indicator 
+               color={props?.colors?.find(c => c?.id === props?.id_det)?.bg} 
+            />
+         }
 
       </main>
    )

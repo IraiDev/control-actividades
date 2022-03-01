@@ -121,7 +121,7 @@ const ActivityCard = props => {
                      <P tag='proy' value={props.abrev} />
 
                      <span className={`
-                        flex gap-2 max-w-max rounded-md
+                        flex gap-2 max-w-max rounded
                         ${props?.colors?.find(c => c?.id === props?.id_det && props.isFather)?.bg}
                         ${props.isFather && 'text-white px-1'}
                      `}>

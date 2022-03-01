@@ -6,7 +6,7 @@ import { fetchToken } from '../helpers/fetch'
 
 export const useActivityPr = () => {
    const { setIsLoading } = useContext(UiContext)
-   const { filters, order } = useContext(ActivityContext)
+   const { prFilters, prOrder } = useContext(ActivityContext)
    const [activitiesPR, setActivitiesPR] = useState([])
    const [total, setTotal] = useState(0)
 
@@ -15,7 +15,7 @@ export const useActivityPr = () => {
          setIsLoading(true)
          const resp = await fetchToken(
             'task/get-finished-task',
-            { },
+            { ...prFilters, ...prOrder},
             'POST'
          )
          const body = await resp.json()
@@ -38,7 +38,7 @@ export const useActivityPr = () => {
    useEffect(() => {
       fetchActivities()
       // eslint-disable-next-line
-   }, [filters, order])
+   }, [prFilters, prOrder])
 
    return {activitiesPR, total}
 

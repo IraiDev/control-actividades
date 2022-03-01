@@ -10,6 +10,7 @@ const CustomSelect = ({
    <span className='grid gap-1 capitalize text-sm'>
       {label}
       <Select
+         placeholder='Seleccione'
          className='capitalize'
          options={[{ value: null, label: defaultLabel }].concat(options)}
          value={value}
