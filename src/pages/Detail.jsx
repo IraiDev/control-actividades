@@ -280,6 +280,8 @@ const Detail = () => {
       toggleModalTimer(false)
       toggleModalPR(false)
       toggleModalET(false)
+      setCloneFiles(null)
+      onCleanFile(Math.random().toString(36))
       setValues({ desc: '', id: null, id_ref: null })
       reset()
    }
@@ -436,6 +438,7 @@ const Detail = () => {
       formData.append('titulo', cTitle)
       formData.append('descripcion', cDescription)
       formData.append('glosa', cGloss)
+      formData.append('id_actividad', activity.id_det)
       cloneFiles && formData.append('archivos', cloneFiles)
 
       const ok = await cloneActivity(formData)
@@ -637,8 +640,8 @@ const Detail = () => {
                      onHigh={() => onChangePriority(100, activity.id_det)}
                      onMid={() => onChangePriority(400, activity.id_det)}
                      onLow={() => onChangePriority(600, activity.id_det)}
-                     onNone={() => onChangePriority(1000, activity.id_det)}>
-                     {/*  */}
+                     onNone={() => onChangePriority(1000, activity.id_det)}
+                  >
                      <AlertBar validation={validation().isSave} />
 
                      <ViewSection lg cols={8}>

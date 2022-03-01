@@ -156,11 +156,11 @@ const NavMenu = ({ isOpen, toggleMenu }) => {
                   name='informe de tiempos'
                />
                <LiNav onClick={toggleMenu} to={activity} name='actividades' />
-               {/* <LiNav
+               <LiNav
                   onClick={toggleMenu}
-                  to={revision}
+                  to={routes.revision}
                   name='actividades P.R'
-               /> */}
+               />
                <LiNav onClick={toggleMenu} to={planner} name='planner' />
                <LiLink
                   onClick={toggleMenu}

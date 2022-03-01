@@ -1,7 +1,7 @@
 const Container = ({ type = 'card', children }) => {
    if (type === 'card') {
       return (
-         <section className='pt-10 pb-24 px-2 container mx-auto gap-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+         <section className='pt-10 pb-24 px-2 container mx-auto gap-2 gap-y-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
             {children}
          </section>
       )

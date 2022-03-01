@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import { ActivityContext } from '../../context/ActivityContext'
+import { UiContext } from '../../context/UiContext'
+import { useLocation } from 'react-router-dom'
 import { useToggle } from '../../hooks/useToggle'
 import { useForm } from '../../hooks/useForm'
 import { useDetail } from '../../hooks/useDetail'
@@ -19,7 +20,6 @@ import TextArea from './TextArea'
 import moment from 'moment'
 import AlertBar from './AlertBar'
 import queryString from 'query-string'
-import { UiContext } from '../../context/UiContext'
 
 const env = process.env.REACT_APP_ENVIOREMENT
 
@@ -182,24 +182,25 @@ const NavBar = () => {
    return (
       <>
          <nav className='flex items-center justify-between bg-white shadow border h-16 px-2 lg:px-10 sticky z-20 top-0 text-slate-700'>
-            {pathname === activity || pathname === home ? (
+            {pathname === activity || pathname === home ?
                <>
-                  {view ? (
+                  {view ?
                      <Button
                         className='bg-zinc-100 hover:bg-zinc-200'
                         isShadow
-                        onClick={toggleSideBar}>
+                        onClick={toggleSideBar}
+                     >
                         Filtros <i className='fas fa-filter' />
                      </Button>
-                  ) : (
-                     <span />
-                  )}
+                   : <span />
+                  }
                </>
-            ) : (
+             : 
                <section className='font-semibold flex gap-2 items-baseline'>
-                  <i className={icon_list} /> <h1>{title_list}</h1>
+                  <i className={icon_list} /> 
+                  <h1>{title_list}</h1>
                </section>
-            )}
+            }
 
             <EnvType env={env} />
 
@@ -211,7 +212,8 @@ const NavBar = () => {
                <Button
                   hidden={pathname !== activity && pathname !== home}
                   title='Nueva actividad'
-                  onClick={() => toggleModal(true)}>
+                  onClick={() => toggleModal(true)}
+               >
                   <i className='fas fa-plus' />
                </Button>
 
@@ -222,14 +224,16 @@ const NavBar = () => {
                         ? ' text-blue-500'
                         : ' text-slate-700' && ' hover:bg-zinc-200'
                   }
-                  onClick={handleToggleShowActivities}>
+                  onClick={handleToggleShowActivities}
+               >
                   <i className='fas fa-user-clock' />
                </Button>
 
                <Button
                   className='hover:bg-zinc-200 hidden md:block'
                   title='Actualizar'
-                  onClick={handleRefresh}>
+                  onClick={handleRefresh}
+               >
                   <i className='fas fa-history' />
                </Button>
 
@@ -242,18 +246,18 @@ const NavBar = () => {
                   menuButton={
                      <MenuButton className='text-slate-700 hover:bg-zinc-200 rounded-lg h-9 px-2.5 transition duration-500 relative'>
                         <span
-                           className={`h-4 min-w-[16px] bg-red-400 text-white rounded-full 
-                              absolute top-0 right-0 text-xs ${
-                                 notify.length < 1 && 'hidden'
-                              }
-                           `}>
+                           className={`
+                              h-4 min-w-[16px] bg-red-400 text-white rounded-full 
+                              absolute top-0 right-0 text-xs
+                              ${notify.length < 1 && 'hidden'}
+                        `}>
                            {notify.length}
                         </span>
                         <i className='fas fa-bell' />
                      </MenuButton>
                   }>
-                  {notify.length > 0 ? (
-                     notify.map((noti, i) => (
+                  {notify.length > 0 ?
+                     notify.map(noti => (
                         <MenuItem
                            key={noti.id_nota}
                            className='text-transparent hover:text-slate-800 flex items-center justify-between'>
@@ -268,16 +272,17 @@ const NavBar = () => {
                            />
                         </MenuItem>
                      ))
-                  ) : (
-                     <MenuItem>No hay notificaciones...</MenuItem>
-                  )}
+                  : <MenuItem>No hay notificaciones...</MenuItem>
+                  }
                   <MenuItem
                      disabled={notify.length < 1}
-                     className={`flex justify-between items-center ${
-                        notify.length > 0 && 'hover:text-red-500'
-                     }`}
-                     onClick={markNotifications}>
-                     Marcar como vistas <i className='fas fa-eye-slash fa-sm' />
+                     className={`flex justify-between items-center space-x-2
+                        ${notify.length > 0 && 'hover:text-red-500'}
+                     `}
+                     onClick={markNotifications}
+                  >
+                     Marcar como vistas 
+                     <i className='fas fa-eye-slash fa-sm' />
                   </MenuItem>
                </Menu>
 

@@ -108,7 +108,11 @@ const ActivityCard = props => {
          <Card
             showPing={props.estado_play_pausa === 2}
             priority={props.prioridad_etiqueta}
-            onDoubleClick={handleNavigate}>
+            onDoubleClick={handleNavigate}
+            isChildren={props.id_det_padre !== 0}
+            isFather={props.isFather}
+            {...props}
+         >
             <CardContent title={props.actividad} cardNum={numberCard}>
                <CardSection colCount={3}>
                   <aside className='capitalize'>
@@ -116,7 +120,16 @@ const ActivityCard = props => {
 
                      <P tag='proy' value={props.abrev} />
 
-                     <P tag='ID' value={props.id_det} />
+                     <span className={`
+                        flex gap-2 max-w-max rounded-md
+                        ${props?.colors?.find(c => c?.id === props?.id_det && props.isFather)?.bg}
+                        ${props.isFather && 'text-white px-1'}
+                     `}>
+                        <strong>ID:</strong> 
+                        {props.id_det}
+                     </span>
+
+                     {/* <P tag='ID' value={props.id_det} /> */}
 
                      <P
                         tag='ticket'

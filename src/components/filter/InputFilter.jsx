@@ -19,12 +19,12 @@ const InputFilter = ({
 }) => {
    if (type === 'table') {
       return (
-         <div className='w-full pb-1 flex items-center justify-between'>
+         <div className='w-full flex items-center justify-between'>
             {isOrder && (
                <Button
                   disabled={upActive}
                   className={`hover:text-blue-500 mt-2 ${
-                     upActive ? 'text-blue-500' : 'text-slate-700'
+                     upActive ? 'text-blue-500' : ''
                   }`}
                   onClick={filterUp}>
                   <i className='fas fa-angle-up' />
@@ -47,7 +47,7 @@ const InputFilter = ({
                <Button
                   disabled={downActive}
                   className={`hover:text-blue-500 mt-2 ${
-                     downActive ? 'text-blue-500' : 'text-slate-700'
+                     downActive ? 'text-blue-500' : ''
                   }`}
                   onClick={filterDown}>
                   <i className='fas fa-angle-down' />

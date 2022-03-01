@@ -14,6 +14,7 @@ const Input = ({
    isNumber = false,
    className,
    padding = 'px-4 py-2',
+   onBlur,
 }) => {
    return (
       <div className={className}>
@@ -24,12 +25,13 @@ const Input = ({
             title={tooltip}
             value={value}
             onChange={onChange}
+            onBlur={onBlur}
             disabled={disabled}
             onFocus={e => {
                e.target.select()
             }}
             type={type}
-            className={`${padding} rounded-md bg-black/5 focus:bg-white transition duration-200 focus:ring-2 focus:shadow-lg ${width}`}
+            className={`${padding} rounded-md bg-zinc-100 focus:bg-white text-slate-700 transition duration-200 focus:ring-2 focus:shadow-lg ${width}`}
             placeholder={placeholder}
             onKeyPress={event => {
                if (!isNumber) return

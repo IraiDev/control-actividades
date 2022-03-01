@@ -20,6 +20,16 @@ import PingIndicator from '../components/ui/PingIndicator'
 import InputFilter from '../components/filter/InputFilter'
 import SelectFilter from '../components/filter/SelectFilter'
 import { useForm } from '../hooks/useForm'
+import { useEffect } from 'react'
+
+const colors = [
+   {border: 'border-red-600', bg: 'bg-red-600'},
+   {border: 'border-black', bg: 'bg-black'},
+   {border: 'border-emerald-600', bg: 'bg-emerald-600'},
+   {border: 'border-indigo-600', bg: 'bg-indigo-600'},
+   {border: 'border-pink-600', bg: 'bg-pink-600'},
+   {border: 'border-blue-600', bg: 'bg-blue-600'},
+]
 
 const PrioritySelector = ({ onClick, color = 'bg-slate-400', disabled }) => {
    return (
@@ -56,6 +66,7 @@ const Activity = () => {
    const { optionsArray, saveFilters, pager, setPager, setOrder, order } =
       useContext(ActivityContext)
    const [multiline, setMultiline] = useState(false)
+   const [color, setColor] = useState([])
    const size = useWindowSize()
 
    const {
@@ -224,6 +235,18 @@ const Activity = () => {
       })
    }
 
+   const getRandomColor = () => {
+      return colors[Math.floor(Math.random() * colors.length)]
+   }
+
+   useEffect(() => {
+      setColor(activities.map(act => {
+         const c = getRandomColor()
+         return({...c, id: act.id_det})
+      }))
+      // eslint-disable-next-line
+   }, [activities])
+
    return (
       <>
          {view ? (
@@ -276,6 +299,8 @@ const Activity = () => {
                         deleteNote={onDeleteNote}
                         pauseActivity={onPauseActivity}
                         playActivity={onPlayActivity}
+                        isFather={activities.some(a => a.id_det_padre === act.id_det)}
+                        colors={color}
                         {...act}
                      />
                   ))

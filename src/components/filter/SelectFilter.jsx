@@ -19,12 +19,12 @@ const SelectFilter = ({
 }) => {
    if (type === 'table') {
       return (
-         <div className='flex justify-between items-center'>
+         <div className='flex justify-between items-center mt-2'>
             {isOrder && (
                <Button
                   disabled={upActive}
                   className={`hover:text-blue-500 mt-1 ${
-                     upActive ? 'text-blue-500' : 'text-gray-700'
+                     upActive ? 'text-blue-500' : ''
                   }`}
                   onClick={filterUp}>
                   <i className='fas fa-angle-up' />
@@ -32,7 +32,7 @@ const SelectFilter = ({
             )}
 
             <section className='w-40 px-1 mx-auto'>
-               <p className='text-xs ml-4 capitalize mb-1'>{field}</p>
+               {field && <p className='text-xs ml-4 capitalize mb-1'>{field}</p>}
                <Select
                   components={{
                      DropdownIndicator: () => null,
@@ -56,7 +56,7 @@ const SelectFilter = ({
                <Button
                   disabled={downActive}
                   className={`hover:text-blue-500 mt-1 ${
-                     downActive ? 'text-blue-500' : 'text-gray-700'
+                     downActive ? 'text-blue-500' : ''
                   }`}
                   onClick={filterDown}>
                   <i className='fas fa-angle-down' />
