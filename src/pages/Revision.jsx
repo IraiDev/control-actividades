@@ -20,7 +20,6 @@ import { useWindowSize } from '../hooks/useWindowSize'
 import Modal from '../components/ui/Modal'
 import Input from '../components/ui/Input'
 import CustomSelect from '../components/ui/CustomSelect'
-import { useEffect } from 'react'
 
 const RA_STATES = [
    { value: 0, label: 'En Fila'},
@@ -58,21 +57,19 @@ const BoxHeader = ({children}) => {
       <>
          <section className='flex gap-3 items-baseline w-full px-2 rounded-md mb-3'>
 
-            <span className='block w-16 h-5' />
+            <span className='block w-8 h-5' />
 
             <div className='grid grid-cols-6 gap-2 w-full'>
 
-               <h3 className='font-semibold text-sm col-span-2'>Producto Zionit</h3>
+               <h3 className='font-semibold text-sm col-span-2 text-center'>Producto Zionit</h3>
 
-               <h3 className='font-semibold text-sm col-span-2'>Glosa explicativa</h3>
+               <h3 className='font-semibold text-sm col-span-2 text-center'>Glosa explicativa</h3>
 
-               <h3 className='font-semibold text-sm col-span-1'>Tiempo (hrs)</h3>
-
-               {/* <span /> */}
+               <h3 className='font-semibold text-sm col-span-1 text-center'>Tiempo (hrs)</h3>
 
             </div>
          </section>
-         <section className='flex gap-3 items-baseline w-full bg-zinc-100 px-2 rounded-md'>
+         <section className='flex gap-3 items-baseline w-full bg-zinc-100 px-2 rounded-md shadow-md'>
 
             <span className='block w-16 h-5' />
 
@@ -86,11 +83,11 @@ const BoxHeader = ({children}) => {
    )
 }
 
-const BoxContent = ({children}) => {
+const BoxContent = ({children, number}) => {
    return (
-      <section className='flex gap-3 items-baseline w-full bg-zinc-100 px-2 rounded-md'>
+      <section className='flex gap-3 items-baseline w-full bg-zinc-100 px-2 rounded-md mb-2 shadow-md'>
 
-         <Numerator number={1} />
+         <Numerator number={number + 1} />
 
          <div className='grid grid-cols-6 gap-2 items-center'>
 
@@ -123,6 +120,7 @@ const Revision = () => {
    const [options, setOptions] = useState({})
    const [modal, setModal] = useState(false)
    const [distributionTime, setDistributionTime] = useState([])
+   const [inputValues, setInputValues] = useState([])
 
    // hooks
    const size = useWindowSize()
@@ -205,7 +203,7 @@ const Revision = () => {
    const handleCreateDistributionTime = () => {
       setDistributionTime(distributionTime => [...distributionTime, {
          id: distributionTime.length + 1,
-         product: options?.product?.value,
+         product: options?.product,
          time,
          gloss,
       }])
@@ -213,9 +211,45 @@ const Revision = () => {
       reset()
    }
 
-   useEffect(() => {
-      console.log(distributionTime)
-   }, [distributionTime])
+   const handleUpdateDistributionTime = (id) => {
+      setDistributionTime(distributionTime.map(item => {
+         const newValues = inputValues.find(i => i.id === item.id)
+         if (item.id === id) {
+            return {
+               ...item,
+               time: newValues.time,
+               gloss: newValues.gloss,
+            }
+         }
+         return item
+      }))
+   }
+
+   const handleDeleteDistributionTime = (id) => {
+      setDistributionTime(distributionTime.filter(item => item.id !== id))
+   }
+
+   const handleOpenModal = () => {
+      setInputValues(distributionTime?.map(item => {
+         return {
+            id: item.id,
+            [`time${item.id}`]: item.time,
+            [`gloss${item.id}`]: item.gloss,
+         }
+      }))
+
+      setModal(true)
+   }
+
+   // useEffect(() => {
+   //    setInputValues(distributionTime?.map(item => {
+   //       return {
+   //          id: item.id,
+   //          [`time${item.id}`]: item.time,
+   //          [`gloss${item.id}`]: item.gloss,
+   //       }
+   //    }))
+   // }, [distributionTime])
  
    return (
       <>
@@ -490,7 +524,7 @@ const Revision = () => {
                      <tr
                         key={act.id_det}
                         className='text-[13px] text-gray-800 transition duration-300 cursor-pointer hover:bg-black/10'
-                        onDoubleClick={() => setModal(true)}
+                        onDoubleClick={handleOpenModal}
                      >
                            
                         <Td><Numerator number={i + 1} /></Td>
@@ -570,6 +604,7 @@ const Revision = () => {
          title='pasar a entregado'
       >
             <div className='mt-10'>
+
                <BoxHeader>
                   <section className='col-span-2'>
                      <CustomSelect
@@ -603,33 +638,59 @@ const Revision = () => {
                   </Button>
                </BoxHeader>
  
-               <h5 className='pl-4 text-sm my-5'>Distribucion de tiempo</h5>
+               <h5 className='pl-4 text-sm my-5'>Lista de distribucion de tiempos</h5>
 
-               <BoxContent>
-                  <section className='col-span-2'>
-                     <CustomSelect />
-                  </section>
+               {distributionTime.length > 0 ?
+                  distributionTime.map((dis, i) => (
 
-                  <Input className='pb-2 col-span-2' />
+                  <BoxContent key={i} number={i}>
+                     <section className='col-span-2'>
+                        <CustomSelect
+                           options={PRODUCT_ZIONIT}
+                           value={dis.product}
+                           onChange={option => setDistributionTime(distributionTime.map(d => d.id === dis.id ? { ...d, product: option } : d))}
+                        />
+                     </section>
 
-                  <Input 
-                     className='pb-2 col-span-1'
-                     placeholder='ej:1.5' 
-                     isNumber 
-                  />
+                     <Input 
+                        className='pb-2 col-span-2'
+                        value={inputValues[i]?.[`gloss${dis.id}`] || ''}
+                        onChange={e => setInputValues(inputValues.map(i => i.id === dis.id ? { ...i, [`gloss${dis.id}`]: e.target.value } : i))}
+                      />
 
-                  <section className='flex gap-2 justify-center col-span-1'>
+                     <Input 
+                        className='pb-2 col-span-1'
+                        placeholder='ej:1.5' 
+                        isNumber
+                        value={inputValues[i]?.[`time${dis.id}`] || ''}
+                        onChange={e => setInputValues(inputValues.map(i => i.id === dis.id ? { ...i, [`time${dis.id}`]: e.target.value } : i))}
+                     />
 
-                     <Button className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'>
-                        <i className='fas fa-check' />
-                     </Button>
+                     <section className='flex gap-2 justify-center col-span-1'>
 
-                     <Button className='bg-red-100 hover:bg-red-200 text-red-500'>
-                        <i className='fas fa-trash-alt' />
-                     </Button>
+                        <Button 
+                           className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
+                           onClick={() => handleUpdateDistributionTime(dis.id)}
+                        >
+                           <i className='fas fa-check' />
+                        </Button>
 
-                  </section>
-               </BoxContent>
+                        <Button 
+                           className='bg-red-100 hover:bg-red-200 text-red-500'
+                           onClick={() => handleDeleteDistributionTime(dis.id)}   
+                        >
+                           <i className='fas fa-trash-alt' />
+                        </Button>
+
+                     </section>
+                  </BoxContent>
+
+                  ))
+                  : 
+                  <span className='text-sm text-zinc-400 pl-8'>
+                     No hay distribucion de tiempos...
+                  </span>
+               }
 
                <footer className='flex justify-between mt-10'>
                   <Button 
