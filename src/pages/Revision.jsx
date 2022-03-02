@@ -20,6 +20,7 @@ import THead from '../components/table2/THead'
 import Modal from '../components/ui/Modal'
 import Input from '../components/ui/Input'
 import CustomSelect from '../components/ui/CustomSelect'
+import TrPRControls from '../components/table2/customTR/TrPRControls'
 
 const RA_STATES = [
    { value: 0, label: 'E.F', fullName: 'En Fila'},
@@ -257,6 +258,7 @@ const Revision = () => {
       <Container type='table'>
 
          <Table>
+
             <THead>
 
                <tr className='text-center capitalize'>
@@ -549,13 +551,14 @@ const Revision = () => {
                </tr>
 
             </THead>
+
             <TBody>
                {activitiesPR.length > 0 &&
                   activitiesPR.map((act, i) => (
-                     <tr
+                     <TrPRControls
                         key={act.id_det}
                         className='text-[13px] text-gray-800 transition duration-300 cursor-pointer hover:bg-black/10'
-                        onDoubleClick={handleOpenModal}
+                        {...act}
                      >
                            
                         <Td><Numerator number={i + 1} /></Td>
@@ -568,13 +571,13 @@ const Revision = () => {
 
                         <Td>{act.nombre_sub_proy ?? '--'}</Td>
 
-                        <Td>{act.tarea_revisor ? act.tarea_revisor[0].abrev_user : '--'}</Td>
+                        <Td>{act.nom_revisor || '--'}</Td>
 
                         <Td>{act.user_solicita}</Td>
 
                         <Td>{act.encargado_actividad}</Td>
 
-                        <Td>{RA_STATES.find(s => s.value === act.estado).label}</Td>
+                        <Td>{RA_STATES.find(s => s.value === act.estado).fullName}</Td>
 
                         <Td
                            isMultiLine={multiline}
@@ -602,9 +605,10 @@ const Revision = () => {
                               }
                            />
                         </Td>
-                     </tr>
+                     </TrPRControls>
                   ))}
             </TBody>
+
          </Table>
 
       </Container>
