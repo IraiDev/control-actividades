@@ -20,7 +20,6 @@ export const useActivity = () => {
          )
          const body = await resp.json()
          const { ok, tareas, total_tareas } = body
-         console.log(tareas)
          setIsLoading(false)
          if (ok) {
             setActivities(tareas)

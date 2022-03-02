@@ -62,6 +62,7 @@ const BoxContent = ({children, number}) => {
 }
 
 const TrPRControls = ({children}) => {
+   
    const [options, setOptions] = useState({st: { value: 3, label: 'P.R'}})
    const [modal, setModal] = useState(false)
    const [distributionTime, setDistributionTime] = useState([])

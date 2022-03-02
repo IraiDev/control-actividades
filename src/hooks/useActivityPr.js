@@ -35,11 +35,26 @@ export const useActivityPr = () => {
       }
    }
 
+   const toggleCheckActivity = async ({id_actividad, estado, revisado}) => {
+      try {
+         const resp = await fetchToken('task/checked-activity', {id_actividad, estado, revisado}, 'PUT')
+         const body = await resp.json()
+
+         console.log('togglecheck',body)
+      } catch (err) {
+         console.log(err)
+      }
+   }
+
    useEffect(() => {
       fetchActivities()
       // eslint-disable-next-line
    }, [prFilters, prOrder])
 
-   return {activitiesPR, total}
+   return {
+      activitiesPR, 
+      total,
+      toggleCheckActivity
+   }
 
 }

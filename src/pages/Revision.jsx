@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from 'react'
+import { useContext, useState } from 'react'
 import { ActivityContext } from '../context/ActivityContext'
 import { useActivityPr } from '../hooks/useActivityPr'
 import { useForm } from '../hooks/useForm'
@@ -17,10 +17,8 @@ import TBody from '../components/table2/TBody'
 import Td from '../components/table2/Td'
 import Th from '../components/table2/Th'
 import THead from '../components/table2/THead'
-import Modal from '../components/ui/Modal'
-import Input from '../components/ui/Input'
-import CustomSelect from '../components/ui/CustomSelect'
 import TrPRControls from '../components/table2/customTR/TrPRControls'
+import { Alert } from '../helpers/alerts'
 
 const RA_STATES = [
    { value: 0, label: 'E.F', fullName: 'En Fila'},
@@ -31,13 +29,6 @@ const RA_STATES = [
    { value: 11, label: 'E', fullName: 'Entregado'},
    { value: 8, label: 'P.F', fullName: 'Para Facturar'},
    { value: 5, label: 'T', fullName: 'Terminado'},
-]
-
-const PRODUCT_ZIONIT = [
-   { value: '1', label: 'Desarrollador A'},
-   { value: '2', label: 'Desarrollador B'},
-   { value: '3', label: 'Investigación'},
-   { value: '4', label: 'Diseño'},
 ]
 
 const CheckBox = ({ checked, onChange, id }) => {
@@ -53,58 +44,11 @@ const CheckBox = ({ checked, onChange, id }) => {
    )
 }
 
-const BoxHeader = ({children}) => {
-   return (
-      <>
-         <section className='flex gap-3 items-baseline w-full px-2 rounded-md mb-3'>
-
-            <span className='block w-8 h-5' />
-
-            <div className='grid grid-cols-6 gap-2 w-full'>
-
-               <h3 className='font-semibold text-sm col-span-2 text-center'>Producto Zionit</h3>
-
-               <h3 className='font-semibold text-sm col-span-2 text-center'>Glosa explicativa</h3>
-
-               <h3 className='font-semibold text-sm col-span-1 text-center'>Tiempo (hrs)</h3>
-
-               <h3 className='font-semibold text-sm col-span-1 text-center'>20</h3>
-
-            </div>
-         </section>
-         <section className='flex gap-3 items-baseline w-full bg-zinc-100 px-2 rounded-md shadow-md'>
-
-            <span className='block w-16 h-5' />
-
-            <div className='grid grid-cols-6 gap-2 items-center'>
-
-               {children}
-
-            </div>
-         </section>
-      </>
-   )
-}
-
-const BoxContent = ({children, number}) => {
-   return (
-      <section className='flex gap-3 items-baseline w-full bg-zinc-100 px-2 rounded-md mb-2 shadow-md'>
-
-         <Numerator number={number + 1} />
-
-         <div className='grid grid-cols-6 gap-2 items-center'>
-
-            {children}
-           
-         </div>
-      </section>
-   )
-}
-
 const Revision = () => {
    const { 
       activitiesPR, 
-      total 
+      total,
+      toggleCheckActivity
    } = useActivityPr()
 
    // context
@@ -121,9 +65,6 @@ const Revision = () => {
    const [multiline, setMultiline] = useState(false)
    const [values, setValues] = useState({ reviewed: false })
    const [options, setOptions] = useState({st: { value: 3, label: 'P.R'}})
-   const [modal, setModal] = useState(false)
-   const [distributionTime, setDistributionTime] = useState([])
-   const [inputValues, setInputValues] = useState([])
 
    // hooks
    const size = useWindowSize()
@@ -132,15 +73,11 @@ const Revision = () => {
       title, 
       desc, 
       ticket,
-      time,
-      gloss
    }, onChangeValues, reset] = useForm({
       id: '',
       title: '',
       desc: '',
       ticket: '',
-      time: '',
-      gloss: '',
    })
 
    // destructuring
@@ -202,56 +139,15 @@ const Revision = () => {
       savePRFilters({ payload: { offset, limit: prPager.limit } })
    }
 
-   const handleCreateDistributionTime = () => {
-      setDistributionTime(distributionTime => [...distributionTime, {
-         id: distributionTime.length + 1,
-         product: options?.product,
-         time,
-         gloss,
-      }])
-      setOptions({...options, product: {value: null, label: 'ninguno'}})
-      reset()
+   const onChangeCheckedActivity = ({id, title, estado, revisado}) => {
+      Alert({
+         title: 'Atención',
+         content: `¿Está seguro de marcar como revisada la siguiente actividad: <strong>${title}</strong>?`,
+         confirmText: 'Si, marcar',
+         cancelText: 'No, cancelar',
+         action: () => toggleCheckActivity({id_actividad: id, estado, revisado})
+      })
    }
-
-   const handleUpdateDistributionTime = (id) => {
-      setDistributionTime(distributionTime.map(dis => {
-         const newValues = inputValues.find(i => i.id === dis.id)
-         if (dis.id === id) {
-            return {
-               ...dis,
-               time: newValues[`time${id}`],
-               gloss: newValues[`gloss${id}`],
-            }
-         }
-         return dis
-      }))
-   }
-
-   const handleDeleteDistributionTime = (id) => {
-      setDistributionTime(distributionTime.filter(dis => dis.id !== id))
-   }
-
-   const handleOpenModal = () => {
-      setInputValues(distributionTime?.map(dis => {
-         return {
-            id: dis.id,
-            [`time${dis.id}`]: dis.time,
-            [`gloss${dis.id}`]: dis.gloss,
-         }
-      }))
-
-      setModal(true)
-   }
-
-   useEffect(() => {
-      setInputValues(distributionTime?.map(dis => {
-         return {
-            id: dis.id,
-            [`time${dis.id}`]: dis.time,
-            [`gloss${dis.id}`]: dis.gloss,
-         }
-      }))
-   }, [distributionTime])
 
    return (
       <>
@@ -596,13 +492,8 @@ const Revision = () => {
                         <Td>
                            <CheckBox
                               id={act.id_det}
-                              checked={values.reviewed}
-                              onChange={e =>
-                                 setValues({
-                                    ...values,
-                                    reviewed: e.target.checked,
-                                 })
-                              }
+                              checked={act.act_revizada}
+                              onChange={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: !act.act_revizada, estado: act.estado})}
                            />
                         </Td>
                      </TrPRControls>
@@ -634,119 +525,6 @@ const Revision = () => {
          <StaticSelect value={prPager.limit} onChange={onChangeSelect} />
 
       </FooterPage>
-
-      <Modal 
-         showModal={modal} 
-         isBlur={false} 
-         onClose={() => setModal(false)}
-         className='max-w-3xl'
-         padding='p-6'
-         title='pasar a entregado'
-      >
-            <div className='mt-10'>
-
-               <BoxHeader>
-                  <section className='col-span-2'>
-                     <CustomSelect
-                        options={PRODUCT_ZIONIT}
-                        value={options?.product}
-                        onChange={option => setOptions({ ...options, product: option })}
-                     />
-                  </section>
-
-                  <Input 
-                     className='pb-2 col-span-2'
-                     name='gloss' 
-                     value={gloss} 
-                     onChange={onChangeValues} 
-                  />
-
-                  <Input 
-                     className='pb-2 col-span-1' 
-                     placeholder='ej:1.5' 
-                     isNumber
-                     name='time' 
-                     value={time} 
-                     onChange={onChangeValues} 
-                  />
-
-                  <Button 
-                     className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 col-span-1 mx-auto'
-                     onClick={handleCreateDistributionTime}
-                  >
-                     agregar
-                  </Button>
-               </BoxHeader>
- 
-               <h5 className='pl-4 text-sm my-5'>Lista de distribucion de tiempos</h5>
-
-               {distributionTime.length > 0 ?
-                  distributionTime.map((dis, i) => (
-
-                  <BoxContent key={i} number={i}>
-                     <section className='col-span-2'>
-                        <CustomSelect
-                           options={PRODUCT_ZIONIT}
-                           value={dis.product}
-                           onChange={option => setDistributionTime(distributionTime.map(d => d.id === dis.id ? { ...d, product: option } : d))}
-                        />
-                     </section>
-
-                     <Input 
-                        className='pb-2 col-span-2'
-                        value={inputValues[i]?.[`gloss${dis.id}`] || ''}
-                        onChange={e => setInputValues(inputValues.map(i => i.id === dis.id ? { ...i, [`gloss${dis.id}`]: e.target.value } : i))}
-                      />
-
-                     <Input 
-                        className='pb-2 col-span-1'
-                        placeholder='ej:1.5' 
-                        isNumber
-                        value={inputValues[i]?.[`time${dis.id}`] || ''}
-                        onChange={e => setInputValues(inputValues.map(i => i.id === dis.id ? { ...i, [`time${dis.id}`]: e.target.value } : i))}
-                     />
-
-                     <section className='flex gap-2 justify-center col-span-1'>
-
-                        <Button 
-                           className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
-                           onClick={() => handleUpdateDistributionTime(dis.id)}
-                        >
-                           <i className='fas fa-check' />
-                        </Button>
-
-                        <Button 
-                           className='bg-red-100 hover:bg-red-200 text-red-500'
-                           onClick={() => handleDeleteDistributionTime(dis.id)}   
-                        >
-                           <i className='fas fa-trash-alt' />
-                        </Button>
-
-                     </section>
-                  </BoxContent>
-
-                  ))
-                  : 
-                  <span className='text-sm text-zinc-400 pl-8'>
-                     No hay distribucion de tiempos...
-                  </span>
-               }
-
-               <footer className='flex justify-between mt-10'>
-                  <Button 
-                     className='bg-red-100 hover:bg-red-200 text-red-500'
-                  >
-                     cancelar
-                  </Button>
-
-                  <Button 
-                     className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
-                  >
-                     Guardar
-                  </Button>
-               </footer>
-            </div>
-      </Modal>
       </>
    )
 }
