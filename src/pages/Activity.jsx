@@ -45,6 +45,32 @@ const PrioritySelector = ({ onClick, color = 'bg-slate-400', disabled }) => {
    )
 }
 
+const BoxSelector = ({priority, lowPriority, mediumPriority, highPriority, nonePriority}) => {
+   return (
+      <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
+         <PrioritySelector
+            disabled={priority === 1000}
+            onClick={nonePriority}
+         />
+         <PrioritySelector
+            disabled={priority === 600}
+            color='bg-green-500/70'
+            onClick={lowPriority}
+         />
+         <PrioritySelector
+            disabled={priority === 400}
+            color='bg-yellow-500/80'
+            onClick={mediumPriority}
+         />
+         <PrioritySelector
+            disabled={priority === 100}
+            color='bg-red-500/70'
+            onClick={highPriority}
+         />
+      </div>
+   )
+}
+
 const CustomSelect = ({ value, onChange }) => {
    return (
       <select
@@ -684,50 +710,17 @@ const Activity = () => {
                                        tiempo_estimado: 1,
                                     })
                                  }
-                                 {...act}>
-                                 <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
-                                    <PrioritySelector
-                                       disabled={
-                                          act.prioridad_etiqueta === 1000
-                                       }
-                                       onClick={() =>
-                                          updatePriority({
-                                             prioridad_numero: 1000,
-                                             id_actividad: act.id_det,
-                                          })
-                                       }
+                                 {...act}
+                              >
+
+                                    <BoxSelector
+                                       priority={act.prioridad_etiqueta}
+                                       nonePriority={() => updatePriority({prioridad_numero: 1000, id_actividad: act.id_det,})}
+                                       lowPriority={() => updatePriority({prioridad_numero: 600, id_actividad: act.id_det,})}
+                                       mediumPriority={() => updatePriority({prioridad_numero: 400, id_actividad: act.id_det,})}
+                                       highPriority={() => updatePriority({prioridad_numero: 100, id_actividad: act.id_det,})}
                                     />
-                                    <PrioritySelector
-                                       disabled={act.prioridad_etiqueta === 600}
-                                       color='bg-green-500/70'
-                                       onClick={() =>
-                                          updatePriority({
-                                             prioridad_numero: 600,
-                                             id_actividad: act.id_det,
-                                          })
-                                       }
-                                    />
-                                    <PrioritySelector
-                                       disabled={act.prioridad_etiqueta === 400}
-                                       color='bg-yellow-500/80'
-                                       onClick={() =>
-                                          updatePriority({
-                                             prioridad_numero: 400,
-                                             id_actividad: act.id_det,
-                                          })
-                                       }
-                                    />
-                                    <PrioritySelector
-                                       disabled={act.prioridad_etiqueta === 100}
-                                       color='bg-red-500/70'
-                                       onClick={() =>
-                                          updatePriority({
-                                             prioridad_numero: 100,
-                                             id_actividad: act.id_det,
-                                          })
-                                       }
-                                    />
-                                 </div>
+                                    
                               </Td>
                            </tr>
                         ))}
