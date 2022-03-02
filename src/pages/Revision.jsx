@@ -22,14 +22,14 @@ import Input from '../components/ui/Input'
 import CustomSelect from '../components/ui/CustomSelect'
 
 const RA_STATES = [
-   { value: 0, label: 'En Fila'},
-   { value: 1, label: 'Pendiente'},
-   { value: 2, label: 'En Trabajo'},
-   { value: 3, label: 'Para Revision'},
-   { value: 5, label: 'Terminado'},
-   { value: 8, label: 'Para Facturar'},
-   { value: 10, label: 'Pausa'},
-   { value: 11, label: 'Entregado'}
+   { value: 0, label: 'E.F', fullName: 'En Fila'},
+   { value: 1, label: 'P', fullName: 'Pendiente'},
+   { value: 2, label: 'E.T', fullName: 'En Trabajo'},
+   { value: 10, label: 'P', fullName: 'Pausa'},
+   { value: 3, label: 'P.R', fullName: 'Para Revision'},
+   { value: 11, label: 'E', fullName: 'Entregado'},
+   { value: 8, label: 'P.F', fullName: 'Para Facturar'},
+   { value: 5, label: 'T', fullName: 'Terminado'},
 ]
 
 const PRODUCT_ZIONIT = [
@@ -66,6 +66,8 @@ const BoxHeader = ({children}) => {
                <h3 className='font-semibold text-sm col-span-2 text-center'>Glosa explicativa</h3>
 
                <h3 className='font-semibold text-sm col-span-1 text-center'>Tiempo (hrs)</h3>
+
+               <h3 className='font-semibold text-sm col-span-1 text-center'>20</h3>
 
             </div>
          </section>
@@ -117,7 +119,7 @@ const Revision = () => {
    // states
    const [multiline, setMultiline] = useState(false)
    const [values, setValues] = useState({ reviewed: false })
-   const [options, setOptions] = useState({})
+   const [options, setOptions] = useState({st: { value: 3, label: 'P.R'}})
    const [modal, setModal] = useState(false)
    const [distributionTime, setDistributionTime] = useState([])
    const [inputValues, setInputValues] = useState([])
@@ -131,8 +133,7 @@ const Revision = () => {
       ticket,
       time,
       gloss
-   }, onChangeValues, reset] =
-   useForm({
+   }, onChangeValues, reset] = useForm({
       id: '',
       title: '',
       desc: '',
@@ -250,13 +251,14 @@ const Revision = () => {
          }
       }))
    }, [distributionTime])
- 
+
    return (
       <>
       <Container type='table'>
 
          <Table>
             <THead>
+
                <tr className='text-center capitalize'>
 
                   <Th></Th>
@@ -335,6 +337,33 @@ const Revision = () => {
                         onChange={option =>
                            setOptions({ ...options, sp: option })
                         }
+                     />
+                  </Th>
+
+                  {/* TODO: revisor */}
+                  <Th>
+                     <SelectFilter
+                        type='table'
+                        value={options.ur}
+                        options={users}
+                        isMulti
+                        onChange={option =>
+                           setOptions({ ...options, ur: option })
+                        }
+                        filterDown={() =>
+                           setPROrder({ orden_revisor: 'desc' })
+                        }
+                        filterUp={() =>
+                           setPROrder({ orden_revisor: 'asc' })
+                        }
+                        upActive={setActive({
+                           param: 'orden_revisor',
+                           value: 'asc',
+                        })}
+                        downActive={setActive({
+                           param: 'orden_revisor',
+                           value: 'desc',
+                        })}
                      />
                   </Th>
 
@@ -480,6 +509,7 @@ const Revision = () => {
                   <Th primary >ticket</Th>
                   <Th primary >proyecto</Th>
                   <Th primary >sub proyecto</Th>
+                  <Th primary >revisor</Th>
                   <Th primary >solicitante</Th>
                   <Th primary >encargado</Th>
                   <Th primary >estado</Th>
@@ -517,6 +547,7 @@ const Revision = () => {
                   </Th>
                   <Th primary ><i className='fas fa-check' /></Th>
                </tr>
+
             </THead>
             <TBody>
                {activitiesPR.length > 0 &&
@@ -537,6 +568,8 @@ const Revision = () => {
 
                         <Td>{act.nombre_sub_proy ?? '--'}</Td>
 
+                        <Td>{act.tarea_revisor ? act.tarea_revisor[0].abrev_user : '--'}</Td>
+
                         <Td>{act.user_solicita}</Td>
 
                         <Td>{act.encargado_actividad}</Td>
@@ -551,12 +584,15 @@ const Revision = () => {
                            {act.actividad || 'Sin Titulo'}
                         </Td>
 
-                        <Td isMultiLine={multiline} align='text-left'>
+                        <Td 
+                           isMultiLine={multiline} 
+                           align='text-left'
+                        >
                            {act.func_objeto}
                         </Td>
                         <Td>
                            <CheckBox
-                              id={i}
+                              id={act.id_det}
                               checked={values.reviewed}
                               onChange={e =>
                                  setValues({

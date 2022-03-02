@@ -16,10 +16,12 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
 
    const [userCheck, setUserCheck] = useState(false)
    const [options, setOptions] = useState({})
-   const [{ id, title, numPriority }, onChangeValues, reset] = useForm({
+   const [{ id, title, numPriority, ticket, desc }, onChangeValues, reset] = useForm({
       id: '',
       title: '',
       numPriority: '',
+      desc: '',
+      ticket: ''
    })
 
    const { projects, subProjects, users, status, priorities } = optionsArray
@@ -33,11 +35,15 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
             options.ue?.length > 0 ? options.ue.map(item => item.label) : [],
          solicitante:
             options.us?.length > 0 ? options.us.map(item => item.label) : [],
+         revisor: 
+            options.ur?.length > 0 ? options.ur.map(item => item.id) : [],
          subProy:
             options.sp?.length > 0 ? options.sp.map(item => item.value) : [],
          color: options.pi?.value || '',
          id_actividad: id,
          titulo: title,
+         numero_ticket:ticket,
+         descripcion: desc,
          prioridad_ra: numPriority,
          offset: 0,
       }
@@ -54,6 +60,7 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
          pr: [],
          ue: [],
          us: [],
+         ur: [],
          sp: [],
          pi: '',
       })
@@ -100,6 +107,24 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
                upActive={setActive({ param: 'orden_id', value: 'asc' })}
                downActive={setActive({ param: 'orden_id', value: 'desc' })}
             />
+
+            <InputFilter
+               field='ticket'
+               name='ticket'
+               value={ticket}
+               onChange={onChangeValues}
+               filterDown={() => setOrder({ orden_ticket: 'desc' })}
+               filterUp={() => setOrder({ orden_ticket: 'asc' })}
+               upActive={setActive({
+                  param: 'orden_ticket',
+                  value: 'asc',
+               })}
+               downActive={setActive({
+                  param: 'orden_ticket',
+                  value: 'desc',
+               })}
+            />
+
             <InputFilter
                field='titulo'
                name='title'
@@ -113,6 +138,24 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
                   value: 'desc',
                })}
             />
+
+            <InputFilter
+               field='descripción'
+               name='desc'
+               value={desc}
+               onChange={onChangeValues}
+               filterDown={() => setOrder({ orden_descripcion: 'desc' })}
+               filterUp={() => setOrder({ orden_descripcion: 'asc' })}
+               upActive={setActive({
+                  param: 'orden_descripcion',
+                  value: 'asc',
+               })}
+               downActive={setActive({
+                  param: 'orden_descripcion',
+                  value: 'desc',
+               })}
+            />
+
             <InputFilter
                field='prioridad (RA)'
                name='numPriority'
@@ -134,6 +177,25 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
          <hr className='mx-3 my-4' />
 
          <section className='grid gap-3'>
+
+         <SelectFilter
+               value={options.us}
+               options={users}
+               field='solicitante'
+               isMulti
+               onChange={option => setOptions({ ...options, us: option })}
+               filterDown={() => setOrder({ orden_solicitante: 'desc' })}
+               filterUp={() => setOrder({ orden_solicitante: 'asc' })}
+               upActive={setActive({
+                  param: 'orden_solicitante',
+                  value: 'asc',
+               })}
+               downActive={setActive({
+                  param: 'orden_solicitante',
+                  value: 'desc',
+               })}
+            />
+
             <SelectFilter
                value={options.ue}
                options={users}
@@ -148,6 +210,24 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
                   value: 'desc',
                })}
             />
+            <SelectFilter
+               value={options.ur}
+               options={users}
+               field='revisor'
+               isMulti
+               onChange={option => setOptions({ ...options, ur: option })}
+               filterDown={() => setOrder({ orden_revisor: 'desc' })}
+               filterUp={() => setOrder({ orden_revisor: 'asc' })}
+               upActive={setActive({
+                  param: 'orden_revisor',
+                  value: 'asc',
+               })}
+               downActive={setActive({
+                  param: 'orden_revisor',
+                  value: 'desc',
+               })}
+            />
+
             <SelectFilter
                value={options.pi}
                options={priorities}
@@ -205,23 +285,6 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
                })}
                downActive={setActive({
                   param: 'orden_sub_proyecto',
-                  value: 'desc',
-               })}
-            />
-            <SelectFilter
-               value={options.us}
-               options={users}
-               field='solicitante'
-               isMulti
-               onChange={option => setOptions({ ...options, us: option })}
-               filterDown={() => setOrder({ orden_solicitante: 'desc' })}
-               filterUp={() => setOrder({ orden_solicitante: 'asc' })}
-               upActive={setActive({
-                  param: 'orden_solicitante',
-                  value: 'asc',
-               })}
-               downActive={setActive({
-                  param: 'orden_solicitante',
                   value: 'desc',
                })}
             />

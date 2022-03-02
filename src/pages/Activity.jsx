@@ -1,4 +1,5 @@
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
+import { useForm } from '../hooks/useForm'
 import { useNavigate } from 'react-router-dom'
 import { UiContext } from '../context/UiContext'
 import { ActivityContext } from '../context/ActivityContext'
@@ -7,11 +8,6 @@ import { useWindowSize } from '../hooks/useWindowSize'
 import { Alert } from '../helpers/alerts'
 import Button from '../components/ui/Button'
 import Pagination from '@mui/material/Pagination'
-import Table from '../components/table/Table'
-import TBody from '../components/table/TBody'
-import THead from '../components/table/THead'
-import Th from '../components/table/Th'
-import Td from '../components/table/Td'
 import ActivityCard from '../components/card/customCard/ActivityCard'
 import Container from '../components/ui/Container'
 import FooterPage from '../components/ui/FooterPage'
@@ -19,8 +15,13 @@ import FooterCounter from '../components/ui/FooterCounter'
 import PingIndicator from '../components/ui/PingIndicator'
 import InputFilter from '../components/filter/InputFilter'
 import SelectFilter from '../components/filter/SelectFilter'
-import { useForm } from '../hooks/useForm'
-import { useEffect } from 'react'
+import Numerator from '../components/ui/Numerator'
+import TdActivityControls from '../components/table2/customTD/TdActivityControls'
+import Table from '../components/table2/Table'
+import TBody from '../components/table2/TBody'
+import THead from '../components/table2/THead'
+import Th from '../components/table2/Th'
+import Td from '../components/table2/Td'
 
 const colors = [
    {border: 'border-red-600', bg: 'bg-red-600'},
@@ -36,8 +37,7 @@ const PrioritySelector = ({ onClick, color = 'bg-slate-400', disabled }) => {
       <>
          {!disabled && (
             <span
-               className={`h-3.5 w-3.5 rounded-full ${color} transition hover:border
-      duration-200 hover:scale-150 transform cursor-pointer`}
+               className={`${color} h-3.5 w-3.5 rounded-full transition hover:border duration-200 hover:scale-150 transform cursor-pointer`}
                onClick={onClick}
             />
          )}
@@ -144,6 +144,7 @@ const Activity = () => {
    const { projects, subProjects, users, status } = optionsArray
 
    const onFilter = () => {
+
       const filters = {
          estado: options.st?.value || '',
          proyecto:
@@ -152,6 +153,8 @@ const Activity = () => {
             options.ue?.length > 0 ? options.ue.map(item => item.label) : [],
          solicitante:
             options.us?.length > 0 ? options.us.map(item => item.label) : [],
+         revisor: 
+            options.ur?.length > 0 ? options.ur.map(item => item.id) : [],
          subProy:
             options.sp?.length > 0 ? options.sp.map(item => item.value) : [],
          color: options.pi?.value || '',
@@ -174,6 +177,7 @@ const Activity = () => {
          ue: [],
          us: [],
          sp: [],
+         ur: [],
          pi: '',
       })
       reset()
@@ -362,9 +366,12 @@ const Activity = () => {
          ) : (
             <Container type='table'>
                <Table>
+
                   <THead>
-                     <tr className='text-center capitalize bg-white'>
-                        <Th className='bg-zinc-100'></Th>
+
+                     <tr className='text-center capitalize'>
+                        <Th></Th>
+
                         <Th>
                            <InputFilter
                               type='table'
@@ -385,7 +392,8 @@ const Activity = () => {
                               })}
                            />
                         </Th>
-                        <Th className='bg-zinc-100'>
+
+                        <Th>
                            <InputFilter
                               type='table'
                               width='w-16'
@@ -394,6 +402,7 @@ const Activity = () => {
                               onChange={onChangeValues}
                            />
                         </Th>
+
                         <Th>
                            <SelectFilter
                               type='table'
@@ -419,7 +428,8 @@ const Activity = () => {
                               })}
                            />
                         </Th>
-                        <Th className='bg-zinc-100'>
+
+                        <Th>
                            <SelectFilter
                               type='table'
                               value={options.sp}
@@ -439,6 +449,34 @@ const Activity = () => {
                               }
                            />
                         </Th>
+
+                        {/* revisor */}
+                        <Th>
+                           <SelectFilter
+                              type='table'
+                              value={options.ur}
+                              options={users}
+                              isMulti
+                              onChange={option =>
+                                 setOptions({ ...options, ur: option })
+                              }
+                              filterDown={() =>
+                                 setOrder({ orden_revisor: 'desc' })
+                              }
+                              filterUp={() =>
+                                 setOrder({ orden_revisor: 'asc' })
+                              }
+                              upActive={setActive({
+                                 param: 'orden_revisor',
+                                 value: 'asc',
+                              })}
+                              downActive={setActive({
+                                 param: 'orden_revisor',
+                                 value: 'desc',
+                              })}
+                           />
+                        </Th>
+
                         <Th>
                            <SelectFilter
                               type='table'
@@ -464,7 +502,8 @@ const Activity = () => {
                               })}
                            />
                         </Th>
-                        <Th className='bg-zinc-100'>
+
+                        <Th>
                            <SelectFilter
                               type='table'
                               value={options.ue}
@@ -489,6 +528,7 @@ const Activity = () => {
                               })}
                            />
                         </Th>
+
                         <Th>
                            <InputFilter
                               type='table'
@@ -512,8 +552,10 @@ const Activity = () => {
                               })}
                            />
                         </Th>
-                        {/* <Th className='bg-zinc-100'></Th> */}
-                        <Th className='bg-zinc-100'>
+
+                        {/* <Th></Th> */}
+
+                        <Th>
                            <InputFilter
                               type='table'
                               width='w-28'
@@ -536,6 +578,7 @@ const Activity = () => {
                               })}
                            />
                         </Th>
+
                         <Th>
                            <InputFilter
                               type='table'
@@ -546,7 +589,8 @@ const Activity = () => {
                               isOrder={false}
                            />
                         </Th>
-                        <Th className='bg-zinc-100'>
+
+                        <Th>
                            <SelectFilter
                               type='table'
                               value={options.st}
@@ -568,140 +612,139 @@ const Activity = () => {
                               })}
                            />
                         </Th>
-                        <Th className='flex justify-around pt-3'>
-                           <Button
-                              className='bg-zinc-100 hover:bg-zinc-200'
-                              title='Limpiar filtros'
-                              isShadow
-                              onClick={onClear}>
-                              <i className='fas fa-eraser' />
-                           </Button>
-                           <Button
-                              className='bg-blue-500 hover:bg-blue-600 text-white'
-                              isShadow
-                              onClick={onFilter}>
-                              filtrar <i className='fas fa-filter' />
-                           </Button>
+
+                        <Th>
+                           <div className='flex justify-between gap-2 mt-2'>
+                              <Button
+                                 className='bg-zinc-100 hover:bg-zinc-200'
+                                 title='Limpiar filtros'
+                                 isShadow
+                                 onClick={onClear}>
+                                 <i className='fas fa-eraser' />
+                              </Button>
+                              <Button
+                                 className='bg-blue-500 hover:bg-blue-600 text-white'
+                                 isShadow
+                                 onClick={onFilter}>
+                                 filtrar <i className='fas fa-filter' />
+                              </Button>
+                           </div>
                         </Th>
                      </tr>
-                     <tr className='text-center capitalize text-white bg-slate-600'>
-                        <Th className='bg-slate-700'>Nᵒ</Th>
-                        <Th>ID</Th>
-                        <Th className='bg-slate-700'>ticket</Th>
-                        <Th>proyecto</Th>
-                        <Th className='bg-slate-700'>sub proyecto</Th>
-                        <Th>solicitante</Th>
-                        <Th className='bg-slate-700'>encargado</Th>
-                        <Th>prioridad</Th>
-                        {/* <Th className='bg-slate-700'>fecha</Th> */}
-                        <Th className='bg-slate-700'>
+
+                     <tr className='text-center capitalize'>
+                        <Th primary>Nᵒ</Th>
+                        <Th primary>ID</Th>
+                        <Th primary>ticket</Th>
+                        <Th primary>proyecto</Th>
+                        <Th primary>sub proyecto</Th>
+                        <Th primary>revisor</Th>
+                        <Th primary>solicitante</Th>
+                        <Th primary>encargado</Th>
+                        <Th primary>prioridad</Th>
+                        {/* <Th primary>fecha</Th> */}
+                        <Th primary>
                            <div className='flex items-baseline justify-center gap-2'>
                               actividad
                               <Button
                                  className='hover:bg-white/5'
                                  onClick={() => setMultiline(!multiline)}>
                                  <i
-                                    className={
-                                       multiline
-                                          ? 'fas fa-angle-up'
-                                          : 'fas fa-angle-down'
+                                    className={multiline
+                                                ? 'fas fa-angle-up'
+                                                : 'fas fa-angle-down'
                                     }
                                  />
                               </Button>
                            </div>
                         </Th>
-                        <Th>
+                        <Th primary>
                            <div className='flex items-baseline justify-center gap-2'>
                               descripcion
                               <Button
                                  className='hover:bg-white/5'
                                  onClick={() => setMultiline(!multiline)}>
                                  <i
-                                    className={
-                                       multiline
-                                          ? 'fas fa-angle-up'
-                                          : 'fas fa-angle-down'
+                                    className={multiline
+                                                ? 'fas fa-angle-up'
+                                                : 'fas fa-angle-down'
                                     }
                                  />
                               </Button>
                            </div>
                         </Th>
-                        <Th className='bg-slate-700'>estado</Th>
-                        <Th></Th>
+                        <Th primary>estado</Th>
+                        <Th primary></Th>
                      </tr>
+
                   </THead>
+
                   <TBody>
                      {activities.length > 0 &&
                         activities.map((act, i) => (
                            <tr
-                              onDoubleClick={() =>
-                                 navigate(`detalle-actividad/${act.id_det}`, {
-                                    replace: true,
-                                 })
-                              }
                               key={act.id_det}
                               className={`
-                                text-sm text-gray-800
-                                transition duration-300 cursor-pointer
-                                ${
-                                   i !== activities.length - 1 &&
-                                   'border-b border-gray-500'
-                                }
-                                ${
-                                   act.prioridad_etiqueta === 600
-                                      ? 'bg-green-400/40 hover:bg-green-400/90'
-                                      : act.prioridad_etiqueta === 400
-                                      ? 'bg-yellow-400/40 hover:bg-yellow-400/90'
-                                      : act.prioridad_etiqueta === 100
-                                      ? 'bg-red-400/40 hover:bg-red-400/90'
-                                      : 'bg-white hover:bg-black/10'
-                                }
-                              `}>
-                              <Td bgcolor>
-                                 <span className='px-2 font-semibold leading-tight bg-amber-200 text-amber-600 shadow rounded-md relative'>
-                                    {i + 1}
-                                    {act.estado_play_pausa === 2 && (
-                                       <PingIndicator size='small' />
-                                    )}
-                                 </span>
-                              </Td>
-                              <Td className='font-bold'>{act.id_det}</Td>
-                              <Td
-                                 className={
-                                    act.num_ticket_edit ? 'font-bold' : ''
+                                 text-[13px] transition duration-300 cursor-pointer
+                                 ${i !== activities.length - 1 && 'border-b border-gray-500'}
+                                 ${
+                                    act.prioridad_etiqueta === 600
+                                       ? 'bg-green-400/40 hover:bg-green-400/90'
+                                       : act.prioridad_etiqueta === 400
+                                       ? 'bg-yellow-400/40 hover:bg-yellow-400/90'
+                                       : act.prioridad_etiqueta === 100
+                                       ? 'bg-red-400/40 hover:bg-red-400/90'
+                                       : 'bg-white hover:bg-black/10'
                                  }
-                                 bgcolor>
-                                 {act.num_ticket_edit || '--'}
+                              `}
+                              onDoubleClick={() => navigate(`detalle-actividad/${act.id_det}`)}
+                           >
+                              <Td>
+                                 <div className='relative'>
+                                    <Numerator number={i + 1} />
+                                    {act.estado_play_pausa === 2 && <PingIndicator size='small' />}
+                                 </div>
                               </Td>
-                              <Td className='font-bold'>{act.abrev}</Td>
-                              <Td bgcolor>{act.nombre_sub_proy ?? '--'}</Td>
+
+                              <Td>{act.id_det}</Td>
+
+                              <Td>{act.num_ticket_edit || '--'}</Td>
+
+                              <Td>{act.abrev}</Td>
+
+                              <Td >{act.nombre_sub_proy ?? '--'}</Td>
+
+                              <Td>{act.abrev_revisor || '--'}</Td>
+
                               <Td>{act.user_solicita}</Td>
-                              <Td className='font-bold' bgcolor>
-                                 {act.encargado_actividad}
-                              </Td>
-                              <Td className='font-bold'>{act.num_prioridad}</Td>
-                              {/* <Td bgcolor>
+
+                              <Td>{act.encargado_actividad}</Td>
+
+                              <Td>{act.num_prioridad}</Td>
+
+                              {/* <Td >
                                  {moment(act.fecha_tx).format('DD/MM/yyyy')}
                               </Td> */}
+
                               <Td
-                                 bgcolor
                                  isMultiLine={multiline}
-                                 className='font-bold'
                                  width='max-w-[150px]'
                                  align='text-left'>
                                  {act.actividad || 'Sin Titulo'}
                               </Td>
-                              <Td isMultiLine={multiline} align='text-left'>
+
+                              <Td 
+                                 isMultiLine={multiline} 
+                                 align='text-left'
+                              >
                                  {act.func_objeto}
                               </Td>
-                              <Td bgcolor className='font-bold'>
-                                 {act.estado === 1 ? 'Pendiente' : 'En trabajo'}
-                              </Td>
-                              <Td
-                                 className='flex items-center justify-between gap-2'
-                                 isModal
-                                 pauseActivity={onPauseActivity}
-                                 playActivity={onPlayActivity}
+
+                              <Td>{act.estado === 1 ? 'Pendiente' : 'En trabajo'}</Td>
+
+                              <TdActivityControls
+                                 onPause={onPauseActivity}
+                                 onPlay={onPlayActivity}
                                  time={act.tiempo_estimado}
                                  callback={() =>
                                     toggleState({
@@ -712,19 +755,19 @@ const Activity = () => {
                                  }
                                  {...act}
                               >
+                                 <BoxSelector
+                                    priority={act.prioridad_etiqueta}
+                                    nonePriority={() => updatePriority({prioridad_numero: 1000, id_actividad: act.id_det,})}
+                                    lowPriority={() => updatePriority({prioridad_numero: 600, id_actividad: act.id_det,})}
+                                    mediumPriority={() => updatePriority({prioridad_numero: 400, id_actividad: act.id_det,})}
+                                    highPriority={() => updatePriority({prioridad_numero: 100, id_actividad: act.id_det,})}
+                                 />
+                              </TdActivityControls>
 
-                                    <BoxSelector
-                                       priority={act.prioridad_etiqueta}
-                                       nonePriority={() => updatePriority({prioridad_numero: 1000, id_actividad: act.id_det,})}
-                                       lowPriority={() => updatePriority({prioridad_numero: 600, id_actividad: act.id_det,})}
-                                       mediumPriority={() => updatePriority({prioridad_numero: 400, id_actividad: act.id_det,})}
-                                       highPriority={() => updatePriority({prioridad_numero: 100, id_actividad: act.id_det,})}
-                                    />
-                                    
-                              </Td>
                            </tr>
                         ))}
                   </TBody>
+
                </Table>
             </Container>
          )}

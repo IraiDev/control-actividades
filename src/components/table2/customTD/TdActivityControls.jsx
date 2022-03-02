@@ -90,31 +90,32 @@ const TdActivityControls = props => {
             
             `}
          >
+            <div className='flex justify-between items-center gap-2'>
+               {ACT_STATE ? 
+                  <Button
+                     className='hover:bg-black/5'
+                     size='w-11 h-7'
+                     title='pasa actividad a E.T'
+                     onClick={handleToggleState}
+                  >
+                     <Icon /> 
+                  </Button>
+                  :
+                  <Button
+                     className='hover:bg-black/5'
+                     size='w-7 h-7'
+                     onClick={
+                        PAUSE_STATE
+                           ? () => setModal(true)
+                           : () => onPlay({ id_actividad: id_det })
+                        }
+                  >
+                     <Icon isPause condition={PAUSE_STATE} />
+                  </Button>
+               }
 
-            {ACT_STATE ? 
-               <Button
-                  className='hover:bg-black/5'
-                  size='w-11 h-7'
-                  title='pasa actividad a E.T'
-                  onClick={handleToggleState}
-               >
-                  <Icon /> 
-               </Button>
-               :
-               <Button
-                  className='hover:bg-black/5'
-                  size='w-7 h-7'
-                  onClick={
-                     PAUSE_STATE
-                        ? () => setModal(true)
-                        : () => onPlay({ id_actividad: id_det })
-                     }
-               >
-                  <Icon isPause condition={PAUSE_STATE} />
-               </Button>
-            }
-
-            {children}
+               {children}
+            </div>
          </td>
 
          {/* modal pause */}

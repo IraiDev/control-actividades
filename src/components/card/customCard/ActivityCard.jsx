@@ -14,8 +14,6 @@ import CardFooter from '../CardFooter'
 import CardContent from '../CardContent'
 import moment from 'moment'
 import FloatMenu from '../../ui/FloatMenu'
-import { useContext } from 'react'
-import { ActivityContext } from '../../../context/ActivityContext'
 
 const defaultNotes = [
    { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -56,8 +54,6 @@ const ActivityCard = props => {
    } = props
 
    const navigate = useNavigate()
-
-   const { optionsArray } = useContext(ActivityContext)
 
    const [{ desc, time }, onChangeValues, reset] = useForm({
       desc: '',
@@ -152,11 +148,7 @@ const ActivityCard = props => {
                   <aside className='capitalize'>
                      <P
                         tag='revisor'
-                        value={
-                           optionsArray?.users?.find(
-                              p => props?.id_revisor === p?.id
-                           )?.label || '- -'
-                        }
+                        value={props.abrev_revisor || '--'}
                      />
 
                      <P

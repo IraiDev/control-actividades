@@ -7,10 +7,13 @@ const initFilters = {
    proyecto: [],
    encargado: [],
    solicitante: [],
+   revisor: [],
    subProy: [],
    color: '',
    id_actividad: '',
    titulo: '',
+   descripcion: '',
+   numero_ticket: '',
    prioridad_ra: '',
    usuario_no_mostrar: '',
    entrabajo: '',
@@ -20,7 +23,7 @@ const initFilters = {
 }
 
 const initPRFilters = {
-   estado: [],
+   estado: [3],
    proyecto: [],
    encargado: [],
    solicitante: [],
@@ -42,7 +45,7 @@ function ActivityProvider({ children }) {
    const [filters, setFilters] = useState(initFilters)
    const [order, setOrder] = useState({})
    const [pager, setPager] = useState({ page: 1, limit: 12 })
-   const [prFilters, setPRFilters] = useState(initFilters)
+   const [prFilters, setPRFilters] = useState(initPRFilters)
    const [prOrder, setPROrder] = useState({})
    const [prPager, setPRPager] = useState({ page: 1, limit: 12 })
 
