@@ -1,6 +1,9 @@
-import { useContext,useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { ActivityContext } from '../context/ActivityContext'
 import { useActivityPr } from '../hooks/useActivityPr'
+import { useForm } from '../hooks/useForm'
+import { useWindowSize } from '../hooks/useWindowSize'
+import { Pagination } from '@mui/material'
 import StaticSelect from '../components/ui/StaticSelect'
 import InputFilter from '../components/filter/InputFilter'
 import SelectFilter from '../components/filter/SelectFilter'
@@ -14,9 +17,6 @@ import TBody from '../components/table2/TBody'
 import Td from '../components/table2/Td'
 import Th from '../components/table2/Th'
 import THead from '../components/table2/THead'
-import { useForm } from '../hooks/useForm'
-import { Pagination } from '@mui/material'
-import { useWindowSize } from '../hooks/useWindowSize'
 import Modal from '../components/ui/Modal'
 import Input from '../components/ui/Input'
 import CustomSelect from '../components/ui/CustomSelect'
@@ -212,44 +212,44 @@ const Revision = () => {
    }
 
    const handleUpdateDistributionTime = (id) => {
-      setDistributionTime(distributionTime.map(item => {
-         const newValues = inputValues.find(i => i.id === item.id)
-         if (item.id === id) {
+      setDistributionTime(distributionTime.map(dis => {
+         const newValues = inputValues.find(i => i.id === dis.id)
+         if (dis.id === id) {
             return {
-               ...item,
-               time: newValues.time,
-               gloss: newValues.gloss,
+               ...dis,
+               time: newValues[`time${id}`],
+               gloss: newValues[`gloss${id}`],
             }
          }
-         return item
+         return dis
       }))
    }
 
    const handleDeleteDistributionTime = (id) => {
-      setDistributionTime(distributionTime.filter(item => item.id !== id))
+      setDistributionTime(distributionTime.filter(dis => dis.id !== id))
    }
 
    const handleOpenModal = () => {
-      setInputValues(distributionTime?.map(item => {
+      setInputValues(distributionTime?.map(dis => {
          return {
-            id: item.id,
-            [`time${item.id}`]: item.time,
-            [`gloss${item.id}`]: item.gloss,
+            id: dis.id,
+            [`time${dis.id}`]: dis.time,
+            [`gloss${dis.id}`]: dis.gloss,
          }
       }))
 
       setModal(true)
    }
 
-   // useEffect(() => {
-   //    setInputValues(distributionTime?.map(item => {
-   //       return {
-   //          id: item.id,
-   //          [`time${item.id}`]: item.time,
-   //          [`gloss${item.id}`]: item.gloss,
-   //       }
-   //    }))
-   // }, [distributionTime])
+   useEffect(() => {
+      setInputValues(distributionTime?.map(dis => {
+         return {
+            id: dis.id,
+            [`time${dis.id}`]: dis.time,
+            [`gloss${dis.id}`]: dis.gloss,
+         }
+      }))
+   }, [distributionTime])
  
    return (
       <>
@@ -706,7 +706,7 @@ const Revision = () => {
                   </Button>
                </footer>
             </div>
-         </Modal>
+      </Modal>
       </>
    )
 }
