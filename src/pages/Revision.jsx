@@ -22,17 +22,6 @@ import { Alert } from '../helpers/alerts'
 import Modal from '../components/ui/Modal'
 import TextArea from '../components/ui/TextArea'
 
-const RA_STATES = [
-   { value: 0, label: 'E.F', fullName: 'En Fila'},
-   { value: 1, label: 'P', fullName: 'Pendiente'},
-   { value: 2, label: 'E.T', fullName: 'En Trabajo'},
-   { value: 10, label: 'P', fullName: 'Pausa'},
-   { value: 3, label: 'P.R', fullName: 'Para Revision'},
-   { value: 11, label: 'E', fullName: 'Entregado'},
-   { value: 8, label: 'P.F', fullName: 'Para Facturar'},
-   { value: 5, label: 'T', fullName: 'Terminado'},
-]
-
 // const CheckBox = ({ checked, onChange, id }) => {
 //    return (
 //       <label
@@ -86,7 +75,7 @@ const Revision = () => {
    })
 
    // destructuring
-   const { projects, subProjects, users } = optionsArray
+   const { projects, subProjects, users, status } = optionsArray
 
    // functions
    const onFilter = () => {
@@ -329,7 +318,7 @@ const Revision = () => {
                         <SelectFilter
                            type='table'
                            value={options.st}
-                           options={RA_STATES}
+                           options={status?.filter(s => s.value === 12 || s.value === 3)}
                            isMulti
                            onChange={option =>
                               setOptions({ ...options, st: option })
@@ -481,7 +470,7 @@ const Revision = () => {
 
                            <Td>{act.encargado_actividad}</Td>
 
-                           <Td>{RA_STATES.find(s => s.value === act.estado).fullName}</Td>
+                           <Td>{status?.find(s => s.value === act.estado).label}</Td>
 
                            <Td
                               isMultiLine={multiline}

@@ -243,7 +243,7 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
             />
             <SelectFilter
                value={options.st}
-               options={status}
+               options={status?.filter(s => s.value === 2 || s.value === 1)}
                field='estado'
                onChange={option => setOptions({ ...options, st: option })}
                filterDown={() => setOrder({ orden_estado: 'desc' })}
