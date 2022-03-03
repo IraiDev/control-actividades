@@ -23,6 +23,7 @@ import ViewContainer from '../components/view/ViewContainer'
 import View from '../components/view/View'
 import ViewSection from '../components/view/ViewSection'
 import ViewFooter from '../components/view/ViewFooter'
+import NumberFormat from 'react-number-format'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
@@ -58,12 +59,8 @@ const initForm = {
    finicio: moment(new Date()).format('YYYY-MM-DD'),
    fdetencion: moment(new Date()).format('YYYY-MM-DD'),
    msg_revision: '',
-   etTicket: '',
-   etEncargado: '',
-   etRecibe: '',
-   etDesc: '',
-   etZionit: '',
-   etCliente: '',
+   tiempo_cliente: 0,
+   tiempo_zionit: 0
 }
 
 const RowContainer = ({ children, isScale = true }) => (
@@ -125,6 +122,7 @@ const Detail = () => {
 
    const date = moment(activity.fecha_tx).format('yyyy-MM-DD')
    const isTicket = activity.num_ticket_edit !== 0
+   const isRuning = activity.estado_play_pausa === 2
    const [showContent, setshowContent] = useState(false)
 
    // modals
@@ -134,7 +132,6 @@ const Detail = () => {
    const [modalPause, toggleModalPause] = useState(false)
    const [modalTimer, toggleModalTimer] = useState(false)
    const [modalPR, toggleModalPR] = useState(false)
-   const [modalET, toggleModalET] = useState(false)
 
    // options
    const [options, setOptions] = useState(initOptions)
@@ -150,6 +147,7 @@ const Detail = () => {
       id: null,
       desc: '',
       content: '',
+      tiempo_total: ''
    })
 
    const [fields, setFields] = useState({
@@ -172,28 +170,20 @@ const Detail = () => {
 
    const [timeValues, setTimeValues] = useState([])
 
-   const [
-      {
-         hinicio,
-         hdetencion,
-         finicio,
-         fdetencion,
-         msg_revision,
-         etTicket,
-         etEncargado,
-         etRecibe,
-         etDesc,
-         etZionit,
-         etCliente,
-      },
-      onChangeValues,
-      reset,
-   ] = useForm(initForm)
+   const [{
+      hinicio,
+      hdetencion,
+      finicio,
+      fdetencion,
+      msg_revision,
+      tiempo_cliente,
+      tiempo_zionit
+   },
+      onChangeValues, reset] = useForm(initForm)
 
    // destructuring
    const { title, description, gloss, ticket, priority, time } = fields
-   const { cTitle, cDescription, cPriority, cTicket, cTime, cGloss } =
-      cloneFields
+   const { cTitle, cDescription, cPriority, cTicket, cTime, cGloss } = cloneFields
    const { projects, subProjects, users } = optionsArray
 
    const validation = () => {
@@ -279,7 +269,6 @@ const Detail = () => {
       toggleModalClone(false)
       toggleModalTimer(false)
       toggleModalPR(false)
-      toggleModalET(false)
       setCloneFiles(null)
       onCleanFile(Math.random().toString(36))
       setValues({ desc: '', id: null, id_ref: null })
@@ -287,7 +276,8 @@ const Detail = () => {
    }
 
    const openModalClone = () => {
-      const setFieldsData = (ticket = 0) => {
+
+      const fieldData = (ticket = 0) => {
          setCloneFields({
             cTicket: ticket,
             cTitle: title,
@@ -310,26 +300,14 @@ const Detail = () => {
          })
       }
 
-      if (activity.num_ticket_edit === 0) {
-         setFieldsData()
+      if (!isTicket) {
+         fieldData()
          toggleModalClone(true)
          return
       }
 
-      Alert({
-         title: 'Atención',
-         content: 'Desea incluir el ticket en la nueva actividad clonada?',
-         confirmButton: 'Si, incluir',
-         cancelButton: 'No, incluir',
-         cancelAction: () => {
-            setFieldsData()
-            toggleModalClone(true)
-         },
-         action: () => {
-            setFieldsData(ticket)
-            toggleModalClone(true)
-         },
-      })
+      fieldData(ticket)
+      toggleModalClone(true)
    }
 
    const handleOnPlayPause = () => {
@@ -467,26 +445,61 @@ const Detail = () => {
       }
    }
 
-   const handleUpdateState = isTicket => {
-      if (isTicket) {
-         navigate(routes.activity, { replace: true })
-         toggleState({ mensaje_revision: msg_revision })
-         reset()
+   const validateActivityIsRunning = () => {
+
+      const action = async () => {
+         
+         if (isRuning) await onPlayPause({ id_actividad: activity.id_det, mensaje: 'Pausa para pasar a revisión' })
+
+         if (isTicket) {
+            setValues({...values, tiempo_total: activity.tiempo_trabajado})
+            toggleModalPR(true)
+         }
+         else {
+            Alert({
+               title: 'Atención',
+               content: 'La actividad pasara a estado <strong>Para Revisión</strong>',
+               confirmText: 'Si, Pasar a revisión',
+               cancelText: 'No, cancelar',
+               action: () => {
+                  navigate(routes.activity, { replace: true })
+                  toggleState({})
+                  reset()
+               }
+            })
+         }
+      }
+
+      if(isRuning) {
+         Alert({
+            title: 'Atención',
+            content: 'Debes pausar la actividad para cambiar el estado a Revisión\n¿Pausar actividad?',
+            confirmText: 'Si, Pausar actividad',
+            calcelText: 'No, cancelar',
+            action
+         })
+         return
+      }
+      
+      action()
+   }
+
+   const handleUpdateState = () => {
+
+      if (values.tiempo_total !== 0) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'Por favor distribuya el <strong>tiempo total</strong> en <strong>tiempo cliente</strong> y <strong>tiempo zionit</strong> hasta que <strong>tiempo total</strong> sea igual a 0 horas',
+            showCancelButton: false,
+         })
+
          return
       }
 
-      Alert({
-         title: 'Atención',
-         content:
-            '¿Estas seguro de cambiar el estado a <strong>REVISIÓN</strong>?',
-         confirmButton: 'Si, actualizar',
-         cancelButton: 'No, cancelar',
-         action: () => {
-            navigate(routes.activity, { replace: true })
-            toggleState({})
-            reset()
-         },
-      })
+      toggleState({ mensaje_revision: msg_revision, tiempo_cliente, tiempo_zionit })
+      navigate(routes.activity, { replace: true })
+      reset()
    }
 
    const handleCreateDetention = () => {
@@ -580,13 +593,6 @@ const Detail = () => {
       })
    }
 
-   const handleToggleET = () => {
-      const glosa = `- N º Ticket: ${etTicket}\n- Entrego: ${etEncargado}\n- Recibe: ${etRecibe}\n- Descripción: ${etDesc}\n- Tiempo Zionit: ${etZionit}\n- Tiempo Cliente: ${etCliente}`
-      setFields({ ...fields, gloss: '' })
-      setFields({ ...fields, gloss: glosa })
-      onCloseModals()
-   }
-
    useEffect(() => {
       if (Object.keys(activity).length > 0) {
          setFields({
@@ -628,6 +634,15 @@ const Detail = () => {
 
       // eslint-disable-next-line
    }, [optionsArray, activity, detentions])
+
+   useEffect(() => {
+      setValues({
+         ...values,
+         tiempo_total: Number(activity.tiempo_trabajado).toFixed(4) - (Number(tiempo_cliente) + Number(tiempo_zionit)),
+      })
+
+      // eslint-disable-next-line
+   }, [tiempo_cliente, tiempo_zionit, activity])
 
    return (
       <>
@@ -984,11 +999,14 @@ const Detail = () => {
                               }>
                               <i className='fas fa-trash' />
                            </Button>
+
                            <Button
+                              hidden={activity.id_det_padre > 0}
                               className='text-slate-600 bg-slate-100 hover:bg-slate-200'
                               onClick={openModalClone}>
                               <i className='fas fa-clone' />
                            </Button>
+
                            {activity.num_ticket_edit !== 0 && (
                               <a
                                  className='text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg h-9 px-2.5 text-center block pt-1.5 transition duration-300'
@@ -999,6 +1017,7 @@ const Detail = () => {
                                  <i className='fas fa-ticket-alt' />
                               </a>
                            )}
+
                            <Button
                               hidden={activity.estado === 1}
                               className={
@@ -1015,24 +1034,16 @@ const Detail = () => {
                                  }
                               />
                            </Button>
+
                            <Button
                               hidden={activity.estado !== 2}
                               title='Pasar actividad a revisión'
                               className='text-orange-400 bg-orange-50 hover:bg-orange-100'
-                              onClick={
-                                 isTicket
-                                    ? () => toggleModalPR(true)
-                                    : () => handleUpdateState(isTicket)
-                              }>
+                              onClick={validateActivityIsRunning}
+                           >
                               <i className='fas fa-eye' />
                            </Button>
-                           {/* <Button
-                              hidden={activity.estado !== 2}
-                              title='Pasar actividad a entregado'
-                              className='text-indigo-400 bg-indigo-50 hover:bg-indigo-100'
-                              onClick={() => toggleModalET(true)}>
-                              <i className='fas fa-handshake' />
-                           </Button> */}
+
                         </section>
 
                         <section className='flex justify-end gap-2'>
@@ -1056,87 +1067,58 @@ const Detail = () => {
 
                {/* modal PR */}
                <Modal
-                  showModal={modalET}
-                  isBlur={false}
-                  onClose={onCloseModals}
-                  className='max-w-3xl'
-                  padding='p-4 md:p-6'
-                  title='Formulario pre paso a entregado'>
-                  <div className='grid gap-3'>
-                     <section className='grid grid-cols-1 md:grid-cols-3 gap-3'>
-                        <Input
-                           field='N ticket'
-                           name='etTicket'
-                           value={etTicket}
-                           onChange={onChangeValues}
-                        />
-                        <Input
-                           field='Encargado'
-                           name='etEncargado'
-                           value={etEncargado}
-                           onChange={onChangeValues}
-                        />
-                        <Input
-                           field='recibe'
-                           name='etRecibe'
-                           value={etRecibe}
-                           onChange={onChangeValues}
-                        />
-                     </section>
-                     <TextArea
-                        field='descripción'
-                        name='etDesc'
-                        value={etDesc}
-                        onChange={onChangeValues}
-                     />
-                     <section className='grid grid-cols-2 gap-3'>
-                        <Input
-                           field='tiempo zionit'
-                           name='etZionit'
-                           value={etZionit}
-                           onChange={onChangeValues}
-                        />
-                        <Input
-                           field='tiempo cliente'
-                           name='etCliente'
-                           value={etCliente}
-                           onChange={onChangeValues}
-                        />
-                     </section>
-                  </div>
-                  <footer className='mt-5 flex justify-between'>
-                     <Button
-                        className='text-red-500 bg-red-50 hover:bg-red-100'
-                        onClick={onCloseModals}>
-                        cancelar
-                     </Button>
-                     <Button
-                        className='text-emerald-500 bg-emerald-50 hover:bg-emerald-100'
-                        onClick={handleToggleET}>
-                        pasar a entregado
-                     </Button>
-                  </footer>
-               </Modal>
-
-               {/* modal PR */}
-               <Modal
                   showModal={modalPR}
                   isBlur={false}
                   onClose={onCloseModals}
                   className='max-w-xl'
                   padding='p-4 md:p-6'
                   title='Pasar a revisión'>
+
                   <div>
-                     <section className='flex gap-2 justify-between items-baseline'>
-                        <p className='text-sm text-gray-600'>
-                           ¿Desea agregar un mensaje a la actividad al pasar a
-                           revisión?
-                        </p>
-                        <CheckBox
-                           value={showContent}
-                           onChange={e => setshowContent(e.target.checked)}
+
+                     <section className='grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3 mb-7'>
+
+                        <Input 
+                           field='Tiempo Cliente (hrs)' 
+                           name='tiempo_cliente'
+                           value={tiempo_cliente} 
+                           onChange={onChangeValues}
                         />
+
+                        <Input 
+                           field='Tiempo Zionit  (hrs)' 
+                           name='tiempo_zionit'
+                           value={tiempo_zionit} 
+                           onChange={onChangeValues}
+                        />
+
+                        <div>
+                           <h5 className='text-xs mt-1 mb-2.5'>Tiempo Total  (hrs)</h5>
+                           <NumberFormat 
+                              value={values.tiempo_total} 
+                              decimalScale={4} 
+                              fixedDecimalScale={false}
+                              displayType='text' 
+                           />
+                        </div>
+
                      </section>
+
+                     {isTicket &&
+                        <section className='flex gap-2 justify-between items-baseline'>
+                           
+                           <p className='text-sm text-gray-600'>
+                              ¿Desea agregar un mensaje al pasar a revisión?
+                           </p>
+
+                           <CheckBox
+                              value={showContent}
+                              onChange={e => setshowContent(e.target.checked)}
+                           />
+                              
+                        </section>
+                     }
+
                      {showContent && (
                         <TextArea
                            field='mensaje'
@@ -1719,6 +1701,7 @@ const Detail = () => {
                               }
                            />
                            <Input
+                              disabled
                               field='ticket'
                               isNumber
                               value={cTicket}

@@ -6,6 +6,7 @@ const CustomSelect = ({
    onChange,
    defaultLabel = 'ninguno',
    label,
+   menuHeight = 200
 }) => (
    <span className='grid gap-1 capitalize text-sm'>
       {label}
@@ -15,6 +16,7 @@ const CustomSelect = ({
          options={[{ value: null, label: defaultLabel }].concat(options)}
          value={value}
          onChange={onChange}
+         maxMenuHeight={menuHeight}
       />
    </span>
 )

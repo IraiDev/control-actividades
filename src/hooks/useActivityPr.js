@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import { ActivityContext } from '../context/ActivityContext'
 import { UiContext } from '../context/UiContext'
+import { Alert } from '../helpers/alerts'
 // import { Alert } from '../helpers/alerts'
 import { fetchToken } from '../helpers/fetch'
 
@@ -41,6 +42,28 @@ export const useActivityPr = () => {
          const body = await resp.json()
 
          console.log('togglecheck',body)
+
+         if (body.ok) fetchActivities()
+         else{
+            Alert({
+               message: 'error',
+               title: 'Atención',
+               content: body.response,
+               showCancelButton: false,
+            })
+         }
+
+      } catch (err) {
+         console.log(err)
+      }
+   }
+
+   const onDistribution = async ({distribuciones = [], id_actividad}) => {
+      try {
+         const resp = await fetchToken('task/distribution', {distribuciones, id_actividad}, 'POST')
+         const body = await resp.json()
+
+      console.log(body)
       } catch (err) {
          console.log(err)
       }
@@ -54,7 +77,8 @@ export const useActivityPr = () => {
    return {
       activitiesPR, 
       total,
-      toggleCheckActivity
+      toggleCheckActivity,
+      onDistribution
    }
 
 }

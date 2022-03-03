@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
+import { ActivityContext } from '../../../context/ActivityContext'
 import { useForm } from '../../../hooks/useForm'
 import Button from '../../ui/Button'
 import CustomSelect from '../../ui/CustomSelect'
@@ -61,11 +62,15 @@ const BoxContent = ({children, number}) => {
    )
 }
 
-const TrPRControls = ({children}) => {
+const TrPRControls = (props) => {
+   
+   const isReviwed = props.estado === 11
+
+   const { optionsArray } = useContext(ActivityContext)
    
    const [options, setOptions] = useState({st: { value: 3, label: 'P.R'}})
    const [modal, setModal] = useState(false)
-   const [distributionTime, setDistributionTime] = useState([])
+   const [times, setTimes] = useState([])
    const [inputValues, setInputValues] = useState([])
 
    const [{ 
@@ -76,9 +81,12 @@ const TrPRControls = ({children}) => {
       gloss: '',
    })
 
-   const handleCreateDistributionTime = () => {
-      setDistributionTime(distributionTime => [...distributionTime, {
-         id: distributionTime.length + 1,
+   // destructuring
+   const { products } = optionsArray
+
+   const handleCreateTimes = () => {
+      setTimes(times => [...times, {
+         id: times.length + 1,
          product: options?.product,
          time,
          gloss,
@@ -87,8 +95,8 @@ const TrPRControls = ({children}) => {
       reset()
    }
 
-   const handleUpdateDistributionTime = (id) => {
-      setDistributionTime(distributionTime.map(dis => {
+   const handleUpdateTimes = (id) => {
+      setTimes(times.map(dis => {
          const newValues = inputValues.find(i => i.id === dis.id)
          if (dis.id === id) {
             return {
@@ -101,13 +109,12 @@ const TrPRControls = ({children}) => {
       }))
    }
 
-   const handleDeleteDistributionTime = (id) => {
-      setDistributionTime(distributionTime.filter(dis => dis.id !== id))
+   const handleDeleteTimes = (id) => {
+      setTimes(times.filter(dis => dis.id !== id))
    }
 
    const handleOpenModal = () => {
-      console.log('OPEN')
-      setInputValues(distributionTime?.map(dis => {
+      setInputValues(times?.map(dis => {
          return {
             id: dis.id,
             [`time${dis.id}`]: dis.time,
@@ -119,22 +126,22 @@ const TrPRControls = ({children}) => {
    }
 
    useEffect(() => {
-      setInputValues(distributionTime?.map(dis => {
+      setInputValues(times?.map(dis => {
          return {
             id: dis.id,
             [`time${dis.id}`]: dis.time,
             [`gloss${dis.id}`]: dis.gloss,
          }
       }))
-   }, [distributionTime])
+   }, [times])
 
   return (
    <>
       <tr
          className='text-[13px] text-gray-800 transition duration-300 cursor-pointer hover:bg-black/10'
-         onDoubleClick={handleOpenModal}
+         onDoubleClick={isReviwed ? () => handleOpenModal() : null} 
       >
-         {children}
+         {props.children}
       </tr>
 
 
@@ -151,9 +158,10 @@ const TrPRControls = ({children}) => {
             <BoxHeader>
                <section className='col-span-2'>
                   <CustomSelect
-                     options={PRODUCT_ZIONIT}
+                     options={products}
                      value={options?.product}
                      onChange={option => setOptions({ ...options, product: option })}
+                     menuHeight={150}
                   />
                </section>
 
@@ -175,7 +183,7 @@ const TrPRControls = ({children}) => {
 
                <Button 
                   className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 col-span-1 mx-auto'
-                  onClick={handleCreateDistributionTime}
+                  onClick={handleCreateTimes}
                >
                   agregar
                </Button>
@@ -183,15 +191,16 @@ const TrPRControls = ({children}) => {
 
             <h5 className='pl-4 text-sm my-5'>Lista de distribucion de tiempos</h5>
 
-            {distributionTime.length > 0 ?
-               distributionTime.map((dis, i) => (
+            {times.length > 0 ?
+               times.map((dis, i) => (
 
                <BoxContent key={i} number={i}>
                   <section className='col-span-2'>
                      <CustomSelect
-                        options={PRODUCT_ZIONIT}
+                        options={products}
                         value={dis.product}
-                        onChange={option => setDistributionTime(distributionTime.map(d => d.id === dis.id ? { ...d, product: option } : d))}
+                        onChange={option => setTimes(times.map(d => d.id === dis.id ? { ...d, product: option } : d))}
+                        menuHeight={150}
                      />
                   </section>
 
@@ -213,14 +222,14 @@ const TrPRControls = ({children}) => {
 
                      <Button 
                         className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
-                        onClick={() => handleUpdateDistributionTime(dis.id)}
+                        onClick={() => handleUpdateTimes(dis.id)}
                      >
                         <i className='fas fa-check' />
                      </Button>
 
                      <Button 
                         className='bg-red-100 hover:bg-red-200 text-red-500'
-                        onClick={() => handleDeleteDistributionTime(dis.id)}   
+                        onClick={() => handleDeleteTimes(dis.id)}   
                      >
                         <i className='fas fa-trash-alt' />
                      </Button>

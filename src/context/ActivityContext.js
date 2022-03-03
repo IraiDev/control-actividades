@@ -119,6 +119,12 @@ function ActivityProvider({ children }) {
                      id: item.id_user,
                   }
                }),
+               products: body.productos.map(item => {
+                  return {
+                     label: item.nom_prod,
+                     value: item.id_producto,
+                  }
+               }),
             })
          } else {
             Alert({

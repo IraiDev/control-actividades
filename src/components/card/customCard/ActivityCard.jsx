@@ -70,6 +70,8 @@ const ActivityCard = props => {
    // variables
    const ESTADO_PAUSA = estado === 1
    const ESTADO_play = estado_play_pausa === 2
+   const isFather = props.id_det_padre === 0 && props.num_ticket_edit !== 0
+   const isChildren = props.id_det_padre !== 0 && props.num_ticket_edit !== 0
 
    const onCloseModals = () => {
       reset()
@@ -105,8 +107,8 @@ const ActivityCard = props => {
             showPing={props.estado_play_pausa === 2}
             priority={props.prioridad_etiqueta}
             onDoubleClick={handleNavigate}
-            isChildren={props.id_det_padre !== 0}
-            isFather={props.isFather}
+            isChildren={isChildren}
+            isFather={isFather}
             {...props}
          >
             <CardContent title={props.actividad} cardNum={numberCard}>
@@ -116,13 +118,12 @@ const ActivityCard = props => {
 
                      <P tag='proy' value={props.abrev} />
 
-                     <span className={`
-                        flex gap-2 max-w-max rounded
-                        ${props?.colors?.find(c => c?.id === props?.id_det && props.isFather)?.bg}
-                        ${props.isFather && 'text-white px-1'}
-                     `}>
+                     <span className='flex gap-2 max-w-max rounded'>
                         <strong>ID:</strong> 
-                        {props.id_det}
+                        <p className={isFather ? 'text-amber-600 bg-amber-200/80 px-1 rounded font-semibold' : ''}
+                        >
+                           {props.id_det}
+                        </p>
                      </span>
 
                      {/* <P tag='ID' value={props.id_det} /> */}

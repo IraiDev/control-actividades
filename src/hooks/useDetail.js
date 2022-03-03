@@ -512,11 +512,13 @@ export const useDetail = id => {
       id_actividad = id,
       estado = 3,
       mensaje_revision,
+      tiempo_cliente = 0,
+      tiempo_zionit = 0,
    }) => {
       try {
          const resp = await fetchToken(
             'task/change-activity-state',
-            { id_actividad, estado, mensaje_revision },
+            { id_actividad, estado, mensaje_revision, tiempo_cliente, tiempo_zionit },
             'POST'
          )
          const body = await resp.json()
@@ -524,7 +526,7 @@ export const useDetail = id => {
          if (body.ok) {
             saveFilters({ payload: { reload: !filters.reload } })
             Alert({
-               content: `La actividad: <strong>${id}</strong> paso a : <strong>P.R</strong>`,
+               content: `La actividad: <strong>${id}</strong> paso a : <strong>Revisión</strong>`,
                statusIcon: 'success',
                showCancelButton: false,
                showConfirmButton: false,

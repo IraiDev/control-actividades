@@ -1,21 +1,18 @@
 import PingIndicator from '../ui/PingIndicator'
 
-const Indicator = ({content, color, isChild}) => {
+const Indicator = ({content, color = 'bg-amber-200/80', isChild}) => {
    return (
-      <span className={`
-         flex items-center gap-2 absolute -top-3 left-6 text-white font-semibold 
-         px-2 py-1 rounded-md shadow-md text-xs
-         ${color}
-         `}
-      >
-         {isChild ? 
-            <>
-               <i className='fas fa-child' />
-               {content}
-            </>
-            : <i className='fas fa-hat-cowboy' />
-         }
-      </span>
+      <div className='bg-white'>
+         <span className={`
+            flex items-center gap-2 absolute -top-3 right-1/2 transform translate-x-1/2 text-amber-600 font-bold 
+            px-2 py-1 rounded-md shadow-md text-xs
+            ${color}
+            `}
+         >
+            <i className={isChild ? 'fas fa-child': 'fas fa-hat-cowboy' } />
+            {content}
+         </span>
+      </div>
    )
 }
 
@@ -25,8 +22,8 @@ const Card = (props) => {
       priority = 1000,
       children,
       showPing = false,
-      isChildren= false,
-      isFather = false,
+      isChildren,
+      isFather,
       className,
    } = props
 
@@ -46,8 +43,6 @@ const Card = (props) => {
                   : priority === 100 && 'text-white bg-red-800/70'
             }
 
-            ${isFather && `border-2 ${props?.colors?.find(c => c?.id === props?.id_det)?.border}`}
-
             ${className}
 
          `}
@@ -60,16 +55,11 @@ const Card = (props) => {
          {isChildren && 
             <Indicator 
                isChild
-               content={props?.id_det_padre} 
-               color={props?.colors?.find(c => c?.id === props?.id_det_padre)?.bg} 
+               content={props?.id_det_padre}
             />
          }
 
-         {isFather && 
-            <Indicator 
-               color={props?.colors?.find(c => c?.id === props?.id_det)?.bg} 
-            />
-         }
+         {isFather && <Indicator content={props?.id_det} />}
 
       </main>
    )

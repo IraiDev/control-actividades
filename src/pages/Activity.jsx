@@ -352,7 +352,6 @@ const Activity = () => {
                         deleteNote={onDeleteNote}
                         pauseActivity={onPauseActivity}
                         playActivity={onPlayActivity}
-                        isFather={activities.some(a => a.id_det_padre === act.id_det)}
                         colors={color}
                         {...act}
                      />
