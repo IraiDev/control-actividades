@@ -1,20 +1,5 @@
+import MarkActivity from '../ui/MarkActivity'
 import PingIndicator from '../ui/PingIndicator'
-
-const Indicator = ({content, color = 'bg-amber-200/80', isChild}) => {
-   return (
-      <div className='bg-white'>
-         <span className={`
-            flex items-center gap-2 absolute -top-3 right-1/2 transform translate-x-1/2 text-amber-600 font-bold 
-            px-2 py-1 rounded-md shadow-md text-xs
-            ${color}
-            `}
-         >
-            <i className={isChild ? 'fas fa-child': 'fas fa-hat-cowboy' } />
-            {content}
-         </span>
-      </div>
-   )
-}
 
 const Card = (props) => {
    const {
@@ -53,13 +38,13 @@ const Card = (props) => {
          {showPing && <PingIndicator />}
 
          {isChildren && 
-            <Indicator 
+            <MarkActivity 
                isChild
                content={props?.id_det_padre}
             />
          }
 
-         {isFather && <Indicator content={props?.id_det} />}
+         {isFather && <MarkActivity content={props?.id_det} />}
 
       </main>
    )

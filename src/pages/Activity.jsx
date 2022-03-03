@@ -22,6 +22,7 @@ import TBody from '../components/table2/TBody'
 import THead from '../components/table2/THead'
 import Th from '../components/table2/Th'
 import Td from '../components/table2/Td'
+import MarkActivity from '../components/ui/MarkActivity'
 
 const colors = [
    {border: 'border-red-600', bg: 'bg-red-600'},
@@ -120,7 +121,6 @@ const Activity = () => {
 
    // states
    const [multiline, setMultiline] = useState(false)
-   const [color, setColor] = useState([])
    const [options, setOptions] = useState({})
 
    // hooks
@@ -288,18 +288,6 @@ const Activity = () => {
       })
    }
 
-   const getRandomColor = () => {
-      return colors[Math.floor(Math.random() * colors.length)]
-   }
-
-   useEffect(() => {
-      setColor(activities.map(act => {
-         const c = getRandomColor()
-         return({...c, id: act.id_det})
-      }))
-      // eslint-disable-next-line
-   }, [activities])
-
    return (
       <>
          {view ? (
@@ -352,7 +340,6 @@ const Activity = () => {
                         deleteNote={onDeleteNote}
                         pauseActivity={onPauseActivity}
                         playActivity={onPlayActivity}
-                        colors={color}
                         {...act}
                      />
                   ))
@@ -449,33 +436,6 @@ const Activity = () => {
                            />
                         </Th>
 
-                        {/* revisor */}
-                        <Th>
-                           <SelectFilter
-                              type='table'
-                              value={options.ur}
-                              options={users}
-                              isMulti
-                              onChange={option =>
-                                 setOptions({ ...options, ur: option })
-                              }
-                              filterDown={() =>
-                                 setOrder({ orden_revisor: 'desc' })
-                              }
-                              filterUp={() =>
-                                 setOrder({ orden_revisor: 'asc' })
-                              }
-                              upActive={setActive({
-                                 param: 'orden_revisor',
-                                 value: 'asc',
-                              })}
-                              downActive={setActive({
-                                 param: 'orden_revisor',
-                                 value: 'desc',
-                              })}
-                           />
-                        </Th>
-
                         <Th>
                            <SelectFilter
                               type='table'
@@ -523,6 +483,33 @@ const Activity = () => {
                               })}
                               downActive={setActive({
                                  param: 'orden_encargado',
+                                 value: 'desc',
+                              })}
+                           />
+                        </Th>
+
+                        {/* revisor */}
+                        <Th>
+                           <SelectFilter
+                              type='table'
+                              value={options.ur}
+                              options={users}
+                              isMulti
+                              onChange={option =>
+                                 setOptions({ ...options, ur: option })
+                              }
+                              filterDown={() =>
+                                 setOrder({ orden_revisor: 'desc' })
+                              }
+                              filterUp={() =>
+                                 setOrder({ orden_revisor: 'asc' })
+                              }
+                              upActive={setActive({
+                                 param: 'orden_revisor',
+                                 value: 'asc',
+                              })}
+                              downActive={setActive({
+                                 param: 'orden_revisor',
                                  value: 'desc',
                               })}
                            />
@@ -637,9 +624,9 @@ const Activity = () => {
                         <Th primary>ticket</Th>
                         <Th primary>proyecto</Th>
                         <Th primary>sub proyecto</Th>
-                        <Th primary>revisor</Th>
                         <Th primary>solicitante</Th>
                         <Th primary>encargado</Th>
+                        <Th primary>revisor</Th>
                         <Th primary>prioridad</Th>
                         {/* <Th primary>fecha</Th> */}
                         <Th primary>
@@ -705,7 +692,29 @@ const Activity = () => {
                                  </div>
                               </Td>
 
-                              <Td>{act.id_det}</Td>
+                              <Td>
+                                 <div className={`
+                                    flex justify-between
+                                    ${act.id_det_padre === 0 && act.num_ticket_edit !== 0 ? 'text-amber-600 font-semibold' : ''}
+                                 `}>
+                                    {act.id_det_padre !== 0 && act.num_ticket_edit !== 0 &&
+                                       <MarkActivity 
+                                          isChild 
+                                          position='block'
+                                          content={act.id_det_padre} 
+                                       />
+                                    }  
+
+                                    {act.id_det_padre === 0 && act.num_ticket_edit !== 0 &&
+                                       <MarkActivity 
+                                          position='block'
+                                          // content={act.id_det} 
+                                       />
+                                    } 
+
+                                    {act.id_det}
+                                 </div>
+                              </Td>
 
                               <Td>{act.num_ticket_edit || '--'}</Td>
 
@@ -713,11 +722,11 @@ const Activity = () => {
 
                               <Td >{act.nombre_sub_proy ?? '--'}</Td>
 
-                              <Td>{act.abrev_revisor || '--'}</Td>
-
                               <Td>{act.user_solicita}</Td>
 
                               <Td>{act.encargado_actividad}</Td>
+
+                              <Td>{act.abrev_revisor || '--'}</Td>
 
                               <Td>{act.num_prioridad}</Td>
 
