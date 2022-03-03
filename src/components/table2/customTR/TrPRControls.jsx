@@ -7,13 +7,6 @@ import Input from '../../ui/Input'
 import Modal from '../../ui/Modal'
 import Numerator from '../../ui/Numerator'
 
-const PRODUCT_ZIONIT = [
-   { value: '1', label: 'Desarrollador A'},
-   { value: '2', label: 'Desarrollador B'},
-   { value: '3', label: 'Investigación'},
-   { value: '4', label: 'Diseño'},
-]
-
 const BoxHeader = ({children}) => {
    return (
       <>
