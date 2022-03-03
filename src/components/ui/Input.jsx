@@ -15,10 +15,14 @@ const Input = ({
    className,
    padding = 'px-4 py-2',
    onBlur,
+   isRequired = false,
 }) => {
    return (
       <div className={className}>
-         <p className='px-4 py-1 capitalize text-xs'>{field}</p>
+         <label className='flex gap-2 items-baseline pl-4 py-2 text-xs capitalize'>
+            {field}
+            {isRequired && <span className='text-red-600 font-semibold'>(*)</span>}
+         </label>
          <input
             id={id}
             name={name}

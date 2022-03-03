@@ -36,9 +36,9 @@ export const useActivityPr = () => {
       }
    }
 
-   const toggleCheckActivity = async ({id_actividad, estado, revisado}) => {
+   const toggleCheckActivity = async ({id_actividad, estado, revisado, glosa_rechazo}) => {
       try {
-         const resp = await fetchToken('task/checked-activity', {id_actividad, estado, revisado}, 'PUT')
+         const resp = await fetchToken('task/checked-activity', {id_actividad, estado, revisado, glosa_rechazo}, 'PUT')
          const body = await resp.json()
 
          console.log('togglecheck',body)

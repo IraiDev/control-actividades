@@ -6,10 +6,14 @@ const TextArea = ({
    placeholder = 'Escriba aqui',
    field,
    disabled = false,
+   isRequired = false,
 }) => {
    return (
       <div>
-         <p className='px-4 py-1 capitalize text-xs'>{field}</p>
+         <label className='flex gap-2 items-baseline pl-4 pb-2 text-xs capitalize'>
+            {field}
+            {isRequired && <span className='text-red-600 font-semibold'>(*)</span>}
+         </label>
          <textarea
             disabled={disabled}
             name={name}

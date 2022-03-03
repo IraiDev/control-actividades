@@ -12,7 +12,6 @@ import Input from '../components/ui/Input'
 import Select from 'react-select'
 import Modal from '../components/ui/Modal'
 import Timer from '../components/timer/Timer'
-import CustomSelect from '../components/ui/CustomSelect'
 import TimerContainer from '../components/timer/TimerContainer'
 import P from '../components/ui/P'
 import Numerator from '../components/ui/Numerator'
@@ -51,6 +50,7 @@ const initOptions = {
    us: { label: 'ninguno', value: null },
    ue: { label: 'ninguno', value: null },
    ur: { label: 'ninguno', value: null },
+   ta: { label: 'ninguno', value: null },
 }
 
 const initForm = {
@@ -94,6 +94,25 @@ const CheckBox = ({ value, onChange }) => {
          />
          <i className={value ? 'fas fa-times' : 'fas fa-check'} />
       </label>
+   )
+}
+
+const CloneSelect = ({options, value, onChange, field, isRequired = false, isDefaultOptions = false}) => {
+   return(
+      <div className='grid gap-2 capitalize text-xs'>
+         <label className='flex gap-2 items-baseline pl-4'>
+            {field}
+            {isRequired && <span className='text-red-600 font-semibold'>(*)</span>}
+         </label>
+         <Select
+            maxMenuHeight={170}
+            className='capitalize text-sm'
+            placeholder='Seleccione'
+            options={isDefaultOptions ? [{ value: null, label: 'ninguna' }].concat(options) : options}
+            value={value}
+            onChange={onChange}
+         />
+      </div>
    )
 }
 
@@ -184,16 +203,17 @@ const Detail = () => {
    // destructuring
    const { title, description, gloss, ticket, priority, time } = fields
    const { cTitle, cDescription, cPriority, cTicket, cTime, cGloss } = cloneFields
-   const { projects, subProjects, users } = optionsArray
+   const { projects, subProjects, users, activity_type } = optionsArray
 
    const validation = () => {
       const vTitle = title.trim() === ''
       const vDesc = description.trim() === ''
       const vPriority = priority.toString().trim() === ''
       const vTime = time.toString().trim() === ''
-      const vProject = options.pr?.value === null
-      const vSolicita = options.us?.value === null
-      const vEncargado = options.ue?.value === null
+      const vProject = options.pr?.value === undefined
+      const vSolicita = options.us?.value === undefined
+      const vEncargado = options.ue?.value === undefined
+      const vRevisor = options.ur?.value === undefined
 
       const onSaveValidation =
          vTitle ||
@@ -202,15 +222,18 @@ const Detail = () => {
          vTime ||
          vProject ||
          vSolicita ||
-         vEncargado
+         vEncargado || 
+         vRevisor
 
       const vTitleC = cTitle.trim() === ''
       const vDescC = cDescription.trim() === ''
       const vPriorityC = cPriority.toString().trim() === ''
       const vTimeC = cTime.toString().trim() === ''
-      const vProjectC = cloneOptions.pr?.value === null
-      const vSolicitaC = cloneOptions.us?.value === null
-      const vEncargadoC = cloneOptions.ue?.value === null
+      const vProjectC = cloneOptions.pr?.value === undefined
+      const vSolicitaC = cloneOptions.us?.value === undefined
+      const vEncargadoC = cloneOptions.ue?.value === undefined
+      const vRevisorC = cloneOptions.ur?.value === undefined
+      const vTipo_actividadC = cloneOptions.ta?.value === undefined
 
       const onCloneValidation =
          vTitleC ||
@@ -219,7 +242,9 @@ const Detail = () => {
          vTimeC ||
          vProjectC ||
          vSolicitaC ||
-         vEncargadoC
+         vEncargadoC ||
+         vRevisorC ||
+         vTipo_actividadC
 
       return {
          isSave: onSaveValidation,
@@ -410,6 +435,7 @@ const Detail = () => {
       cloneOptions?.us && formData.append('solicita', cloneOptions.us.label)
       cloneOptions?.ue && formData.append('encargado', cloneOptions.ue.label)
       cloneOptions?.ur && formData.append('revisor', cloneOptions.ur.id)
+      cloneOptions?.ta && formData.append('tipo_actividad', cloneOptions.ta.id)
       formData.append('prioridad', cPriority)
       formData.append('ticket', cTicket)
       formData.append('tiempo_estimado', cTime)
@@ -660,6 +686,7 @@ const Detail = () => {
                      <AlertBar validation={validation().isSave} />
 
                      <ViewSection lg cols={8}>
+
                         <aside className='col-span-1 md:col-span-2'>
                            <header className='text-sm'>
                               <P
@@ -721,16 +748,19 @@ const Detail = () => {
                            <hr className='my-5' />
 
                            <section className='grid gap-2'>
-                              <CustomSelect
-                                 label='Proyecto (*)'
+                              <CloneSelect
+                                 isDefaultOptions
+                                 isRequired
+                                 field='Proyecto'
                                  options={projects}
                                  value={options.pr}
                                  onChange={option =>
                                     setOptions({ ...options, pr: option })
                                  }
                               />
-                              <CustomSelect
-                                 label='Sub proyecto'
+                              <CloneSelect
+                                 isDefaultOptions
+                                 field='Sub proyecto'
                                  options={
                                     options?.pr?.value
                                        ? subProjects?.filter(
@@ -743,24 +773,30 @@ const Detail = () => {
                                     setOptions({ ...options, sp: option })
                                  }
                               />
-                              <CustomSelect
-                                 label='Solicitante (*)'
+                              <CloneSelect
+                                 isDefaultOptions
+                                 isRequired
+                                 field='Solicitante'
                                  options={users}
                                  value={options.us}
                                  onChange={option =>
                                     setOptions({ ...options, us: option })
                                  }
                               />
-                              <CustomSelect
-                                 label='Encargado (*)'
+                              <CloneSelect
+                                 isDefaultOptions
+                                 isRequired
+                                 field='Encargado'
                                  options={users}
                                  value={options.ue}
                                  onChange={option =>
                                     setOptions({ ...options, ue: option })
                                  }
                               />
-                              <CustomSelect
-                                 label='Revisor'
+                              <CloneSelect
+                                 isDefaultOptions
+                                 isRequired
+                                 field='Revisor'
                                  options={users}
                                  value={options.ur}
                                  onChange={option =>
@@ -772,14 +808,16 @@ const Detail = () => {
 
                         <section className='col-span-1 md:col-span-3 grid gap-2'>
                            <Input
-                              field='titulo (*)'
+                              isRequired
+                              field='titulo'
                               value={title}
                               onChange={e =>
                                  setFields({ ...fields, title: e.target.value })
                               }
                            />
                            <TextArea
-                              field='descripccion (*)'
+                              isRequired
+                              field='descripccion'
                               value={description}
                               onChange={e =>
                                  setFields({
@@ -808,7 +846,8 @@ const Detail = () => {
                                  }
                               />
                               <Input
-                                 field='prioridad (*)'
+                                 isRequired
+                                 field='prioridad'
                                  value={priority}
                                  isNumber
                                  onChange={e =>
@@ -819,7 +858,8 @@ const Detail = () => {
                                  }
                               />
                               <Input
-                                 field='T. estimado (*)'
+                                 isRequired
+                                 field='T. estimado'
                                  value={time}
                                  isNumber
                                  onChange={e =>
@@ -1602,96 +1642,105 @@ const Detail = () => {
                   title={`Clonar actividad: ${activity.id_det}, ${
                      activity.actividad || 'Sin titulo'
                   }`}>
+
                   <AlertBar validation={validation().isClone} />
+
                   <div className='grid gap-5'>
+
                      <header className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                        <aside>
-                           <span className='grid gap-2 capitalize text-sm'>
-                              proyecto (*):
-                              <Select
-                                 className='uppercase'
-                                 placeholder='Seleccione'
-                                 options={projects}
-                                 value={cloneOptions.pr}
-                                 onChange={option =>
-                                    setCloneOptions({
-                                       ...cloneOptions,
-                                       pr: option,
-                                    })
-                                 }
-                              />
-                           </span>
-                           <span className='grid gap-2 capitalize text-sm'>
-                              Sub proyecto:
-                              <Select
-                                 className='uppercase'
-                                 placeholder='Seleccione'
-                                 options={
-                                    options.pr?.value
-                                       ? subProjects?.filter(
-                                            s => s.id === options.pr?.value
-                                         )
-                                       : subProjects
-                                 }
-                                 value={cloneOptions.sp}
-                                 onChange={option =>
-                                    setCloneOptions({
-                                       ...cloneOptions,
-                                       sp: option,
-                                    })
-                                 }
-                              />
-                           </span>
-                           <span className='grid gap-2 capitalize text-sm'>
-                              Solicitante (*):
-                              <Select
-                                 className='uppercase'
-                                 placeholder='Seleccione'
-                                 options={users}
-                                 value={cloneOptions.us}
-                                 onChange={option =>
-                                    setCloneOptions({
-                                       ...cloneOptions,
-                                       us: option,
-                                    })
-                                 }
-                              />
-                           </span>
-                           <span className='grid gap-2 capitalize text-sm'>
-                              encargado (*):
-                              <Select
-                                 className='uppercase'
-                                 placeholder='Seleccione'
-                                 options={users}
-                                 value={cloneOptions.ue}
-                                 onChange={option =>
-                                    setCloneOptions({
-                                       ...cloneOptions,
-                                       ue: option,
-                                    })
-                                 }
-                              />
-                           </span>
-                           <span className='grid gap-2 capitalize text-sm'>
-                              revisor:
-                              <Select
-                                 className='uppercase'
-                                 placeholder='Seleccione'
-                                 options={users}
-                                 value={cloneOptions.ur}
-                                 onChange={option =>
-                                    setCloneOptions({
-                                       ...cloneOptions,
-                                       ur: option,
-                                    })
-                                 }
-                              />
-                           </span>
+                        <aside className='grid gap-2'>
+
+                           <CloneSelect
+                              isRequired
+                              field='Proyecto'
+                              options={projects}
+                              value={cloneOptions.pr}
+                              onChange={option =>
+                                 setCloneOptions({
+                                    ...cloneOptions,
+                                    pr: option,
+                                 })
+                              }
+                           />
+
+                           <CloneSelect
+                              field='Sub proyecto'
+                              options={
+                                 options.pr?.value
+                                    ? subProjects?.filter(
+                                          s => s.id === options.pr?.value
+                                       )
+                                    : subProjects
+                              }
+                              value={cloneOptions.sp}
+                              onChange={option =>
+                                 setCloneOptions({
+                                    ...cloneOptions,
+                                    sp: option,
+                                 })
+                              }
+                           />
+
+                           <CloneSelect
+                              isRequired
+                              field='Solicitante'
+                              options={users}
+                              value={cloneOptions.us}
+                              onChange={option =>
+                                 setCloneOptions({
+                                    ...cloneOptions,
+                                    us: option,
+                                 })
+                              }
+                           />
+
+                           <CloneSelect
+                              isRequired
+                              field='Encargado'
+                              options={users}
+                              value={cloneOptions.ue}
+                              onChange={option =>
+                                 setCloneOptions({
+                                    ...cloneOptions,
+                                    ue: option,
+                                 })
+                              }
+                           />
+
+                           <CloneSelect
+                              isRequired
+                              field='Revisor'
+                              options={users}
+                              value={cloneOptions.ur}
+                              onChange={option =>
+                                 setCloneOptions({
+                                    ...cloneOptions,
+                                    ur: option,
+                                 })
+                              }
+                           />
                         </aside>
 
-                        <aside className='mt-0.5'>
+                        <aside className='mt-0.5 grid'>
+
+                           <div className='border-2 border-amber-400/30 rounded bg-amber-50 p-0.5'>
+                              <CloneSelect
+                                 isRequired
+                                 field='tipo actividad'
+                                 options={activity_type}
+                                 value={cloneOptions.ta}
+                                 onChange={option =>
+                                    setCloneOptions({
+                                       ...cloneOptions,
+                                       ta: option,
+                                    })
+                                 }
+                              />
+                           </div>
+
                            <Input
-                              field='titulo (*)'
+                              isRequired
+                              field='titulo'
                               value={cTitle}
                               onChange={e =>
                                  setCloneFields({
@@ -1700,6 +1749,7 @@ const Detail = () => {
                                  })
                               }
                            />
+
                            <Input
                               disabled
                               field='ticket'
@@ -1712,8 +1762,10 @@ const Detail = () => {
                                  })
                               }
                            />
+
                            <Input
-                              field='prioridad (*)'
+                              isRequired
+                              field='prioridad'
                               isNumber
                               value={cPriority}
                               onChange={e =>
@@ -1723,8 +1775,10 @@ const Detail = () => {
                                  })
                               }
                            />
+
                            <Input
-                              field='T. estimado (*)'
+                              isRequired
+                              field='T. estimado'
                               value={cTime}
                               isNumber
                               onChange={e =>
@@ -1761,6 +1815,7 @@ const Detail = () => {
                      </section>
 
                      <footer className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-10'>
+
                         <input
                            key={cleanFile}
                            className='
@@ -1773,19 +1828,24 @@ const Detail = () => {
                            name='cloneFile'
                            onChange={e => setCloneFiles(e.target.files[0])}
                         />
+
                         <div className='place-self-end flex gap-2'>
+
                            <Button
                               className='text-red-500 hover:bg-red-100'
                               onClick={onCloseModals}>
                               Cancelar
                            </Button>
+
                            <Button
                               disabled={validation().isClone}
                               className='text-yellow-500 hover:bg-yellow-100 place-self-end disabled:hover:bg-transparent'
                               onClick={onClone}>
                               clonar actividad
                            </Button>
+
                         </div>
+
                      </footer>
                   </div>
                </Modal>

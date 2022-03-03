@@ -20,7 +20,7 @@ const View = ({ children, title, priority, onHigh, onMid, onLow, onNone }) => {
    const navigate = useNavigate()
 
    return (
-      <div className='bg-white p-4 md:p-6 rounded-lg shadow-lg shadow-gray-600/10 border grid gap-5'>
+      <div className='bg-white p-4 sm:p-10 rounded-lg shadow-lg shadow-gray-600/10 border grid gap-5'>
          <header className='flex flex-wrap items-center justify-between'>
             <Button
                className='hover:text-blue-500'

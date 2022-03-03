@@ -159,435 +159,435 @@ const Revision = () => {
 
    return (
       <>
-      <Container type='table'>
+         <Container type='table'>
 
-         <Table>
+            <Table>
 
-            <THead>
+               <THead>
 
-               <tr className='text-center capitalize'>
+                  <tr className='text-center capitalize'>
 
-                  <Th></Th>
-                  <Th>
-                     <InputFilter
-                        type='table'
-                        width='w-16'
-                        isNumber
-                        name='id'
-                        value={id}
-                        onChange={onChangeValues}
-                        filterDown={() => setPROrder({ orden_id: 'desc' })}
-                        filterUp={() => setPROrder({ orden_id: 'asc' })}
-                        upActive={setActive({
-                           param: 'orden_id',
-                           value: 'asc',
-                        })}
-                        downActive={setActive({
-                           param: 'orden_id',
-                           value: 'desc',
-                        })}
-                     />
-                  </Th>
+                     <Th></Th>
+                     <Th>
+                        <InputFilter
+                           type='table'
+                           width='w-16'
+                           isNumber
+                           name='id'
+                           value={id}
+                           onChange={onChangeValues}
+                           filterDown={() => setPROrder({ orden_id: 'desc' })}
+                           filterUp={() => setPROrder({ orden_id: 'asc' })}
+                           upActive={setActive({
+                              param: 'orden_id',
+                              value: 'asc',
+                           })}
+                           downActive={setActive({
+                              param: 'orden_id',
+                              value: 'desc',
+                           })}
+                        />
+                     </Th>
 
-                  <Th>
-                     <InputFilter
-                        type='table'
-                        width='w-16'
-                        name='ticket'
-                        value={ticket}
-                        onChange={onChangeValues}
-                     />
-                  </Th>
+                     <Th>
+                        <InputFilter
+                           type='table'
+                           width='w-16'
+                           name='ticket'
+                           value={ticket}
+                           onChange={onChangeValues}
+                        />
+                     </Th>
 
-                  <Th>
-                     <SelectFilter
-                        type='table'
-                        value={options.pr}
-                        options={projects}
-                        isMulti
-                        onChange={option =>
-                           setOptions({ ...options, pr: option })
-                        }
-                        filterDown={() =>
-                           setPROrder({ orden_proyecto: 'desc' })
-                        }
-                        filterUp={() =>
-                           setPROrder({ orden_proyecto: 'asc' })
-                        }
-                        upActive={setActive({
-                           param: 'orden_proyecto',
-                           value: 'asc',
-                        })}
-                        downActive={setActive({
-                           param: 'orden_proyecto',
-                           value: 'desc',
-                        })}
-                     />
-                  </Th>
+                     <Th>
+                        <SelectFilter
+                           type='table'
+                           value={options.pr}
+                           options={projects}
+                           isMulti
+                           onChange={option =>
+                              setOptions({ ...options, pr: option })
+                           }
+                           filterDown={() =>
+                              setPROrder({ orden_proyecto: 'desc' })
+                           }
+                           filterUp={() =>
+                              setPROrder({ orden_proyecto: 'asc' })
+                           }
+                           upActive={setActive({
+                              param: 'orden_proyecto',
+                              value: 'asc',
+                           })}
+                           downActive={setActive({
+                              param: 'orden_proyecto',
+                              value: 'desc',
+                           })}
+                        />
+                     </Th>
 
-                  <Th>
-                     <SelectFilter
-                        type='table'
-                        value={options.sp}
-                        options={
-                           options.pr?.length > 1
-                              ? []
-                              : options.pr?.length > 0
-                              ? subProjects?.filter(
-                                   s => s.id === options.pr[0]?.value
-                                )
-                              : subProjects
-                        }
-                        isMulti
-                        isOrder={false}
-                        onChange={option =>
-                           setOptions({ ...options, sp: option })
-                        }
-                     />
-                  </Th>
+                     <Th>
+                        <SelectFilter
+                           type='table'
+                           value={options.sp}
+                           options={
+                              options.pr?.length > 1
+                                 ? []
+                                 : options.pr?.length > 0
+                                 ? subProjects?.filter(
+                                    s => s.id === options.pr[0]?.value
+                                 )
+                                 : subProjects
+                           }
+                           isMulti
+                           isOrder={false}
+                           onChange={option =>
+                              setOptions({ ...options, sp: option })
+                           }
+                        />
+                     </Th>
 
-                  {/* TODO: revisor */}
-                  <Th>
-                     <SelectFilter
-                        type='table'
-                        value={options.ur}
-                        options={users}
-                        isMulti
-                        onChange={option =>
-                           setOptions({ ...options, ur: option })
-                        }
-                        filterDown={() =>
-                           setPROrder({ orden_revisor: 'desc' })
-                        }
-                        filterUp={() =>
-                           setPROrder({ orden_revisor: 'asc' })
-                        }
-                        upActive={setActive({
-                           param: 'orden_revisor',
-                           value: 'asc',
-                        })}
-                        downActive={setActive({
-                           param: 'orden_revisor',
-                           value: 'desc',
-                        })}
-                     />
-                  </Th>
+                     {/* TODO: revisor */}
+                     <Th>
+                        <SelectFilter
+                           type='table'
+                           value={options.ur}
+                           options={users}
+                           isMulti
+                           onChange={option =>
+                              setOptions({ ...options, ur: option })
+                           }
+                           filterDown={() =>
+                              setPROrder({ orden_revisor: 'desc' })
+                           }
+                           filterUp={() =>
+                              setPROrder({ orden_revisor: 'asc' })
+                           }
+                           upActive={setActive({
+                              param: 'orden_revisor',
+                              value: 'asc',
+                           })}
+                           downActive={setActive({
+                              param: 'orden_revisor',
+                              value: 'desc',
+                           })}
+                        />
+                     </Th>
 
-                  <Th>
-                     <SelectFilter
-                        type='table'
-                        value={options.us}
-                        options={users}
-                        isMulti
-                        onChange={option =>
-                           setOptions({ ...options, us: option })
-                        }
-                        filterDown={() =>
-                           setPROrder({ orden_solicitante: 'desc' })
-                        }
-                        filterUp={() =>
-                           setPROrder({ orden_solicitante: 'asc' })
-                        }
-                        upActive={setActive({
-                           param: 'orden_solicitante',
-                           value: 'asc',
-                        })}
-                        downActive={setActive({
-                           param: 'orden_solicitante',
-                           value: 'desc',
-                        })}
-                     />
-                  </Th>
+                     <Th>
+                        <SelectFilter
+                           type='table'
+                           value={options.us}
+                           options={users}
+                           isMulti
+                           onChange={option =>
+                              setOptions({ ...options, us: option })
+                           }
+                           filterDown={() =>
+                              setPROrder({ orden_solicitante: 'desc' })
+                           }
+                           filterUp={() =>
+                              setPROrder({ orden_solicitante: 'asc' })
+                           }
+                           upActive={setActive({
+                              param: 'orden_solicitante',
+                              value: 'asc',
+                           })}
+                           downActive={setActive({
+                              param: 'orden_solicitante',
+                              value: 'desc',
+                           })}
+                        />
+                     </Th>
 
-                  <Th>
-                     <SelectFilter
-                        type='table'
-                        value={options.ue}
-                        options={users}
-                        isMulti
-                        onChange={option =>
-                           setOptions({ ...options, ue: option })
-                        }
-                        filterDown={() =>
-                           setPROrder({ orden_encargado: 'desc' })
-                        }
-                        filterUp={() =>
-                           setPROrder({ orden_encargado: 'asc' })
-                        }
-                        upActive={setActive({
-                           param: 'orden_encargado',
-                           value: 'asc',
-                        })}
-                        downActive={setActive({
-                           param: 'orden_encargado',
-                           value: 'desc',
-                        })}
-                     />
-                  </Th>
+                     <Th>
+                        <SelectFilter
+                           type='table'
+                           value={options.ue}
+                           options={users}
+                           isMulti
+                           onChange={option =>
+                              setOptions({ ...options, ue: option })
+                           }
+                           filterDown={() =>
+                              setPROrder({ orden_encargado: 'desc' })
+                           }
+                           filterUp={() =>
+                              setPROrder({ orden_encargado: 'asc' })
+                           }
+                           upActive={setActive({
+                              param: 'orden_encargado',
+                              value: 'asc',
+                           })}
+                           downActive={setActive({
+                              param: 'orden_encargado',
+                              value: 'desc',
+                           })}
+                        />
+                     </Th>
 
-                  <Th>
-                     <SelectFilter
-                        type='table'
-                        value={options.st}
-                        options={RA_STATES}
-                        isMulti
-                        onChange={option =>
-                           setOptions({ ...options, st: option })
-                        }
-                        filterDown={() =>
-                           setPROrder({ orden_estado: 'desc' })
-                        }
-                        filterUp={() =>
-                           setPROrder({ orden_estado: 'asc' })
-                        }
-                        upActive={setActive({
-                           param: 'orden_estado',
-                           value: 'asc',
-                        })}
-                        downActive={setActive({
-                           param: 'orden_estado',
-                           value: 'desc',
-                        })}
-                     />
-                  </Th>
+                     <Th>
+                        <SelectFilter
+                           type='table'
+                           value={options.st}
+                           options={RA_STATES}
+                           isMulti
+                           onChange={option =>
+                              setOptions({ ...options, st: option })
+                           }
+                           filterDown={() =>
+                              setPROrder({ orden_estado: 'desc' })
+                           }
+                           filterUp={() =>
+                              setPROrder({ orden_estado: 'asc' })
+                           }
+                           upActive={setActive({
+                              param: 'orden_estado',
+                              value: 'asc',
+                           })}
+                           downActive={setActive({
+                              param: 'orden_estado',
+                              value: 'desc',
+                           })}
+                        />
+                     </Th>
 
-                  <Th>
-                     <InputFilter
-                        type='table'
-                        width='w-28'
-                        name='title'
-                        value={title}
-                        onChange={onChangeValues}
-                        filterDown={() =>
-                           setPROrder({ orden_actividad: 'desc' })
-                        }
-                        filterUp={() =>
-                           setPROrder({ orden_actividad: 'asc' })
-                        }
-                        upActive={setActive({
-                           param: 'orden_actividad',
-                           value: 'asc',
-                        })}
-                        downActive={setActive({
-                           param: 'orden_actividad',
-                           value: 'desc',
-                        })}
-                     />
-                  </Th>
+                     <Th>
+                        <InputFilter
+                           type='table'
+                           width='w-28'
+                           name='title'
+                           value={title}
+                           onChange={onChangeValues}
+                           filterDown={() =>
+                              setPROrder({ orden_actividad: 'desc' })
+                           }
+                           filterUp={() =>
+                              setPROrder({ orden_actividad: 'asc' })
+                           }
+                           upActive={setActive({
+                              param: 'orden_actividad',
+                              value: 'asc',
+                           })}
+                           downActive={setActive({
+                              param: 'orden_actividad',
+                              value: 'desc',
+                           })}
+                        />
+                     </Th>
 
-                  <Th>
-                     <InputFilter
-                        type='table'
-                        width='w-96'
-                        name='desc'
-                        value={desc}
-                        onChange={onChangeValues}
-                        isOrder={false}
-                     />
+                     <Th>
+                        <InputFilter
+                           type='table'
+                           width='w-96'
+                           name='desc'
+                           value={desc}
+                           onChange={onChangeValues}
+                           isOrder={false}
+                        />
 
-                  </Th>
+                     </Th>
 
-                  <Th>
-                     <div className='flex justify-around pt-3 gap-2'>
-                        <Button
-                           className='hover:bg-black/10 bg-black/5'
-                           title='Limpiar filtros'
-                           isShadow
-                           onClick={onClear}
+                     <Th>
+                        <div className='flex justify-around pt-3 gap-2'>
+                           <Button
+                              className='hover:bg-black/10 bg-black/5'
+                              title='Limpiar filtros'
+                              isShadow
+                              onClick={onClear}
+                           >
+                              <i className='fas fa-eraser' />
+                           </Button>
+                           <Button
+                              className='bg-blue-600 hover:bg-blue-500 text-white'
+                              isShadow
+                              onClick={onFilter}
+                           >
+                              filtrar <i className='fas fa-filter' />
+                           </Button>
+                        </div>
+                     </Th>
+
+                  </tr>
+
+                  <tr className='text-center capitalize'>
+                     <Th primary >Nᵒ</Th>
+                     <Th primary >ID</Th>
+                     <Th primary >ticket</Th>
+                     <Th primary >proyecto</Th>
+                     <Th primary >sub proyecto</Th>
+                     <Th primary >revisor</Th>
+                     <Th primary >solicitante</Th>
+                     <Th primary >encargado</Th>
+                     <Th primary >estado</Th>
+                     <Th primary >
+                        <div className='flex items-baseline justify-center gap-2'>
+                           actividad
+                           <Button
+                              className='hover:bg-white/5'
+                              onClick={() => setMultiline(!multiline)}>
+                              <i
+                                 className={
+                                    multiline
+                                       ? 'fas fa-angle-up'
+                                       : 'fas fa-angle-down'
+                                 }
+                              />
+                           </Button>
+                        </div>
+                     </Th>
+                     <Th primary >
+                        <div className='flex items-baseline justify-center gap-2'>
+                           descripcion
+                           <Button
+                              className='hover:bg-white/5'
+                              onClick={() => setMultiline(!multiline)}>
+                              <i
+                                 className={
+                                    multiline
+                                       ? 'fas fa-angle-up'
+                                       : 'fas fa-angle-down'
+                                 }
+                              />
+                           </Button>
+                        </div>
+                     </Th>
+                     <Th primary ><i className='fas fa-check' /></Th>
+                  </tr>
+
+               </THead>
+
+               <TBody>
+                  {activitiesPR.length > 0 &&
+                     activitiesPR.map((act, i) => (
+                        <TrPRControls
+                           key={act.id_det}
+                           className='text-[13px] text-gray-800 transition duration-300 cursor-pointer hover:bg-black/10'
+                           {...act}
                         >
-                           <i className='fas fa-eraser' />
-                        </Button>
-                        <Button
-                           className='bg-blue-600 hover:bg-blue-500 text-white'
-                           isShadow
-                           onClick={onFilter}
-                        >
-                           filtrar <i className='fas fa-filter' />
-                        </Button>
-                     </div>
-                  </Th>
+                              
+                           <Td><Numerator number={i + 1} /></Td>
 
-               </tr>
+                           <Td>{act.id_det}</Td>
 
-               <tr className='text-center capitalize'>
-                  <Th primary >Nᵒ</Th>
-                  <Th primary >ID</Th>
-                  <Th primary >ticket</Th>
-                  <Th primary >proyecto</Th>
-                  <Th primary >sub proyecto</Th>
-                  <Th primary >revisor</Th>
-                  <Th primary >solicitante</Th>
-                  <Th primary >encargado</Th>
-                  <Th primary >estado</Th>
-                  <Th primary >
-                     <div className='flex items-baseline justify-center gap-2'>
-                        actividad
-                        <Button
-                           className='hover:bg-white/5'
-                           onClick={() => setMultiline(!multiline)}>
-                           <i
-                              className={
-                                 multiline
-                                    ? 'fas fa-angle-up'
-                                    : 'fas fa-angle-down'
-                              }
-                           />
-                        </Button>
-                     </div>
-                  </Th>
-                  <Th primary >
-                     <div className='flex items-baseline justify-center gap-2'>
-                        descripcion
-                        <Button
-                           className='hover:bg-white/5'
-                           onClick={() => setMultiline(!multiline)}>
-                           <i
-                              className={
-                                 multiline
-                                    ? 'fas fa-angle-up'
-                                    : 'fas fa-angle-down'
-                              }
-                           />
-                        </Button>
-                     </div>
-                  </Th>
-                  <Th primary ><i className='fas fa-check' /></Th>
-               </tr>
+                           <Td>{act.num_ticket_edit || '--'}</Td>
 
-            </THead>
+                           <Td>{act.abrev}</Td>
 
-            <TBody>
-               {activitiesPR.length > 0 &&
-                  activitiesPR.map((act, i) => (
-                     <TrPRControls
-                        key={act.id_det}
-                        className='text-[13px] text-gray-800 transition duration-300 cursor-pointer hover:bg-black/10'
-                        {...act}
-                     >
-                           
-                        <Td><Numerator number={i + 1} /></Td>
+                           <Td>{act.nombre_sub_proy ?? '--'}</Td>
 
-                        <Td>{act.id_det}</Td>
+                           <Td>{act.nom_revisor || '--'}</Td>
 
-                        <Td>{act.num_ticket_edit || '--'}</Td>
+                           <Td>{act.user_solicita}</Td>
 
-                        <Td>{act.abrev}</Td>
+                           <Td>{act.encargado_actividad}</Td>
 
-                        <Td>{act.nombre_sub_proy ?? '--'}</Td>
+                           <Td>{RA_STATES.find(s => s.value === act.estado).fullName}</Td>
 
-                        <Td>{act.nom_revisor || '--'}</Td>
+                           <Td
+                              isMultiLine={multiline}
+                              width='max-w-[150px]'
+                              align='text-left'
+                           >
+                              {act.actividad || 'Sin Titulo'}
+                           </Td>
 
-                        <Td>{act.user_solicita}</Td>
+                           <Td 
+                              isMultiLine={multiline} 
+                              align='text-left'
+                           >
+                              {act.func_objeto}
+                           </Td>
+                           <Td>
+                              {/* <CheckBox
+                                 id={act.id_det}
+                                 checked={act.act_revizada}
+                                 onChange={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: !act.act_revizada, estado: act.estado})}
+                              /> */}
 
-                        <Td>{act.encargado_actividad}</Td>
+                              <div className='flex gap-2 justify-center'>
+                                 <Button 
+                                    className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
+                                    onClick={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: true, estado: act.estado})}
+                                 >
+                                    <i className='fas fa-check' />
+                                 </Button>
 
-                        <Td>{RA_STATES.find(s => s.value === act.estado).fullName}</Td>
+                                 <Button 
+                                    className='bg-red-100 hover:bg-red-200 text-red-500 px-3'
+                                    onClick={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: false, estado: act.estado})}  
+                                 >
+                                    <i className='fas fa-times' />
+                                 </Button>
+                              </div>
 
-                        <Td
-                           isMultiLine={multiline}
-                           width='max-w-[150px]'
-                           align='text-left'
-                        >
-                           {act.actividad || 'Sin Titulo'}
-                        </Td>
+                           </Td>
+                        </TrPRControls>
+                     ))}
+               </TBody>
 
-                        <Td 
-                           isMultiLine={multiline} 
-                           align='text-left'
-                        >
-                           {act.func_objeto}
-                        </Td>
-                        <Td>
-                           {/* <CheckBox
-                              id={act.id_det}
-                              checked={act.act_revizada}
-                              onChange={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: !act.act_revizada, estado: act.estado})}
-                           /> */}
+            </Table>
 
-                           <div className='flex gap-2 justify-center'>
-                              <Button 
-                                 className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
-                                 onClick={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: true, estado: act.estado})}
-                              >
-                                 <i className='fas fa-check' />
-                              </Button>
+         </Container>
 
-                              <Button 
-                                 className='bg-red-100 hover:bg-red-200 text-red-500 px-3'
-                                 onClick={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: false, estado: act.estado})}  
-                              >
-                                 <i className='fas fa-times' />
-                              </Button>
-                           </div>
+         <FooterPage>
 
-                        </Td>
-                     </TrPRControls>
-                  ))}
-            </TBody>
+            <FooterCounter count={activitiesPR.length} />
 
-         </Table>
-
-      </Container>
-
-      <FooterPage>
-
-         <FooterCounter count={activitiesPR.length} />
-
-         <Pagination
-            siblingCount={size.width < 480 ? 0 : 1}
-            boundaryCount={size.width < 480 ? 0 : 1}
-            size='small'
-            count={
-               prPager.limit === ''
-                  ? 1
-                  : Math.ceil(Number(total) / Number(prPager.limit))
-            }
-            color='primary'
-            onChange={onChangePage}
-            page={prPager.page}
-         />
-         
-         <StaticSelect value={prPager.limit} onChange={onChangeSelect} />
-
-      </FooterPage>
-
-      <Modal
-         showModal={modalReject}
-         onClose={() => toggleModalReject(false)}
-         isBlur={false}
-         className='max-w-md'
-         padding='p-6'
-         title='Motivo rechazo revisión'
-      >
-         <TextArea 
-            field='descripción'
-            name='reject_gloss'
-            value={reject_gloss}
-            onChange={onChangeValues}
-         />
-
-         <footer className='flex justify-between mt-7'>
+            <Pagination
+               siblingCount={size.width < 480 ? 0 : 1}
+               boundaryCount={size.width < 480 ? 0 : 1}
+               size='small'
+               count={
+                  prPager.limit === ''
+                     ? 1
+                     : Math.ceil(Number(total) / Number(prPager.limit))
+               }
+               color='primary'
+               onChange={onChangePage}
+               page={prPager.page}
+            />
             
-            <Button 
-               className='bg-red-100 hover:bg-red-200 text-red-500'
-               onClick={() => {
-                  toggleModalReject(false)
-                  reset()
-               }}
-            >
-               cancelar
-            </Button>
+            <StaticSelect value={prPager.limit} onChange={onChangeSelect} />
 
-            <Button 
-               className='bg-yellow-100 hover:bg-yellow-200 text-yellow-500'
-               onClick={() => toggleCheckActivity({id_actividad: id, estado: 3, revisado: false, glosa: reject_gloss})}
-            >
-               rechazar
-            </Button>
+         </FooterPage>
 
-         </footer>
+         <Modal
+            showModal={modalReject}
+            onClose={() => toggleModalReject(false)}
+            isBlur={false}
+            className='max-w-md'
+            padding='p-6'
+            title='Motivo rechazo revisión'
+         >
+            <TextArea 
+               field='descripción'
+               name='reject_gloss'
+               value={reject_gloss}
+               onChange={onChangeValues}
+            />
 
-      </Modal>
+            <footer className='flex justify-between mt-7'>
+               
+               <Button 
+                  className='bg-red-100 hover:bg-red-200 text-red-500'
+                  onClick={() => {
+                     toggleModalReject(false)
+                     reset()
+                  }}
+               >
+                  cancelar
+               </Button>
+
+               <Button 
+                  className='bg-yellow-100 hover:bg-yellow-200 text-yellow-500'
+                  onClick={() => toggleCheckActivity({id_actividad: id, estado: 3, revisado: false, glosa_rechazo: reject_gloss})}
+               >
+                  rechazar
+               </Button>
+
+            </footer>
+
+         </Modal>
 
       </>
    )

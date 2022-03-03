@@ -128,6 +128,13 @@ function ActivityProvider({ children }) {
                      value: item.id_producto,
                   }
                }),
+               activity_type: body.tipos_actividad.map(item => {
+                  return {
+                     label: item.desc_tipo_actividad,
+                     value: item.id_tipo_actividad,
+                     active: item.activo
+                  }
+               }),
             })
          } else {
             Alert({
