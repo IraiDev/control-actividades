@@ -24,15 +24,6 @@ import Th from '../components/table2/Th'
 import Td from '../components/table2/Td'
 import MarkActivity from '../components/ui/MarkActivity'
 
-const colors = [
-   {border: 'border-red-600', bg: 'bg-red-600'},
-   {border: 'border-black', bg: 'bg-black'},
-   {border: 'border-emerald-600', bg: 'bg-emerald-600'},
-   {border: 'border-indigo-600', bg: 'bg-indigo-600'},
-   {border: 'border-pink-600', bg: 'bg-pink-600'},
-   {border: 'border-blue-600', bg: 'bg-blue-600'},
-]
-
 const PrioritySelector = ({ onClick, color = 'bg-slate-400', disabled }) => {
    return (
       <>
