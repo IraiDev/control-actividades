@@ -68,7 +68,7 @@ const SelectFilter = ({
 
    return (
       <div className='flex justify-between items-center pl-5 pr-3 gap-1'>
-         <section className='w-full'>
+         <section className='w-full relative'>
             <p className='text-xs ml-4 capitalize mb-1'>{field}</p>
             <Select
                className='w-full capitalize text-sm'

@@ -19,6 +19,8 @@ import Th from '../components/table2/Th'
 import THead from '../components/table2/THead'
 import TrPRControls from '../components/table2/customTR/TrPRControls'
 import { Alert } from '../helpers/alerts'
+import Modal from '../components/ui/Modal'
+import TextArea from '../components/ui/TextArea'
 
 const RA_STATES = [
    { value: 0, label: 'E.F', fullName: 'En Fila'},
@@ -31,18 +33,18 @@ const RA_STATES = [
    { value: 5, label: 'T', fullName: 'Terminado'},
 ]
 
-const CheckBox = ({ checked, onChange, id }) => {
-   return (
-      <label
-         htmlFor={id}
-         className={`flex gap-2 justify-center ${
-            checked ? 'text-blue-500' : ''
-         }`}>
-         <input id={id} type='checkbox' checked={checked} onChange={onChange} />
-         Revisado
-      </label>
-   )
-}
+// const CheckBox = ({ checked, onChange, id }) => {
+//    return (
+//       <label
+//          htmlFor={id}
+//          className={`flex gap-2 justify-center ${
+//             checked ? 'text-blue-500' : ''
+//          }`}>
+//          <input id={id} type='checkbox' checked={checked} onChange={onChange} />
+//          Revisado
+//       </label>
+//    )
+// }
 
 const Revision = () => {
    const { 
@@ -63,8 +65,9 @@ const Revision = () => {
 
    // states
    const [multiline, setMultiline] = useState(false)
-   const [values, setValues] = useState({ reviewed: false })
+   // const [values, setValues] = useState({ reviewed: false })
    const [options, setOptions] = useState({st: { value: 3, label: 'P.R'}})
+   const [modalReject, toggleModalReject] = useState(false)
 
    // hooks
    const size = useWindowSize()
@@ -73,11 +76,13 @@ const Revision = () => {
       title, 
       desc, 
       ticket,
+      reject_gloss
    }, onChangeValues, reset] = useForm({
       id: '',
       title: '',
       desc: '',
       ticket: '',
+      reject_gloss: ''
    })
 
    // destructuring
@@ -142,10 +147,13 @@ const Revision = () => {
    const onChangeCheckedActivity = ({id, title, estado, revisado}) => {
       Alert({
          title: 'Atención',
-         content: `¿Está seguro de marcar como revisada la siguiente actividad: <strong>${title}</strong>?`,
-         confirmText: 'Si, marcar',
+         content: `${revisado ? 'Aprobar':'Rechazar'} revisión de la siguiente actividad: <strong>${title}</strong>, <strong>${id}</strong>`,
+         confirmText: `${revisado ? 'Si, Aprobar':'Si, Rechazar'}`,
          cancelText: 'No, cancelar',
-         action: () => toggleCheckActivity({id_actividad: id, estado, revisado})
+         action: () => {revisado ?
+            toggleCheckActivity({id_actividad: id, estado, revisado})
+            : toggleModalReject(true)
+         }
       })
    }
 
@@ -490,11 +498,28 @@ const Revision = () => {
                            {act.func_objeto}
                         </Td>
                         <Td>
-                           <CheckBox
+                           {/* <CheckBox
                               id={act.id_det}
                               checked={act.act_revizada}
                               onChange={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: !act.act_revizada, estado: act.estado})}
-                           />
+                           /> */}
+
+                           <div className='flex gap-2 justify-center'>
+                              <Button 
+                                 className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
+                                 onClick={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: true, estado: act.estado})}
+                              >
+                                 <i className='fas fa-check' />
+                              </Button>
+
+                              <Button 
+                                 className='bg-red-100 hover:bg-red-200 text-red-500 px-3'
+                                 onClick={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: false, estado: act.estado})}  
+                              >
+                                 <i className='fas fa-times' />
+                              </Button>
+                           </div>
+
                         </Td>
                      </TrPRControls>
                   ))}
@@ -525,6 +550,45 @@ const Revision = () => {
          <StaticSelect value={prPager.limit} onChange={onChangeSelect} />
 
       </FooterPage>
+
+      <Modal
+         showModal={modalReject}
+         onClose={() => toggleModalReject(false)}
+         isBlur={false}
+         className='max-w-md'
+         padding='p-6'
+         title='Motivo rechazo revisión'
+      >
+         <TextArea 
+            field='descripción'
+            name='reject_gloss'
+            value={reject_gloss}
+            onChange={onChangeValues}
+         />
+
+         <footer className='flex justify-between mt-7'>
+            
+            <Button 
+               className='bg-red-100 hover:bg-red-200 text-red-500'
+               onClick={() => {
+                  toggleModalReject(false)
+                  reset()
+               }}
+            >
+               cancelar
+            </Button>
+
+            <Button 
+               className='bg-yellow-100 hover:bg-yellow-200 text-yellow-500'
+               onClick={() => toggleCheckActivity({id_actividad: id, estado: 3, revisado: false, glosa: reject_gloss})}
+            >
+               rechazar
+            </Button>
+
+         </footer>
+
+      </Modal>
+
       </>
    )
 }

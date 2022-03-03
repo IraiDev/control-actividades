@@ -85,6 +85,8 @@ function ActivityProvider({ children }) {
          const resp = await fetchToken('task/get-filters')
          const body = await resp.json()
 
+         console.log(body)
+
          if (body.ok) {
             setOptionsArray({
                subProjects: body.subproyectos.map(item => {
@@ -98,6 +100,7 @@ function ActivityProvider({ children }) {
                   return {
                      label: item.abrev,
                      value: item.id_proy,
+                     fullName: item.proyecto,
                   }
                }),
                priorities: body.prioridades.map(item => {
