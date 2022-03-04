@@ -65,7 +65,7 @@ const initForm = {
 
 const RowContainer = ({ children, isScale = true }) => (
    <section
-      className={`grid grid-cols-7 gap-3 items-baseline bg-white rounded-md shadow p-2 pt-0
+      className={`grid grid-cols-7 gap-3 items-center bg-white rounded-md shadow p-2 pt-0
          ${isScale && 'transition duration-200 transform hover:scale-[0.99]'}
       `}>
       {children}
@@ -214,6 +214,7 @@ const Detail = () => {
       const vSolicita = options.us?.value === undefined
       const vEncargado = options.ue?.value === undefined
       const vRevisor = options.ur?.value === undefined
+      const vRdisE = options.ur?.id === options.ue?.id
 
       const onSaveValidation =
          vTitle ||
@@ -223,7 +224,8 @@ const Detail = () => {
          vProject ||
          vSolicita ||
          vEncargado || 
-         vRevisor
+         vRevisor ||
+         vRdisE
 
       const vTitleC = cTitle.trim() === ''
       const vDescC = cDescription.trim() === ''
@@ -234,6 +236,7 @@ const Detail = () => {
       const vEncargadoC = cloneOptions.ue?.value === undefined
       const vRevisorC = cloneOptions.ur?.value === undefined
       const vTipo_actividadC = cloneOptions.ta?.value === undefined
+      const vRdisEC = cloneOptions.ur.id === cloneOptions.ue.id
 
       const onCloneValidation =
          vTitleC ||
@@ -244,7 +247,8 @@ const Detail = () => {
          vSolicitaC ||
          vEncargadoC ||
          vRevisorC ||
-         vTipo_actividadC
+         vTipo_actividadC ||
+         vRdisEC
 
       return {
          isSave: onSaveValidation,
@@ -683,7 +687,11 @@ const Detail = () => {
                      onLow={() => onChangePriority(600, activity.id_det)}
                      onNone={() => onChangePriority(1000, activity.id_det)}
                   >
-                     <AlertBar validation={validation().isSave} />
+                     <AlertBar 
+                        validation={validation().isSave} 
+                        isCustom={options?.ur?.id !== options?.ue?.id} 
+                        customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
+                     />
 
                      <ViewSection lg cols={8}>
 
@@ -1190,7 +1198,9 @@ const Detail = () => {
                   className='max-w-7xl'
                   padding='p-4 md:p-6'
                   title='Modificar tiempos de actividad'>
+
                   <main className='grid gap-1 bg-zinc-100 rounded-md p-2 mt-10 shadow w-[1216px] overflow-auto'>
+
                      <header className='grid grid-cols-7 gap-1 text-center capitalize font-semibold border-b'>
                         <span className='py-1.5 border-r col-span-3'>
                            desde
@@ -1200,7 +1210,9 @@ const Detail = () => {
                         </span>
                         <span className='py-1.5 col-span-2'>control</span>
                      </header>
+
                      <section className='grid grid-cols-7 gap-1 text-center capitalize font-semibold'>
+
                         <div className='flex gap-4 col-span-2 py-1.5 border-r'>
                            <span className='ml-2'>Nº</span>{' '}
                            <span className='text-center w-full mr-3'>
@@ -1213,11 +1225,12 @@ const Detail = () => {
                         <span className='py-1.5'>tiempo (hrs)</span>
                         <span />
                      </section>
+
                      <RowContainer isScale={false}>
-                        <div className='grid grid-cols-5 col-span-2 items-baseline gap-2'>
+                        <div className='grid grid-cols-5 col-span-2 items-center gap-2'>
                            <span className='col-span-2' />
                            <Input
-                              className='col-span-3'
+                              className='col-span-3 mb-2'
                               type='date'
                               name='finicio'
                               value={finicio}
@@ -1232,6 +1245,7 @@ const Detail = () => {
                            onChange={onChangeValues}>
                            {inputProps => (
                               <Input
+                                 className='mb-2'
                                  name={inputProps.name}
                                  onChange={inputProps.onChange}
                                  value={inputProps.value}
@@ -1239,6 +1253,7 @@ const Detail = () => {
                            )}
                         </InputMask>
                         <Input
+                           className='mb-2'
                            type='date'
                            name='fdetencion'
                            value={fdetencion}
@@ -1252,6 +1267,7 @@ const Detail = () => {
                            onChange={onChangeValues}>
                            {inputProps => (
                               <Input
+                                 className='mb-2'
                                  name={inputProps.name}
                                  onChange={inputProps.onChange}
                                  value={inputProps.value}
@@ -1259,7 +1275,7 @@ const Detail = () => {
                            )}
                         </InputMask>
                         <span className='text-center'></span>
-                        <div className='flex justify-center gap-2 border-l'>
+                        <div className='flex justify-center gap-2 border-l mt-2'>
                            <Button
                               className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
                               onClick={handleCreateDetention}>
@@ -1267,18 +1283,19 @@ const Detail = () => {
                            </Button>
                         </div>
                      </RowContainer>
+
                      <h5 className='py-3 px-3'>Detenciones</h5>
                      <div className='max-h-72 overflow-custom grid gap-1 border-t'>
                         {detentions.length > 0 &&
                            detentions.map((d, i) => (
                               <RowContainer key={d.id_pausa}>
-                                 <div className='grid grid-cols-5 col-span-2 items-baseline gap-2'>
+                                 <div className='grid grid-cols-5 col-span-2 items-center gap-2'>
                                     <Numerator
-                                       className='col-span-2 max-w-max'
+                                       className='col-span-2 max-w-max mt-4'
                                        number={i + 1}
                                     />
                                     <Input
-                                       className='col-span-3'
+                                       className='col-span-3 mb-2'
                                        type='date'
                                        value={
                                           timeValues[i]?.[`ini${d.id_pausa}`] ||
@@ -1322,6 +1339,7 @@ const Detail = () => {
                                     }>
                                     {inputProps => (
                                        <Input
+                                          className='mb-1'
                                           onChange={inputProps.onChange}
                                           value={inputProps.value}
                                        />
@@ -1329,6 +1347,7 @@ const Detail = () => {
                                  </InputMask>
 
                                  <Input
+                                    className='mb-1'
                                     type='date'
                                     value={
                                        timeValues[i]?.[`det${d.id_pausa}`] || ''
@@ -1370,13 +1389,14 @@ const Detail = () => {
                                     }>
                                     {inputProps => (
                                        <Input
+                                          className='mb-1'
                                           onChange={inputProps.onChange}
                                           value={inputProps.value}
                                        />
                                     )}
                                  </InputMask>
 
-                                 <span className='text-center'>
+                                 <span className='text-center mt-3'>
                                     {moment(
                                        `${d.fecha_detencion} ${d.hora_detencion}`
                                     ).isValid() && (
@@ -1396,7 +1416,7 @@ const Detail = () => {
                                     )}
                                  </span>
 
-                                 <div className='flex justify-center gap-2 border-l'>
+                                 <div className='flex justify-center gap-2 border-l mt-2'>
                                     <Button
                                        disabled={
                                           !moment(
@@ -1643,7 +1663,11 @@ const Detail = () => {
                      activity.actividad || 'Sin titulo'
                   }`}>
 
-                  <AlertBar validation={validation().isClone} />
+                  <AlertBar 
+                     validation={validation().isClone} 
+                     isCustom={cloneOptions?.ur?.id !== cloneOptions?.ue?.id} 
+                     customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
+                  />
 
                   <div className='grid gap-5'>
 

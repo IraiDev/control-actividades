@@ -14,12 +14,12 @@ import NavMenu from './NavMenu'
 import SideBar from './SideBar'
 import TimerUsers from '../timer/TimerUsers'
 import Modal from './Modal'
-import CustomSelect from './CustomSelect'
 import Input from './Input'
 import TextArea from './TextArea'
 import moment from 'moment'
 import AlertBar from './AlertBar'
 import queryString from 'query-string'
+import Select from 'react-select'
 
 const env = process.env.REACT_APP_ENVIOREMENT
 
@@ -63,6 +63,25 @@ const MenuContent = ({ content }) => {
    )
 }
 
+const CloneSelect = ({options, value, onChange, field, isRequired = false, isDefaultOptions = false}) => {
+   return(
+      <div className='grid gap-2 capitalize text-xs'>
+         <label className='flex gap-2 items-baseline pl-4'>
+            {field}
+            {isRequired && <span className='text-red-600 font-semibold'>(*)</span>}
+         </label>
+         <Select
+            maxMenuHeight={170}
+            className='capitalize text-sm'
+            placeholder='Seleccione'
+            options={isDefaultOptions ? [{ value: null, label: 'ninguna' }].concat(options) : options}
+            value={value}
+            onChange={onChange}
+         />
+      </div>
+   )
+}
+
 const NavBar = () => {
    const { saveFilters, filters, optionsArray } = useContext(ActivityContext)
    const { view } = useContext(UiContext)
@@ -80,19 +99,21 @@ const NavBar = () => {
    const [files, setFiles] = useState([])
    const [options, setOptions] = useState(initOptions)
    const [
-      { title, ticket, priority, time, desc, gloss },
+      { title, priority, time, desc, gloss },
       onChangeValues,
       reset,
    ] = useForm({
       title: '',
-      ticket: '',
       priority: '150',
       time: '',
       desc: '',
       gloss: '',
    })
 
+   const { projects, subProjects, users } = optionsArray
+
    const validations = () => {
+
       const vTitle = title.trim() === ''
       const vDesc = desc.trim() === ''
       const vPriority = priority.trim() === ''
@@ -100,13 +121,12 @@ const NavBar = () => {
       const vPr = options.pr.value === null
       const vUs = options.us.value === null
       const vUe = options.ue.value === null
+      const vUr = options.ur.value === null
+      const vUrDisUe = options.ur.id === options.ue.id
 
-      const onCreateValidation =
-         vTitle || vDesc || vTime || vPriority || vPr || vUs || vUe
+      const onCreateValidation = vTitle || vDesc || vTime || vPriority || vPr || vUs || vUe || vUr || vUrDisUe
       return { isCreate: onCreateValidation }
    }
-
-   const { projects, subProjects, users } = optionsArray
 
    const getTimes = async () => {
       try {
@@ -129,7 +149,7 @@ const NavBar = () => {
       options?.ue && formData.append('encargado', options.ue.label)
       options?.ur && formData.append('revisor', options.ur.id)
       formData.append('prioridad', priority)
-      formData.append('ticket', ticket)
+      formData.append('ticket', 0)
       formData.append('tiempo_estimado', time)
       formData.append('titulo', title)
       formData.append('descripcion', desc)
@@ -306,20 +326,29 @@ const NavBar = () => {
             onClose={onCloseModal}
             padding='p-4 md:p-6'
             title='Nueva actividad'>
-            <AlertBar validation={validations().isCreate} />
+
+            <AlertBar 
+               validation={validations().isCreate} 
+               isCustom={options?.ur?.id !== options?.ue?.id} 
+               customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
+             />
+
             <div className='grid gap-5'>
+
                <header className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <aside className='grid gap-1'>
-                     <CustomSelect
-                        label='proyecto (*)'
+
+                     <CloneSelect
+                        isRequired
+                        field='proyecto'
                         options={projects}
                         value={options.pr}
                         onChange={option =>
                            setOptions({ ...options, pr: option })
                         }
                      />
-                     <CustomSelect
-                        label='Sub proyecto'
+                     <CloneSelect
+                        field='Sub proyecto'
                         options={
                            options.pr?.value
                               ? subProjects?.filter(
@@ -332,24 +361,27 @@ const NavBar = () => {
                            setOptions({ ...options, sp: option })
                         }
                      />
-                     <CustomSelect
-                        label='Solicitante (*)'
+                     <CloneSelect
+                        isRequired
+                        label='Solicitante'
                         options={users}
                         value={options.us}
                         onChange={option =>
                            setOptions({ ...options, us: option })
                         }
                      />
-                     <CustomSelect
-                        label='encargado (*)'
+                     <CloneSelect
+                        isRequired
+                        field='Encargado'
                         options={users}
                         value={options.ue}
                         onChange={option =>
                            setOptions({ ...options, ue: option })
                         }
                      />
-                     <CustomSelect
-                        label='revisor'
+                     <CloneSelect
+                        isRequired
+                        field='Revisor'
                         options={users}
                         value={options.ur}
                         onChange={option =>
@@ -360,38 +392,38 @@ const NavBar = () => {
 
                   <aside className='mt-0.5'>
                      <Input
-                        field='titulo (*)'
+                        isRequired
+                        field='titulo'
                         name='title'
                         value={title}
                         onChange={onChangeValues}
                      />
+
                      <Input
-                        field='ticket'
-                        name='ticket'
-                        value={ticket}
-                        onChange={onChangeValues}
-                        isNumber
-                     />
-                     <Input
-                        field='prioridad (*)'
-                        name='priority'
-                        value={priority}
-                        onChange={onChangeValues}
-                        isNumber
-                     />
-                     <Input
-                        field='T. estimado (*)'
+                        isRequired
+                        field='T. estimado'
                         name='time'
                         isNumber
                         value={time}
                         onChange={onChangeValues}
                      />
+
+                     <Input
+                        isRequired
+                        field='prioridad'
+                        name='priority'
+                        value={priority}
+                        onChange={onChangeValues}
+                        isNumber
+                     />
+                     
                   </aside>
                </header>
 
                <section className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <TextArea
-                     field='descripccion (*)'
+                     isRequired
+                     field='descripccion'
                      name='desc'
                      value={desc}
                      onChange={onChangeValues}

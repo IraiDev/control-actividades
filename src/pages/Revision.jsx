@@ -55,7 +55,7 @@ const Revision = () => {
 
    // states
    const [multiline, setMultiline] = useState(false)
-   // const [values, setValues] = useState({ reviewed: false })
+   const [activityData, setActivityData] = useState({ id: null })
    const [options, setOptions] = useState({st: {value: 3, label: 'PARA REVISION'}})
    const [modalReject, toggleModalReject] = useState(false)
 
@@ -134,6 +134,16 @@ const Revision = () => {
       savePRFilters({ payload: { offset, limit: prPager.limit } })
    }
 
+   const openModalReject = id => { 
+      setActivityData({...activityData, id})
+      toggleModalReject(true)
+   }
+
+   const onCloseModal = () => {
+      toggleModalReject(false)
+      reset()
+   }
+
    const onChangeCheckedActivity = ({id, title, estado, revisado}) => {
       Alert({
          title: 'Atención',
@@ -142,7 +152,7 @@ const Revision = () => {
          cancelText: 'No, cancelar',
          action: () => {revisado ?
             toggleCheckActivity({id_actividad: id, estado, revisado})
-            : toggleModalReject(true)
+            : openModalReject(id)
          }
       })
    }
@@ -426,6 +436,7 @@ const Revision = () => {
                            </Button>
                         </div>
                      </Th>
+                     
                      <Th primary >
                         <div className='flex items-baseline justify-center gap-2'>
                            descripcion
@@ -442,6 +453,7 @@ const Revision = () => {
                            </Button>
                         </div>
                      </Th>
+
                      <Th primary ><i className='fas fa-check' /></Th>
                   </tr>
 
@@ -489,30 +501,34 @@ const Revision = () => {
                            >
                               {act.func_objeto}
                            </Td>
-                           <Td>
-                              {/* <CheckBox
-                                 id={act.id_det}
-                                 checked={act.act_revizada}
-                                 onChange={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: !act.act_revizada, estado: act.estado})}
-                              /> */}
 
-                              <div className='flex gap-2 justify-center'>
-                                 <Button 
-                                    className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
-                                    onClick={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: true, estado: act.estado})}
-                                 >
-                                    <i className='fas fa-check' />
-                                 </Button>
+                           { act.estado !== 5 &&
+                              <Td>
+                                 {/* <CheckBox
+                                    id={act.id_det}
+                                    checked={act.act_revizada}
+                                    onChange={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: !act.act_revizada, estado: act.estado})}
+                                 /> */}
 
-                                 <Button 
-                                    className='bg-red-100 hover:bg-red-200 text-red-500 px-3'
-                                    onClick={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: false, estado: act.estado})}  
-                                 >
-                                    <i className='fas fa-times' />
-                                 </Button>
-                              </div>
+                                 
+                                    <div className='flex gap-2 justify-center'>
+                                    <Button 
+                                       className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
+                                       onClick={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: true, estado: act.estado})}
+                                    >
+                                       <i className='fas fa-check' />
+                                    </Button>
 
-                           </Td>
+                                    <Button 
+                                       className='bg-red-100 hover:bg-red-200 text-red-500 px-3'
+                                       onClick={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: false, estado: act.estado})}  
+                                    >
+                                       <i className='fas fa-times' />
+                                    </Button>
+                                 </div>
+
+                              </Td>
+            }
                         </TrPRControls>
                      ))}
                </TBody>
@@ -545,7 +561,7 @@ const Revision = () => {
 
          <Modal
             showModal={modalReject}
-            onClose={() => toggleModalReject(false)}
+            onClose={onCloseModal}
             isBlur={false}
             className='max-w-md'
             padding='p-6'
@@ -572,7 +588,7 @@ const Revision = () => {
 
                <Button 
                   className='bg-yellow-100 hover:bg-yellow-200 text-yellow-500'
-                  onClick={() => toggleCheckActivity({id_actividad: id, estado: 3, revisado: false, glosa_rechazo: reject_gloss})}
+                  onClick={() => toggleCheckActivity({id_actividad: activityData.id, estado: 3, revisado: false, glosa_rechazo: reject_gloss})}
                >
                   rechazar
                </Button>
