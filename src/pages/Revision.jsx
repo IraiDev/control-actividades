@@ -39,7 +39,8 @@ const Revision = () => {
    const { 
       activitiesPR, 
       total,
-      toggleCheckActivity
+      toggleCheckActivity,
+      onDistribution
    } = useActivityPr()
 
    // context
@@ -55,7 +56,7 @@ const Revision = () => {
    // states
    const [multiline, setMultiline] = useState(false)
    // const [values, setValues] = useState({ reviewed: false })
-   const [options, setOptions] = useState({st: { value: 3, label: 'P.R'}})
+   const [options, setOptions] = useState({st: {value: 3, label: 'PARA REVISION'}})
    const [modalReject, toggleModalReject] = useState(false)
 
    // hooks
@@ -81,7 +82,7 @@ const Revision = () => {
    const onFilter = () => {
       const filters = {
          estado: 
-            options.st?.length > 0 ? options.st.map(item => item.value) : [],
+            options.st ? [options?.st?.value] : [],
          proyecto:
             options.pr?.length > 0 ? options.pr.map(item => item.value) : [],
          encargado:
@@ -319,7 +320,8 @@ const Revision = () => {
                            type='table'
                            value={options.st}
                            options={status?.filter(s => s.value === 12 || s.value === 3)}
-                           isMulti
+                           placeholder='Seleccione'
+                           defaultOptions
                            onChange={option =>
                               setOptions({ ...options, st: option })
                            }
@@ -451,6 +453,7 @@ const Revision = () => {
                         <TrPRControls
                            key={act.id_det}
                            className='text-[13px] text-gray-800 transition duration-300 cursor-pointer hover:bg-black/10'
+                           callback={(times) => onDistribution({distribuciones: times, id_actividad: act.id_det})}
                            {...act}
                         >
                               

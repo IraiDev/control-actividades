@@ -16,6 +16,7 @@ const SelectFilter = ({
    type = 'sidebar',
    placeholder = 'seleccione',
    isOrder = true,
+   defaultOptions = false
 }) => {
    if (type === 'table') {
       return (
@@ -43,7 +44,7 @@ const SelectFilter = ({
                   options={
                      isMulti
                         ? options
-                        : [{ value: null, label: defaultLabel }].concat(options)
+                        : !defaultOptions ?[{ value: null, label: defaultLabel }].concat(options) : options
                   }
                   value={value}
                   onChange={onChange}

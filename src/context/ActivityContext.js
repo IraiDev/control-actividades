@@ -85,8 +85,6 @@ function ActivityProvider({ children }) {
          const resp = await fetchToken('task/get-filters')
          const body = await resp.json()
 
-         console.log(body)
-
          if (body.ok) {
             setOptionsArray({
                subProjects: body.subproyectos.map(item => {
@@ -132,7 +130,7 @@ function ActivityProvider({ children }) {
                   return {
                      label: item.desc_tipo_actividad,
                      value: item.id_tipo_actividad,
-                     active: item.activo
+                     active: item.activo,
                   }
                }),
             })
@@ -157,7 +155,7 @@ function ActivityProvider({ children }) {
          setFilters(Object.assign({}, filters, payload))
       }
    }
-   
+
    const savePRFilters = ({ reset = false, payload }) => {
       if (reset) {
          setPRFilters(initPRFilters)

@@ -16,13 +16,14 @@ export const useActivityPr = () => {
          setIsLoading(true)
          const resp = await fetchToken(
             'task/get-finished-task',
-            { ...prFilters, ...prOrder},
+            { ...prFilters, ...prOrder },
             'POST'
          )
          const body = await resp.json()
          const { ok, tareas, total_tareas } = body
 
          console.log(tareas)
+
          setIsLoading(false)
          if (ok) {
             setActivitiesPR(tareas)
@@ -36,15 +37,24 @@ export const useActivityPr = () => {
       }
    }
 
-   const toggleCheckActivity = async ({id_actividad, estado, revisado, glosa_rechazo}) => {
+   const toggleCheckActivity = async ({
+      id_actividad,
+      estado,
+      revisado,
+      glosa_rechazo,
+   }) => {
       try {
-         const resp = await fetchToken('task/checked-activity', {id_actividad, estado, revisado, glosa_rechazo}, 'PUT')
+         const resp = await fetchToken(
+            'task/checked-activity',
+            { id_actividad, estado, revisado, glosa_rechazo },
+            'PUT'
+         )
          const body = await resp.json()
 
-         console.log('togglecheck',body)
+         console.log('togglecheck', body)
 
          if (body.ok) fetchActivities()
-         else{
+         else {
             Alert({
                message: 'error',
                title: 'Atención',
@@ -52,18 +62,28 @@ export const useActivityPr = () => {
                showCancelButton: false,
             })
          }
-
       } catch (err) {
          console.log(err)
       }
    }
 
-   const onDistribution = async ({distribuciones = [], id_actividad}) => {
+   const onDistribution = async ({ distribuciones = [], id_actividad }) => {
       try {
-         const resp = await fetchToken('task/distribution', {distribuciones, id_actividad}, 'POST')
+         const resp = await fetchToken(
+            'task/time-distribution',
+            { distribuciones, id_actividad },
+            'POST'
+         )
          const body = await resp.json()
 
-      console.log(body)
+         if (body.ok) {
+            fetchActivities()
+            console.log('salio bien', body)
+         }
+         else{
+            console.log('salio mal ',body)
+         }
+
       } catch (err) {
          console.log(err)
       }
@@ -75,10 +95,9 @@ export const useActivityPr = () => {
    }, [prFilters, prOrder])
 
    return {
-      activitiesPR, 
+      activitiesPR,
       total,
       toggleCheckActivity,
-      onDistribution
+      onDistribution,
    }
-
 }
