@@ -79,7 +79,7 @@ const TrPRControls = props => {
    const [tr, setTr] = useState(props.tiempo_trabajado)
 
    const [{ time, gloss }, onChangeValues, reset] = useForm({
-      time: '',
+      time: 0,
       gloss: '',
    })
 
@@ -104,8 +104,6 @@ const TrPRControls = props => {
 
       const newValues = inputValues.find(i => i.id === id)
 
-      // setTr(props.tiempo_trabajado.toFixed(4) - inputValues.reduce((a, b) => Number(a) + Number(b.tiempo), 0))
-
       setTimes(
          times.map(dis => {
             if (dis.id_dist_tiempo_act === id) {
@@ -125,25 +123,11 @@ const TrPRControls = props => {
 
       const filter = times.filter(dis => dis.id_dist_tiempo_act !== id)
 
-      // setTr(props.tiempo_trabajado.toFixed(4) - filter.reduce((a, b) => Number(a) + Number(b.tiempo_dist_act), 0))
-
       setTimes(filter)
-
-      // setInputValues(
-      //    filter?.map(dis => {
-      //       return {
-      //          id: dis.id_dist_tiempo_act,
-      //          tiempo: dis.tiempo_dist_act,
-      //          glosa: dis.glosa_dist_tiempos_act,
-      //          producto: products.find(p => Number(p.value) === dis.id_producto),
-      //       }
-      //    })
-      // )
    }
 
    const handleOpenModal = () => {
 
-      // setTr(props.tiempo_trabajado.toFixed(4) - times.reduce((a, b) => Number(a) + Number(b.tiempo_dist_act), 0))
       setModal(true)
    }
 
@@ -155,14 +139,20 @@ const TrPRControls = props => {
          setModal(false)
       }
 
-      Alert({
-         icon: 'warn',
-         title: 'Atención',
-         content: 'Al cancelar perdera todas las modificaciones realizadas',
-         cancelText: 'No, volver',
-         confirmText: 'Si, cancelar',
-         action
-      })
+      if (times.length > 0) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'Al cancelar perdera todas las modificaciones realizadas',
+            cancelText: 'No, volver',
+            confirmText: 'Si, cancelar',
+            action
+         })
+         return 
+      }
+
+      setModal(false)
+      
    }
 
    const handleApplyChanges = () => {
@@ -177,24 +167,10 @@ const TrPRControls = props => {
    }, [])
 
    useEffect(() => {
-      setInputValues(
-         times?.map(dis => {
-            return {
-               id: dis.id_dist_tiempo_act,
-               tiempo: dis.tiempo_dist_act,
-               glosa: dis.glosa_dist_tiempos_act,
-               producto: products.find(p => Number(p.value) === dis.id_producto),
-            }
-         })
-      )
+      setTr(props.tiempo_trabajado.toFixed(4) - times.reduce((a, b) => Number(a) + Number(b.tiempo_dist_act), 0))
+
       // eslint-disable-next-line
    }, [times])
-
-   useEffect(() => {
-      setTr(props.tiempo_trabajado.toFixed(4) - inputValues.reduce((a, b) => Number(a) + Number(b.tiempo), 0))
-
-      // eslint-disable-next-line
-   }, [inputValues])
 
    return (
       <>
@@ -212,6 +188,7 @@ const TrPRControls = props => {
             padding='p-6'
             title='pasar a entregado'>
             <div className='mt-10'>
+
                <BoxHeader time={props.tiempo_trabajado} modTime={tr}>
                   <section className='col-span-2'>
                      <CustomSelect
@@ -257,11 +234,11 @@ const TrPRControls = props => {
                         <section className='col-span-2'>
                            <CustomSelect
                               options={products}
-                              value={inputValues[i]?.producto ?? {value: null, label: 'ninguno'}}
+                              value={products.find(p => Number(times[i]?.id_producto) === Number(p.value)) ?? {value: null, label: 'ninguno'}}
                               onChange={option => {
-                                 setInputValues(inputValues.map(inp => {
-                                    if (inp.id === dis.id_dist_tiempo_act) {
-                                       return { ...inp, producto: option }
+                                 setTimes(times.map(inp => {
+                                    if (inp.id_dist_tiempo_act === dis.id_dist_tiempo_act) {
+                                       return { ...inp, id_producto: Number(option.value) }
                                     }
                                     return inp
                                  }))
@@ -272,11 +249,11 @@ const TrPRControls = props => {
 
                         <Input
                            className='pb-2 col-span-2'
-                           value={inputValues[i]?.glosa ?? ''}
+                           value={times[i]?.glosa_dist_tiempos_act ?? ''}
                            onChange={e => {
-                              setInputValues(inputValues.map(inp => {
-                                 if (inp.id === dis.id_dist_tiempo_act) {
-                                    return { ...inp, glosa: e.target.value }
+                              setTimes(times.map(inp => {
+                                 if (inp.id_dist_tiempo_act === dis.id_dist_tiempo_act) {
+                                    return { ...inp, glosa_dist_tiempos_act: e.target.value }
                                  }
                                  return inp
                               }))
@@ -287,11 +264,11 @@ const TrPRControls = props => {
                            className='pb-2 col-span-1'
                            placeholder='ej:1.5'
                            isNumber
-                           value={inputValues[i]?.tiempo ?? ''}
+                           value={times[i]?.tiempo_dist_act ?? ''}
                            onChange={e => {
-                              setInputValues(inputValues.map(inp => {
-                                 if (inp.id === dis.id_dist_tiempo_act) {
-                                    return { ...inp, tiempo: e.target.value }
+                              setTimes(times.map(inp => {
+                                 if (inp.id_dist_tiempo_act === dis.id_dist_tiempo_act) {
+                                    return { ...inp, tiempo_dist_act: e.target.value }
                                  }
                                  return inp
                               }))
