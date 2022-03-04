@@ -20,7 +20,7 @@ const SelectFilter = ({
 }) => {
    if (type === 'table') {
       return (
-         <div className='flex justify-between items-center mt-2'>
+         <div className='flex justify-between items-center mt-2 z-50'>
             {isOrder && (
                <Button
                   disabled={upActive}
@@ -35,6 +35,9 @@ const SelectFilter = ({
             <section className='w-40 px-1 mx-auto'>
                {field && <p className='text-xs ml-4 capitalize mb-1'>{field}</p>}
                <Select
+                  menuPortalTarget={document.getElementById("select-root")} 
+                  styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                  downActive
                   components={{
                      DropdownIndicator: () => null,
                      IndicatorSeparator: () => null,

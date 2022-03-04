@@ -15,36 +15,47 @@ const BoxHeader = ({ children, time, modTime }) => {
          <section className='flex gap-3 items-baseline w-full px-2 rounded-md mb-3'>
             <span className='block w-8 h-5' />
 
-            <div className='grid grid-cols-6 gap-2 w-full'>
-               <h3 className='font-semibold text-sm col-span-2 text-center'>
-                  Producto Zionit
-               </h3>
-
-               <h3 className='font-semibold text-sm col-span-2 text-center'>
-                  Glosa explicativa
-               </h3>
-
-               <h3 className='font-semibold text-sm col-span-1 text-center'>
-                  Tiempo (hrs)
-               </h3>
-
-               <div className='font-semibold text-sm col-span-1 flex items-baseline gap-2 justify-center'>
-               <NumberFormat 
-                     value={time} 
-                     decimalScale={4} 
-                     fixedDecimalScale={false}
-                     displayType='text' 
-                  /> 
-                  /
-                  <NumberFormat 
-                     className={modTime < 0 ? 'text-red-500' : modTime === 0 ? 'text-green-500' : ''}
-                     value={modTime} 
-                     decimalScale={4} 
-                     fixedDecimalScale={false}
-                     displayType='text' 
-                  />
+            <div className='w-full'>
+               <div className='font-semibold text-sm flex items-baseline gap-5 justify-end mb-2'>
+                  <span className='py-1 px-2.5 text-yellow-600 bg-yellow-100 rounded-md' title='Tiempo total'>T.T</span>
+                  <span className='py-1 px-2.5 text-emerald-600 bg-emerald-100 rounded-md' title='Tiempo restante'>T.R</span>
                </div>
+
+               <div className='grid grid-cols-6 gap-2 w-full'>
+
+                  <h3 className='font-semibold text-sm col-span-2 text-center'>
+                     Producto Zionit
+                  </h3>
+
+                  <h3 className='font-semibold text-sm col-span-2 text-center'>
+                     Glosa explicativa
+                  </h3>
+
+                  <h3 className='font-semibold text-sm col-span-1 text-center'>
+                     Tiempo (hrs)
+                  </h3>
+
+                  <div className='font-semibold text-sm col-span-1 flex items-baseline gap-2 justify-center'>
+                     <NumberFormat 
+                        className='text-yellow-500'
+                        value={time} 
+                        decimalScale={4} 
+                        fixedDecimalScale={false}
+                        displayType='text' 
+                     /> 
+                     /
+                     <NumberFormat 
+                        className={modTime < 0 ? 'text-red-500' : 'text-emerald-500'}
+                        value={modTime} 
+                        decimalScale={4} 
+                        fixedDecimalScale={false}
+                        displayType='text' 
+                     />
+                  </div>
+               </div>
+
             </div>
+
          </section>
          <section className='flex gap-3 items-baseline w-full bg-zinc-100 px-2 rounded-md shadow-md'>
             <span className='block w-16 h-5' />
@@ -68,14 +79,13 @@ const BoxContent = ({ children, number }) => {
 }
 
 const TrPRControls = props => {
-   const isReviwed = props.estado === 12
+   const isReviwed = props.estado === 5
 
    const { optionsArray } = useContext(ActivityContext)
 
    const [options, setOptions] = useState({ st: { value: 3, label: 'P.R' } })
    const [modal, setModal] = useState(false)
    const [times, setTimes] = useState([])
-   const [inputValues, setInputValues] = useState([])
    const [tr, setTr] = useState(props.tiempo_trabajado)
 
    const [{ time, gloss }, onChangeValues, reset] = useForm({
@@ -87,6 +97,40 @@ const TrPRControls = props => {
    const { products } = optionsArray
 
    const handleCreateTimes = () => {
+
+      if (time > tr) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'El tiempo ingresado es mayor al tiempo restante, por favor modifique el valor y vuelva a intentarlo',
+            showCancelButton: false, 
+         })
+
+         return
+      }
+
+      if (gloss === '' || options.product.value === undefined) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'Por favor complete todos los campos',
+            showCancelButton: false,
+         })
+
+         return
+      }
+
+      if (time === 0) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'No puedes crear una distribucion de tiempo con 0 horas',
+            showCancelButton: false,
+         })
+
+         return
+      }
+
       setTimes(times => [
          ...times,
          {
@@ -98,25 +142,6 @@ const TrPRControls = props => {
       ])
       setOptions({ ...options, product: { value: null, label: 'ninguno' } })
       reset()
-   }
-
-   const handleUpdateTimes = id => {
-
-      const newValues = inputValues.find(i => i.id === id)
-
-      setTimes(
-         times.map(dis => {
-            if (dis.id_dist_tiempo_act === id) {
-               return {
-                  ...dis,
-                  tiempo_dist_act: newValues.tiempo,
-                  glosa_dist_tiempos_act: newValues.glosa,
-                  id_producto: Number(newValues.producto.value),
-               }
-            }
-            return dis
-         })
-      )
    }
 
    const handleDeleteTimes = id => {
@@ -135,30 +160,47 @@ const TrPRControls = props => {
 
       const action = () => {
          setTimes(props.tiempos_distribuidos)
-         setInputValues([])
          setModal(false)
       }
 
-      if (times.length > 0) {
-         Alert({
-            icon: 'warn',
-            title: 'Atención',
-            content: 'Al cancelar perdera todas las modificaciones realizadas',
-            cancelText: 'No, volver',
-            confirmText: 'Si, cancelar',
-            action
-         })
-         return 
-      }
-
-      setModal(false)
+      Alert({
+         icon: 'warn',
+         title: 'Atención',
+         content: 'Al cancelar perdera todas las modificaciones realizadas',
+         cancelText: 'No, volver',
+         confirmText: 'Si, cancelar',
+         action
+      })
       
    }
 
    const handleApplyChanges = () => {
+
+      const some = times.some(dis => Number(dis.tiempo_dist_act) === 0)
+
+      if (tr < 0) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'El tiempo restante no puede ser menor a 0, por favor ajuste los valores de la distribucion de tiempos',
+            showCancelButton: false,
+         })
+         return
+      }
+
+      if (some) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'Algunos tiempos son 0, por favor modifique los valores y vuelva a intentarlo',
+            showCancelButton: false,
+         })
+         return
+      }
+
       props.callback(times)
-      setInputValues([])
       setModal((false))
+      reset()
    }
 
    useEffect(() => {
@@ -202,14 +244,14 @@ const TrPRControls = props => {
                   </section>
 
                   <Input
-                     className='pb-2 col-span-2'
+                     className='pb-3.5 col-span-2'
                      name='gloss'
                      value={gloss}
                      onChange={onChangeValues}
                   />
 
                   <Input
-                     className='pb-2 col-span-1'
+                     className='pb-3.5 col-span-1'
                      placeholder='ej:1.5'
                      isNumber
                      name='time'
@@ -231,6 +273,7 @@ const TrPRControls = props => {
                {times.length > 0 ? (
                   times.map((dis, i) => (
                      <BoxContent key={i} number={i}>
+
                         <section className='col-span-2'>
                            <CustomSelect
                               options={products}
@@ -248,7 +291,7 @@ const TrPRControls = props => {
                         </section>
 
                         <Input
-                           className='pb-2 col-span-2'
+                           className='pb-3.5 col-span-2'
                            value={times[i]?.glosa_dist_tiempos_act ?? ''}
                            onChange={e => {
                               setTimes(times.map(inp => {
@@ -261,7 +304,7 @@ const TrPRControls = props => {
                         />
 
                         <Input
-                           className='pb-2 col-span-1'
+                           className='pb-3.5 col-span-1'
                            placeholder='ej:1.5'
                            isNumber
                            value={times[i]?.tiempo_dist_act ?? ''}
@@ -275,23 +318,14 @@ const TrPRControls = props => {
                            }}
                         />
 
-                        <section className='flex gap-2 justify-center col-span-1'>
-                           <Button
-                              className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
-                              onClick={() =>
-                                 handleUpdateTimes(dis.id_dist_tiempo_act)
-                              }>
-                              <i className='fas fa-check' />
-                           </Button>
+                        <Button
+                           className='bg-red-100 hover:bg-red-200 text-red-500 mx-auto'
+                           onClick={() =>
+                              handleDeleteTimes(dis.id_dist_tiempo_act)
+                           }>
+                           <i className='fas fa-trash-alt' />
+                        </Button>
 
-                           <Button
-                              className='bg-red-100 hover:bg-red-200 text-red-500'
-                              onClick={() =>
-                                 handleDeleteTimes(dis.id_dist_tiempo_act)
-                              }>
-                              <i className='fas fa-trash-alt' />
-                           </Button>
-                        </section>
                      </BoxContent>
                   ))
                ) : (

@@ -319,7 +319,7 @@ const Revision = () => {
                         <SelectFilter
                            type='table'
                            value={options.st}
-                           options={status?.filter(s => s.value === 12 || s.value === 3)}
+                           options={status?.filter(s => s.value === 12 || s.value === 3 || s.value === 5)}
                            placeholder='Seleccione'
                            defaultOptions
                            onChange={option =>

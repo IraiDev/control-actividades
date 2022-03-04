@@ -1,4 +1,4 @@
-const TBody = ({ children, className }) => {
+const TBody = ({ children, className = 'min-h-[400px]' }) => {
    return <tbody className={className}>{children}</tbody>
 }
 
