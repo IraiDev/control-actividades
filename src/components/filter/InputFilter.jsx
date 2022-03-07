@@ -23,7 +23,7 @@ const InputFilter = ({
             {isOrder && (
                <Button
                   disabled={upActive}
-                  className={`hover:text-blue-500 mt-2 ${
+                  className={`hover:text-blue-500 mt-3 ${
                      upActive ? 'text-blue-500' : ''
                   }`}
                   onClick={filterUp}>
@@ -32,7 +32,7 @@ const InputFilter = ({
             )}
 
             <Input
-               className='mx-auto pb-1.5'
+               className='mx-auto pt-2'
                padding={padding}
                width={width}
                field={field}
@@ -46,7 +46,7 @@ const InputFilter = ({
             {isOrder && (
                <Button
                   disabled={downActive}
-                  className={`hover:text-blue-500 mt-2 ${
+                  className={`hover:text-blue-500 mt-3 ${
                      downActive ? 'text-blue-500' : ''
                   }`}
                   onClick={filterDown}>
@@ -69,7 +69,7 @@ const InputFilter = ({
 
          <Button
             disabled={upActive}
-            className={`hover:text-blue-500 mt-5 ${
+            className={`hover:text-blue-500 mt-7 ${
                upActive ? 'text-blue-500' : 'text-slate-700'
             }`}
             onClick={filterUp}>
@@ -78,7 +78,7 @@ const InputFilter = ({
 
          <Button
             disabled={downActive}
-            className={`hover:text-blue-500 mt-5 ${
+            className={`hover:text-blue-500 mt-7 ${
                downActive ? 'text-blue-500' : 'text-slate-700'
             }`}
             onClick={filterDown}>
