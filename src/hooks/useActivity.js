@@ -26,8 +26,9 @@ export const useActivity = () => {
             setActivities(tareas.map(task => {
                return {
                   ...task,
-                  esPadre: 0,
-                  EsHijo: 0
+                  esPadre: task.id_det === 20704 ? 1 : task.id_det === 20707 ? 1 : 0,
+                  esHijo: task.id_det === 20705 ? 1 : task.id_det === 20707 ? 1 : 0,
+                  tipo_actividad: task.id_det === 20706 ? 3 : task.id_det === 20708 ? 2 : 1,
                }
             }))
 
@@ -293,6 +294,8 @@ export const useActivity = () => {
          console.log(err)
       }
    }
+
+   console.log(activities)
 
    useEffect(() => {
       fetchActivities()

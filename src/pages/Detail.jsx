@@ -682,10 +682,18 @@ const Detail = () => {
                   <View
                      title={activity.actividad}
                      priority={activity.prioridad_etiqueta}
+                     type={{desc: activity.desc_tipo_actividad, id: activity.tipo_actividad}}
                      onHigh={() => onChangePriority(100, activity.id_det)}
                      onMid={() => onChangePriority(400, activity.id_det)}
                      onLow={() => onChangePriority(600, activity.id_det)}
                      onNone={() => onChangePriority(1000, activity.id_det)}
+                     id={activity.id_det}
+                     idFather={activity.id_det_padre}
+                     isChildren={activity.esHijo === 1 && activity.esPadre === 0}
+                     isFather={activity.esPadre === 1 && activity.esHijo === 0}
+                     isCoorActivity={activity.tipo_actividad === 3}
+                     isReviewedActivity={activity.tipo_actividad === 2}
+                     isChildrenAndChildren={activity.esHijo === 1 && activity.esPadre === 1}
                   >
                      <AlertBar 
                         validation={validation().isSave} 
@@ -1049,7 +1057,7 @@ const Detail = () => {
                            </Button>
 
                            <Button
-                              hidden={activity.id_det_padre > 0}
+                              hidden={activity.tipo_actividad === 3 || activity.tipo_actividad === 2}
                               className='text-slate-600 bg-slate-100 hover:bg-slate-200'
                               onClick={openModalClone}>
                               <i className='fas fa-clone' />

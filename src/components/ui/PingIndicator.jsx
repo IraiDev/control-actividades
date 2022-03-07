@@ -1,15 +1,10 @@
 const PingIndicator = ({
    tooltip = 'Trabajando en esta actividad',
    size = 'normal',
+   hidden = false
 }) => {
-   if (size === 'normal') {
-      return (
-         <div className='absolute -top-1 -left-1' title={tooltip}>
-            <span className='h-3.5 w-3.5 rounded-full bg-red-400 fixed' />
-            <span className='h-3.5 w-3.5 rounded-full bg-red-400 animate-ping fixed' />
-         </div>
-      )
-   }
+
+   if(hidden) return null
 
    if (size === 'small') {
       return (
@@ -20,7 +15,13 @@ const PingIndicator = ({
       )
    }
 
-   return null
+   return (
+      <div className='absolute -top-1 -left-1' title={tooltip}>
+         <span className='h-3.5 w-3.5 rounded-full bg-red-400 fixed' />
+         <span className='h-3.5 w-3.5 rounded-full bg-red-400 animate-ping fixed' />
+      </div>
+   )
+   
 }
 
 export default PingIndicator

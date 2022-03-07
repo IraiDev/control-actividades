@@ -26,7 +26,14 @@ export const useDetail = id => {
 
          setIsLoading(false)
          if (ok) {
-            setActivity(tareas[0])
+            setActivity(tareas.map(task => {
+               return {
+                  ...task,
+                  esPadre: task.id_det === 20704 ? 1 : task.id_det === 20707 ? 1 : 0,
+                  esHijo: task.id_det === 20705 ? 1 : task.id_det === 20707 ? 1 : 0,
+                  tipo_actividad: task.id_det === 20706 ? 3 : task.id_det === 20708 ? 2 : 1,
+               }
+            })[0])
          } else {
             navigate(routes.activity, { replace: true })
             Alert({

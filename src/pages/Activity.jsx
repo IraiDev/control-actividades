@@ -679,29 +679,55 @@ const Activity = () => {
                               <Td>
                                  <div className='relative'>
                                     <Numerator number={i + 1} />
-                                    {act.estado_play_pausa === 2 && <PingIndicator size='small' />}
+                                    <PingIndicator hidden={act.estado_play_pausa !== 2} size='small' />
                                  </div>
                               </Td>
 
                               <Td>
                                  <div className={`
-                                    flex justify-between
+                                    flex justify-between gap-2
                                     ${act.id_det_padre === 0 && act.num_ticket_edit !== 0 ? 'text-amber-600 font-semibold' : ''}
                                  `}>
-                                    {act.id_det_padre !== 0 && act.num_ticket_edit !== 0 &&
-                                       <MarkActivity 
-                                          isChild 
-                                          position='block'
-                                          content={act.id_det_padre} 
-                                       />
-                                    }  
+                                    <MarkActivity 
+                                       hidden={!(act.esPadre === 1 && act.esHijo === 0)} 
+                                       position='block' 
+                                    >
+                                       <i className='fas fa-child fa-lg' />
+                                       {act?.id_det}
+                                    </MarkActivity>
 
-                                    {act.id_det_padre === 0 && act.num_ticket_edit !== 0 &&
-                                       <MarkActivity 
-                                          position='block'
-                                          // content={act.id_det} 
-                                       />
-                                    } 
+                                    <MarkActivity 
+                                       hidden={!(act.esHijo === 1 && act.esPadre === 0)} 
+                                       position='block'
+                                    >
+                                       <i className='fas fa-hat-cowboy fa-lg' />
+                                       {act?.id_det_padre} 
+                                    </MarkActivity>
+
+                                    <MarkActivity 
+                                       hidden={!(act.tipo_actividad === 3)} 
+                                       position='block'
+                                    >
+                                       <i className='far fa-calendar-alt fa-lg' />
+                                       {act?.id_det_padre} 
+                                    </MarkActivity>
+
+                                    <MarkActivity 
+                                       hidden={!(act.tipo_actividad === 2)} 
+                                       position='block'
+                                    >
+                                       <i className='fas fa-calendar-check fa-lg' />
+                                       {act?.id_det_padre} 
+                                    </MarkActivity>
+
+                                    <MarkActivity 
+                                       hidden={!(act.esHijo === 1 && act.esPadre === 1)} 
+                                       position='block'
+                                    >
+                                       <i className='fas fa-child' />
+                                       <i className='fas fa-hat-cowboy' />
+                                       {act?.id_det_padre} 
+                                    </MarkActivity>
 
                                     {act.id_det}
                                  </div>

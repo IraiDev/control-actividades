@@ -9,11 +9,14 @@ const Card = (props) => {
       showPing = false,
       isChildren,
       isFather,
+      isCoorActivity,
+      isReviewedActivity,
+      isChildrenAndChildren,
       className,
    } = props
 
    return (
-      <main
+      <div
          className={`
 
             p-3 pb-2 rounded-xl shadow-lg grid content-between transition duration-200 hover:scale-[1.01] transform 
@@ -35,18 +38,35 @@ const Card = (props) => {
       >
          {children}
 
-         {showPing && <PingIndicator />}
+         <PingIndicator hidden={!showPing} />
 
-         {isChildren && 
-            <MarkActivity 
-               isChild
-               content={props?.id_det_padre}
-            />
-         }
+         <MarkActivity hidden={!isChildren} >
+            <i className='fas fa-child fa-lg' />
+            {props?.id_det_padre}
+         </MarkActivity>
 
-         {isFather && <MarkActivity content={props?.id_det} />}
+         <MarkActivity hidden={!isFather} >
+            <i className='fas fa-hat-cowboy fa-lg' />
+            {props?.id_det} 
+         </MarkActivity>
 
-      </main>
+         <MarkActivity hidden={!isCoorActivity} >
+            <i className='far fa-calendar-alt fa-lg' />
+            {props?.id_det_padre} 
+         </MarkActivity>
+
+         <MarkActivity hidden={!isReviewedActivity} >
+            <i className='fas fa-calendar-check fa-lg' />
+            {props?.id_det_padre} 
+         </MarkActivity>
+
+         <MarkActivity hidden={!isChildrenAndChildren} >
+            <i className='fas fa-child' />
+            <i className='fas fa-hat-cowboy' />
+            {props?.id_det_padre} 
+         </MarkActivity>
+
+      </div>
    )
 }
 

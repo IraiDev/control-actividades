@@ -2,13 +2,15 @@ import { useState } from 'react'
 import OnOutsiceClick from 'react-outclick'
 import Button from './Button'
 
-const FloatMenu = ({ name, value, onChange, onClick, reset }) => {
+const FloatMenu = ({ name, value, onChange, onClick, reset, hidden = false }) => {
    const [showContextMenu, setShowContextMenu] = useState(false)
 
    const validation = value === '' || value === '0'
 
+   if(hidden) return null
+
    return (
-      <main className='relative z-5s0'>
+      <div className='relative'>
          <Button
             size='w-11 h-7'
             title='pasa actividad a E.T'
@@ -26,7 +28,7 @@ const FloatMenu = ({ name, value, onChange, onClick, reset }) => {
                   setShowContextMenu(false)
                   reset()
                }}>
-               <div className='p-4 pb-2.5 bg-white absolute bottom-8 left-5 text-slate-600 rounded-md shadow-lg border z-50'>
+               <section className='p-4 pb-2.5 bg-white absolute bottom-8 left-5 text-slate-600 rounded-md shadow-lg border z-50'>
                   <h1 className='text-xs font-semibold'>
                      Ingrese tiempo estimado
                   </h1>
@@ -75,10 +77,10 @@ const FloatMenu = ({ name, value, onChange, onClick, reset }) => {
                      </Button>
                   </footer>
                   <div className='w-4 h-4 bg-white absolute -bottom-1 left-3 transform rotate-45 z-10' />
-               </div>
+               </section>
             </OnOutsiceClick>
          )}
-      </main>
+      </div>
    )
 }
 

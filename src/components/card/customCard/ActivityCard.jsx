@@ -70,8 +70,14 @@ const ActivityCard = props => {
    // variables
    const ESTADO_PAUSA = estado === 1
    const ESTADO_play = estado_play_pausa === 2
-   const isFather = props.id_det_padre === 0 && props.num_ticket_edit !== 0
-   const isChildren = props.id_det_padre !== 0 && props.num_ticket_edit !== 0
+   // const isFather = props.id_det_padre === 0 && props.num_ticket_edit !== 0
+   // const isChildren = props.id_det_padre !== 0 && props.num_ticket_edit !== 0
+   const isFather = props.esPadre === 1 && props.esHijo === 0
+   const isChildren = props.esHijo === 1 && props.esPadre === 0
+   const isChildrenAndChildren = props.esHijo === 1 && props.esPadre === 1
+   const isReviewedActivity = props.tipo_actividad === 2
+   const isCoorActivity = props.tipo_actividad === 3
+   const isTicket = props.num_ticket_edit > 0
 
    const onCloseModals = () => {
       reset()
@@ -109,9 +115,13 @@ const ActivityCard = props => {
             onDoubleClick={handleNavigate}
             isChildren={isChildren}
             isFather={isFather}
+            isCoorActivity={isCoorActivity}
+            isChildrenAndChildren={isChildrenAndChildren}
+            isReviewedActivity={isReviewedActivity}
             {...props}
          >
             <CardContent title={props.actividad} cardNum={numberCard}>
+
                <CardSection colCount={3}>
                   <aside className='capitalize'>
                      <P tag='solicita' value={props.user_solicita} />
@@ -125,8 +135,6 @@ const ActivityCard = props => {
                            {props.id_det}
                         </p>
                      </span>
-
-                     {/* <P tag='ID' value={props.id_det} /> */}
 
                      <P
                         tag='ticket'
@@ -144,6 +152,9 @@ const ActivityCard = props => {
                      <P tag='sub p' value={props.nombre_sub_proy || '- -'} />
 
                      <P tag='Prioridad' value={props.num_prioridad} />
+
+                     <P tag='Tipo' value={props.desc_tipo_actividad} />
+
                   </section>
 
                   <aside className='capitalize'>
@@ -193,8 +204,9 @@ const ActivityCard = props => {
             </CardContent>
 
             <CardFooter>
-               {ESTADO_PAUSA ? (
+               {!(isFather && isTicket) ?
                   <FloatMenu
+                     hidden={!ESTADO_PAUSA}
                      name='time'
                      value={time}
                      onChange={onChangeValues}
@@ -204,24 +216,27 @@ const ActivityCard = props => {
                      }}
                      reset={reset}
                   />
-               ) : (
-                  <Button
-                     className='hover:bg-black/5'
-                     size='w-7 h-7'
-                     onClick={
+                  : <span className='block' />
+               }
+               
+               <Button
+                  hidden={ESTADO_PAUSA}
+                  className='hover:bg-black/5'
+                  size='w-7 h-7'
+                  onClick={
+                     ESTADO_play
+                        ? () => toggleModalPause(true)
+                        : () => playActivity({ id_actividad: props.id_det })
+                  }>
+                  <i
+                     className={
                         ESTADO_play
-                           ? () => toggleModalPause(true)
-                           : () => playActivity({ id_actividad: props.id_det })
-                     }>
-                     <i
-                        className={
-                           ESTADO_play
-                              ? 'fas fa-pause fa-sm'
-                              : 'fas fa-play fa-sm'
-                        }
-                     />
-                  </Button>
-               )}
+                           ? 'fas fa-pause fa-sm'
+                           : 'fas fa-play fa-sm'
+                     }
+                  />
+               </Button>
+               
                <div>
                   <Menu
                      direction='top'
@@ -287,6 +302,7 @@ const ActivityCard = props => {
                   </Menu>
                </div>
             </CardFooter>
+
          </Card>
 
          {/* modal add */}
