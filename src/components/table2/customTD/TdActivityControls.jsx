@@ -40,7 +40,9 @@ const TdActivityControls = props => {
       onPlay,
       callback,
       time,
-      id_det
+      id_det,
+      isStickyLeft = false,
+      isStickyRight = true,
    } = props
    
    // conditions
@@ -87,7 +89,7 @@ const TdActivityControls = props => {
                odd:bg-black/5 even:bg-black/0 border-b border-zinc-400
                ${isMultiLine ? 'whitespace-pre-wrap' : 'truncate'}
                ${width}
-            
+               ${isStickyLeft ? 'sticky left-0 odd:bg-zinc-200/80 even:bg-zinc-200/80' : isStickyRight ? 'sticky right-0 odd:bg-zinc-200/80 even:bg-zinc-200/80' : ' odd:bg-black/0 even:bg-black/5'}
             `}
          >
             <div className='flex justify-between items-center gap-2'>

@@ -1,5 +1,4 @@
 import { useEffect, useState, useContext } from 'react'
-import NumberFormat from 'react-number-format'
 import { ActivityContext } from '../../../context/ActivityContext'
 import { Alert } from '../../../helpers/alerts'
 import { useForm } from '../../../hooks/useForm'
@@ -8,6 +7,7 @@ import CustomSelect from '../../ui/CustomSelect'
 import Input from '../../ui/Input'
 import Modal from '../../ui/Modal'
 import Numerator from '../../ui/Numerator'
+import NumberFormat from 'react-number-format'
 
 const BoxHeader = ({ children, time, modTime }) => {
    return (
@@ -83,7 +83,7 @@ const TrPRControls = props => {
 
    const { optionsArray } = useContext(ActivityContext)
 
-   const [options, setOptions] = useState({ st: { value: 3, label: 'P.R' } })
+   const [options, setOptions] = useState()
    const [modal, setModal] = useState(false)
    const [times, setTimes] = useState([])
    const [tr, setTr] = useState(props.tiempo_trabajado)
@@ -228,7 +228,9 @@ const TrPRControls = props => {
             onClose={onCloseModal}
             className='max-w-3xl'
             padding='p-6'
-            title='pasar a entregado'>
+            title='pasar a entregado'
+         >
+
             <div className='mt-10'>
 
                <BoxHeader time={props.tiempo_trabajado} modTime={tr}>

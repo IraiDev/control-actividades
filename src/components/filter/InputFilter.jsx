@@ -32,7 +32,7 @@ const InputFilter = ({
             )}
 
             <Input
-               className='mx-auto'
+               className='mx-auto pb-1.5'
                padding={padding}
                width={width}
                field={field}

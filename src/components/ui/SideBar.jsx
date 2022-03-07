@@ -10,13 +10,27 @@ import SelectFilter from '../filter/SelectFilter'
 const { home, activity } = routes
 
 const SideBar = ({ isOpen, toggleSideBar }) => {
-   const { optionsArray, saveFilters, setOrder, order, setPager, pager } =
-      useContext(ActivityContext)
    const { pathname } = useLocation()
 
+   const { 
+      optionsArray, 
+      saveFilters, 
+      setOrder, 
+      order, 
+      setPager, 
+      pager 
+   } = useContext(ActivityContext)
+   
    const [userCheck, setUserCheck] = useState(false)
+   
    const [options, setOptions] = useState({})
-   const [{ id, title, numPriority, ticket, desc }, onChangeValues, reset] = useForm({
+   const [{ 
+      id, 
+      title, 
+      numPriority, 
+      ticket, 
+      desc 
+   }, onChangeValues, reset] = useForm({
       id: '',
       title: '',
       numPriority: '',
@@ -178,7 +192,7 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
 
          <section className='grid gap-3'>
 
-         <SelectFilter
+            <SelectFilter
                value={options.us}
                options={users}
                field='solicitante'

@@ -4,6 +4,7 @@ import { useActivityPr } from '../hooks/useActivityPr'
 import { useForm } from '../hooks/useForm'
 import { useWindowSize } from '../hooks/useWindowSize'
 import { Pagination } from '@mui/material'
+import { Alert } from '../helpers/alerts'
 import StaticSelect from '../components/ui/StaticSelect'
 import InputFilter from '../components/filter/InputFilter'
 import SelectFilter from '../components/filter/SelectFilter'
@@ -18,22 +19,8 @@ import Td from '../components/table2/Td'
 import Th from '../components/table2/Th'
 import THead from '../components/table2/THead'
 import TrPRControls from '../components/table2/customTR/TrPRControls'
-import { Alert } from '../helpers/alerts'
 import Modal from '../components/ui/Modal'
 import TextArea from '../components/ui/TextArea'
-
-// const CheckBox = ({ checked, onChange, id }) => {
-//    return (
-//       <label
-//          htmlFor={id}
-//          className={`flex gap-2 justify-center ${
-//             checked ? 'text-blue-500' : ''
-//          }`}>
-//          <input id={id} type='checkbox' checked={checked} onChange={onChange} />
-//          Revisado
-//       </label>
-//    )
-// }
 
 const Revision = () => {
    const { 
@@ -168,6 +155,8 @@ const Revision = () => {
                   <tr className='text-center capitalize'>
 
                      <Th></Th>
+
+                     {/* id */}
                      <Th>
                         <InputFilter
                            type='table'
@@ -189,6 +178,7 @@ const Revision = () => {
                         />
                      </Th>
 
+                     {/* ticket */}
                      <Th>
                         <InputFilter
                            type='table'
@@ -199,6 +189,7 @@ const Revision = () => {
                         />
                      </Th>
 
+                     {/* proyecto */}
                      <Th>
                         <SelectFilter
                            type='table'
@@ -225,6 +216,7 @@ const Revision = () => {
                         />
                      </Th>
 
+                     {/* subproyecto */}
                      <Th>
                         <SelectFilter
                            type='table'
@@ -246,33 +238,7 @@ const Revision = () => {
                         />
                      </Th>
 
-                     {/* TODO: revisor */}
-                     <Th>
-                        <SelectFilter
-                           type='table'
-                           value={options.ur}
-                           options={users}
-                           isMulti
-                           onChange={option =>
-                              setOptions({ ...options, ur: option })
-                           }
-                           filterDown={() =>
-                              setPROrder({ orden_revisor: 'desc' })
-                           }
-                           filterUp={() =>
-                              setPROrder({ orden_revisor: 'asc' })
-                           }
-                           upActive={setActive({
-                              param: 'orden_revisor',
-                              value: 'asc',
-                           })}
-                           downActive={setActive({
-                              param: 'orden_revisor',
-                              value: 'desc',
-                           })}
-                        />
-                     </Th>
-
+                     {/* solicitante */}
                      <Th>
                         <SelectFilter
                            type='table'
@@ -299,6 +265,7 @@ const Revision = () => {
                         />
                      </Th>
 
+                     {/* encargado */}
                      <Th>
                         <SelectFilter
                            type='table'
@@ -325,6 +292,34 @@ const Revision = () => {
                         />
                      </Th>
 
+                     {/* revisor */}
+                     <Th>
+                        <SelectFilter
+                           type='table'
+                           value={options.ur}
+                           options={users}
+                           isMulti
+                           onChange={option =>
+                              setOptions({ ...options, ur: option })
+                           }
+                           filterDown={() =>
+                              setPROrder({ orden_revisor: 'desc' })
+                           }
+                           filterUp={() =>
+                              setPROrder({ orden_revisor: 'asc' })
+                           }
+                           upActive={setActive({
+                              param: 'orden_revisor',
+                              value: 'asc',
+                           })}
+                           downActive={setActive({
+                              param: 'orden_revisor',
+                              value: 'desc',
+                           })}
+                        />
+                     </Th>
+
+                     {/* estado */}
                      <Th>
                         <SelectFilter
                            type='table'
@@ -352,6 +347,7 @@ const Revision = () => {
                         />
                      </Th>
 
+                     {/* titulo */}
                      <Th>
                         <InputFilter
                            type='table'
@@ -376,6 +372,7 @@ const Revision = () => {
                         />
                      </Th>
 
+                     {/* descripcion */}
                      <Th>
                         <InputFilter
                            type='table'
@@ -388,7 +385,8 @@ const Revision = () => {
 
                      </Th>
 
-                     <Th>
+                     {/* actions */}
+                     <Th isStickyRight >
                         <div className='flex justify-around pt-3 gap-2'>
                            <Button
                               className='hover:bg-black/10 bg-black/5'
@@ -416,9 +414,9 @@ const Revision = () => {
                      <Th primary >ticket</Th>
                      <Th primary >proyecto</Th>
                      <Th primary >sub proyecto</Th>
-                     <Th primary >revisor</Th>
                      <Th primary >solicitante</Th>
                      <Th primary >encargado</Th>
+                     <Th primary >revisor</Th>
                      <Th primary >estado</Th>
                      <Th primary >
                         <div className='flex items-baseline justify-center gap-2'>
@@ -454,7 +452,7 @@ const Revision = () => {
                         </div>
                      </Th>
 
-                     <Th primary ><i className='fas fa-check' /></Th>
+                     <Th primary isStickyRight ><i className='fas fa-check' /></Th>
                   </tr>
 
                </THead>
@@ -479,11 +477,11 @@ const Revision = () => {
 
                            <Td>{act.nombre_sub_proy ?? '--'}</Td>
 
-                           <Td>{act.nom_revisor || '--'}</Td>
-
                            <Td>{act.user_solicita}</Td>
 
                            <Td>{act.encargado_actividad}</Td>
+
+                           <Td>{act.abrev_revisor || '--'}</Td>
 
                            <Td>{status?.find(s => s.value === act.estado).label}</Td>
 
@@ -502,33 +500,27 @@ const Revision = () => {
                               {act.func_objeto}
                            </Td>
 
-                           { act.estado !== 5 &&
-                              <Td>
-                                 {/* <CheckBox
-                                    id={act.id_det}
-                                    checked={act.act_revizada}
-                                    onChange={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: !act.act_revizada, estado: act.estado})}
-                                 /> */}
-
+                           <Td isStickyRight >
                                  
-                                    <div className='flex gap-2 justify-center'>
+                              { act.estado !== 5 &&
+                                 <div className='flex gap-2 justify-center'>
                                     <Button 
-                                       className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
+                                       className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 border border-emerald-300'
                                        onClick={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: true, estado: act.estado})}
                                     >
                                        <i className='fas fa-check' />
                                     </Button>
 
                                     <Button 
-                                       className='bg-red-100 hover:bg-red-200 text-red-500 px-3'
+                                       className='bg-red-100 hover:bg-red-200 text-red-500 border border-red-300 px-3'
                                        onClick={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: false, estado: act.estado})}  
                                     >
                                        <i className='fas fa-times' />
                                     </Button>
                                  </div>
+                              }
 
-                              </Td>
-            }
+                           </Td>
                         </TrPRControls>
                      ))}
                </TBody>

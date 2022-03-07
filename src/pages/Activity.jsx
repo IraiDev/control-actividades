@@ -590,7 +590,7 @@ const Activity = () => {
                            />
                         </Th>
 
-                        <Th>
+                        <Th isStickyRight >
                            <div className='flex justify-between gap-2 mt-2'>
                               <Button
                                  className='bg-zinc-100 hover:bg-zinc-200'
@@ -651,7 +651,7 @@ const Activity = () => {
                            </div>
                         </Th>
                         <Th primary>estado</Th>
-                        <Th primary></Th>
+                        <Th primary isStickyRight ></Th>
                      </tr>
 
                   </THead>

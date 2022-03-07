@@ -10,9 +10,9 @@ const Table = props => {
    } = props
 
    return (
-   <section className='mt-6 w-full rounded-md border border-zinc-400/40 shadow-lg shadow-zinc-500/30 overflow-auto animate__animated animate__fadeIn'>
+   <section className='mt-6 rounded-md border border-zinc-400/40 shadow-lg shadow-zinc-500/30 overflow-auto animate__animated animate__fadeIn'>
       <div className={height}>
-         <table className={`relative overflow-auto`}>{children}</table>
+         <table className='table-auto w-full overflow-auto'>{children}</table>
       </div>
    </section>
 )}

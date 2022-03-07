@@ -13,7 +13,7 @@ const Input = ({
    tooltip,
    isNumber = false,
    className,
-   padding = 'px-4 py-1.5',
+   padding = 'px-4 pt-1.5 pb-2',
    onBlur,
    isRequired = false,
 }) => {
