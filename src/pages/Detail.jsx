@@ -754,11 +754,20 @@ const Detail = () => {
                                        <span
                                           className={`h-4 w-4 rounded-full mx-1 inline-block align-middle ${userStyles.styles}`}
                                        />
-                                       {userStyles.priority} (
-                                       {activity.num_prioridad})
+                                       {userStyles.priority} ({activity.num_prioridad})
                                     </>
                                  }
                               />
+                              <span className={`
+                                 px-2 py-0.5 font-semibold rounded-full text-sm mt-2 block w-max
+                                 ${activity.tipo_actividad === 1 ? 'bg-indigo-100 text-indigo-500' 
+                                    : activity.tipo_actividad === 2 ? 'bg-emerald-100 text-emerald-500' 
+                                    : activity.tipo_actividad === 3 ? 'bg-orange-100 text-orange-500' 
+                                    : 'bg-zinc-100 text-black'
+                                 }
+                              `}>
+                                 Tipo: {activity.desc_tipo_actividad}
+                              </span>
                            </header>
 
                            <hr className='my-5' />
