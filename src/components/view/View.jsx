@@ -7,6 +7,7 @@ import Switch from '../ui/Switch'
 import CustomSelect from '../ui/CustomSelect'
 import Numerator from '../ui/Numerator'
 import { Alert } from '../../helpers/alerts'
+import Box from '../ui/Box'
 
 const arr = [
    {value: 1, label: 'actividad 1'},
@@ -37,22 +38,6 @@ const PrioritySelector = ({
       ${disabled ? 'hidden' : 'hover:scale-125'}
     `}
          onClick={onClick}></button>
-   )
-}
-
-const Box = ({children, isHeader = false}) => {
-   if (isHeader) {
-      return (
-         <div className='grid grid-cols-7 gap-3 items-center mt-3 bg-zinc-100 p-1 rounded-md'>
-            {children}
-         </div>
-      )
-   }
-
-   return (
-      <div className='grid grid-cols-7 gap-3 items-center p-1 border-t'>
-         {children}
-      </div>
    )
 }
 

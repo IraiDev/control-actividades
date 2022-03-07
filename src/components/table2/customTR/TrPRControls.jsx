@@ -8,75 +8,7 @@ import Input from '../../ui/Input'
 import Modal from '../../ui/Modal'
 import Numerator from '../../ui/Numerator'
 import NumberFormat from 'react-number-format'
-
-const BoxHeader = ({ children, time, modTime }) => {
-   return (
-      <>
-         <section className='flex gap-3 items-baseline w-full px-2 rounded-md mb-3'>
-            <span className='block w-8 h-5' />
-
-            <div className='w-full'>
-               <div className='font-semibold text-sm flex items-baseline gap-5 justify-end mb-2'>
-                  <span className='py-1 px-2.5 text-yellow-600 bg-yellow-100 rounded-md' title='Tiempo total'>T.T</span>
-                  <span className='py-1 px-2.5 text-emerald-600 bg-emerald-100 rounded-md' title='Tiempo restante'>T.R</span>
-               </div>
-
-               <div className='grid grid-cols-6 gap-2 w-full'>
-
-                  <h3 className='font-semibold text-sm col-span-2 text-center'>
-                     Producto Zionit
-                  </h3>
-
-                  <h3 className='font-semibold text-sm col-span-2 text-center'>
-                     Glosa explicativa
-                  </h3>
-
-                  <h3 className='font-semibold text-sm col-span-1 text-center'>
-                     Tiempo (hrs)
-                  </h3>
-
-                  <div className='font-semibold text-sm col-span-1 flex items-baseline gap-2 justify-center'>
-                     <NumberFormat 
-                        className='text-yellow-500'
-                        value={time} 
-                        decimalScale={4} 
-                        fixedDecimalScale={false}
-                        displayType='text' 
-                     /> 
-                     /
-                     <NumberFormat 
-                        className={modTime < 0 ? 'text-red-500' : 'text-emerald-500'}
-                        value={modTime} 
-                        decimalScale={4} 
-                        fixedDecimalScale={false}
-                        displayType='text' 
-                     />
-                  </div>
-               </div>
-
-            </div>
-
-         </section>
-         <section className='flex gap-3 items-baseline w-full bg-zinc-100 px-2 rounded-md shadow-md'>
-            <span className='block w-16 h-5' />
-
-            <div className='grid grid-cols-6 gap-2 items-center'>
-               {children}
-            </div>
-         </section>
-      </>
-   )
-}
-
-const BoxContent = ({ children, number }) => {
-   return (
-      <section className='flex gap-3 items-baseline w-full bg-zinc-100 px-2 rounded-md mb-2 shadow-md'>
-         <Numerator number={number + 1} />
-
-         <div className='grid grid-cols-6 gap-2 items-center'>{children}</div>
-      </section>
-   )
-}
+import Box from '../../ui/Box'
 
 const TrPRControls = props => {
    const isReviwed = props.estado === 5
@@ -226,14 +158,70 @@ const TrPRControls = props => {
             showModal={modal}
             isBlur={false}
             onClose={onCloseModal}
-            className='max-w-3xl'
+            className='max-w-4xl'
             padding='p-6'
             title='pasar a entregado'
          >
 
             <div className='mt-10'>
 
-               <BoxHeader time={props.tiempo_trabajado} modTime={tr}>
+               <Box className='bg-white' isBlock >
+                  
+                  <span className='col-span-1' />
+
+                  <span className='col-span-2' />
+
+                  <span className='col-span-2' />
+
+                  <span className='col-span-1' />
+
+                  <div className='font-semibold text-sm col-span-1 flex justify-between'>
+                     <span className='py-1 px-2.5 text-yellow-600 bg-yellow-100 rounded-md' title='Tiempo total'>T.T</span>
+                     <span className='py-1 px-2.5 text-emerald-600 bg-emerald-100 rounded-md' title='Tiempo restante'>T.R</span>
+                  </div>
+               </Box>
+
+               <Box isBlock >
+
+                  <h3 className='font-semibold text-sm col-span-1 py-2 text-center'>
+                     Nº
+                  </h3>
+                  
+                  <h3 className='font-semibold text-sm col-span-2 text-center'>
+                     Producto Zionit
+                  </h3>
+
+                  <h3 className='font-semibold text-sm col-span-2 text-center'>
+                     Glosa explicativa
+                  </h3>
+
+                  <h3 className='font-semibold text-sm col-span-1 text-center'>
+                     Tiempo (hrs)
+                  </h3>
+
+                  <div className='font-semibold text-sm col-span-1 flex items-baseline gap-2 justify-center'>
+                     <NumberFormat 
+                        className='text-yellow-500'
+                        value={props.tiempo_trabajado} 
+                        decimalScale={4} 
+                        fixedDecimalScale={false}
+                        displayType='text' 
+                     /> 
+                     /
+                     <NumberFormat 
+                        className={tr < 0 ? 'text-red-500' : 'text-emerald-500'}
+                        value={tr} 
+                        decimalScale={4} 
+                        fixedDecimalScale={false}
+                        displayType='text' 
+                     />
+                  </div>
+               </Box>
+
+               <Box isBlock >
+
+                  <span className='col-span-1 py-6' />
+
                   <section className='col-span-2'>
                      <CustomSelect
                         options={products}
@@ -246,14 +234,14 @@ const TrPRControls = props => {
                   </section>
 
                   <Input
-                     className='pb-3.5 col-span-2'
+                     className='col-span-2'
                      name='gloss'
                      value={gloss}
                      onChange={onChangeValues}
                   />
 
                   <Input
-                     className='pb-3.5 col-span-1'
+                     className='col-span-1'
                      placeholder='ej:1.5'
                      isNumber
                      name='time'
@@ -266,17 +254,22 @@ const TrPRControls = props => {
                      onClick={handleCreateTimes}>
                      agregar
                   </Button>
-               </BoxHeader>
+               </Box>
 
                <h5 className='pl-4 text-sm my-5'>
                   Lista de distribucion de tiempos
                </h5>
 
-               {times.length > 0 ? (
+               {times.length > 0 ?
                   times.map((dis, i) => (
-                     <BoxContent key={i} number={i}>
 
-                        <section className='col-span-2'>
+                     <Box key={i} isBlock>
+
+                        <div className='mx-auto'>
+                           <Numerator number={i + 1} />  
+                        </div>
+
+                        <section className='col-span-2 py-1'>
                            <CustomSelect
                               options={products}
                               value={products.find(p => Number(times[i]?.id_producto) === Number(p.value)) ?? {value: null, label: 'ninguno'}}
@@ -293,7 +286,7 @@ const TrPRControls = props => {
                         </section>
 
                         <Input
-                           className='pb-3.5 col-span-2'
+                           className='col-span-2'
                            value={times[i]?.glosa_dist_tiempos_act ?? ''}
                            onChange={e => {
                               setTimes(times.map(inp => {
@@ -306,7 +299,7 @@ const TrPRControls = props => {
                         />
 
                         <Input
-                           className='pb-3.5 col-span-1'
+                           className='col-span-1'
                            placeholder='ej:1.5'
                            isNumber
                            value={times[i]?.tiempo_dist_act ?? ''}
@@ -321,20 +314,21 @@ const TrPRControls = props => {
                         />
 
                         <Button
-                           className='bg-red-100 hover:bg-red-200 text-red-500 mx-auto'
+                           className='hover:bg-red-100 text-red-500 mx-auto'
                            onClick={() =>
                               handleDeleteTimes(dis.id_dist_tiempo_act)
                            }>
                            <i className='fas fa-trash-alt' />
                         </Button>
 
-                     </BoxContent>
+                     </Box>
+                     
                   ))
-               ) : (
+                : 
                   <span className='text-sm text-zinc-400 pl-8'>
                      No hay distribucion de tiempos...
                   </span>
-               )}
+               }
 
                <footer className='flex justify-between mt-10'>
                   <Button 

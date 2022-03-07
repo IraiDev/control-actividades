@@ -19,10 +19,12 @@ const Input = ({
 }) => {
    return (
       <div className={className}>
-         <label className='flex gap-2 items-baseline pl-4 py-2 text-xs capitalize'>
-            {field}
-            {isRequired && <span className='text-red-600 font-semibold'>(*)</span>}
-         </label>
+         {field &&
+            <label className='flex gap-2 items-baseline pl-4 py-2 text-xs capitalize'>
+               {field}
+               {isRequired && <span className='text-red-600 font-semibold'>(*)</span>}
+            </label>
+         }
          <input
             id={id}
             name={name}
