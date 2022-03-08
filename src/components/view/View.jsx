@@ -203,14 +203,14 @@ const View = ({
             
             <div className='my-10'>
 
-               <Box isHeader>
+               <Box isBlock>
                   <span className='col-span-1 text-center py-2' >Nº</span>
                   <span className='col-span-2 text-center py-2 border-l' >Actividad</span>
                   <span className='col-span-2 text-center py-2 border-l' >Condicion</span>
                   <span className='col-span-2 text-center py-2 border-l' >Restriccion</span>
                </Box>
 
-               <Box isHeader>
+               <Box isBlock>
                   
                   <Button 
                      className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 mx-auto'
@@ -247,7 +247,9 @@ const View = ({
                   
                   {restrinccions.length > 0 ?
                      restrinccions.map((res, i) => (
+
                         <Box key={res.id}>
+
                            <Numerator number={1 + i} />
 
                            <span className='col-span-2 text-center'>{res.act}</span>
@@ -266,7 +268,9 @@ const View = ({
                               </Button>
 
                            </div>
+                           
                         </Box>
+
                      ))
                      : 
                      <span className='text-sm pl-4 text-zinc-400'>

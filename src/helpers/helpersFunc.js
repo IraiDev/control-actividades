@@ -67,6 +67,7 @@ export const sliceString = (value, index) => {
 }
 
 export const validateDate = ({ finicio, fdetencion, hinicio, hdetencion }) => {
+
    const i = moment(`${finicio} ${hinicio}`).format('YYYY-MM-DD HH:mm:ss')
    const d = moment(`${fdetencion} ${hdetencion}`).format('YYYY-MM-DD HH:mm:ss')
 

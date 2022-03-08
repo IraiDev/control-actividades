@@ -265,9 +265,7 @@ const TrPRControls = props => {
 
                      <Box key={i} isBlock>
 
-                        <div className='mx-auto'>
-                           <Numerator number={i + 1} />  
-                        </div>
+                        <Numerator className='mx-auto' number={i + 1} />
 
                         <section className='col-span-2 py-1'>
                            <CustomSelect

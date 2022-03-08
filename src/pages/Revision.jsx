@@ -121,8 +121,8 @@ const Revision = () => {
       savePRFilters({ payload: { offset, limit: prPager.limit } })
    }
 
-   const openModalReject = id => { 
-      setActivityData({...activityData, id})
+   const openModalReject = (id, estado) => { 
+      setActivityData({...activityData, id, estado})
       toggleModalReject(true)
    }
 
@@ -132,6 +132,7 @@ const Revision = () => {
    }
 
    const onChangeCheckedActivity = ({id, title, estado, revisado}) => {
+
       Alert({
          title: 'Atención',
          content: `${revisado ? 'Aprobar':'Rechazar'} revisión de la siguiente actividad: <strong>${title}</strong>, <strong>${id}</strong>`,
@@ -139,9 +140,14 @@ const Revision = () => {
          cancelText: 'No, cancelar',
          action: () => {revisado ?
             toggleCheckActivity({id_actividad: id, estado, revisado})
-            : openModalReject(id)
+            : openModalReject(id, estado)
          }
       })
+   }
+
+   const handleToggleCheckActivity = () => {
+      toggleCheckActivity({id_actividad: activityData.id, estado: activityData.estado, revisado: false, glosa_rechazo: reject_gloss})
+      onCloseModal()
    }
 
    return (
@@ -580,7 +586,7 @@ const Revision = () => {
 
                <Button 
                   className='bg-yellow-100 hover:bg-yellow-200 text-yellow-500'
-                  onClick={() => toggleCheckActivity({id_actividad: activityData.id, estado: 3, revisado: false, glosa_rechazo: reject_gloss})}
+                  onClick={handleToggleCheckActivity}
                >
                   rechazar
                </Button>

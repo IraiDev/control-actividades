@@ -22,17 +22,7 @@ export const useActivity = () => {
          const { ok, tareas, total_tareas } = body
          setIsLoading(false)
          if (ok) {
-
-            setActivities(tareas.map(task => {
-               return {
-                  ...task,
-                  esPadre: task.id_det === 20704 ? 1 : task.id_det === 20707 ? 1 : 0,
-                  esHijo: task.id_det === 20705 ? 1 : task.id_det === 20707 ? 1 : 0,
-                  tipo_actividad: task.id_det === 20706 ? 3 : task.id_det === 20708 ? 2 : 1,
-               }
-            }))
-
-            // setActivities(tareas)
+            setActivities(tareas)
             setTotal(total_tareas)
          } else {
             console.log('Error')

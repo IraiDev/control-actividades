@@ -53,7 +53,9 @@ export const useActivityPr = () => {
 
          console.log('togglecheck', body)
 
-         if (body.ok) fetchActivities()
+         if (body.ok) {
+            fetchActivities()
+         }
          else {
             Alert({
                message: 'error',
