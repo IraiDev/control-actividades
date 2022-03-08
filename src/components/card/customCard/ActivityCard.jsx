@@ -31,6 +31,17 @@ const defaultPauses = [
    { id: 1112424, desc: 'Salida a terreno...' },
 ]
 
+const HighLightSpan = ({condition, children}) => {
+   return (
+      <span className='flex gap-2 max-w-max rounded'>
+         <strong>ID:</strong> 
+         <p className={condition ? 'text-amber-600 bg-amber-200/80 px-1 rounded font-semibold' : ''} >
+            {children}
+         </p>
+      </span>
+   )
+}
+
 const ActivityCard = props => {
    const {
       addDefaultNote,
@@ -70,13 +81,12 @@ const ActivityCard = props => {
    // variables
    const ESTADO_PAUSA = estado === 1
    const ESTADO_play = estado_play_pausa === 2
-   // const isFather = props.id_det_padre === 0 && props.num_ticket_edit !== 0
-   // const isChildren = props.id_det_padre !== 0 && props.num_ticket_edit !== 0
-   const isFather = props.esPadre === 1 && props.esHijo === 0
-   const isChildren = props.esHijo === 1 && props.esPadre === 0
-   const isChildrenAndChildren = props.esHijo === 1 && props.esPadre === 1
-   const isReviewedActivity = props.tipo_actividad === 2
-   const isCoorActivity = props.tipo_actividad === 3
+   const isFather = props.es_padre === 1 && props.es_hijo === 0
+   const isChildren = props.es_hijo === 1 && props.es_padre === 0
+   const isChildrenAndFather = props.es_hijo === 1 && props.es_padre === 1
+   const isReviewedActivity = props.id_tipo_actividad === 2
+   const isCoorActivity = props.id_tipo_actividad === 4
+   const isDeliveryActivity = props.id_tipo_actividad === 3
    const isTicket = props.num_ticket_edit > 0
 
    const onCloseModals = () => {
@@ -116,8 +126,9 @@ const ActivityCard = props => {
             isChildren={isChildren}
             isFather={isFather}
             isCoorActivity={isCoorActivity}
-            isChildrenAndChildren={isChildrenAndChildren}
+            isChildrenAndFather={isChildrenAndFather}
             isReviewedActivity={isReviewedActivity}
+            isDeliveryActivity={isDeliveryActivity}
             {...props}
          >
             <CardContent title={props.actividad} cardNum={numberCard}>
@@ -130,8 +141,7 @@ const ActivityCard = props => {
 
                      <span className='flex gap-2 max-w-max rounded'>
                         <strong>ID:</strong> 
-                        <p className={isFather ? 'text-amber-600 bg-amber-200/80 px-1 rounded font-semibold' : ''}
-                        >
+                        <p className={isFather || isChildrenAndFather ? 'text-amber-600 bg-amber-200/80 px-1 rounded font-semibold' : ''} >
                            {props.id_det}
                         </p>
                      </span>

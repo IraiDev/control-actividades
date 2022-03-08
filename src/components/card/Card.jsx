@@ -11,7 +11,8 @@ const Card = (props) => {
       isFather,
       isCoorActivity,
       isReviewedActivity,
-      isChildrenAndChildren,
+      isChildrenAndFather,
+      isDeliveryActivity,
       className,
    } = props
 
@@ -60,9 +61,14 @@ const Card = (props) => {
             {props?.id_det_padre} 
          </MarkActivity>
 
-         <MarkActivity hidden={!isChildrenAndChildren} >
+         <MarkActivity hidden={!isChildrenAndFather} >
             <i className='fas fa-child' />
             <i className='fas fa-hat-cowboy' />
+            {props?.id_det_padre} 
+         </MarkActivity>
+
+         <MarkActivity hidden={!isDeliveryActivity} >
+            <i className='fas fa-truck fa-lg' />
             {props?.id_det_padre} 
          </MarkActivity>
 

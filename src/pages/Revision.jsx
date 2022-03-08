@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { ActivityContext } from '../context/ActivityContext'
 import { useActivityPr } from '../hooks/useActivityPr'
 import { useForm } from '../hooks/useForm'
@@ -37,13 +37,14 @@ const Revision = () => {
       setPRPager,
       setPROrder,
       prOrder,
-      optionsArray
+      optionsArray,
+      prFilters
    } = useContext(ActivityContext)
 
    // states
    const [multiline, setMultiline] = useState(false)
    const [activityData, setActivityData] = useState({ id: null })
-   const [options, setOptions] = useState({st: {value: 3, label: 'PARA REVISION'}})
+   const [options, setOptions] = useState({})
    const [modalReject, toggleModalReject] = useState(false)
 
    // hooks
@@ -145,10 +146,16 @@ const Revision = () => {
       })
    }
 
-   const handleToggleCheckActivity = () => {
+   const handleToggleRejectActivity = () => {
       toggleCheckActivity({id_actividad: activityData.id, estado: activityData.estado, revisado: false, glosa_rechazo: reject_gloss})
       onCloseModal()
    }
+
+   useEffect(() => {
+      setOptions({st: optionsArray?.status?.find(os => os.value === prFilters.estado[0])})
+
+      // eslint-disable-next-line
+   }, [optionsArray])
 
    return (
       <>
@@ -586,7 +593,7 @@ const Revision = () => {
 
                <Button 
                   className='bg-yellow-100 hover:bg-yellow-200 text-yellow-500'
-                  onClick={handleToggleCheckActivity}
+                  onClick={handleToggleRejectActivity}
                >
                   rechazar
                </Button>

@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Alert } from '../../helpers/alerts'
 import Button from '../ui/Button'
 import MarkActivity from '../ui/MarkActivity'
 import Modal from '../ui/Modal'
 import Switch from '../ui/Switch'
 import CustomSelect from '../ui/CustomSelect'
 import Numerator from '../ui/Numerator'
-import { Alert } from '../../helpers/alerts'
 import Box from '../ui/Box'
 
 const arr = [
@@ -56,6 +56,7 @@ const View = ({
    isCoorActivity,
    isReviewedActivity,
    isChildrenAndChildren,
+   isDeliveryActivity
 }) => {
    const navigate = useNavigate()
 
@@ -189,6 +190,11 @@ const View = ({
                <i className='fas fa-hat-cowboy' />
                {idFather} 
             </MarkActivity>
+
+            <MarkActivity hidden={!isDeliveryActivity} >
+            <i className='fas fa-truck fa-lg' />
+            {idFather} 
+         </MarkActivity>
 
          </div>
 

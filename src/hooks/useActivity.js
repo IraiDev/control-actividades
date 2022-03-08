@@ -21,6 +21,9 @@ export const useActivity = () => {
          const body = await resp.json()
          const { ok, tareas, total_tareas } = body
          setIsLoading(false)
+
+         console.log('tarjetas: ', tareas)
+
          if (ok) {
             setActivities(tareas)
             setTotal(total_tareas)
@@ -284,8 +287,6 @@ export const useActivity = () => {
          console.log(err)
       }
    }
-
-   console.log(activities)
 
    useEffect(() => {
       fetchActivities()

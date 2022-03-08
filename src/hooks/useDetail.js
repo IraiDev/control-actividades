@@ -379,7 +379,7 @@ export const useDetail = id => {
 
          if (ok) {
             setDetentions(response)
-            fetchDetail()
+            await fetchDetail()
          }
          else {
             Alert({
@@ -529,7 +529,7 @@ export const useDetail = id => {
          if (body.ok) {
             saveFilters({ payload: { reload: !filters.reload } })
             Alert({
-               content: `La actividad: <strong>${id}</strong> paso a : <strong>Revisión</strong>`,
+               content: `La actividad ID: <strong>${id}</strong> paso a : <strong>Revisión</strong>`,
                statusIcon: 'success',
                showCancelButton: false,
                showConfirmButton: false,

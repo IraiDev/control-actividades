@@ -44,6 +44,7 @@ export const useActivityPr = () => {
       glosa_rechazo,
    }) => {
       try {
+         setIsLoading(true)
          const resp = await fetchToken(
             'task/checked-activity',
             { id_actividad, estado, revisado, glosa_rechazo },
@@ -51,10 +52,14 @@ export const useActivityPr = () => {
          )
          const body = await resp.json()
 
-         console.log('togglecheck', body)
-
          if (body.ok) {
             fetchActivities()
+            Alert({
+               statusIcon: 'success',
+               content: `La actividad ID: <strong>${id_actividad}</strong> ha sido ${revisado ? 'aprobada' : 'rechazada'}`,
+               showCancelButton: false,
+               showConfirmButton: false,
+            })
          }
          else {
             Alert({
@@ -63,14 +68,17 @@ export const useActivityPr = () => {
                content: body.response,
                showCancelButton: false,
             })
+            setIsLoading(false)
          }
       } catch (err) {
          console.log(err)
+         setIsLoading(false)
       }
    }
 
    const onDistribution = async ({ distribuciones = [], id_actividad }) => {
       try {
+         setIsLoading(true)
          const resp = await fetchToken(
             'task/time-distribution',
             { distribuciones, id_actividad },
@@ -80,14 +88,21 @@ export const useActivityPr = () => {
 
          if (body.ok) {
             fetchActivities()
-            console.log('salio bien', body)
+            setIsLoading(true)
          }
          else{
-            console.log('salio mal ',body)
+            Alert({
+               icon: 'error',
+               title: 'Atención',
+               content: body.response,
+               showCancelButton: false,
+            })
+            setIsLoading(false)
          }
 
       } catch (err) {
          console.log(err)
+         setIsLoading(false)
       }
    }
 

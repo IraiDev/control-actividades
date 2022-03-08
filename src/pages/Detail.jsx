@@ -498,23 +498,23 @@ const Detail = () => {
          
          if (isRuning) await onPlayPause({ id_actividad: activity.id_det, mensaje: 'Pausa para pasar a revisión' })
 
-         if (isTicket) {
-            setValues({...values, tiempo_total: activity.tiempo_trabajado})
-            toggleModalPR(true)
-         }
-         else {
-            Alert({
-               title: 'Atención',
-               content: 'La actividad pasara a estado <strong>Para Revisión</strong>',
-               confirmText: 'Si, Pasar a revisión',
-               cancelText: 'No, cancelar',
-               action: () => {
-                  navigate(routes.activity, { replace: true })
-                  toggleState({})
-                  reset()
-               }
-            })
-         }
+         // if (isTicket) {
+         setValues({...values, tiempo_total: activity.tiempo_trabajado})
+         toggleModalPR(true)
+         // }
+         // else {
+         // Alert({
+         //    title: 'Atención',
+         //    content: 'La actividad pasara a estado <strong>Para Revisión</strong>',
+         //    confirmText: 'Si, Pasar a revisión',
+         //    cancelText: 'No, cancelar',
+         //    action: () => {
+         //       navigate(routes.activity, { replace: true })
+         //       toggleState({})
+         //       reset()
+         //    }
+         // })
+         // }
       }
 
       if(isRuning) {
@@ -706,12 +706,14 @@ const Detail = () => {
                      onNone={() => onChangePriority(1000, activity.id_det)}
                      id={activity.id_det}
                      idFather={activity.id_det_padre}
-                     isChildren={activity.esHijo === 1 && activity.esPadre === 0}
-                     isFather={activity.esPadre === 1 && activity.esHijo === 0}
-                     isCoorActivity={activity.tipo_actividad === 3}
-                     isReviewedActivity={activity.tipo_actividad === 2}
-                     isChildrenAndChildren={activity.esHijo === 1 && activity.esPadre === 1}
+                     isChildren={activity.es_hijo === 1 && activity.es_padre === 0}
+                     isFather={activity.es_padre === 1 && activity.es_hijo === 0}
+                     isChildrenAndChildren={activity.es_hijo === 1 && activity.es_padre === 1}
+                     isCoorActivity={activity.id_tipo_actividad === 4}
+                     isReviewedActivity={activity.id_tipo_actividad === 2}
+                     isDeliveryActivity={activity.id_tipo_actividad === 3}
                   >
+
                      <AlertBar 
                         validation={validation().isSave} 
                         isCustom={options?.ur?.id !== options?.ue?.id} 
@@ -777,9 +779,10 @@ const Detail = () => {
                               />
                               <span className={`
                                  px-2 py-0.5 font-semibold rounded-full text-sm mt-2 block w-max
-                                 ${activity.tipo_actividad === 1 ? 'bg-indigo-100 text-indigo-500' 
-                                    : activity.tipo_actividad === 2 ? 'bg-emerald-100 text-emerald-500' 
-                                    : activity.tipo_actividad === 3 ? 'bg-orange-100 text-orange-500' 
+                                 ${activity.id_tipo_actividad === 1 ? 'bg-indigo-100 text-indigo-500' 
+                                    : activity.id_tipo_actividad === 2 ? 'bg-emerald-100 text-emerald-500' 
+                                    : activity.id_tipo_actividad === 3 ? 'bg-red-100 text-red-500' 
+                                    : activity.id_tipo_actividad === 4 ? 'bg-orange-100 text-orange-500' 
                                     : 'bg-zinc-100 text-black'
                                  }
                               `}>
@@ -1083,7 +1086,7 @@ const Detail = () => {
                            </Button>
 
                            <Button
-                              hidden={activity.tipo_actividad === 3 || activity.tipo_actividad === 2}
+                              hidden={!(activity.id_tipo_actividad === 1)}
                               className='text-slate-600 bg-slate-100 hover:bg-slate-200'
                               onClick={openModalClone}>
                               <i className='fas fa-clone' />

@@ -30,7 +30,7 @@ const TrPRControls = props => {
 
    const handleCreateTimes = () => {
 
-      if (time > tr) {
+      if (Number(time) > Number(tr.toFixed(2))) {
          Alert({
             icon: 'warn',
             title: 'Atención',
@@ -141,7 +141,8 @@ const TrPRControls = props => {
    }, [])
 
    useEffect(() => {
-      setTr(props.tiempo_trabajado.toFixed(4) - times.reduce((a, b) => Number(a) + Number(b.tiempo_dist_act), 0))
+      const total = props.tiempo_trabajado.toFixed(2)
+      setTr(Number(total) - times.reduce((a, b) => Number(a) + Number(b?.tiempo_dist_act), 0).toFixed(2))
 
       // eslint-disable-next-line
    }, [times])
@@ -203,7 +204,7 @@ const TrPRControls = props => {
                      <NumberFormat 
                         className='text-yellow-500'
                         value={props.tiempo_trabajado} 
-                        decimalScale={4} 
+                        decimalScale={2} 
                         fixedDecimalScale={false}
                         displayType='text' 
                      /> 
@@ -211,7 +212,7 @@ const TrPRControls = props => {
                      <NumberFormat 
                         className={tr < 0 ? 'text-red-500' : 'text-emerald-500'}
                         value={tr} 
-                        decimalScale={4} 
+                        decimalScale={2} 
                         fixedDecimalScale={false}
                         displayType='text' 
                      />
