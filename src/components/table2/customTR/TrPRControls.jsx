@@ -141,7 +141,7 @@ const TrPRControls = props => {
    }, [])
 
    useEffect(() => {
-      const total = props.tiempo_trabajado.toFixed(2)
+      const total = props.tiempo_cliente.toFixed(2)
       setTr(Number(total) - times.reduce((a, b) => Number(a) + Number(b?.tiempo_dist_act), 0).toFixed(2))
 
       // eslint-disable-next-line
@@ -203,7 +203,7 @@ const TrPRControls = props => {
                   <div className='font-semibold text-sm col-span-1 flex items-baseline gap-2 justify-center'>
                      <NumberFormat 
                         className='text-yellow-500'
-                        value={props.tiempo_trabajado} 
+                        value={props.tiempo_cliente} 
                         decimalScale={2} 
                         fixedDecimalScale={false}
                         displayType='text' 

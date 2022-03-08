@@ -13,6 +13,7 @@ const Card = (props) => {
       isReviewedActivity,
       isChildrenAndFather,
       isDeliveryActivity,
+      isTicket,
       className,
    } = props
 
@@ -41,33 +42,51 @@ const Card = (props) => {
 
          <PingIndicator hidden={!showPing} />
 
-         <MarkActivity hidden={!isChildren} >
+         <MarkActivity 
+            condicion={isTicket}
+            hidden={!isChildren} 
+         >
             <i className='fas fa-child fa-lg' />
             {props?.id_det_padre}
          </MarkActivity>
 
-         <MarkActivity hidden={!isFather} >
+         <MarkActivity 
+            condicion={isTicket}
+            hidden={!isFather} 
+         >
             <i className='fas fa-hat-cowboy fa-lg' />
             {props?.id_det} 
          </MarkActivity>
 
-         <MarkActivity hidden={!isCoorActivity} >
+         <MarkActivity 
+            condicion={isTicket}
+            hidden={!isCoorActivity} 
+         >
             <i className='far fa-calendar-alt fa-lg' />
             {props?.id_det_padre} 
          </MarkActivity>
 
-         <MarkActivity hidden={!isReviewedActivity} >
+         <MarkActivity 
+            condicion={isTicket}
+            hidden={!isReviewedActivity} 
+         >
             <i className='fas fa-calendar-check fa-lg' />
             {props?.id_det_padre} 
          </MarkActivity>
 
-         <MarkActivity hidden={!isChildrenAndFather} >
+         <MarkActivity 
+            condicion={isTicket}
+            hidden={!isChildrenAndFather} 
+         >
             <i className='fas fa-child' />
             <i className='fas fa-hat-cowboy' />
             {props?.id_det_padre} 
          </MarkActivity>
 
-         <MarkActivity hidden={!isDeliveryActivity} >
+         <MarkActivity 
+            condicion={isTicket}
+            hidden={!isDeliveryActivity} 
+         >
             <i className='fas fa-truck fa-lg' />
             {props?.id_det_padre} 
          </MarkActivity>

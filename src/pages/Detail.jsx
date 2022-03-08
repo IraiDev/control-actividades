@@ -531,6 +531,19 @@ const Detail = () => {
       action()
    }
 
+   const finishActivity = () => {
+      Alert({
+         title: 'Atención',
+         content: '¿Estas seguro de terminar la actividad?',
+         confirmText: 'Si, terminar',
+         cancelText: 'No, cancelar',
+         action: () => {
+            toggleState({ tiempo_cliente: activity.tiempo_trabajado, estado: 5 })
+            navigate(routes.activity, { replace: true })
+         }
+      })
+   }
+
    const handleUpdateState = () => {
 
       if (values.tiempo_total !== 0) {
@@ -712,6 +725,7 @@ const Detail = () => {
                      isCoorActivity={activity.id_tipo_actividad === 4}
                      isReviewedActivity={activity.id_tipo_actividad === 2}
                      isDeliveryActivity={activity.id_tipo_actividad === 3}
+                     isTicket={activity.num_ticket_edit > 0}
                   >
 
                      <AlertBar 
@@ -1121,12 +1135,22 @@ const Detail = () => {
                            </Button>
 
                            <Button
-                              hidden={activity.estado !== 2}
+                              hidden={activity.estado !== 2 || activity.id_tipo_actividad !== 1}
                               title='Pasar actividad a revisión'
                               className='text-orange-400 bg-orange-50 hover:bg-orange-100'
                               onClick={validateActivityIsRunning}
                            >
                               <i className='fas fa-eye' />
+                           </Button>
+
+                           <Button
+                              hidden={activity.id_tipo_actividad === 1}
+                              title='Pasar actividad a revisión'
+                              className='text-pink-400 bg-pink-50 hover:bg-pink-100'
+                              onClick={finishActivity}
+                           >
+                              <i className='fas fa-check-double' />
+                              terminar
                            </Button>
 
                         </section>

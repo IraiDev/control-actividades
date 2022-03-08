@@ -363,7 +363,7 @@ const NavBar = () => {
                      />
                      <CloneSelect
                         isRequired
-                        label='Solicitante'
+                        field='Solicitante'
                         options={users}
                         value={options.us}
                         onChange={option =>

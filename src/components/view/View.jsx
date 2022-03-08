@@ -56,7 +56,8 @@ const View = ({
    isCoorActivity,
    isReviewedActivity,
    isChildrenAndChildren,
-   isDeliveryActivity
+   isDeliveryActivity,
+   isTicket,
 }) => {
    const navigate = useNavigate()
 
@@ -151,6 +152,7 @@ const View = ({
             {children}
 
             <MarkActivity 
+               condicion={isTicket}
                position='absolute -top-3.5 left-1/2 transform -translate-x-1/2'
                hidden={!isChildren}
             >
@@ -159,6 +161,7 @@ const View = ({
             </MarkActivity>
 
             <MarkActivity 
+               condicion={isTicket}
                position='absolute -top-3.5 left-1/2 transform -translate-x-1/2'
                hidden={!isFather}
             >
@@ -167,6 +170,7 @@ const View = ({
             </MarkActivity>
 
             <MarkActivity 
+               condicion={isTicket}
                position='absolute -top-3.5 left-1/2 transform -translate-x-1/2'
                hidden={!isCoorActivity}
             >
@@ -175,6 +179,7 @@ const View = ({
             </MarkActivity>
 
             <MarkActivity 
+               condicion={isTicket}
                position='absolute -top-3.5 left-1/2 transform -translate-x-1/2'
                hidden={!isReviewedActivity}
             >
@@ -183,6 +188,7 @@ const View = ({
             </MarkActivity>
 
             <MarkActivity 
+               condicion={isTicket}
                position='absolute -top-3.5 left-1/2 transform -translate-x-1/2'
                hidden={!isChildrenAndChildren}
             >
@@ -191,10 +197,13 @@ const View = ({
                {idFather} 
             </MarkActivity>
 
-            <MarkActivity hidden={!isDeliveryActivity} >
-            <i className='fas fa-truck fa-lg' />
-            {idFather} 
-         </MarkActivity>
+            <MarkActivity 
+               condicion={isTicket}
+               hidden={!isDeliveryActivity} 
+            >
+               <i className='fas fa-truck fa-lg' />
+               {idFather} 
+            </MarkActivity>
 
          </div>
 

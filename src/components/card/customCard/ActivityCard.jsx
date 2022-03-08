@@ -129,6 +129,7 @@ const ActivityCard = props => {
             isChildrenAndFather={isChildrenAndFather}
             isReviewedActivity={isReviewedActivity}
             isDeliveryActivity={isDeliveryActivity}
+            isTicket={isTicket}
             {...props}
          >
             <CardContent title={props.actividad} cardNum={numberCard}>
