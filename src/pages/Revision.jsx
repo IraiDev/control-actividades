@@ -79,8 +79,11 @@ const Revision = () => {
             options.us?.length > 0 ? options.us.map(item => item.label) : [],
          subProy:
             options.sp?.length > 0 ? options.sp.map(item => item.value) : [],
+         revisor:
+            options.ur?.length > 0 ? options.sp.map(item => item.id) : [],
          id_actividad: id,
          titulo: title,
+         ticket,
          descripcion: desc,
          offset: 0,
       }
