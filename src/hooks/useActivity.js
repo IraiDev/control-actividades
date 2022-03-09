@@ -22,8 +22,6 @@ export const useActivity = () => {
          const { ok, tareas, total_tareas } = body
          setIsLoading(false)
 
-         console.log('tarjetas: ', tareas)
-
          if (ok) {
             setActivities(tareas)
             setTotal(total_tareas)

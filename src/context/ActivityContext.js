@@ -48,6 +48,7 @@ function ActivityProvider({ children }) {
    const [prFilters, setPRFilters] = useState(initPRFilters)
    const [prOrder, setPROrder] = useState({})
    const [prPager, setPRPager] = useState({ page: 1, limit: 12 })
+   const [refresh, setRefresh] = useState(false)
 
    const login = async ({ email }) => {
       try {
@@ -84,6 +85,9 @@ function ActivityProvider({ children }) {
       try {
          const resp = await fetchToken('task/get-filters')
          const body = await resp.json()
+
+         console.log('estados: ',body.estados)
+         console.log('tipos: ',body.tipos_actividad)
 
          if (body.ok) {
             setOptionsArray({
@@ -182,6 +186,8 @@ function ActivityProvider({ children }) {
       setPRPager,
       setPROrder,
       prOrder,
+      setRefresh,
+      refresh
    }
    return (
       <ActivityContext.Provider value={value}>

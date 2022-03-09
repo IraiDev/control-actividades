@@ -6,10 +6,10 @@ import { Alert } from '../helpers/alerts'
 import { fetchToken, fetchTokenFile } from '../helpers/fetch'
 import { routes } from '../types/types'
 
-export const useDetail = (id, ticket) => {
+export const useDetail = id => {
    const navigate = useNavigate()
    const { setIsLoading } = useContext(UiContext)
-   const { filters, saveFilters } = useContext(ActivityContext)
+   const { filters, saveFilters, refresh, setRefresh } = useContext(ActivityContext)
    const [activity, setActivity] = useState({})
    const [detentions, setDetentions] = useState([])
 
@@ -549,7 +549,7 @@ export const useDetail = (id, ticket) => {
       }
    }
 
-   const getPredecessor = async ({ id_actividad = id, id_ticket = ticket }) => {
+   const getPredecessor = async ({ id_actividad = id, id_ticket }) => {
       try {
          setIsLoading(true)
          const resp = await fetchToken('task/get-predecesoras', { id_actividad, id_ticket }, 'POST')
@@ -589,8 +589,11 @@ export const useDetail = (id, ticket) => {
          const resp = await fetchToken('task/manage-predecesoras', { id_actividad, predecesoras  }, 'POST')
          const body = await resp.json()
 
-      if (body.ok) setIsLoading(false)
-         else{
+      if (body.ok) {
+         setRefresh(!refresh)
+         setIsLoading(false)
+      }
+      else{
             setIsLoading(false)
             Alert({
                icon: 'error',
@@ -612,7 +615,7 @@ export const useDetail = (id, ticket) => {
 
       return () => null
       // eslint-disable-next-line
-   }, [id])
+   }, [id, refresh])
 
    return {
       activity,

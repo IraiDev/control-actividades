@@ -1,7 +1,12 @@
 
-const Switch = ({name, value, onChange}) => {
+const Switch = ({name, value, onChange, hidden = false}) => {
+
+  if (hidden) return null
+
   return (
-    <div className='flex gap-2 items-center justify-between px-7 w-full text-sm text-zinc-500 my-1'>
+    <div 
+      className='flex gap-2 items-center justify-between px-7 w-full text-sm text-zinc-500 my-1'
+    >
       {name}
       <div 
         className={`

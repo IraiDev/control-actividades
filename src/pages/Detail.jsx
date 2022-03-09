@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import { ActivityContext } from '../context/ActivityContext'
 import { useNavigate, useParams } from 'react-router-dom'
-import { validateDate } from '../helpers/helpersFunc'
+import { validateDate, validatePredecessor } from '../helpers/helpersFunc'
 import { useDetail } from '../hooks/useDetail'
 import { useForm } from '../hooks/useForm'
 import { routes } from '../types/types'
@@ -24,6 +24,7 @@ import ViewSection from '../components/view/ViewSection'
 import ViewFooter from '../components/view/ViewFooter'
 import NumberFormat from 'react-number-format'
 import Box from '../components/ui/Box'
+import Switch from '../components/ui/Switch'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
@@ -160,6 +161,7 @@ const Detail = () => {
    const [modalPause, toggleModalPause] = useState(false)
    const [modalTimer, toggleModalTimer] = useState(false)
    const [modalPR, toggleModalPR] = useState(false)
+   const [modalReject, setModalReject] = useState(false)
 
    // options
    const [options, setOptions] = useState(initOptions)
@@ -197,6 +199,7 @@ const Detail = () => {
    })
 
    const [timeValues, setTimeValues] = useState([])
+   const [sw, setSw] = useState({a: {value: false, resp: true}, b: {value: false, resp: false}})
 
    const [{
       hinicio,
@@ -315,7 +318,9 @@ const Detail = () => {
       toggleModalClone(false)
       toggleModalTimer(false)
       toggleModalPR(false)
+      setModalReject(false)
       setCloneFiles(null)
+      setSw({a: {value: false, resp: false}, b: {value: false, resp: true}})
       onCleanFile(Math.random().toString(36))
       setValues({ desc: '', id: null, id_ref: null })
       reset()
@@ -494,54 +499,80 @@ const Detail = () => {
 
    const validateActivityIsRunning = () => {
 
-      const action = async () => {
+      const callback = () => {
+         const action = async () => {
          
-         if (isRuning) await onPlayPause({ id_actividad: activity.id_det, mensaje: 'Pausa para pasar a revisión' })
+            if (isRuning) await onPlayPause({ id_actividad: activity.id_det, mensaje: 'Pausa para pasar a revisión' })
+            setValues({...values, tiempo_total: activity.tiempo_trabajado})
+            toggleModalPR(true)
 
-         // if (isTicket) {
-         setValues({...values, tiempo_total: activity.tiempo_trabajado})
-         toggleModalPR(true)
-         // }
-         // else {
-         // Alert({
-         //    title: 'Atención',
-         //    content: 'La actividad pasara a estado <strong>Para Revisión</strong>',
-         //    confirmText: 'Si, Pasar a revisión',
-         //    cancelText: 'No, cancelar',
-         //    action: () => {
-         //       navigate(routes.activity, { replace: true })
-         //       toggleState({})
-         //       reset()
-         //    }
-         // })
-         // }
+         }
+   
+         if(isRuning) {
+            Alert({
+               title: 'Atención',
+               content: 'Debes pausar la actividad para cambiar el estado a Revisión\n¿Pausar actividad?',
+               confirmText: 'Si, Pausar actividad',
+               calcelText: 'No, cancelar',
+               action
+            })
+            return
+         }
+         
+         action()
       }
 
-      if(isRuning) {
-         Alert({
-            title: 'Atención',
-            content: 'Debes pausar la actividad para cambiar el estado a Revisión\n¿Pausar actividad?',
-            confirmText: 'Si, Pausar actividad',
-            calcelText: 'No, cancelar',
-            action
-         })
-         return
-      }
-      
-      action()
+      validatePredecessor({
+         array: activity.predecesoras, 
+         callback, 
+         state: 3, 
+         options: optionsArray
+      })
    }
 
-   const finishActivity = () => {
-      Alert({
-         title: 'Atención',
-         content: '¿Estas seguro de terminar la actividad?',
-         confirmText: 'Si, terminar',
-         cancelText: 'No, cancelar',
-         action: () => {
+   const finishActivity = (type) => {
+
+      const callback = () => {
+
+         if(type === 3) return setModalReject(true)
+
+         const action = () => {
             toggleState({ tiempo_cliente: activity.tiempo_trabajado, estado: 5 })
             navigate(routes.activity, { replace: true })
          }
+
+         Alert({
+            title: 'Atención',
+            content: '¿Estas seguro de terminar la actividad?',
+            confirmText: 'Si, terminar',
+            cancelText: 'No, cancelar',
+            action
+         })
+      }
+
+      validatePredecessor({
+         array: activity.predecesoras, 
+         callback, 
+         state: 5, 
+         options: optionsArray
       })
+   }
+
+   const handleFinshDeliveryActivity = () => {
+
+      if ((sw.a.value === false && sw.b.value === false)) {
+         Alert({
+            title: 'Atención',
+            content: 'Debes seleccionar una de las opcions, rechazada o aprobada',
+            showCancelButton: false,
+         })
+         return
+      }
+
+      const find = sw.a.value ? sw.a.resp : sw.a.resp
+
+      toggleState({ tiempo_cliente: activity.tiempo_trabajado, estado: 5, rechazada: find })
+      navigate(routes.activity, { replace: true })
    }
 
    const handleUpdateState = () => {
@@ -658,8 +689,8 @@ const Detail = () => {
          setFields({
             ...fields,
             title: activity.actividad || 'Sin titulo',
-            description: activity.func_objeto,
-            gloss: activity.glosa_explicativa,
+            description: activity.func_objeto || '',
+            gloss: activity.glosa_explicativa || '',
             ticket: activity.num_ticket_edit,
             priority: activity.num_prioridad,
             time: activity.tiempo_estimado,
@@ -1148,10 +1179,10 @@ const Detail = () => {
                            </Button>
 
                            <Button
-                              hidden={activity.id_tipo_actividad === 1}
-                              title='Pasar actividad a revisión'
+                              hidden={activity.id_tipo_actividad === 1 || activity.estado === 1}
+                              title='Teminar actividad'
                               className='text-pink-400 bg-pink-50 hover:bg-pink-100'
-                              onClick={finishActivity}
+                              onClick={() => finishActivity(activity.id_tipo_actividad)}
                            >
                               <i className='fas fa-check-double' />
                               terminar
@@ -1178,6 +1209,52 @@ const Detail = () => {
                   </View>
                </ViewContainer>
 
+               {/* modal reject */}
+               <Modal
+                  showModal={modalReject}
+                  isBlur={false}
+                  onClose={onCloseModals}
+                  className='max-w-xl'
+                  padding='p-4 md:p-6'
+                  title='Terminar actividad de entrega'>
+
+                  <div>
+
+                     <p className='text-center mt-10'>
+                        ¿La actividad fue aprobada o rechazada por el cliente?
+                     </p>
+
+                     <section className='flex justify-around mt-5 w-80 mx-auto'>
+                        
+                        <Switch 
+                           value={sw.a.value} 
+                           name='Aprobada' 
+                           onChange={(value) => setSw({a: {...sw.a, value}, b: {...sw.b, value: false}})}
+                         />
+                        
+                        <Switch 
+                           value={sw.b.value} 
+                           name='Rechazada' 
+                           onChange={(value) => setSw({a: {...sw.a, value: false}, b: {...sw.b, value}})}
+                         />
+                        
+                     </section>
+                     
+                     <section className='flex justify-between mt-10'>
+                        <Button
+                           className='text-red-500 hover:bg-red-100'
+                           onClick={onCloseModals}>
+                           Cancelar
+                        </Button>
+                        <Button
+                           className='text-emerald-500 hover:bg-emerald-100'
+                           onClick={handleFinshDeliveryActivity}>
+                           terminar actividad
+                        </Button>
+                     </section>
+                  </div>
+               </Modal>
+
                {/* modal PR */}
                <Modal
                   showModal={modalPR}
@@ -1196,6 +1273,7 @@ const Detail = () => {
                            name='tiempo_cliente'
                            value={tiempo_cliente} 
                            onChange={onChangeValues}
+                           isNumber
                         />
 
                         <Input 
@@ -1203,6 +1281,7 @@ const Detail = () => {
                            name='tiempo_zionit'
                            value={tiempo_zionit} 
                            onChange={onChangeValues}
+                           isNumber
                         />
 
                         <div className='mt-2 text-center'>

@@ -22,8 +22,6 @@ export const useActivityPr = () => {
          const body = await resp.json()
          const { ok, tareas, total_tareas } = body
 
-         console.log(tareas)
-
          setIsLoading(false)
          if (ok) {
             setActivitiesPR(tareas)

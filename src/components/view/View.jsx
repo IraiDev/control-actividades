@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react'
+import { ActivityContext } from '../../context/ActivityContext'
 import { useNavigate } from 'react-router-dom'
 import { useDetail } from '../../hooks/useDetail'
 import { Alert } from '../../helpers/alerts'
@@ -9,7 +10,6 @@ import Switch from '../ui/Switch'
 import CustomSelect from '../ui/CustomSelect'
 import Numerator from '../ui/Numerator'
 import Box from '../ui/Box'
-import { ActivityContext } from '../../context/ActivityContext'
 
 const initOptions = {
    act: {value: null, label: 'niguno'},
@@ -125,8 +125,6 @@ const View = props => {
 
       setRestrictions(list)
       setArrOptions(activities?.map(a => ({value: a.id_det, label: a.descripcion_actividad})))
-
-      console.log(activities?.map(a => ({value: a.id_det, label: a.descripcion_actividad})))
 
       setShowModal(true)
    }
@@ -276,7 +274,7 @@ const View = props => {
 
                   <CustomSelect 
                      className='col-span-2' 
-                     options={optionsArray?.status?.filter(os => os.value !== 0 && os.value !== 10 && os.value !== 8 && os.value !== props.estado)}
+                     options={optionsArray?.status?.filter(os => os.value === 2 || os.value === 1)}
                      width='w-full' 
                      onChange={(option) => setOptions({ ...options, acci: option})}
                      value={options.acci}
@@ -292,14 +290,14 @@ const View = props => {
 
                   <CustomSelect 
                      className='col-span-2' 
-                     options={optionsArray?.status} 
+                     options={optionsArray?.status?.filter(os => os.value !== 0 && os.value !== 10 && os.value !== 8 && os.value !== props.estado)}
                      width='w-full' 
                      onChange={(option) => setOptions({ ...options, cond: option})}
                      value={options.cond}
                   />
 
                   <div className='col-span-2'>
-                     <Switch name='Alta' value={sw.isHigh.status} onChange={(value) => setSw({isHigh: {...sw.isHigh, status: value}, isLow: {...sw.isLow, status: false}})} />
+                     <Switch hidden name='Alta' value={sw.isHigh.status} onChange={(value) => setSw({isHigh: {...sw.isHigh, status: value}, isLow: {...sw.isLow, status: false}})} />
                      
                      <Switch name='Relajada' value={sw.isLow.status} onChange={(value) => setSw({isLow: {...sw.isLow, status: value}, isHigh: {...sw.isHigh, status: false}})} />
                   </div>
