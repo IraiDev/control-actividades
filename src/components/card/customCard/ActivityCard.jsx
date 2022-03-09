@@ -95,7 +95,7 @@ const ActivityCard = props => {
    }
 
    const handleUpdateState = () => {
-      if (time === '' || time === '0') {
+      if (time === '' || time === '0' || time === 0) {
          Alert({
             icon: 'warn',
             title: 'Atencion',

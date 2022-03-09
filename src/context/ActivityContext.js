@@ -86,9 +86,6 @@ function ActivityProvider({ children }) {
          const resp = await fetchToken('task/get-filters')
          const body = await resp.json()
 
-         console.log('estados: ',body.estados)
-         console.log('tipos: ',body.tipos_actividad)
-
          if (body.ok) {
             setOptionsArray({
                subProjects: body.subproyectos.map(item => {

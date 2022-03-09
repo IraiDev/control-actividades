@@ -569,7 +569,7 @@ const Detail = () => {
          return
       }
 
-      const find = sw.a.value ? sw.a.resp : sw.a.resp
+      const find = sw.a.value ? false : true
 
       toggleState({ tiempo_cliente: activity.tiempo_trabajado, estado: 5, rechazada: find })
       navigate(routes.activity, { replace: true })
