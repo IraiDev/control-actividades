@@ -27,13 +27,14 @@ const initPRFilters = {
    proyecto: [],
    encargado: [],
    solicitante: [],
+   revisor: [],
    subProy: [],
    numero_ticket: '',
    id_actividad: '',
    descripcion: '',
    titulo: '',
    offset: 0,
-   limit: 20,
+   limit: 12,
    reload: false,
 }
 
