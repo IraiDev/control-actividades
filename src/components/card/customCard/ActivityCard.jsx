@@ -132,6 +132,17 @@ const ActivityCard = props => {
             isTicket={isTicket}
             {...props}
          >
+
+            {isRestricted && 
+               <span 
+                  className='h-7 w-7 flex justify-center items-center mx-auto absolute top-3 right-12'
+                  title='Actividad con predecesores y restricciones'
+               >
+                  <i className='fas fa-link' />
+                  {/* <i className='fas fa-lock' /> */}
+               </span>
+            }
+
             <CardContent title={props.actividad} cardNum={numberCard}>
 
                <CardSection colCount={3}>
@@ -168,7 +179,7 @@ const ActivityCard = props => {
 
                   </section>
 
-                  <aside className='capitalize relative'>
+                  <aside className='capitalize'>
                      <P
                         tag='revisor'
                         value={props.abrev_revisor || '--'}
@@ -183,15 +194,6 @@ const ActivityCard = props => {
                         tag='estado'
                         value={ESTADO_PAUSA ? ' pendiente' : ' en trabajo'}
                      />
-
-                     {isRestricted && 
-                        <span 
-                           className='h-7 w-7 flex justify-center items-center rounded-full bg-indigo-200 text-indigo-500 mx-auto absolute -bottom-5 right-3'
-                           title='Actividad con predecesores y restricciones'
-                        >
-                           <i className='fas fa-link' />
-                        </span>
-                     }
 
                   </aside>
                </CardSection>
