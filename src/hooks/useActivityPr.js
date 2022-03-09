@@ -57,7 +57,7 @@ export const useActivityPr = () => {
                content: `La actividad ID: <strong>${id_actividad}</strong> ha sido ${revisado ? 'aprobada' : 'rechazada'}`,
                showCancelButton: false,
                showConfirmButton: false,
-               timer: 3000
+               timer: 2000
             })
          }
          else {

@@ -80,10 +80,10 @@ const Revision = () => {
          subProy:
             options.sp?.length > 0 ? options.sp.map(item => item.value) : [],
          revisor:
-            options.ur?.length > 0 ? options.sp.map(item => item.id) : [],
+            options.ur?.length > 0 ? options.ur.map(item => item.id) : [],
          id_actividad: id,
          titulo: title,
-         ticket,
+         numero_ticket: ticket,
          descripcion: desc,
          offset: 0,
       }
@@ -202,6 +202,16 @@ const Revision = () => {
                            name='ticket'
                            value={ticket}
                            onChange={onChangeValues}
+                           filterDown={() => setPROrder({ orden_ticket: 'desc' })}
+                           filterUp={() => setPROrder({ orden_ticket: 'asc' })}
+                           upActive={setActive({
+                              param: 'orden_ticket',
+                              value: 'asc',
+                           })}
+                           downActive={setActive({
+                              param: 'orden_ticket',
+                              value: 'desc',
+                           })}
                         />
                      </Th>
 
