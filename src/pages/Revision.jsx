@@ -154,6 +154,16 @@ const Revision = () => {
       onCloseModal()
    }
 
+   const calculateTime = (act) => {
+      const time = Number(act?.tiempo_cliente.toFixed(2)) - act?.tiempos_distribuidos?.reduce((a, b) => Number(a) + Number(b?.tiempo_dist_act), 0).toFixed(2)
+      const length = act?.tiempos_distribuidos?.length
+
+      return {
+         time,
+         length
+      }
+   }
+
    useEffect(() => {
       setOptions({st: optionsArray?.status?.find(os => os.value === prFilters.estado[0])})
 
@@ -528,7 +538,7 @@ const Revision = () => {
 
                            <Td isStickyRight >
                                  
-                              { act.estado !== 5 &&
+                              { act.estado !== 5 ?
                                  <div className='flex gap-2 justify-center'>
                                     <Button 
                                        className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 border border-emerald-300'
@@ -544,6 +554,24 @@ const Revision = () => {
                                        <i className='fas fa-times' />
                                     </Button>
                                  </div>
+
+                              : 
+                              <span className={`
+
+                                    px-2 py-1 font-bold rounded-full text-sm
+                                       ${calculateTime(act).time === 0 ? 'text-green-500 bg-green-200' 
+                                          : calculateTime(act).length === 0 ? 'text-amber-500 bg-amber-200'
+                                             : 'text-red-500 bg-red-200'}
+                                    
+                                 `}
+                              >
+                                 {
+                                    <>
+                                       <i className='fas fa-clock mr-3' />
+                                       {calculateTime(act).time}
+                                    </>
+                                 }
+                              </span>
                               }
 
                            </Td>

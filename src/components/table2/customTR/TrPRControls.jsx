@@ -164,7 +164,22 @@ const TrPRControls = props => {
             title='pasar a entregado'
          >
 
-            <div className='mt-10'>
+            <div className='mt-5'>
+
+               <section className='p-2 mb-5 bg-zinc-100 rounded-md'>
+
+                  <h1 className='capitalize mb-2'>
+                     <span className='font-semibold mr-2'>
+                        Titulo:
+                     </span>  
+                     {props.actividad}, {props.id_det}
+                  </h1>
+
+                  <h1 className='capitalize font-semibold text-sm'>descripción</h1>
+
+                  <p className='text-zinc-500 text-xs'>{props.func_objeto}</p>
+
+               </section>
 
                <Box className='bg-white' isBlock >
                   

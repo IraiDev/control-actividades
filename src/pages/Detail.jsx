@@ -764,6 +764,7 @@ const Detail = () => {
                         validation={validation().isSave} 
                         isCustom={options?.ur?.id !== options?.ue?.id} 
                         customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
+                        position='top-20'
                      />
 
                      <ViewSection lg cols={8}>
