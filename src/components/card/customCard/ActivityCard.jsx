@@ -81,6 +81,7 @@ const ActivityCard = props => {
    const isCoorActivity = props.id_tipo_actividad === 4
    const isDeliveryActivity = props.id_tipo_actividad === 3
    const isTicket = props.num_ticket_edit > 0
+   const isRestricted = props.predecesoras.length > 0
 
    const onCloseModals = () => {
       reset()
@@ -167,7 +168,7 @@ const ActivityCard = props => {
 
                   </section>
 
-                  <aside className='capitalize'>
+                  <aside className='capitalize relative'>
                      <P
                         tag='revisor'
                         value={props.abrev_revisor || '--'}
@@ -182,6 +183,16 @@ const ActivityCard = props => {
                         tag='estado'
                         value={ESTADO_PAUSA ? ' pendiente' : ' en trabajo'}
                      />
+
+                     {isRestricted && 
+                        <span 
+                           className='h-7 w-7 flex justify-center items-center rounded-full bg-indigo-200 text-indigo-500 mx-auto absolute -bottom-5 right-3'
+                           title='Actividad con predecesores y restricciones'
+                        >
+                           <i className='fas fa-link' />
+                        </span>
+                     }
+
                   </aside>
                </CardSection>
 

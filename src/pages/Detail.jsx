@@ -1153,7 +1153,7 @@ const Detail = () => {
                            )}
 
                            <Button
-                              hidden={activity.estado === 1}
+                              hidden={activity.estado === 1|| (activity.es_padre === 1 && activity.es_hijo === 0 && isTicket)}
                               className={
                                  activity.estado_play_pausa === 2
                                     ? 'text-red-400 bg-red-50 hover:bg-red-100'
@@ -1170,7 +1170,7 @@ const Detail = () => {
                            </Button>
 
                            <Button
-                              hidden={activity.estado !== 2 || activity.id_tipo_actividad !== 1}
+                              hidden={activity.estado !== 2 || activity.id_tipo_actividad !== 1 || (activity.es_padre === 1 && activity.es_hijo === 0 && isTicket)}
                               title='Pasar actividad a revisión'
                               className='text-orange-400 bg-orange-50 hover:bg-orange-100'
                               onClick={validateActivityIsRunning}

@@ -274,7 +274,7 @@ const View = props => {
 
                   <CustomSelect 
                      className='col-span-2' 
-                     options={optionsArray?.status?.filter(os => os.value === 2 || os.value === 1)}
+                     options={optionsArray?.status?.filter(os => (os.value === 2 || os.value === 1) && os.value !== props.estado)}
                      width='w-full' 
                      onChange={(option) => setOptions({ ...options, acci: option})}
                      value={options.acci}
@@ -286,11 +286,11 @@ const View = props => {
                      width='w-full'
                      onChange={(option) => setOptions({ ...options, act: option})}
                      value={options.act}
-                  />
+                  />S
 
                   <CustomSelect 
                      className='col-span-2' 
-                     options={optionsArray?.status?.filter(os => os.value !== 0 && os.value !== 10 && os.value !== 8 && os.value !== props.estado)}
+                     options={optionsArray?.status?.filter(os => os.value !== 0 && os.value !== 10 && os.value !== 8 && os.value !== 11)}
                      width='w-full' 
                      onChange={(option) => setOptions({ ...options, cond: option})}
                      value={options.cond}
