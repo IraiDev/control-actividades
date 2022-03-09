@@ -6,7 +6,7 @@ import { Alert } from '../helpers/alerts'
 import { fetchToken, fetchTokenFile } from '../helpers/fetch'
 import { routes } from '../types/types'
 
-export const useDetail = id => {
+export const useDetail = (id, ticket) => {
    const navigate = useNavigate()
    const { setIsLoading } = useContext(UiContext)
    const { filters, saveFilters } = useContext(ActivityContext)
@@ -517,11 +517,12 @@ export const useDetail = id => {
       mensaje_revision,
       tiempo_cliente = 0,
       tiempo_zionit = 0,
+      rechazada = false 
    }) => {
       try {
          const resp = await fetchToken(
             'task/change-activity-state',
-            { id_actividad, estado, mensaje_revision, tiempo_cliente, tiempo_zionit },
+            { id_actividad, estado, mensaje_revision, tiempo_cliente, tiempo_zionit, rechazada },
             'POST'
          )
          const body = await resp.json()
@@ -546,6 +547,63 @@ export const useDetail = id => {
       } catch (err) {
          console.log(err)
       }
+   }
+
+   const getPredecessor = async ({ id_actividad = id, id_ticket = ticket }) => {
+      try {
+         setIsLoading(true)
+         const resp = await fetchToken('task/get-predecesoras', { id_actividad, id_ticket }, 'POST')
+         const body = await resp.json()
+
+      if (body.ok) {
+         setIsLoading(false)
+         return {
+            ok: body.ok,
+            list: body.predecesoras,
+            activities: body.actividades_relacionadas,
+         }
+      }
+      else{
+         setIsLoading(false)
+         Alert({
+            icon: 'error',
+            title: 'Atención',
+            content: body.response,
+            showCancelButton: false,
+         })
+         return {
+            ok: body.ok,
+            list: [],
+            activities: [],
+         }
+      }
+      } catch (err) {
+         console.log('error',err)
+         setIsLoading(false)
+      }
+   }
+
+   const updatePredecessor = async ({id_actividad = id, predecesoras  = []}) => {
+      try {
+         setIsLoading(true)
+         const resp = await fetchToken('task/manage-predecesoras', { id_actividad, predecesoras  }, 'POST')
+         const body = await resp.json()
+
+      if (body.ok) setIsLoading(false)
+         else{
+            setIsLoading(false)
+            Alert({
+               icon: 'error',
+               title: 'Atención',
+               content: body.response,
+               showCancelButton: false,
+            })
+         }
+      } catch (err) {
+         console.log(err)
+         setIsLoading(false)
+      }
+
    }
 
    useEffect(() => {
@@ -573,5 +631,7 @@ export const useDetail = id => {
       updateDetention,
       deleteDetention,
       toggleState,
+      updatePredecessor,
+      getPredecessor
    }
 }

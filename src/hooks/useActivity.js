@@ -210,20 +210,16 @@ export const useActivity = () => {
    const onPlayPause = async ({ id_actividad, mensaje }) => {
       setIsLoading(true)
       try {
-         const resp = await fetchToken(
-            'task/play-pause',
-            { id_actividad, mensaje },
-            'POST'
-         )
+         const resp = await fetchToken('task/play-pause', { id_actividad, mensaje }, 'POST')
          const body = await resp.json()
+
          setIsLoading(false)
-         if (body.ok) {
-            fetchActivities()
-         } else {
+         if (body.ok) fetchActivities()
+         else {
             Alert({
                icon: 'error',
                title: 'Error',
-               content: 'Error al pausar/reanudar actividad',
+               content: body.response,
                showCancelButton: false,
             })
          }
@@ -233,7 +229,7 @@ export const useActivity = () => {
       }
    }
 
-   const toggleState = async ({ id_actividad, estado, tiempo_estimado }) => {
+   const toggleState = async ({ id_actividad, estado, tiempo_estimado}) => {
       try {
          const resp = await fetchToken(
             'task/change-activity-state',

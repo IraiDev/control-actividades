@@ -726,6 +726,7 @@ const Detail = () => {
                      isReviewedActivity={activity.id_tipo_actividad === 2}
                      isDeliveryActivity={activity.id_tipo_actividad === 3}
                      isTicket={activity.num_ticket_edit > 0}
+                     {...activity}
                   >
 
                      <AlertBar 
@@ -1027,8 +1028,9 @@ const Detail = () => {
 
                         <aside>
                            <h5 className='text-sm mb-5 text-center font-semibold'>
-                              Tiempos de la actividad:{' '}
+                              Tiempos de la actividad:
                            </h5>
+
                            <div className='grid grid-cols-3 content-center place-content-center'>
                               <TimerContainer subtitle='estimado'>
                                  {
@@ -1040,6 +1042,7 @@ const Detail = () => {
                                     ).complete
                                  }
                               </TimerContainer>
+
                               <TimerContainer
                                  subtitle='trabajado'
                                  color='orange'>
@@ -1055,12 +1058,11 @@ const Detail = () => {
                                     }
                                  />
                               </TimerContainer>
+
                               <TimerContainer
                                  subtitle='hoy'
                                  color={
-                                    activity.estado_play_pausa === 2
-                                       ? 'red'
-                                       : 'green'
+                                    activity.estado_play_pausa === 2 ? 'red' : 'green'
                                  }>
                                  <Timer
                                     pause={activity.estado_play_pausa === 2}
@@ -1075,6 +1077,7 @@ const Detail = () => {
                                  />
                               </TimerContainer>
                            </div>
+
                            <div className='flex justify-center mt-5 '>
                               <Button
                                  hidden={detentions.length === 0}
@@ -1084,6 +1087,7 @@ const Detail = () => {
                                  tiempos
                               </Button>
                            </div>
+
                         </aside>
                      </ViewSection>
 

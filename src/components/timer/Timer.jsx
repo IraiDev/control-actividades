@@ -33,7 +33,7 @@ const Timer = (props) => {
     props.pause ? start() : stop()
     return () => stop()
     // eslint-disable-next-line
-  }, [props.pause])
+  }, [props.pause, t])
 
   return (
     <div className='flex'>

@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useDetail } from '../../hooks/useDetail'
 import { Alert } from '../../helpers/alerts'
 import Button from '../ui/Button'
 import MarkActivity from '../ui/MarkActivity'
@@ -8,17 +9,12 @@ import Switch from '../ui/Switch'
 import CustomSelect from '../ui/CustomSelect'
 import Numerator from '../ui/Numerator'
 import Box from '../ui/Box'
-
-const arr = [
-   {value: 1, label: 'actividad 1'},
-   {value: 2, label: 'actividad 2'},
-   {value: 3, label: 'actividad 3'},
-   {value: 4, label: 'actividad 4'},
-]
+import { ActivityContext } from '../../context/ActivityContext'
 
 const initOptions = {
    act: {value: null, label: 'niguno'},
    cond: {value: null, label: 'niguno'},
+   acci: {value: null, label: 'niguno'},
 }
 
 const initSw = {
@@ -41,31 +37,39 @@ const PrioritySelector = ({
    )
 }
 
-const View = ({ 
-   children, 
-   title, 
-   priority, 
-   onHigh, 
-   onMid, 
-   onLow, 
-   onNone,
-   id,
-   idFather,
-   isChildren,
-   isFather,
-   isCoorActivity,
-   isReviewedActivity,
-   isChildrenAndChildren,
-   isDeliveryActivity,
-   isTicket,
-}) => {
+const View = props => {
+
+   const { 
+      children, 
+      title, 
+      priority, 
+      onHigh, 
+      onMid, 
+      onLow, 
+      onNone,
+      id,
+      idFather,
+      isChildren,
+      isFather,
+      isCoorActivity,
+      isReviewedActivity,
+      isChildrenAndChildren,
+      isDeliveryActivity,
+      isTicket,
+   } = props
+
    const navigate = useNavigate()
+
+   const {optionsArray} = useContext(ActivityContext)
+
+   const {updatePredecessor, getPredecessor} = useDetail(id, props.num_ticket_edit)
 
    const [showModal, setShowModal] = useState(false)
    const [sw, setSw] = useState(initSw)
    const [restrinccions, setRestrictions] = useState([])
 
    const [options, setOptions] = useState(initOptions)
+   const [arrOptions, setArrOptions] = useState([])
 
    const handleAddRestriction = () => {
 
@@ -80,13 +84,15 @@ const View = ({
          return
       }
 
-      const find = sw.isHigh.status ? 1 : 2
+      const find = sw.isHigh.status ? 1 : 0
 
       setRestrictions([...restrinccions, {
-         id: restrinccions.length,
-         act: options?.act.label,
-         cond: options?.cond.label,
-         rest: find,
+         id_predecesoras: restrinccions.length + 1,
+         id_det: id,
+         id_det_condicion: options?.act.value,
+         estado_condicion: options?.cond.value,
+         estado_accion: options?.acci.value,
+         restriccion: find,
       }])
 
       setOptions(initOptions)
@@ -100,7 +106,43 @@ const View = ({
          content: '¿Esta seguro de eliminar esta restriccion?',
          cancelText: 'No, cancelar',
          confirmText: 'Si, eliminar',
-         action: () => setRestrictions(restrinccions.filter(r => r.id !== id))
+         action: () => setRestrictions(restrinccions.filter(r => r.id_predecesoras !== id))
+      })
+      setOptions(initOptions)
+      setSw(initSw)
+   }
+
+   const pushPredecessor = () => {
+      updatePredecessor({predecesoras: restrinccions})
+      setShowModal(false)
+      setOptions(initOptions)
+      setSw(initSw)
+   }
+
+   const openModal = async () => {
+
+      const { list, activities } = await getPredecessor({id_actividad: id, id_ticket: props.num_ticket_edit})
+
+      setRestrictions(list)
+      setArrOptions(activities?.map(a => ({value: a.id_det, label: a.descripcion_actividad})))
+
+      console.log(activities?.map(a => ({value: a.id_det, label: a.descripcion_actividad})))
+
+      setShowModal(true)
+   }
+
+   const onCloseModal = () => {
+      Alert({
+         icon: 'warn',
+         title: 'Atención',
+         content: 'Cerrar o cancelar haras que se pierdan todos los cambios no aplicados, ¿Esta seguro de cancelar?',
+         cancelText: 'No, cancelar',
+         confirmText: 'Si, cancelar',
+         action: () => {
+            setShowModal(false)
+            setOptions(initOptions)
+            setSw(initSw)
+         }
       })
    }
 
@@ -111,13 +153,15 @@ const View = ({
             <header className='relative flex flex-wrap items-center justify-between'>
                <Button
                   className='hover:text-blue-500'
-                  onClick={() => navigate('/actividades', { replace: true })}>
+                  onClick={() => navigate('/actividades', { replace: true })}
+               >
                   <i className='fas fa-arrow-left fa-lg' />
                </Button>
 
                <Button 
+                  hidden={isFather}
                   className='bg-amber-100/60 hover:bg-amber-100 text-amber-500 text-sm absolute left-1/2 transform -translate-x-1/2'
-                  onClick={() => setShowModal(true)}  
+                  onClick={openModal}  
                >
                   <i className="fas fa-stream" />
                   asignar predecesora
@@ -209,34 +253,38 @@ const View = ({
 
          <Modal
             showModal={showModal}
-            onClose={() => setShowModal(false)}
+            onClose={onCloseModal}
             isBlur={false}
             padding='p-6'
-            className='max-w-3xl'
+            className='max-w-5xl'
             title='Seleccionar actividades predecesoras'
          >
             
-            <div className='my-10'>
+            <div className='mt-10'>
 
-               <Box isBlock>
+               <Box colCount={10} isBlock>
                   <span className='col-span-1 text-center py-2' >Nº</span>
-                  <span className='col-span-2 text-center py-2 border-l' >Actividad</span>
-                  <span className='col-span-2 text-center py-2 border-l' >Condicion</span>
-                  <span className='col-span-2 text-center py-2 border-l' >Restriccion</span>
+                  <span title='Acción que se desea realizar en actividad actual' className='col-span-2 text-center py-2 border-l' >Accion</span>
+                  <span title='Predecesora y activiad con la cual se comparara la condicion' className='col-span-2 text-center py-2 border-l' >Actividad</span>
+                  <span title='Estado con el cual se debe cumplir para realizar la accción' className='col-span-2 text-center py-2 border-l' >Condicion</span>
+                  <span title='Nivel de restriccion para que se cumplan las condiciones: Alta = imperativo, Relajada = sugerencia' className='col-span-2 text-center py-2 border-l' >Restriccion</span>
                </Box>
 
-               <Box isBlock>
+               <Box colCount={10} isBlock>
                   
-                  <Button 
-                     className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 mx-auto'
-                     onClick={handleAddRestriction}
-                  >
-                     Agregar
-                  </Button>
+                  <span />
 
                   <CustomSelect 
                      className='col-span-2' 
-                     options={arr} 
+                     options={optionsArray?.status?.filter(os => os.value !== 0 && os.value !== 10 && os.value !== 8 && os.value !== props.estado)}
+                     width='w-full' 
+                     onChange={(option) => setOptions({ ...options, acci: option})}
+                     value={options.acci}
+                  />
+
+                  <CustomSelect 
+                     className='col-span-2' 
+                     options={arrOptions} 
                      width='w-full'
                      onChange={(option) => setOptions({ ...options, act: option})}
                      value={options.act}
@@ -244,7 +292,7 @@ const View = ({
 
                   <CustomSelect 
                      className='col-span-2' 
-                     options={arr} 
+                     options={optionsArray?.status} 
                      width='w-full' 
                      onChange={(option) => setOptions({ ...options, cond: option})}
                      value={options.cond}
@@ -255,6 +303,13 @@ const View = ({
                      
                      <Switch name='Relajada' value={sw.isLow.status} onChange={(value) => setSw({isLow: {...sw.isLow, status: value}, isHigh: {...sw.isHigh, status: false}})} />
                   </div>
+
+                  <Button 
+                     className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 mx-auto'
+                     onClick={handleAddRestriction}
+                  >
+                     Agregar
+                  </Button>
                   
                </Box>
 
@@ -263,26 +318,29 @@ const View = ({
                   {restrinccions.length > 0 ?
                      restrinccions.map((res, i) => (
 
-                        <Box key={res.id}>
+                        <Box colCount={10} key={res.id_predecesoras}>
 
-                           <Numerator number={1 + i} />
+                           <Numerator className='mx-auto' number={1 + i} />
 
-                           <span className='col-span-2 text-center'>{res.act}</span>
+                           <span className='col-span-2 text-center'>
+                              {optionsArray?.status.find(({value}) => value === res.estado_accion).label}
+                           </span>
 
-                           <span className='col-span-2 text-center'>{res.cond}</span>
+                           <span className='col-span-2 text-center'>{res.id_det_condicion}</span>
 
-                           <div className='flex items-center gap-2 justify-between col-span-2 px-3'>
+                           <span className='col-span-2 text-center'>
+                              {optionsArray?.status.find(({value}) => value === res.estado_condicion).label}
+                           </span>
+                           <span className='col-span-2 text-center'>
+                              {res.restriccion === 1 ? 'Alta' : 'Relajada'}
+                           </span>
 
-                              <span>{res.rest}</span>
-
-                              <Button 
+                           <Button 
                                  className='hover:bg-red-100 text-red-500'
-                                 onClick={() => handleDeleteRestriction(res.id)}
+                                 onClick={() => handleDeleteRestriction(res.id_predecesoras)}
                               >
                                  <i className="fas fa-trash-alt" />
-                              </Button>
-
-                           </div>
+                           </Button>
                            
                         </Box>
 
@@ -294,6 +352,24 @@ const View = ({
                   }
 
                </div>
+
+               <footer className='flex justify-between gap-2 mt-10'>
+
+                  <Button
+                     className='bg-red-100 hover:bg-red-200 text-red-500'
+                     onClick={onCloseModal}
+                  >
+                     cancelar
+                  </Button>
+
+                  <Button
+                     className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
+                     onClick={pushPredecessor}
+                  >
+                     Aplicar cambios
+                  </Button>
+
+               </footer>
 
             </div>
 

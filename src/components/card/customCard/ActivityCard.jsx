@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
+import { ActivityContext } from '../../../context/ActivityContext'
 import { useNavigate } from 'react-router-dom'
 import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu'
+import { validatePredecessor } from '../../../helpers/helpersFunc'
 import { useForm } from '../../../hooks/useForm'
 import { Alert } from '../../../helpers/alerts'
 import LiNote from '../../ui/LiNote'
@@ -12,8 +14,8 @@ import Card from '../Card'
 import CardSection from '../CardSection'
 import CardFooter from '../CardFooter'
 import CardContent from '../CardContent'
-import moment from 'moment'
 import FloatMenu from '../../ui/FloatMenu'
+import moment from 'moment'
 
 const defaultNotes = [
    { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -30,17 +32,6 @@ const defaultPauses = [
    { id: 1112322, desc: 'Por reunion de trabajo...' },
    { id: 1112424, desc: 'Salida a terreno...' },
 ]
-
-const HighLightSpan = ({condition, children}) => {
-   return (
-      <span className='flex gap-2 max-w-max rounded'>
-         <strong>ID:</strong> 
-         <p className={condition ? 'text-amber-600 bg-amber-200/80 px-1 rounded font-semibold' : ''} >
-            {children}
-         </p>
-      </span>
-   )
-}
 
 const ActivityCard = props => {
    const {
@@ -65,6 +56,8 @@ const ActivityCard = props => {
    } = props
 
    const navigate = useNavigate()
+
+   const {optionsArray} = useContext(ActivityContext)
 
    const [{ desc, time }, onChangeValues, reset] = useForm({
       desc: '',
@@ -113,7 +106,13 @@ const ActivityCard = props => {
          return
       }
 
-      toggleState({ tiempo_estimado: time })
+      validatePredecessor({
+         array: props.predecesoras, 
+         callback: () => toggleState({ tiempo_estimado: time }), 
+         state: 2, 
+         options: optionsArray
+      })
+
       reset()
    }
 
@@ -215,29 +214,26 @@ const ActivityCard = props => {
             </CardContent>
 
             <CardFooter>
-               {!(isFather && isTicket) ?
-                  <FloatMenu
-                     hidden={!ESTADO_PAUSA}
-                     name='time'
-                     value={time}
-                     onChange={onChangeValues}
-                     onClick={() => {
-                        reset()
-                        handleUpdateState()
-                     }}
-                     reset={reset}
-                  />
-                  : <span className='block' />
-               }
+               <FloatMenu
+                  hidden={!ESTADO_PAUSA || (isFather && isTicket)}
+                  name='time'
+                  value={time}
+                  onChange={onChangeValues}
+                  onClick={() => {
+                     reset()
+                     handleUpdateState()
+                  }}
+                  reset={reset}
+               />
                
                <Button
-                  hidden={ESTADO_PAUSA}
+                  hidden={ESTADO_PAUSA || (isFather && isTicket)}
                   className='hover:bg-black/5'
                   size='w-7 h-7'
                   onClick={
                      ESTADO_play
                         ? () => toggleModalPause(true)
-                        : () => playActivity({ id_actividad: props.id_det })
+                        : () => playActivity({ id_actividad: props.id_det }) 
                   }>
                   <i
                      className={
@@ -247,6 +243,8 @@ const ActivityCard = props => {
                      }
                   />
                </Button>
+
+               <span />
                
                <div>
                   <Menu

@@ -104,3 +104,55 @@ export const validateDate = ({ finicio, fdetencion, hinicio, hdetencion }) => {
 
    return true
 }
+
+export const validatePredecessor = ({ array, callback, state, options }) => {
+
+      if (array.length > 0) {
+
+         const filter = array.filter(item => item.estado_accion === state)
+
+         if (filter.length > 0 ) {
+
+            const alta = filter.filter(item => item.restriccion === 1 && item.estado_actual_condicion !== item.estado_condicion)
+
+            if (alta.length > 0) {
+               Alert({
+                  icon: 'warn',
+                  title: 'Atencion',
+                  content: `Esta actividad no puede pasar a estado 
+                  <strong>${options?.status.find(os => os.value === state).label}</strong> 
+                   porque actividad predecesora Nº <strong>${alta[0].id_det_condicion}</strong>
+                   debe estar en estado <strong>${options?.status.find(os => os.value === alta[0].estado_condicion).label}</strong>
+                   y se encuentra en estado <strong>${options?.status.find(os => os.value === alta[0].estado_actual_condicion).label}</strong>
+                   <br>si este mensaje no refleja el estado actual por favor refresque la pagina
+                   `,
+                  showCancelButton: false,
+               })
+               return 
+            }
+
+            const baja = filter.filter(item => item.restriccion === 0 && item.estado_actual_condicion !== item.estado_condicion)
+
+            if (baja.length > 0) {
+               
+               Alert({
+                  icon: 'warn',
+                  title: 'Atencion',
+                  content: `¿Esta seguro que desea pasar a estado 
+                   <strong>${options?.status.find(os => os.value === state).label}</strong> ?
+                   Porque actividad predecesora Nº <strong>${baja[0].id_det_condicion}</strong>
+                   debe estar en estado <strong>${options?.status.find(os => os.value === baja[0].estado_condicion).label}</strong>
+                   y se encuentra en estado <strong>${options?.status.find(os => os.value === baja[0].estado_actual_condicion).label}</strong>
+                   <br>si este mensaje no refleja el estado actual por favor refresque la pagina
+                   `,
+                  confirnText: 'Si, continuar',
+                  cancelText: 'No, cancelar',
+                  action: () => callback()
+               })
+               return 
+            }
+
+         }
+      }
+      callback()
+}

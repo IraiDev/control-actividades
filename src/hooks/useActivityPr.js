@@ -110,12 +110,12 @@ export const useActivityPr = () => {
    useEffect(() => {
       fetchActivities()
       // eslint-disable-next-line
-   }, [prFilters, prOrder])
+   }, [prFilters, prOrder]) 
 
    return {
       activitiesPR,
       total,
       toggleCheckActivity,
-      onDistribution,
+      onDistribution
    }
 }
