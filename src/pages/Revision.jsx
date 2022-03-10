@@ -44,6 +44,7 @@ const Revision = () => {
    // states
    const [multiline, setMultiline] = useState(false)
    const [activityData, setActivityData] = useState({ id: null })
+   const [isActive, setIsActive] = useState(null)
    const [options, setOptions] = useState({})
    const [modalReject, toggleModalReject] = useState(false)
 
@@ -498,7 +499,8 @@ const Revision = () => {
                      activitiesPR.map((act, i) => (
                         <TrPRControls
                            key={act.id_det}
-                           className='text-[13px] text-gray-800 transition duration-300 cursor-pointer hover:bg-black/10'
+                           className={act.id_det === isActive ? 'bg-purple-100' : ''}
+                           getId={(id_callback) =>setIsActive(id_callback)}
                            callback={(times) => onDistribution({distribuciones: times, id_actividad: act.id_det})}
                            {...act}
                         >

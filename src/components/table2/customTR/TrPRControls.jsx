@@ -84,7 +84,7 @@ const TrPRControls = props => {
    }
 
    const handleOpenModal = () => {
-
+      props.getId(props.id_det)
       setModal(true)
    }
 
@@ -131,7 +131,7 @@ const TrPRControls = props => {
       }
 
       props.callback(times)
-      setModal((false))
+      setModal(false)
       reset()
    }
 
@@ -150,7 +150,7 @@ const TrPRControls = props => {
    return (
       <>
          <tr
-            className='text-[13px] text-gray-800 transition duration-300 cursor-pointer hover:bg-black/10'
+            className={`text-[13px] text-gray-800 transition duration-300 cursor-pointer hover:bg-black/10 ${props.className}`}
             onDoubleClick={isReviwed ? () => handleOpenModal() : null}>
             {props.children}
          </tr>
@@ -166,9 +166,9 @@ const TrPRControls = props => {
 
             <div className='mt-5'>
 
-               <section className='p-2 mb-5 bg-zinc-100 rounded-md'>
+               <section className='p-3.5 mb-5 bg-zinc-100 rounded-md'>
 
-                  <h1 className='capitalize mb-2'>
+                  <h1 className='first-letter:capitalize mb-2'>
                      <span className='font-semibold mr-2'>
                         Titulo:
                      </span>  
