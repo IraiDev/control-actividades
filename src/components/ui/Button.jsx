@@ -22,6 +22,7 @@ const Button = ({
             px-2.5 font-semibold capitalize focus:outline-none 
             flex gap-2 items-center justify-center transition duration-300
             text-base rounded-md
+            disabled:line-through
             ${isShadow && 'hover:shadow-lg'}
             ${className}
             ${block ? 'block' : 'inline-block'}

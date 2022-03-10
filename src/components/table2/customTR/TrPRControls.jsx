@@ -266,7 +266,8 @@ const TrPRControls = props => {
                   />
 
                   <Button
-                     className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 col-span-1 mx-auto'
+                     disabled={Number(tr) <= 0}
+                     className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 col-span-1 mx-auto disabled:hover:bg-emerald-200/50'
                      onClick={handleCreateTimes}>
                      agregar
                   </Button>

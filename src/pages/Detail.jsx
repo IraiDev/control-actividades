@@ -231,10 +231,10 @@ const Detail = () => {
       const vDesc = description.trim() === ''
       const vPriority = priority.toString().trim() === ''
       const vTime = time.toString().trim() === ''
-      const vProject = options.pr?.value === undefined
-      const vSolicita = options.us?.value === undefined
-      const vEncargado = options.ue?.value === undefined
-      const vRevisor = options.ur?.value === undefined
+      const vProject = options.pr?.value === undefined || options.pr?.value === null
+      const vSolicita = options.us?.value === undefined || options.us?.value === null
+      const vEncargado = options.ue?.value === undefined || options.ue?.value === null
+      const vRevisor = options.ur?.value === undefined || options.ur?.value === null
       const vRdisE = options.ur?.id === options.ue?.id
 
       const onSaveValidation =
@@ -1196,10 +1196,10 @@ const Detail = () => {
                            <Button
                               hidden={(activity.id_tipo_actividad === 1 && !isFather) || activity.estado === 1}
                               title='Teminar actividad'
-                              className='text-pink-400 bg-pink-50 hover:bg-pink-100'
+                              className='text-amber-500 bg-amber-100 hover:bg-amber-200'
                               onClick={() => finishActivity(activity.id_tipo_actividad, isFather)}
                            >
-                              <i className='fas fa-check-double' />
+                              {/* <i className='fas fa-check-double' /> */}
                               terminar
                            </Button>
 
@@ -1207,7 +1207,7 @@ const Detail = () => {
 
                         <section className='flex justify-end gap-2'>
                            <Button
-                              className='text-red-500 hover:bg-red-100'
+                              className='text-red-500 hover:bg-red-100 disabled:hover:bg-transparent'
                               onClick={() =>
                                  navigate(routes.activity, { replace: true })
                               }>
@@ -1215,7 +1215,7 @@ const Detail = () => {
                            </Button>
                            <Button
                               disabled={validation().isSave}
-                              className='text-emerald-500 hover:bg-emerald-100 place-self-end'
+                              className='text-emerald-500 hover:bg-emerald-100 place-self-end disabled:hover:bg-transparent'
                               onClick={onSave}>
                               Guardar
                            </Button>
