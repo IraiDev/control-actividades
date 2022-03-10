@@ -542,6 +542,8 @@ export const useDetail = id => {
                title: 'Atención',
                content: body.response,
                showCancelButton: false,
+               height: 'max-h-96 overflow-y-auto text-left',
+               width: '40rem',
             })
          }
       } catch (err) {

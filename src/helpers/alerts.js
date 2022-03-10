@@ -35,6 +35,8 @@ export const Alert = async props => {
       inputPlaceholder = 'Escriba aqui',
       showCancelButton = true,
       showConfirmButton = true,
+      height = '',
+      width = '30rem',
       isBlur = false,
       timer = undefined,
       action = () => {
@@ -109,7 +111,7 @@ export const Alert = async props => {
          customClass,
          showClass,
          hideClass,
-         html: `<div class="text-base">${content}</div>`,
+         html: `<div class="text-base ${height}">${content}</div>`,
          title:
             title !== ''
                ? `<h4 class="text-2xl capitalize">${title} <i class="fas ${icon}"></i></h4>`
@@ -123,7 +125,7 @@ export const Alert = async props => {
          timer,
          timerProgressBar: timer !== undefined,
          allowOutsideClick: isBlur,
-         width: '30rem',
+         width,
       }).then(result => {
          if (result.isConfirmed) {
             action()

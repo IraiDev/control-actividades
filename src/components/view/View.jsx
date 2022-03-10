@@ -124,7 +124,7 @@ const View = props => {
       const { list, activities } = await getPredecessor({id_actividad: id, id_ticket: props.num_ticket_edit})
 
       setRestrictions(list)
-      setArrOptions(activities?.map(a => ({value: a.id_det, label: a.descripcion_actividad})))
+      setArrOptions(activities?.map(a => ({value: a.id_det, label: a.descripcion_actividad, tooltip: a.actividad})))
 
       setShowModal(true)
    }
@@ -274,7 +274,7 @@ const View = props => {
 
                   <CustomSelect 
                      className='col-span-2' 
-                     options={optionsArray?.status?.filter(os => (os.value === 2 || os.value === 1) && os.value !== props.estado).concat([{ value: 1000, label: 'SIN RESTRICCION' }])}
+                     options={optionsArray?.status?.filter(os => (os.value === 2 || os.value === 1) && os.value !== props.estado).concat([{ value: 1000, label: 'SIN RESTRICCION', tooltip: 'nada' }])}
                      width='w-full' 
                      onChange={(option) => setOptions({ ...options, acci: option})}
                      value={options.acci}

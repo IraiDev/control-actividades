@@ -534,7 +534,13 @@ const Detail = () => {
    const finishActivity = (type, isFather) => {
 
       if(isFather) {
-         console.log('terminada')
+         Alert({
+            title: 'Atención',
+            content: '¿Esta seguro de terminar la actividada Pare original?',
+            confirmText: 'Si, Terminar actividad',
+            calcelText: 'No, cancelar',
+            action: () => toggleState({ estado: 5 })
+         })
          return
       }
 
