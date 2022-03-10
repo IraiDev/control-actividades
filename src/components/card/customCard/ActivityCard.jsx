@@ -153,7 +153,14 @@ const ActivityCard = props => {
 
                      <span className='flex gap-2 max-w-max rounded'>
                         <strong>ID:</strong> 
-                        <p className={isFather || isChildrenAndFather ? 'text-amber-600 bg-amber-200/80 px-1 rounded font-semibold' : ''} >
+                        <p className={`
+
+                              px-1 rounded font-semibold
+                              ${(isFather || isChildrenAndFather) && isTicket ? 'text-amber-600 bg-amber-200/80'
+                                    : isFather || isChildrenAndFather ? 'text-indigo-600 bg-indigo-200/80' : ''}
+                           
+                           `} 
+                        >
                            {props.id_det}
                         </p>
                      </span>
