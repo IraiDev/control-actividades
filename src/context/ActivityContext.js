@@ -94,6 +94,7 @@ function ActivityProvider({ children }) {
                      label: item.nombre_sub_proy,
                      value: item.id_sub_proyecto,
                      id: item.id_proyecto,
+                     tooltip: item.nombre_sub_proy,
                   }
                }),
                projects: body.proyectos.map(item => {
@@ -101,18 +102,21 @@ function ActivityProvider({ children }) {
                      label: item.abrev,
                      value: item.id_proy,
                      fullName: item.proyecto,
+                     tooltip: item.proyecto
                   }
                }),
                priorities: body.prioridades.map(item => {
                   return {
                      label: item.nombre,
                      value: item.color,
+                     tooltip: item.nombre
                   }
                }),
                status: body.estados.map(item => {
                   return {
                      label: item.desc_estado,
                      value: item.id_estado,
+                     tooltip: item.abrev
                   }
                }),
                users: body.usuarios.map(item => {
@@ -120,12 +124,14 @@ function ActivityProvider({ children }) {
                      label: item.abrev_user,
                      value: item.abrev_user,
                      id: item.id_user,
+                     tooltip: item.nom_user,
                   }
                }),
                products: body.productos.map(item => {
                   return {
                      label: item.nom_prod,
                      value: item.id_producto,
+                     tooltip: item.nom_prod,
                   }
                }),
                activity_type: body.tipos_actividad.map(item => {
@@ -133,6 +139,7 @@ function ActivityProvider({ children }) {
                      label: item.desc_tipo_actividad,
                      value: item.id_tipo_actividad,
                      active: item.activo,
+                     tooltip: item.desc_tipo_actividad,
                   }
                }),
             })

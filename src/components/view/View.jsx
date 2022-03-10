@@ -273,7 +273,6 @@ const View = props => {
                   <span />
 
                   <CustomSelect 
-                     title='selectttttt'
                      className='col-span-2' 
                      options={optionsArray?.status?.filter(os => (os.value === 2 || os.value === 1) && os.value !== props.estado).concat([{ value: 1000, label: 'SIN RESTRICCION' }])}
                      width='w-full' 
@@ -282,6 +281,7 @@ const View = props => {
                   />
 
                   <CustomSelect 
+                     showTooltip
                      className='col-span-2' 
                      options={arrOptions} 
                      width='w-full'

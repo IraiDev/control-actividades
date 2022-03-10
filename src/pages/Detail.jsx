@@ -1086,6 +1086,7 @@ const Detail = () => {
                                  color='orange'>
                                  <Timer
                                     pause={activity.estado_play_pausa === 2}
+                                    refresh={activity}
                                     time={
                                        timeFormat(
                                           moment.duration(
@@ -1104,6 +1105,7 @@ const Detail = () => {
                                  }>
                                  <Timer
                                     pause={activity.estado_play_pausa === 2}
+                                    refresh={activity}
                                     time={
                                        timeFormat(
                                           moment.duration(
