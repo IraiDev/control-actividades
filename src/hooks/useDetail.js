@@ -534,7 +534,7 @@ export const useDetail = id => {
                statusIcon: 'success',
                showCancelButton: false,
                showConfirmButton: false,
-               timer: 3000,
+               timer: 2000,
             })
          } else {
             Alert({

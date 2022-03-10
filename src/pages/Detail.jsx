@@ -152,6 +152,7 @@ const Detail = () => {
    const date = moment(activity.fecha_tx).format('yyyy-MM-DD')
    const isTicket = activity.num_ticket_edit !== 0
    const isRuning = activity.estado_play_pausa === 2
+   const isFather = activity.es_padre === 1 && activity.es_hijo === 0
    const [showContent, setshowContent] = useState(false)
 
    // modals
@@ -530,7 +531,12 @@ const Detail = () => {
       })
    }
 
-   const finishActivity = (type) => {
+   const finishActivity = (type, isFather) => {
+
+      if(isFather) {
+         console.log('terminada')
+         return
+      }
 
       const callback = () => {
 
@@ -751,7 +757,7 @@ const Detail = () => {
                      id={activity.id_det}
                      idFather={activity.id_det_padre}
                      isChildren={activity.es_hijo === 1 && activity.es_padre === 0}
-                     isFather={activity.es_padre === 1 && activity.es_hijo === 0}
+                     isFather={isFather}
                      isChildrenAndChildren={activity.es_hijo === 1 && activity.es_padre === 1}
                      isCoorActivity={activity.id_tipo_actividad === 4}
                      isReviewedActivity={activity.id_tipo_actividad === 2}
@@ -1180,10 +1186,10 @@ const Detail = () => {
                            </Button>
 
                            <Button
-                              hidden={activity.id_tipo_actividad === 1 || activity.estado === 1}
+                              hidden={(activity.id_tipo_actividad === 1 && !isFather) || activity.estado === 1}
                               title='Teminar actividad'
                               className='text-pink-400 bg-pink-50 hover:bg-pink-100'
-                              onClick={() => finishActivity(activity.id_tipo_actividad)}
+                              onClick={() => finishActivity(activity.id_tipo_actividad, isFather)}
                            >
                               <i className='fas fa-check-double' />
                               terminar
