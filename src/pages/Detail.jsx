@@ -539,7 +539,10 @@ const Detail = () => {
             content: '¿Esta seguro de terminar la actividada Pare original?',
             confirmText: 'Si, Terminar actividad',
             calcelText: 'No, cancelar',
-            action: () => toggleState({ estado: 5 })
+            action: () => {
+               toggleState({ estado: 5 })
+               navigate(routes.activity, {replace: true})
+            }
          })
          return
       }
