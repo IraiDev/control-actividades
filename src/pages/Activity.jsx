@@ -701,27 +701,32 @@ const Activity = () => {
 
                               <Td>
                                  <div className={`
-                                    flex justify-between gap-2
-                                    ${act.id_det_padre === 0 && act.num_ticket_edit !== 0 ? 'text-amber-600 font-semibold' : ''}
+                                    flex justify-between gap-1 items-center
+                                    ${act.es_padre && act.num_ticket_edit > 0 ? 'text-amber-600 font-bold' 
+                                       : act.es_padre && act.num_ticket_edit <= 0 ? 'text-indigo-600 font-bold' : ''
+                                 }
                                  `}>
                                     <MarkActivity 
-                                       hidden={!(act.esPadre === 1 && act.esHijo === 0)} 
+                                       hidden={!(act.es_padre === 0 && act.es_hijo === 1)} 
+                                       condicion={act.num_ticket_edit > 0}
                                        position='block' 
                                     >
                                        <i className='fas fa-child fa-lg' />
-                                       {act?.id_det}
+                                       {act?.id_det_padre}
                                     </MarkActivity>
 
                                     <MarkActivity 
-                                       hidden={!(act.esHijo === 1 && act.esPadre === 0)} 
+                                       hidden={!(act.es_hijo === 0 && act.es_padre === 1)} 
+                                       condicion={act.num_ticket_edit > 0}
                                        position='block'
                                     >
                                        <i className='fas fa-hat-cowboy fa-lg' />
-                                       {act?.id_det_padre} 
+                                       {act?.id_det} 
                                     </MarkActivity>
 
                                     <MarkActivity 
-                                       hidden={!(act.tipo_actividad === 3)} 
+                                       hidden={!(act.id_tipo_actividad === 4)} 
+                                       condicion={act.num_ticket_edit > 0}
                                        position='block'
                                     >
                                        <i className='far fa-calendar-alt fa-lg' />
@@ -729,7 +734,8 @@ const Activity = () => {
                                     </MarkActivity>
 
                                     <MarkActivity 
-                                       hidden={!(act.tipo_actividad === 2)} 
+                                       hidden={!(act.id_tipo_actividad === 2)} 
+                                       condicion={act.num_ticket_edit > 0}
                                        position='block'
                                     >
                                        <i className='fas fa-calendar-check fa-lg' />
@@ -737,13 +743,23 @@ const Activity = () => {
                                     </MarkActivity>
 
                                     <MarkActivity 
-                                       hidden={!(act.esHijo === 1 && act.esPadre === 1)} 
+                                       hidden={!(act.es_hijo === 1 && act.es_padre === 1)} 
+                                       condicion={act.num_ticket_edit > 0}
                                        position='block'
                                     >
                                        <i className='fas fa-child' />
                                        <i className='fas fa-hat-cowboy' />
                                        {act?.id_det_padre} 
                                     </MarkActivity>
+                                    <MarkActivity 
+                                       condicion={act.num_ticket_edit > 0}
+                                       hidden={!(act.id_tipo_actividad === 3)} 
+                                    >
+                                       <i className='fas fa-truck fa-lg' />
+                                       {act?.id_det_padre} 
+                                    </MarkActivity>
+
+                                    <span />
 
                                     {act.id_det}
                                  </div>
