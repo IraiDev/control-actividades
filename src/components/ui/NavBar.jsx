@@ -65,11 +65,12 @@ const MenuContent = ({ content }) => {
 
 const CloneSelect = ({options, value, onChange, field, isRequired = false, isDefaultOptions = false}) => {
    return(
-      <div className='grid gap-2 capitalize text-xs'>
-         <label className='flex gap-2 items-baseline pl-4'>
+      <div className='capitalize text-xs mb-2'>
+         <span className='flex gap-2 items-baseline font-semibold text-sm px-2 w-max mb-2 py-0.5 bg-amber-200/80 rounded-md'>
             {field}
             {isRequired && <span className='text-red-600 font-semibold'>(*)</span>}
-         </label>
+         </span>
+
          <Select
             maxMenuHeight={170}
             className='capitalize text-sm'
@@ -392,6 +393,8 @@ const NavBar = () => {
 
                   <aside className='mt-0.5'>
                      <Input
+                        className='mb-3'
+                        highlight
                         isRequired
                         field='titulo'
                         name='title'
@@ -400,6 +403,8 @@ const NavBar = () => {
                      />
 
                      <Input
+                        className='mb-3'
+                        highlight
                         isRequired
                         field='T. estimado'
                         name='time'
@@ -409,6 +414,8 @@ const NavBar = () => {
                      />
 
                      <Input
+                        className='mb-3'
+                        highlight
                         isRequired
                         field='prioridad'
                         name='priority'
@@ -422,6 +429,7 @@ const NavBar = () => {
 
                <section className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <TextArea
+                     highlight
                      isRequired
                      field='descripccion'
                      name='desc'
@@ -429,6 +437,7 @@ const NavBar = () => {
                      onChange={onChangeValues}
                   />
                   <TextArea
+                     highlight
                      field='glosa'
                      name='gloss'
                      value={gloss}

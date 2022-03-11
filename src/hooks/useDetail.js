@@ -9,7 +9,7 @@ import { routes } from '../types/types'
 export const useDetail = id => {
    const navigate = useNavigate()
    const { setIsLoading } = useContext(UiContext)
-   const { filters, saveFilters, refresh, setRefresh } = useContext(ActivityContext)
+   const { filters, saveFilters, refresh, setRefresh, user } = useContext(ActivityContext)
    const [activity, setActivity] = useState({})
    const [detentions, setDetentions] = useState([])
 
@@ -23,6 +23,8 @@ export const useDetail = id => {
          )
          const body = await resp.json()
          const { ok, tareas } = body
+
+         console.log(tareas[0])
 
          setIsLoading(false)
          if (ok) {
@@ -282,7 +284,7 @@ export const useDetail = id => {
       }
    }
 
-   const deleteActivity = ({ id_actividad }) => {
+   const deleteActivity = ({ id_actividad, encargado, isFather, isTicket }) => {
       const action = async () => {
          try {
             const resp = await fetchToken(
@@ -312,6 +314,17 @@ export const useDetail = id => {
          } catch (err) {
             console.log(err)
          }
+      }
+
+      if(encargado?.id !== user?.id && isFather && isTicket) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'No puedes eliminar esta actividad ya que no eres el encargado',
+            showCancelButton: false,
+         })
+
+         return
       }
 
       Alert({

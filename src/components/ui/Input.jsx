@@ -16,14 +16,19 @@ const Input = ({
    padding = 'px-4 py-1.5',
    onBlur,
    isRequired = false,
+   highlight = false
 }) => {
    return (
       <div className={className}>
          {field &&
-            <label className='flex gap-2 items-baseline pl-4 py-2 text-xs capitalize'>
+            <span className={`
+               flex gap-2 items-baseline font-semibold text-sm capitalize w-max mb-1.5 py-0.5
+               ${highlight ? 'px-2 bg-amber-200/80 rounded-md' : ''}
+               `}
+            >
                {field}
                {isRequired && <span className='text-red-600 font-semibold'>(*)</span>}
-            </label>
+            </span>
          }
          <input
             id={id}

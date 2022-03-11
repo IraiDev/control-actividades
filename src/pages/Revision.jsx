@@ -55,17 +55,17 @@ const Revision = () => {
       title, 
       desc, 
       ticket,
-      reject_gloss
+      reject_gloss,
    }, onChangeValues, reset] = useForm({
       id: '',
       title: '',
       desc: '',
       ticket: '',
-      reject_gloss: ''
+      reject_gloss: '',
    })
 
    // destructuring
-   const { projects, subProjects, users, status } = optionsArray
+   const { projects, subProjects, users, status, activity_type } = optionsArray
 
    // functions
    const onFilter = () => {
@@ -82,6 +82,8 @@ const Revision = () => {
             options.sp?.length > 0 ? options.sp.map(item => item.value) : [],
          revisor:
             options.ur?.length > 0 ? options.ur.map(item => item.id) : [],
+         id_tipo_actividad: 
+            options.ita?.length > 0 ? options.ita.map(item => item.value) : [],
          id_actividad: id,
          titulo: title,
          numero_ticket: ticket,
@@ -181,7 +183,33 @@ const Revision = () => {
 
                   <tr className='text-center capitalize'>
 
-                     <Th></Th>
+                     <Th>
+                        <SelectFilter
+                           className='w-[182px]'
+                           placeholder='tipo actividad'
+                           type='table'
+                           value={options.ita}
+                           options={activity_type}
+                           isMulti
+                           onChange={option =>
+                              setOptions({ ...options, ita: option })
+                           }
+                           filterDown={() =>
+                              setPROrder({ orden_tipo_actividad: 'desc' })
+                           }
+                           filterUp={() =>
+                              setPROrder({ orden_tipo_actividad: 'asc' })
+                           }
+                           upActive={setActive({
+                              param: 'orden_tipo_actividad',
+                              value: 'asc',
+                           })}
+                           downActive={setActive({
+                              param: 'orden_tipo_actividad',
+                              value: 'desc',
+                           })}
+                        />
+                     </Th>
 
                      {/* id */}
                      <Th>
@@ -229,10 +257,12 @@ const Revision = () => {
                      {/* proyecto */}
                      <Th>
                         <SelectFilter
+                           className='w-40'
                            type='table'
                            value={options.pr}
                            options={projects}
                            isMulti
+                           showTooltip
                            onChange={option =>
                               setOptions({ ...options, pr: option })
                            }
@@ -256,6 +286,7 @@ const Revision = () => {
                      {/* subproyecto */}
                      <Th>
                         <SelectFilter
+                           className='w-36'
                            type='table'
                            value={options.sp}
                            options={
@@ -278,6 +309,8 @@ const Revision = () => {
                      {/* solicitante */}
                      <Th>
                         <SelectFilter
+                           className='w-[153px]'
+                           showTooltip
                            type='table'
                            value={options.us}
                            options={users}
@@ -305,6 +338,8 @@ const Revision = () => {
                      {/* encargado */}
                      <Th>
                         <SelectFilter
+                           className='w-[153px]'
+                           showTooltip
                            type='table'
                            value={options.ue}
                            options={users}
@@ -332,6 +367,8 @@ const Revision = () => {
                      {/* revisor */}
                      <Th>
                         <SelectFilter
+                           className='w-[153px]'
+                           showTooltip
                            type='table'
                            value={options.ur}
                            options={users}
@@ -359,6 +396,7 @@ const Revision = () => {
                      {/* estado */}
                      <Th>
                         <SelectFilter
+                           className='w-[200px]'
                            type='table'
                            value={options.st}
                            options={status?.filter(s => s.value === 12 || s.value === 3 || s.value === 5)}
@@ -505,7 +543,7 @@ const Revision = () => {
                            {...act}
                         >
                               
-                           <Td><Numerator number={i + 1} /></Td>
+                           <Td><Numerator className='mx-auto' number={i + 1} /></Td>
 
                            <Td>{act.id_det}</Td>
 

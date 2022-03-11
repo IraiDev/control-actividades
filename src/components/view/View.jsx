@@ -274,7 +274,7 @@ const View = props => {
 
                   <CustomSelect 
                      className='col-span-2' 
-                     options={optionsArray?.status?.filter(os => (os.value === 2 || os.value === 1) && os.value !== props.estado)}
+                     options={optionsArray?.status?.filter(os => (os.value === 2 || os.value === 1) && os.value !== props.estado).concat([{ value: 1000, label: 'SIN RESTRICCION', tooltip: 'nada' }])}
                      width='w-full' 
                      onChange={(option) => setOptions({ ...options, acci: option})}
                      value={options.acci}
@@ -291,7 +291,7 @@ const View = props => {
 
                   <CustomSelect 
                      className='col-span-2' 
-                     options={optionsArray?.status?.filter(os => os.value !== 0 && os.value !== 10 && os.value !== 8 && os.value !== 11)}
+                     options={optionsArray?.status?.filter(os => os.value !== 0 && os.value !== 10 && os.value !== 8 && os.value !== 11).concat([{ value: 1000, label: 'SIN RESTRICCION' }])}
                      width='w-full' 
                      onChange={(option) => setOptions({ ...options, cond: option})}
                      value={options.cond}

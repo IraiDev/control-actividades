@@ -1,6 +1,30 @@
 import React from 'react'
 import Button from '../ui/Button'
-import Select from 'react-select'
+import Select, { components } from 'react-select'
+import Tooltip, {TooltipPrimitive} from '@atlaskit/tooltip'
+import styled from '@emotion/styled';
+
+const InlineDialog = styled(TooltipPrimitive)`
+  background: rgb(244, 244, 245);
+  border-radius: 4px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-sizing: content-box; /* do not set this to border-box or it will break the overflow handling */
+  color: #333;
+  border: 1px solid #ccc;
+  max-height: 300px;
+  max-width: 300px;
+  padding: 8px 12px;
+  margin-left: 13px;
+`
+
+const Option = (props) => {
+
+   return (
+      <Tooltip appearance='secundary' content={props?.data?.tooltip} position='right-end' component={InlineDialog}>
+         <components.Option {...props} />
+      </Tooltip>
+   )
+}
 
 const SelectFilter = ({
    isMulti = false,
@@ -16,11 +40,14 @@ const SelectFilter = ({
    type = 'sidebar',
    placeholder = 'seleccione',
    isOrder = true,
-   defaultOptions = false
+   defaultOptions = false,
+   className = '',
+   showTooltip = false,
+   height = 170
 }) => {
    if (type === 'table') {
       return (
-         <div className='flex justify-between items-center mt-2 z-50'>
+         <div className={`flex justify-between items-center mt-2 mx-auto ${className}`}>
             {isOrder && (
                <Button
                   disabled={upActive}
@@ -33,15 +60,22 @@ const SelectFilter = ({
             )}
 
             <section className='w-40 px-1 mx-auto'>
-               {field && <p className='text-xs ml-4 capitalize mb-1'>{field}</p>}
+               {field && <p className='text-xs text-center capitalize mb-1'>{field}</p>}
                <Select
+                  components={
+                     showTooltip ? { 
+                        Option,
+                        DropdownIndicator: () => null,
+                        IndicatorSeparator: () => null,
+                     } : {
+                        DropdownIndicator: () => null,
+                        IndicatorSeparator: () => null,
+                     }
+                  }
                   menuPortalTarget={document.getElementById("select-root")} 
+                  isClearable={false}
                   styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                   downActive
-                  components={{
-                     DropdownIndicator: () => null,
-                     IndicatorSeparator: () => null,
-                  }}
                   className='capitalize text-sm font-normal'
                   placeholder={placeholder}
                   options={
@@ -51,7 +85,7 @@ const SelectFilter = ({
                   }
                   value={value}
                   onChange={onChange}
-                  maxMenuHeight={170}
+                  maxMenuHeight={height}
                   isMulti={isMulti}
                />
             </section>
@@ -75,7 +109,9 @@ const SelectFilter = ({
 
          <section className='w-full relative'>
 
-            <p className='text-xs ml-4 capitalize mb-1'>{field}</p>
+            <span className='text-sm font-semibold capitalize block w-max mb-1.5 px-2 py-0.5 bg-amber-200/80 rounded-md'>
+               {field}
+            </span>
 
             <Select
                className='w-full capitalize text-sm'

@@ -58,14 +58,23 @@ const InputFilter = ({
    }
 
    return (
-      <div className='flex justify-between items-center pl-5 pr-3'>
-         <Input
-            field={field}
-            isNumber={isNumber}
-            name={name}
-            value={value}
-            onChange={onChange}
-         />
+      <div className='flex justify-between items-center pl-5 pr-3 mb-3'>
+
+         <section>
+
+            <span className='text-sm font-semibold capitalize block w-max mb-1.5 px-2 py-0.5 bg-amber-200/80 rounded-md'>
+               {field}
+            </span>
+
+            <Input
+               // field={field}
+               isNumber={isNumber}
+               name={name}
+               value={value}
+               onChange={onChange}
+            />
+
+         </section>
 
          <Button
             disabled={upActive}

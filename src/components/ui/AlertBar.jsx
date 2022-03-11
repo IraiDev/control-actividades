@@ -6,7 +6,7 @@ const AlertBar = ({ validation, customMsg, isCustom = false, position = '-top-4'
          className={`
 
             rounded-md text-red-500 text-sm py-2 px-2.5 block w-max mx-auto my-2
-            sticky z-50
+            sticky z-30
             ${validation ? 'bg-red-100' : 'bg-transparent'}
             ${position}
             

@@ -82,11 +82,12 @@ const CheckBox = ({ value, onChange }) => {
 
 const CloneSelect = ({options, value, onChange, field, isRequired = false, isDefaultOptions = false}) => {
    return(
-      <div className='grid gap-2 capitalize text-xs'>
-         <label className='flex gap-2 items-baseline pl-4'>
+      <div className='capitalize text-xs'>
+         <span className='flex gap-2 items-baseline font-semibold text-sm px-2 w-max mb-2 py-0.5 bg-amber-200/80 rounded-md'>
             {field}
             {isRequired && <span className='text-red-600 font-semibold'>(*)</span>}
-         </label>
+         </span>
+
          <Select
             maxMenuHeight={170}
             className='capitalize text-sm'
@@ -916,6 +917,7 @@ const Detail = () => {
                         <section className='col-span-1 md:col-span-3 grid gap-2'>
                            <Input
                               isRequired
+                              highlight
                               field='titulo'
                               value={title}
                               onChange={e =>
@@ -924,6 +926,7 @@ const Detail = () => {
                            />
                            <TextArea
                               isRequired
+                              highlight
                               field='descripccion'
                               value={description}
                               onChange={e =>
@@ -934,6 +937,7 @@ const Detail = () => {
                               }
                            />
                            <TextArea
+                              highlight
                               field='glosa'
                               value={gloss}
                               onChange={e =>
@@ -942,6 +946,7 @@ const Detail = () => {
                            />
                            <div className='grid grid-cols-1 lg:grid-cols-3 gap-2'>
                               <Input
+                                 highlight
                                  field='ticket'
                                  value={ticket}
                                  isNumber
@@ -953,6 +958,7 @@ const Detail = () => {
                                  }
                               />
                               <Input
+                                 highlight
                                  isRequired
                                  field='prioridad'
                                  value={priority}
@@ -965,6 +971,7 @@ const Detail = () => {
                                  }
                               />
                               <Input
+                                 highlight
                                  isRequired
                                  field='T. estimado'
                                  value={time}
@@ -1147,6 +1154,9 @@ const Detail = () => {
                               onClick={() =>
                                  deleteActivity({
                                     id_actividad: activity.id_det,
+                                    encargado: optionsArray.users.find(ou => ou.label === activity.encargado_actividad),
+                                    isFather,
+                                    isTicket
                                  })
                               }>
                               <i className='fas fa-trash' />
@@ -1159,7 +1169,7 @@ const Detail = () => {
                               <i className='fas fa-clone' />
                            </Button>
 
-                           {activity.num_ticket_edit !== 0 && (
+                           {isTicket && (
                               <a
                                  className='text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg h-9 px-2.5 text-center block pt-1.5 transition duration-300'
                                  target='_blank'
@@ -1188,7 +1198,7 @@ const Detail = () => {
                            </Button>
 
                            <Button
-                              hidden={activity.estado !== 2 || activity.id_tipo_actividad !== 1 || (activity.es_padre === 1 && activity.es_hijo === 0 && isTicket)}
+                              hidden={activity.estado !== 2 || activity.id_tipo_actividad !== 1 || (isFather && isTicket)}
                               title='Pasar actividad a revisión'
                               className='text-orange-400 bg-orange-50 hover:bg-orange-100'
                               onClick={validateActivityIsRunning}
@@ -1197,7 +1207,7 @@ const Detail = () => {
                            </Button>
 
                            <Button
-                              hidden={(activity.id_tipo_actividad === 1 && !isFather) || activity.estado === 1}
+                              hidden={(activity.id_tipo_actividad === 1 && !isFather) || activity.estado === 1 || !isTicket}
                               title='Teminar actividad'
                               className='text-amber-500 bg-amber-100 hover:bg-amber-200'
                               onClick={() => finishActivity(activity.id_tipo_actividad, isFather)}
@@ -1877,7 +1887,7 @@ const Detail = () => {
 
                         <aside className='mt-0.5 grid'>
 
-                           <div className='border-2 border-amber-400/30 rounded bg-amber-50 p-0.5'>
+                           <div className='border-2 border-amber-200 rounded p-0.5 mb-3'>
                               <CloneSelect
                                  isRequired
                                  field='tipo actividad'
@@ -1894,6 +1904,8 @@ const Detail = () => {
 
                            <Input
                               isRequired
+                              highlight
+                              className='mb-3'
                               field='titulo'
                               value={cTitle}
                               onChange={e =>
@@ -1906,6 +1918,8 @@ const Detail = () => {
 
                            <Input
                               disabled
+                              highlight
+                              className='mb-3'
                               field='ticket'
                               isNumber
                               value={cTicket}
@@ -1919,6 +1933,8 @@ const Detail = () => {
 
                            <Input
                               isRequired
+                              highlight
+                              className='mb-3'
                               field='prioridad'
                               isNumber
                               value={cPriority}
@@ -1932,6 +1948,8 @@ const Detail = () => {
 
                            <Input
                               isRequired
+                              highlight
+                              className='mb-3'
                               field='T. estimado'
                               value={cTime}
                               isNumber

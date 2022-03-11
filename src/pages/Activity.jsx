@@ -107,7 +107,8 @@ const Activity = () => {
       pager, 
       setPager, 
       setOrder, 
-      order 
+      order, 
+      user
    } = useContext(ActivityContext)
 
    // states
@@ -210,7 +211,19 @@ const Activity = () => {
       onPlayPause({ id_actividad })
    }
 
-   const onDeleteActivity = ({ id_actividad, title = 'sin titulo' }) => {
+   const onDeleteActivity = ({ id_actividad, title = 'sin titulo', encargado, isFather, isTicket }) => {
+
+      if(encargado?.id !== user?.id && isFather && isTicket) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'No puedes eliminar esta actividad ya que no eres el encargado',
+            showCancelButton: false,
+         })
+
+         return
+      }
+
       Alert({
          icon: 'warn',
          title: 'Atención',
@@ -323,6 +336,9 @@ const Activity = () => {
                            onDeleteActivity({
                               id_actividad: act.id_det,
                               title: act.actividad,
+                              encargado: optionsArray?.users?.find(ou => ou.label === act.encargado_actividad),
+                              isTicket: act.num_ticket_edit > 0,
+                              isFather: act.es_padre === 1 && act.es_hijo === 0
                            })
                         }
                         addNote={onAddNote}
