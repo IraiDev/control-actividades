@@ -307,7 +307,7 @@ export const useDetail = id => {
                Alert({
                   icon: 'error',
                   title: 'Error',
-                  content: 'Error al eliminar actividad',
+                  content: body.response,
                   showCancelButton: false,
                })
             }

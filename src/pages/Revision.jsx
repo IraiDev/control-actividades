@@ -183,6 +183,8 @@ const Revision = () => {
 
                   <tr className='text-center capitalize'>
 
+                     <Th></Th>
+
                      <Th>
                         <SelectFilter
                            className='w-[182px]'
@@ -485,6 +487,7 @@ const Revision = () => {
 
                   <tr className='text-center capitalize'>
                      <Th primary >Nᵒ</Th>
+                     <Th primary >Tipo actividad</Th>
                      <Th primary >ID</Th>
                      <Th primary >ticket</Th>
                      <Th primary >proyecto</Th>
@@ -544,6 +547,22 @@ const Revision = () => {
                         >
                               
                            <Td><Numerator className='mx-auto' number={i + 1} /></Td>
+
+                           <Td>
+                              <span className={`
+                                    px-2 py-0.5 font-bold rounded-md text-sm mt-2 block w-max mx-auto capitalize
+                                    ${
+                                       act.id_tipo_actividad === 1 ? 'bg-indigo-200 text-indigo-500' 
+                                          : act.id_tipo_actividad === 2 ? 'bg-emerald-200 text-emerald-500' 
+                                          : act.id_tipo_actividad === 3 ? 'bg-red-200 text-red-500' 
+                                          : act.id_tipo_actividad === 4 ? 'bg-orange-200 text-orange-500' 
+                                          : 'bg-zinc-100 text-black'
+                                    }
+                                 `}
+                              >
+                                 {act.desc_tipo_actividad}
+                              </span>
+                           </Td>
 
                            <Td>{act.id_det}</Td>
 
