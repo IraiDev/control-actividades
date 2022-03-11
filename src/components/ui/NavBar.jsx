@@ -47,18 +47,42 @@ const EnvType = ({ env, isHide = false }) => (
 const { activity, home } = routes
 
 const MenuContent = ({ content }) => {
+
+   const { 
+      saveFilters, 
+      setPager, 
+      pager 
+   } = useContext(ActivityContext)
+
+   const onFilter = () => {
+
+      setPager({ ...pager, page: 1 })
+      saveFilters({ payload: {id_actividad: content.id_det, offset: 0,} })
+   }
+
    return (
-      <div className='grid text-slate-700 max-w-[150px]'>
+      <div 
+         className='grid text-slate-700 max-w-[150px]'
+         onClick={onFilter}
+      >
+
          <span className='text-xs'>
             <strong>Fecha:</strong>{' '}
             {moment(content.fecha_hora_crea).format('DD/MM/yyyy, HH:mm')}
          </span>
+
+         <span className='text-xs truncate'>
+            <strong>ID:</strong> {content.id_det}
+         </span>
+
          <span className='text-xs truncate'>
             <strong>Desc.:</strong> {content.desc_nota}
          </span>
+
          <span className='text-xs'>
             <strong>Por:</strong> {content.user_crea_nota.abrev_user}
          </span>
+
       </div>
    )
 }
@@ -284,13 +308,13 @@ const NavBar = () => {
                            className='text-transparent hover:text-slate-800 flex items-center justify-between'>
                            <MenuContent content={noti} />
                            <Button
-                              className='outline-none focus:outline-none hover:text-red-500'
-                              type='icon'
-                              icon='fas fa-eye-slash fa-sm'
+                              className='outline-none focus:outline-none hover:text-red-500 ml-5'
                               onClick={() =>
                                  markNotifications({ id_nota: noti.id_nota })
                               }
-                           />
+                           >
+                              <i className='fas fa-eye-slash fa-sm' />
+                           </Button>
                         </MenuItem>
                      ))
                   : <MenuItem>No hay notificaciones...</MenuItem>

@@ -18,7 +18,7 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
       setOrder, 
       order, 
       setPager, 
-      pager 
+      pager
    } = useContext(ActivityContext)
    
    const [userCheck, setUserCheck] = useState(false)
