@@ -693,9 +693,18 @@ const Activity = () => {
                               onDoubleClick={() => navigate(`detalle-actividad/${act.id_det}`)}
                            >
                               <Td>
-                                 <div className='relative'>
+                                 <div className='relative flex items-center gap-2'>
                                     <Numerator number={i + 1} />
                                     <PingIndicator hidden={act.estado_play_pausa !== 2} size='small' />
+                                    {act.predecesoras.length > 0 && 
+                                       <span 
+                                          className='h-7 w-7 pt-1'
+                                          title='Actividad con predecesores y restricciones'
+                                       >
+                                          <i className='fas fa-link' />
+                                          {/* <i className='fas fa-lock' /> */}
+                                       </span>
+                                    }
                                  </div>
                               </Td>
 
