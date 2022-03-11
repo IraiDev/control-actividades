@@ -48,7 +48,7 @@ const Revision = () => {
    const [isActive, setIsActive] = useState(null)
    const [options, setOptions] = useState({})
    const [modalReject, toggleModalReject] = useState(false)
-   const [soloPadre, setSoloPadre] = useState(false)
+   const [soloPadre, setSoloPadre] = useState(prFilters.solo_padres)
 
    // hooks
    const size = useWindowSize()
@@ -109,6 +109,7 @@ const Revision = () => {
          sp: [],
       })
       reset()
+      setSoloPadre(false)
       setPROrder({})
    }
 
@@ -196,7 +197,7 @@ const Revision = () => {
                               className='mt-1 cursor-pointer'
                               id='solo_padres' 
                               type="checkbox"
-                              value={soloPadre} 
+                              checked={soloPadre} 
                               onChange={e => setSoloPadre(e.target.checked)}
                            />
                           
