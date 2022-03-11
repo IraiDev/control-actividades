@@ -36,6 +36,7 @@ const initPRFilters = {
    offset: 0,
    limit: 12,
    reload: false,
+   solo_padres: false
 }
 
 export const ActivityContext = createContext()

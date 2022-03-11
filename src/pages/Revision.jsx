@@ -21,6 +21,7 @@ import THead from '../components/table2/THead'
 import TrPRControls from '../components/table2/customTR/TrPRControls'
 import Modal from '../components/ui/Modal'
 import TextArea from '../components/ui/TextArea'
+import MarkActivity from '../components/ui/MarkActivity'
 
 const Revision = () => {
    const { 
@@ -47,6 +48,7 @@ const Revision = () => {
    const [isActive, setIsActive] = useState(null)
    const [options, setOptions] = useState({})
    const [modalReject, toggleModalReject] = useState(false)
+   const [soloPadre, setSoloPadre] = useState(false)
 
    // hooks
    const size = useWindowSize()
@@ -89,6 +91,7 @@ const Revision = () => {
          numero_ticket: ticket,
          descripcion: desc,
          offset: 0,
+         solo_padres: soloPadre,
       }
 
       setPRPager({ ...prPager, page: 1 })
@@ -173,6 +176,8 @@ const Revision = () => {
       // eslint-disable-next-line
    }, [optionsArray])
 
+   console.log(activitiesPR);
+
    return (
       <>
          <Container type='table'>
@@ -183,7 +188,22 @@ const Revision = () => {
 
                   <tr className='text-center capitalize'>
 
-                     <Th></Th>
+                     <Th>
+                        <label 
+                           htmlFor='solo_padres'
+                           className='flex gap-2 items-center mt-2 px-2 py-1 mx-auto w-max font-normal rounded-full bg-zinc-200 cursor-pointer'
+                        >
+                           Solo padres
+                           <input 
+                              className='mt-1 cursor-pointer'
+                              id='solo_padres' 
+                              type="checkbox"
+                              value={soloPadre} 
+                              onChange={e => setSoloPadre(e.target.checked)}
+                           />
+                          
+                        </label>
+                     </Th>
 
                      <Th>
                         <SelectFilter
@@ -564,7 +584,18 @@ const Revision = () => {
                               </span>
                            </Td>
 
-                           <Td>{act.id_det}</Td>
+                           <Td>
+                              <div className='relative'> 
+                                 {act.id_det}
+                                 <MarkActivity 
+                                    position='absolute top-0 left-0'
+                                    condicion={act.num_ticket_edit > 0}
+                                    hidden={!(act.es_padre === 1 && act.es_hijo === 0)} 
+                                 >
+                                    <i className='fas fa-hat-cowboy fa-lg' />
+                                 </MarkActivity>
+                              </div>
+                           </Td>
 
                            <Td>{act.num_ticket_edit || '--'}</Td>
 
