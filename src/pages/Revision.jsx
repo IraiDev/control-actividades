@@ -176,8 +176,6 @@ const Revision = () => {
       // eslint-disable-next-line
    }, [optionsArray])
 
-   console.log(activitiesPR);
-
    return (
       <>
          <Container type='table'>
