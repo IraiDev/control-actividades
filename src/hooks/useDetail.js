@@ -24,8 +24,6 @@ export const useDetail = id => {
          const body = await resp.json()
          const { ok, tareas } = body
 
-         console.log(tareas[0])
-
          setIsLoading(false)
          if (ok) {
             setActivity(tareas[0])

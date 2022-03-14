@@ -59,7 +59,6 @@ function ActivityProvider({ children }) {
 
          if (body.ok) {
             localStorage.setItem('tokenBackend', body.token)
-            console.log(body)
             setUser({
                ok: true,
                name: body.usuario.nombre,

@@ -13,5 +13,13 @@ export const useForm = (initialState = {}) => {
       [target.name]: target.value,
     })
   }
-  return [values, handleInputChange, reset]
+
+  const handlePreset = (scope) => {
+    setValues({
+      ...values,
+      ...scope,
+    })
+  }
+
+  return [values, handleInputChange, handlePreset, reset]
 }
