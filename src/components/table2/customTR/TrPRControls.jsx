@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ActivityContext } from '../../../context/ActivityContext'
 import { Alert } from '../../../helpers/alerts'
 import { useForm } from '../../../hooks/useForm'
@@ -12,6 +13,8 @@ import Box from '../../ui/Box'
 
 const TrPRControls = props => {
    const isReviwed = props.estado === 5
+
+   const navigate = useNavigate()
 
    const { optionsArray } = useContext(ActivityContext)
 
@@ -135,6 +138,15 @@ const TrPRControls = props => {
       reset()
    }
 
+   const onDoubleClick = () => {
+      if (isReviwed) {
+         handleOpenModal()
+         return
+      }
+
+      navigate(`actividad-pr-detalle/${props.id_det}?type_detail=pr`) 
+   }
+
    useEffect(() => {
       setTimes(props.tiempos_distribuidos)
       // eslint-disable-next-line
@@ -151,7 +163,7 @@ const TrPRControls = props => {
       <>
          <tr
             className={`text-[13px] text-gray-800 transition duration-300 cursor-pointer hover:bg-black/10 ${props.className}`}
-            onDoubleClick={isReviwed ? () => handleOpenModal() : null}>
+            onDoubleClick={onDoubleClick}>
             {props.children}
          </tr>
 

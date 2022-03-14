@@ -1,13 +1,16 @@
 import { useEffect, useState, useContext } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { ActivityContext } from '../context/ActivityContext'
 import { UiContext } from '../context/UiContext'
 import { Alert } from '../helpers/alerts'
 import { fetchToken, fetchTokenFile } from '../helpers/fetch'
 import { routes } from '../types/types'
+import queryString from 'query-string'
 
-export const useDetail = id => {
+export const useDetail = (id) => {
    const navigate = useNavigate()
+   const {search} = useLocation()
+   const { type_detail = '' } = queryString.parse(search)
    const { setIsLoading } = useContext(UiContext)
    const { filters, saveFilters, refresh, setRefresh, user } = useContext(ActivityContext)
    const [activity, setActivity] = useState({})
@@ -41,6 +44,30 @@ export const useDetail = id => {
       } catch (e) {
          navigate(routes.activity, { replace: true })
          console.log('error fetch detail', e)
+         setIsLoading(false)
+      }
+   }
+
+   const fetchPRDetail = async () => {
+      try {
+         setIsLoading(true)
+         const resp = await fetchToken(
+            'task/get-finished-task',
+            { id_actividad: id},
+            'POST'
+         )
+         const body = await resp.json()
+         const { ok, tareas } = body
+
+         setIsLoading(false)
+         if (ok) {
+            console.log(tareas[0])
+            setActivity(tareas[0])
+         } else {
+            console.log('Error')
+         }
+      } catch (e) {
+         console.log(e)
          setIsLoading(false)
       }
    }
@@ -623,8 +650,11 @@ export const useDetail = id => {
    }
 
    useEffect(() => {
-      id && fetchDetail()
-      id && getDetentions({ id_actividad: id })
+
+      if (id) {
+         type_detail === 'pr' && fetchPRDetail() 
+         type_detail !== 'pr' && getDetentions({ id_actividad: id })
+      }
 
       return () => null
       // eslint-disable-next-line
@@ -648,6 +678,6 @@ export const useDetail = id => {
       deleteDetention,
       toggleState,
       updatePredecessor,
-      getPredecessor
+      getPredecessor,
    }
 }

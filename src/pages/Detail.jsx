@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { ActivityContext } from '../context/ActivityContext'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { validateDate, validatePredecessor } from '../helpers/helpersFunc'
 import { useDetail } from '../hooks/useDetail'
 import { useForm } from '../hooks/useForm'
@@ -25,6 +25,7 @@ import ViewFooter from '../components/view/ViewFooter'
 import NumberFormat from 'react-number-format'
 import Box from '../components/ui/Box'
 import Switch from '../components/ui/Switch'
+import queryString from 'query-string'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
@@ -80,7 +81,7 @@ const CheckBox = ({ value, onChange }) => {
    )
 }
 
-const CloneSelect = ({options, value, onChange, field, isRequired = false, isDefaultOptions = false}) => {
+const CloneSelect = ({options, value, onChange, field, isRequired = false, isDefaultOptions = false, disabled = false}) => {
    return(
       <div className='capitalize text-xs'>
          <span className='flex gap-2 items-baseline font-semibold text-sm px-2 w-max mb-2 py-0.5 bg-amber-200/80 rounded-md'>
@@ -89,6 +90,7 @@ const CloneSelect = ({options, value, onChange, field, isRequired = false, isDef
          </span>
 
          <Select
+            isDisabled={disabled}
             maxMenuHeight={170}
             className='capitalize text-sm'
             placeholder='Seleccione'
@@ -130,6 +132,8 @@ const Span = ({children, colCount = 1}) => {
 const Detail = () => {
    const navigate = useNavigate()
    const { id } = useParams()
+   const { search } = useLocation()
+   const { type_detail = '' } = queryString.parse(search)
    const { optionsArray } = useContext(ActivityContext)
    const {
       activity,
@@ -230,8 +234,8 @@ const Detail = () => {
    const validation = () => {
       const vTitle = title.trim() === ''
       const vDesc = description.trim() === ''
-      const vPriority = priority.toString().trim() === ''
-      const vTime = time.toString().trim() === ''
+      const vPriority = priority?.toString().trim() === ''
+      const vTime = time?.toString().trim() === ''
       const vProject = options.pr?.value === undefined || options.pr?.value === null
       const vSolicita = options.us?.value === undefined || options.us?.value === null
       const vEncargado = options.ue?.value === undefined || options.ue?.value === null
@@ -251,8 +255,8 @@ const Detail = () => {
 
       const vTitleC = cTitle.trim() === ''
       const vDescC = cDescription.trim() === ''
-      const vPriorityC = cPriority.toString().trim() === ''
-      const vTimeC = cTime.toString().trim() === ''
+      const vPriorityC = cPriority?.toString().trim() === ''
+      const vTimeC = cTime?.toString().trim() === ''
       const vProjectC = cloneOptions.pr?.value === undefined
       const vSolicitaC = cloneOptions.us?.value === undefined
       const vEncargadoC = cloneOptions.ue?.value === undefined
@@ -776,12 +780,13 @@ const Detail = () => {
                      {...activity}
                   >
 
-                     <AlertBar 
-                        validation={validation().isSave} 
-                        isCustom={options?.ur?.id !== options?.ue?.id} 
-                        customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
-                        position='top-20'
-                     />
+                     {type_detail !== 'pr' && 
+                        <AlertBar 
+                           validation={validation().isSave} 
+                           isCustom={options?.ur?.id !== options?.ue?.id} 
+                           customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
+                           position='top-20'
+                        />}
 
                      <ViewSection lg cols={8}>
 
@@ -916,7 +921,8 @@ const Detail = () => {
 
                         <section className='col-span-1 md:col-span-3 grid gap-2'>
                            <Input
-                              isRequired
+                              disabled={type_detail === 'pr'}
+                              isRequired={type_detail !== 'pr'}
                               highlight
                               field='titulo'
                               value={title}
@@ -925,7 +931,8 @@ const Detail = () => {
                               }
                            />
                            <TextArea
-                              isRequired
+                              disabled={type_detail === 'pr'}
+                              isRequired={type_detail !== 'pr'}
                               highlight
                               field='descripccion'
                               value={description}
@@ -937,6 +944,7 @@ const Detail = () => {
                               }
                            />
                            <TextArea
+                              disabled={type_detail === 'pr'}
                               highlight
                               field='glosa'
                               value={gloss}
@@ -946,6 +954,7 @@ const Detail = () => {
                            />
                            <div className='grid grid-cols-1 lg:grid-cols-3 gap-2'>
                               <Input
+                                 disabled={type_detail === 'pr'}
                                  highlight
                                  field='ticket'
                                  value={ticket}
@@ -959,7 +968,8 @@ const Detail = () => {
                               />
                               <Input
                                  highlight
-                                 isRequired
+                                 disabled={type_detail === 'pr'}
+                                 isRequired={type_detail !== 'pr'}
                                  field='prioridad'
                                  value={priority}
                                  isNumber
@@ -970,9 +980,12 @@ const Detail = () => {
                                     })
                                  }
                               />
+
+                              {/* TODO: aqui quede, desabilitando campos */}
                               <Input
                                  highlight
-                                 isRequired
+                                 disabled={type_detail === 'pr'}
+                                 isRequired={type_detail !== 'pr'}
                                  field='T. estimado'
                                  value={time}
                                  isNumber
@@ -998,7 +1011,7 @@ const Detail = () => {
                                     <i className='fas fa-plus' />
                                  </Button>
                                  <Button
-                                    disabled={activity.notas.length === 0}
+                                    disabled={activity?.notas?.length === 0}
                                     className='text-slate-600 bg-slate-100 hover:bg-slate-200 disabled:hover:bg-slate-200/50'
                                     onClick={() => toggleModalEdit(true)}>
                                     <i className='fas fa-pen' />
@@ -1006,8 +1019,8 @@ const Detail = () => {
                               </section>
                            </div>
                            <ul className='max-h-[540px] overflow-custom'>
-                              {activity.notas.length > 0 ? (
-                                 activity.notas.map((note, i) => (
+                              {activity?.notas?.length > 0 && activity?.notas !== undefined ? (
+                                 activity?.notas?.map((note, i) => (
                                     <li
                                        key={note.id_nota}
                                        className='bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 mb-2.5 shadow-md shadow-gray-400/20 hover:bg-black/10 transition duration-200'>
@@ -1032,8 +1045,8 @@ const Detail = () => {
                               Archivos:{' '}
                            </h5>
                            <ul className='h-28 overflow-custom border-x p-1.5'>
-                              {activity.tarea_documentos.length > 0 ? (
-                                 activity.tarea_documentos.map((file, i) => (
+                              {activity?.tarea_documentos?.length > 0 ? (
+                                 activity?.tarea_documentos?.map((file, i) => (
                                     <li
                                        key={file.id_docum}
                                        className='p-2 bg-white 
@@ -1238,7 +1251,8 @@ const Detail = () => {
                </ViewContainer>
 
                {/* modal reject */}
-               <Modal
+               {modalReject &&
+                  <Modal
                   showModal={modalReject}
                   isBlur={false}
                   onClose={onCloseModals}
@@ -1281,10 +1295,11 @@ const Detail = () => {
                         </Button>
                      </section>
                   </div>
-               </Modal>
+                  </Modal>}
 
                {/* modal PR */}
-               <Modal
+               {modalPR &&
+                  <Modal
                   showModal={modalPR}
                   isBlur={false}
                   onClose={onCloseModals}
@@ -1360,10 +1375,11 @@ const Detail = () => {
                         </Button>
                      </section>
                   </div>
-               </Modal>
+                  </Modal>}
 
                {/* modal detentions */}
-               <Modal
+               {modalTimer &&
+                  <Modal
                   showModal={modalTimer}
                   isBlur={false}
                   onClose={onCloseModals}
@@ -1604,423 +1620,427 @@ const Detail = () => {
                            ))}
                      </div>
                   </div>
-               </Modal>
+                  </Modal>}
 
                {/* modal edit */}
-               <Modal
-                  showModal={modalEdit}
-                  isBlur={false}
-                  onClose={onCloseModals}
-                  className='max-w-2xl'
-                  padding='p-4 md:p-6'
-                  title='Modificar Notas'>
-                  <div className='grid gap-5'>
-                     <h5 className='text-sm'>Notas actuales: </h5>
-                     <ul className='max-h-56 overflow-custom'>
-                        {activity.notas.length > 0 ? (
-                           activity.notas.map(note => (
+               {modalEdit &&
+                  <Modal
+                     showModal={modalEdit}
+                     isBlur={false}
+                     onClose={onCloseModals}
+                     className='max-w-2xl'
+                     padding='p-4 md:p-6'
+                     title='Modificar Notas'>
+                     <div className='grid gap-5'>
+                        <h5 className='text-sm'>Notas actuales: </h5>
+                        <ul className='max-h-56 overflow-custom'>
+                           {activity.notas.length > 0 ? (
+                              activity.notas.map(note => (
+                                 <li
+                                    key={note.id_nota}
+                                    className={`flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 cursor-pointer shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200 ${
+                                       values.id === note.id_nota &&
+                                       'border-2 border-blue-400'
+                                    }`}
+                                    onClick={() => {
+                                       setValues({
+                                          desc: note.desc_nota,
+                                          id: note.id_nota,
+                                       })
+                                    }}>
+                                    <span>
+                                       <h1>
+                                          {note.usuario.abrev_user}
+                                          <span className='text-gray-600 text-xs font-light ml-2'>
+                                             {moment(note.date).format(
+                                                'DD/MM/yyyy, HH:mm'
+                                             )}
+                                          </span>
+                                       </h1>
+                                       <p className='text-gray-600 text-sm'>
+                                          {note.desc_nota}
+                                       </p>
+                                    </span>
+                                    <button
+                                       className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
+                                       onClick={() =>
+                                          onDelete({
+                                             id: note.id_nota,
+                                             desc: note.desc_nota,
+                                          })
+                                       }>
+                                       <i className='fas fa-trash fa-sm' />
+                                    </button>
+                                 </li>
+                              ))
+                           ) : (
+                              <li className='text-gray-500 text-sm ml-2'>
+                                 No hay notas...
+                              </li>
+                           )}
+                        </ul>
+                        <TextArea
+                           disabled={values.id === null}
+                           placeholder='Selecciona una nota para editar...'
+                           field='descripcion'
+                           value={values.desc}
+                           onChange={e =>
+                              setValues({ ...values, desc: e.target.value })
+                           }
+                        />
+                        <Button
+                           className='text-blue-500 hover:bg-blue-100 place-self-end'
+                           onClick={onUpdate}>
+                           modificar nota
+                        </Button>
+                     </div>
+                  </Modal>}
+
+               {/* modal add */}
+               {modalAdd &&
+                  <Modal
+                     showModal={modalAdd}
+                     isBlur={false}
+                     onClose={onCloseModals}
+                     className='max-w-2xl'
+                     padding='p-4 md:p-6'
+                     title='crear Notas'>
+                     <div className='grid gap-5'>
+                        <h5 className='text-sm'>Notas rapidas: </h5>
+                        <ul className='max-h-56 overflow-custom'>
+                           {defaultNotes.map(note => (
                               <li
-                                 key={note.id_nota}
-                                 className={`flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 cursor-pointer shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200 ${
-                                    values.id === note.id_nota &&
-                                    'border-2 border-blue-400'
-                                 }`}
-                                 onClick={() => {
-                                    setValues({
-                                       desc: note.desc_nota,
-                                       id: note.id_nota,
-                                    })
-                                 }}>
+                                 key={note.id}
+                                 className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 
+                                    mr-1.5 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'>
                                  <span>
-                                    <h1>
-                                       {note.usuario.abrev_user}
-                                       <span className='text-gray-600 text-xs font-light ml-2'>
-                                          {moment(note.date).format(
-                                             'DD/MM/yyyy, HH:mm'
-                                          )}
-                                       </span>
-                                    </h1>
                                     <p className='text-gray-600 text-sm'>
-                                       {note.desc_nota}
+                                       {note.desc}
                                     </p>
                                  </span>
                                  <button
-                                    className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
-                                    onClick={() =>
-                                       onDelete({
-                                          id: note.id_nota,
-                                          desc: note.desc_nota,
-                                       })
-                                    }>
-                                    <i className='fas fa-trash fa-sm' />
+                                    className='ml-2 text-blue-400 hover:text-blue-600 transition duration-200 transform hover:hover:scale-125'
+                                    onClick={() => {
+                                       note.id === 11121
+                                          ? updatePriorityAndAddNote({
+                                             prioridad_numero: 100,
+                                             id_actividad: activity.id_det,
+                                             description: note.desc,
+                                          })
+                                          : newNote({
+                                             id_actividad: activity.id_det,
+                                             description: note.desc,
+                                          })
+                                       onCloseModals()
+                                    }}>
+                                    <i className='fas fa-tag fa-sm'></i>
                                  </button>
                               </li>
-                           ))
-                        ) : (
-                           <li className='text-gray-500 text-sm ml-2'>
-                              No hay notas...
-                           </li>
-                        )}
-                     </ul>
-                     <TextArea
-                        disabled={values.id === null}
-                        placeholder='Selecciona una nota para editar...'
-                        field='descripcion'
-                        value={values.desc}
-                        onChange={e =>
-                           setValues({ ...values, desc: e.target.value })
-                        }
-                     />
-                     <Button
-                        className='text-blue-500 hover:bg-blue-100 place-self-end'
-                        onClick={onUpdate}>
-                        modificar nota
-                     </Button>
-                  </div>
-               </Modal>
-
-               {/* modal add */}
-               <Modal
-                  showModal={modalAdd}
-                  isBlur={false}
-                  onClose={onCloseModals}
-                  className='max-w-2xl'
-                  padding='p-4 md:p-6'
-                  title='crear Notas'>
-                  <div className='grid gap-5'>
-                     <h5 className='text-sm'>Notas rapidas: </h5>
-                     <ul className='max-h-56 overflow-custom'>
-                        {defaultNotes.map(note => (
-                           <li
-                              key={note.id}
-                              className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 
-                                 mr-1.5 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'>
-                              <span>
-                                 <p className='text-gray-600 text-sm'>
-                                    {note.desc}
-                                 </p>
-                              </span>
-                              <button
-                                 className='ml-2 text-blue-400 hover:text-blue-600 transition duration-200 transform hover:hover:scale-125'
-                                 onClick={() => {
-                                    note.id === 11121
-                                       ? updatePriorityAndAddNote({
-                                            prioridad_numero: 100,
-                                            id_actividad: activity.id_det,
-                                            description: note.desc,
-                                         })
-                                       : newNote({
-                                            id_actividad: activity.id_det,
-                                            description: note.desc,
-                                         })
-                                    onCloseModals()
-                                 }}>
-                                 <i className='fas fa-tag fa-sm'></i>
-                              </button>
-                           </li>
-                        ))}
-                     </ul>
-                     <TextArea
-                        field='descripcion'
-                        value={values.desc}
-                        onChange={e =>
-                           setValues({ ...values, desc: e.target.value })
-                        }
-                     />
-                     <Button
-                        className='text-blue-500 hover:bg-blue-100 place-self-end'
-                        onClick={onAdd}>
-                        crear nota
-                     </Button>
-                  </div>
-               </Modal>
+                           ))}
+                        </ul>
+                        <TextArea
+                           field='descripcion'
+                           value={values.desc}
+                           onChange={e =>
+                              setValues({ ...values, desc: e.target.value })
+                           }
+                        />
+                        <Button
+                           className='text-blue-500 hover:bg-blue-100 place-self-end'
+                           onClick={onAdd}>
+                           crear nota
+                        </Button>
+                     </div>
+                  </Modal>}
 
                {/* modal pause */}
-               <Modal
-                  showModal={modalPause}
-                  isBlur={false}
-                  onClose={onCloseModals}
-                  className='max-w-2xl'
-                  padding='p-4 md:p-6'
-                  title={`Pausar actividad: ${activity.actividad}, ${activity.id_det}`}>
-                  <div className='grid gap-5'>
-                     <h5 className='text-sm'>Descripcion actividad: </h5>
-                     <p className='text-sm whitespace-pre-wrap max-h-44 overflow-custom p-1.5 rounded-lg bg-black/5'>
-                        {values.content}
-                     </p>
-                     <h5 className='text-sm'>Pausas rapidas: </h5>
-                     <ul className='max-h-56 overflow-custom'>
-                        {defaultPauses.map(pause => (
-                           <li
-                              key={pause.id}
-                              className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'>
-                              <p className='text-gray-600 text-sm'>
-                                 {pause.desc}
-                              </p>
-                              <button
-                                 className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
-                                 onClick={() => {
-                                    onPlayPause({
-                                       id_actividad: activity.id_det,
-                                       mensaje: pause.desc,
-                                    })
-                                    onCloseModals()
-                                 }}>
-                                 <i className='fas fa-pause fa-sm' />
-                              </button>
-                           </li>
-                        ))}
-                     </ul>
-                     <TextArea
-                        field='Mensaje pausa'
-                        value={values.desc}
-                        onChange={e =>
-                           setValues({ ...values, desc: e.target.value })
-                        }
-                     />
-                     <footer className='flex items-center justify-between'>
-                        <Button
-                           className='w-max text-blue-500 hover:bg-blue-100'
-                           onClick={() => onCloseModals()}>
-                           cancelar
-                        </Button>
-                        <Button
-                           className='w-max text-red-500 hover:bg-red-100'
-                           onClick={onPause}>
-                           Pausar actividad
-                        </Button>
-                     </footer>
-                  </div>
-               </Modal>
+               {modalPause && 
+                  <Modal
+                     showModal={modalPause}
+                     isBlur={false}
+                     onClose={onCloseModals}
+                     className='max-w-2xl'
+                     padding='p-4 md:p-6'
+                     title={`Pausar actividad: ${activity.actividad}, ${activity.id_det}`}>
+                     <div className='grid gap-5'>
+                        <h5 className='text-sm'>Descripcion actividad: </h5>
+                        <p className='text-sm whitespace-pre-wrap max-h-44 overflow-custom p-1.5 rounded-lg bg-black/5'>
+                           {values.content}
+                        </p>
+                        <h5 className='text-sm'>Pausas rapidas: </h5>
+                        <ul className='max-h-56 overflow-custom'>
+                           {defaultPauses.map(pause => (
+                              <li
+                                 key={pause.id}
+                                 className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'>
+                                 <p className='text-gray-600 text-sm'>
+                                    {pause.desc}
+                                 </p>
+                                 <button
+                                    className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
+                                    onClick={() => {
+                                       onPlayPause({
+                                          id_actividad: activity.id_det,
+                                          mensaje: pause.desc,
+                                       })
+                                       onCloseModals()
+                                    }}>
+                                    <i className='fas fa-pause fa-sm' />
+                                 </button>
+                              </li>
+                           ))}
+                        </ul>
+                        <TextArea
+                           field='Mensaje pausa'
+                           value={values.desc}
+                           onChange={e =>
+                              setValues({ ...values, desc: e.target.value })
+                           }
+                        />
+                        <footer className='flex items-center justify-between'>
+                           <Button
+                              className='w-max text-blue-500 hover:bg-blue-100'
+                              onClick={() => onCloseModals()}>
+                              cancelar
+                           </Button>
+                           <Button
+                              className='w-max text-red-500 hover:bg-red-100'
+                              onClick={onPause}>
+                              Pausar actividad
+                           </Button>
+                        </footer>
+                     </div>
+                  </Modal>}
 
                {/* modal clone */}
-               <Modal
-                  showModal={modalClone}
-                  isBlur={false}
-                  onClose={onCloseModals}
-                  padding='p-4 md:p-6'
-                  title={`Clonar actividad: ${activity.id_det}, ${
-                     activity.actividad || 'Sin titulo'
-                  }`}>
+               {modalClone && 
+                  <Modal
+                     showModal={modalClone}
+                     isBlur={false}
+                     onClose={onCloseModals}
+                     padding='p-4 md:p-6'
+                     title={`Clonar actividad: ${activity.id_det}, ${
+                        activity.actividad || 'Sin titulo'
+                     }`}>
 
-                  <AlertBar 
-                     validation={validation().isClone} 
-                     isCustom={cloneOptions?.ur?.id !== cloneOptions?.ue?.id} 
-                     customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
-                  />
+                     <AlertBar 
+                        validation={validation().isClone} 
+                        isCustom={cloneOptions?.ur?.id !== cloneOptions?.ue?.id} 
+                        customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
+                     />
 
-                  <div className='grid gap-5'>
+                     <div className='grid gap-5'>
 
-                     <header className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                        <aside className='grid gap-2'>
+                        <header className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                           <aside className='grid gap-2'>
 
-                           <CloneSelect
-                              isRequired
-                              field='Proyecto'
-                              options={projects}
-                              value={cloneOptions.pr}
-                              onChange={option =>
-                                 setCloneOptions({
-                                    ...cloneOptions,
-                                    pr: option,
-                                 })
-                              }
-                           />
-
-                           <CloneSelect
-                              field='Sub proyecto'
-                              options={
-                                 options.pr?.value
-                                    ? subProjects?.filter(
-                                          s => s.id === options.pr?.value
-                                       )
-                                    : subProjects
-                              }
-                              value={cloneOptions.sp}
-                              onChange={option =>
-                                 setCloneOptions({
-                                    ...cloneOptions,
-                                    sp: option,
-                                 })
-                              }
-                           />
-
-                           <CloneSelect
-                              isRequired
-                              field='Solicitante'
-                              options={users}
-                              value={cloneOptions.us}
-                              onChange={option =>
-                                 setCloneOptions({
-                                    ...cloneOptions,
-                                    us: option,
-                                 })
-                              }
-                           />
-
-                           <CloneSelect
-                              isRequired
-                              field='Encargado'
-                              options={users}
-                              value={cloneOptions.ue}
-                              onChange={option =>
-                                 setCloneOptions({
-                                    ...cloneOptions,
-                                    ue: option,
-                                 })
-                              }
-                           />
-
-                           <CloneSelect
-                              isRequired
-                              field='Revisor'
-                              options={users}
-                              value={cloneOptions.ur}
-                              onChange={option =>
-                                 setCloneOptions({
-                                    ...cloneOptions,
-                                    ur: option,
-                                 })
-                              }
-                           />
-                        </aside>
-
-                        <aside className='mt-0.5 grid'>
-
-                           <div className='border-2 border-amber-200 rounded p-0.5 mb-3'>
                               <CloneSelect
                                  isRequired
-                                 field='tipo actividad'
-                                 options={activity_type}
-                                 value={cloneOptions.ta}
+                                 field='Proyecto'
+                                 options={projects}
+                                 value={cloneOptions.pr}
                                  onChange={option =>
                                     setCloneOptions({
                                        ...cloneOptions,
-                                       ta: option,
+                                       pr: option,
                                     })
                                  }
                               />
+
+                              <CloneSelect
+                                 field='Sub proyecto'
+                                 options={
+                                    options.pr?.value
+                                       ? subProjects?.filter(
+                                             s => s.id === options.pr?.value
+                                          )
+                                       : subProjects
+                                 }
+                                 value={cloneOptions.sp}
+                                 onChange={option =>
+                                    setCloneOptions({
+                                       ...cloneOptions,
+                                       sp: option,
+                                    })
+                                 }
+                              />
+
+                              <CloneSelect
+                                 isRequired
+                                 field='Solicitante'
+                                 options={users}
+                                 value={cloneOptions.us}
+                                 onChange={option =>
+                                    setCloneOptions({
+                                       ...cloneOptions,
+                                       us: option,
+                                    })
+                                 }
+                              />
+
+                              <CloneSelect
+                                 isRequired
+                                 field='Encargado'
+                                 options={users}
+                                 value={cloneOptions.ue}
+                                 onChange={option =>
+                                    setCloneOptions({
+                                       ...cloneOptions,
+                                       ue: option,
+                                    })
+                                 }
+                              />
+
+                              <CloneSelect
+                                 isRequired
+                                 field='Revisor'
+                                 options={users}
+                                 value={cloneOptions.ur}
+                                 onChange={option =>
+                                    setCloneOptions({
+                                       ...cloneOptions,
+                                       ur: option,
+                                    })
+                                 }
+                              />
+                           </aside>
+
+                           <aside className='mt-0.5 grid'>
+
+                              <div className='border-2 border-amber-200 rounded p-0.5 mb-3'>
+                                 <CloneSelect
+                                    isRequired
+                                    field='tipo actividad'
+                                    options={activity_type}
+                                    value={cloneOptions.ta}
+                                    onChange={option =>
+                                       setCloneOptions({
+                                          ...cloneOptions,
+                                          ta: option,
+                                       })
+                                    }
+                                 />
+                              </div>
+
+                              <Input
+                                 isRequired
+                                 highlight
+                                 className='mb-3'
+                                 field='titulo'
+                                 value={cTitle}
+                                 onChange={e =>
+                                    setCloneFields({
+                                       ...cloneFields,
+                                       cTitle: e.target.value,
+                                    })
+                                 }
+                              />
+
+                              <Input
+                                 disabled
+                                 highlight
+                                 className='mb-3'
+                                 field='ticket'
+                                 isNumber
+                                 value={cTicket}
+                                 onChange={e =>
+                                    setCloneFields({
+                                       ...cloneFields,
+                                       cTicket: e.target.value,
+                                    })
+                                 }
+                              />
+
+                              <Input
+                                 isRequired
+                                 highlight
+                                 className='mb-3'
+                                 field='prioridad'
+                                 isNumber
+                                 value={cPriority}
+                                 onChange={e =>
+                                    setCloneFields({
+                                       ...cloneFields,
+                                       cPriority: e.target.value,
+                                    })
+                                 }
+                              />
+
+                              <Input
+                                 isRequired
+                                 highlight
+                                 className='mb-3'
+                                 field='T. estimado'
+                                 value={cTime}
+                                 isNumber
+                                 onChange={e =>
+                                    setCloneFields({
+                                       ...cloneFields,
+                                       cTime: e.target.value,
+                                    })
+                                 }
+                              />
+                           </aside>
+                        </header>
+
+                        <section className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                           <TextArea
+                              field='descripccion (*)'
+                              value={cDescription}
+                              onChange={e =>
+                                 setCloneFields({
+                                    ...cloneFields,
+                                    cDescription: e.target.value,
+                                 })
+                              }
+                           />
+                           <TextArea
+                              field='glosa'
+                              value={cGloss}
+                              onChange={e =>
+                                 setCloneFields({
+                                    ...cloneFields,
+                                    cGloss: e.target.value,
+                                 })
+                              }
+                           />
+                        </section>
+
+                        <footer className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-10'>
+
+                           <input
+                              key={cleanFile}
+                              className='
+                                 file:rounded-full file:bg-blue-50 file:py-2 file:px-4 file:text-sm
+                                 file:hover:bg-blue-100 file:text-blue-400 file:border-none
+                                 file:transition file:duration-500 file:cursor-pointer file:font-semibold
+                                 file:hover:shadow-lg file:hover:shadow-blue-400/20 text-slate-400 text-sm
+                                 file:mt-5 max-w-max'
+                              type='file'
+                              name='cloneFile'
+                              onChange={e => setCloneFiles(e.target.files[0])}
+                           />
+
+                           <div className='place-self-end flex gap-2'>
+
+                              <Button
+                                 className='text-red-500 hover:bg-red-100'
+                                 onClick={onCloseModals}>
+                                 Cancelar
+                              </Button>
+
+                              <Button
+                                 disabled={validation().isClone}
+                                 className='text-yellow-500 hover:bg-yellow-100 place-self-end disabled:hover:bg-transparent'
+                                 onClick={onClone}>
+                                 clonar actividad
+                              </Button>
+
                            </div>
 
-                           <Input
-                              isRequired
-                              highlight
-                              className='mb-3'
-                              field='titulo'
-                              value={cTitle}
-                              onChange={e =>
-                                 setCloneFields({
-                                    ...cloneFields,
-                                    cTitle: e.target.value,
-                                 })
-                              }
-                           />
-
-                           <Input
-                              disabled
-                              highlight
-                              className='mb-3'
-                              field='ticket'
-                              isNumber
-                              value={cTicket}
-                              onChange={e =>
-                                 setCloneFields({
-                                    ...cloneFields,
-                                    cTicket: e.target.value,
-                                 })
-                              }
-                           />
-
-                           <Input
-                              isRequired
-                              highlight
-                              className='mb-3'
-                              field='prioridad'
-                              isNumber
-                              value={cPriority}
-                              onChange={e =>
-                                 setCloneFields({
-                                    ...cloneFields,
-                                    cPriority: e.target.value,
-                                 })
-                              }
-                           />
-
-                           <Input
-                              isRequired
-                              highlight
-                              className='mb-3'
-                              field='T. estimado'
-                              value={cTime}
-                              isNumber
-                              onChange={e =>
-                                 setCloneFields({
-                                    ...cloneFields,
-                                    cTime: e.target.value,
-                                 })
-                              }
-                           />
-                        </aside>
-                     </header>
-
-                     <section className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                        <TextArea
-                           field='descripccion (*)'
-                           value={cDescription}
-                           onChange={e =>
-                              setCloneFields({
-                                 ...cloneFields,
-                                 cDescription: e.target.value,
-                              })
-                           }
-                        />
-                        <TextArea
-                           field='glosa'
-                           value={cGloss}
-                           onChange={e =>
-                              setCloneFields({
-                                 ...cloneFields,
-                                 cGloss: e.target.value,
-                              })
-                           }
-                        />
-                     </section>
-
-                     <footer className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-10'>
-
-                        <input
-                           key={cleanFile}
-                           className='
-                              file:rounded-full file:bg-blue-50 file:py-2 file:px-4 file:text-sm
-                              file:hover:bg-blue-100 file:text-blue-400 file:border-none
-                              file:transition file:duration-500 file:cursor-pointer file:font-semibold
-                              file:hover:shadow-lg file:hover:shadow-blue-400/20 text-slate-400 text-sm
-                              file:mt-5 max-w-max'
-                           type='file'
-                           name='cloneFile'
-                           onChange={e => setCloneFiles(e.target.files[0])}
-                        />
-
-                        <div className='place-self-end flex gap-2'>
-
-                           <Button
-                              className='text-red-500 hover:bg-red-100'
-                              onClick={onCloseModals}>
-                              Cancelar
-                           </Button>
-
-                           <Button
-                              disabled={validation().isClone}
-                              className='text-yellow-500 hover:bg-yellow-100 place-self-end disabled:hover:bg-transparent'
-                              onClick={onClone}>
-                              clonar actividad
-                           </Button>
-
-                        </div>
-
-                     </footer>
-                  </div>
-               </Modal>
+                        </footer>
+                     </div>
+                  </Modal>}
             </>
          )}
       </>

@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
 import { ActivityContext } from '../../context/ActivityContext'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useDetail } from '../../hooks/useDetail'
 import { Alert } from '../../helpers/alerts'
 import Button from '../ui/Button'
@@ -10,6 +10,7 @@ import Switch from '../ui/Switch'
 import CustomSelect from '../ui/CustomSelect'
 import Numerator from '../ui/Numerator'
 import Box from '../ui/Box'
+import queryString from 'query-string'
 
 const initOptions = {
    act: {value: null, label: 'niguno'},
@@ -59,6 +60,8 @@ const View = props => {
    } = props
 
    const navigate = useNavigate()
+   const {search} = useLocation()
+   const { type_detail = '' } = queryString.parse(search)
 
    const {optionsArray} = useContext(ActivityContext)
 
@@ -151,7 +154,7 @@ const View = props => {
             <header className='relative flex flex-wrap items-center justify-between'>
                <Button
                   className='hover:text-blue-500'
-                  onClick={() => navigate('/actividades', { replace: true })}
+                  onClick={() => navigate(type_detail === 'pr' ? '/revision-actividades' : '/actividades', { replace: true })}
                >
                   <i className='fas fa-arrow-left fa-lg' />
                </Button>

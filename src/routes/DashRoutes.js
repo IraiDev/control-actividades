@@ -37,6 +37,10 @@ const DashRoutes = () => {
             <Route path={planner} element={<Planner />} />
             <Route path={todo} element={<Todo />} />
             <Route path={revision} element={<Revision />} />
+            <Route
+               path={revision + '/actividad-pr-detalle/:id'}
+               element={<Detail />}
+            />
             <Route path={home} element={<Activity />} />
          </Routes>
       </main>
