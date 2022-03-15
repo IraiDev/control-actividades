@@ -1200,11 +1200,12 @@ const Detail = () => {
 
                               {isTicket && (
                                  <a
-                                    className='text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg h-9 px-2.5 text-center block pt-1.5 transition duration-300'
+                                    className='flex gap-2 items-baseline text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg h-9 px-2.5 text-center pt-1.5 transition duration-300 animate-bounce'
                                     target='_blank'
                                     rel='noreferrer'
                                     title='Tickets (Eventos)'
                                     href={`https://tickets.zproduccion.cl/#/in/${activity.num_ticket_edit}`}>
+                                    Ticket
                                     <i className='fas fa-ticket-alt' />
                                  </a>
                               )}
