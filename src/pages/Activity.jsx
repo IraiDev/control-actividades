@@ -151,6 +151,7 @@ const Activity = () => {
             options.sp?.length > 0 ? options.sp.map(item => item.value) : [],
          color: options.pi?.value || '',
          id_actividad: id,
+         numero_ticket: ticket,
          titulo: title,
          prioridad_ra: numPriority,
          offset: 0,

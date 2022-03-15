@@ -59,10 +59,10 @@ const Revision = () => {
       ticket,
       reject_gloss,
    }, onChangeValues, reset] = useForm({
-      id: '',
-      title: '',
-      desc: '',
-      ticket: '',
+      id: prFilters.id_actividad,
+      title: prFilters.titulo,
+      desc: prFilters.descripcion,
+      ticket: prFilters.numero_ticket,
       reject_gloss: '',
    })
 
@@ -175,7 +175,10 @@ const Revision = () => {
    }
 
    useEffect(() => {
-      setOptions({st: optionsArray?.status?.find(os => os.value === prFilters.estado[0])})
+      setOptions({
+         st: optionsArray?.status?.find(os => os.value === prFilters.estado[0]),
+         // pr: optionsArray?.projects?.filter(os => prFilters.proyecto.filter(os.value)),
+      })
 
       // eslint-disable-next-line
    }, [optionsArray])
