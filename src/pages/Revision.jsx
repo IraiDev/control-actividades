@@ -163,13 +163,13 @@ const Revision = () => {
 
    const calculateTime = (act) => {
 
-      const te = Number(act?.tiempo_cliente.toFixed(2))
+      const te = Number(act?.tiempo_cliente.toFixed(4))
 
-      const time = te - Number(act?.tiempos_distribuidos?.reduce((a, b) => Number(a.toFixed(2)) + Number(b?.tiempo_dist_act.toFixed(2)), 0).toFixed(2))
+      const time = te - Number(act?.tiempos_distribuidos?.reduce((a, b) => Number(a.toFixed(4)) + Number(b?.tiempo_dist_act.toFixed(4)), 0).toFixed(4))
       const length = act?.tiempos_distribuidos?.length
 
       return {
-         time: Number(time.toFixed(2)),
+         time: Number(time.toFixed(4)),
          length
       }
    }
@@ -621,7 +621,7 @@ const Revision = () => {
                                  title='Tiemppo total cobrable'
                                  className='px-2 py-0.5 rounded-full bg-green-300/80 font-bold'
                               >
-                                 {act?.tiempo_cliente.toFixed(2)}
+                                 {act?.tiempo_cliente.toFixed(4)}
                               </span>
                            </Td>
 

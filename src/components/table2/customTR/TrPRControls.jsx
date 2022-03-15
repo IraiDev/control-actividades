@@ -33,7 +33,7 @@ const TrPRControls = props => {
 
    const handleCreateTimes = () => {
 
-      if (Number(time) > Number(tr.toFixed(2))) {
+      if (Number(time) > Number(tr.toFixed(4))) {
          Alert({
             icon: 'warn',
             title: 'Atención',
@@ -153,8 +153,8 @@ const TrPRControls = props => {
    }, [])
 
    useEffect(() => {
-      const total = props.tiempo_cliente.toFixed(2)
-      setTr(Number(total) - times.reduce((a, b) => Number(a) + Number(b?.tiempo_dist_act), 0).toFixed(2))
+      const total = props.tiempo_cliente.toFixed(4)
+      setTr(Number(total) - times.reduce((a, b) => Number(a) + Number(b?.tiempo_dist_act), 0).toFixed(4))
 
       // eslint-disable-next-line
    }, [times])
@@ -171,12 +171,12 @@ const TrPRControls = props => {
             showModal={modal}
             isBlur={false}
             onClose={onCloseModal}
-            className='max-w-4xl'
+            className='max-w-5xl'
             padding='p-6'
             title='pasar a entregado'
          >
 
-            <div className='mt-5'>
+            <div className='mt-5 w-[960px]'>
 
                <section className='p-3.5 mb-5 bg-zinc-100 rounded-md'>
 
@@ -231,7 +231,7 @@ const TrPRControls = props => {
                      <NumberFormat 
                         className='text-yellow-500'
                         value={props.tiempo_cliente} 
-                        decimalScale={2} 
+                        decimalScale={4} 
                         fixedDecimalScale={false}
                         displayType='text' 
                      /> 
@@ -239,7 +239,7 @@ const TrPRControls = props => {
                      <NumberFormat 
                         className={tr < 0 ? 'text-red-500' : 'text-emerald-500'}
                         value={tr} 
-                        decimalScale={2} 
+                        decimalScale={4} 
                         fixedDecimalScale={false}
                         displayType='text' 
                      />
