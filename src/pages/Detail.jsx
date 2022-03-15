@@ -777,6 +777,7 @@ const Detail = () => {
                      isReviewedActivity={activity.id_tipo_actividad === 2}
                      isDeliveryActivity={activity.id_tipo_actividad === 3}
                      isTicket={activity.num_ticket_edit > 0}
+                     isPR={type_detail === 'pr'}
                      {...activity}
                   >
 
@@ -863,7 +864,8 @@ const Detail = () => {
                            <section className='grid gap-2'>
                               <CloneSelect
                                  isDefaultOptions
-                                 isRequired
+                                 isRequired={type_detail !== 'pr'}
+                                 disabled={type_detail === 'pr'}
                                  field='Proyecto'
                                  options={projects}
                                  value={options.pr}
@@ -873,6 +875,7 @@ const Detail = () => {
                               />
                               <CloneSelect
                                  isDefaultOptions
+                                 disabled={type_detail === 'pr'}
                                  field='Sub proyecto'
                                  options={
                                     options?.pr?.value
@@ -888,7 +891,8 @@ const Detail = () => {
                               />
                               <CloneSelect
                                  isDefaultOptions
-                                 isRequired
+                                 isRequired={type_detail !== 'pr'}
+                                 disabled={type_detail === 'pr'}
                                  field='Solicitante'
                                  options={users}
                                  value={options.us}
@@ -898,7 +902,8 @@ const Detail = () => {
                               />
                               <CloneSelect
                                  isDefaultOptions
-                                 isRequired
+                                 isRequired={type_detail !== 'pr'}
+                                 disabled={type_detail === 'pr'}
                                  field='Encargado'
                                  options={users}
                                  value={options.ue}
@@ -908,7 +913,8 @@ const Detail = () => {
                               />
                               <CloneSelect
                                  isDefaultOptions
-                                 isRequired
+                                 isRequired={type_detail !== 'pr'}
+                                 disabled={type_detail === 'pr'}
                                  field='Revisor'
                                  options={users}
                                  value={options.ur}
@@ -924,7 +930,7 @@ const Detail = () => {
                               disabled={type_detail === 'pr'}
                               isRequired={type_detail !== 'pr'}
                               highlight
-                              field='titulo'
+                              field='título'
                               value={title}
                               onChange={e =>
                                  setFields({ ...fields, title: e.target.value })
@@ -934,7 +940,7 @@ const Detail = () => {
                               disabled={type_detail === 'pr'}
                               isRequired={type_detail !== 'pr'}
                               highlight
-                              field='descripccion'
+                              field='descripción'
                               value={description}
                               onChange={e =>
                                  setFields({
@@ -1004,19 +1010,23 @@ const Detail = () => {
                               <h5 className='text-sm font-semibold'>
                                  Notas (Informes):{' '}
                               </h5>
-                              <section className='flex gap-2'>
-                                 <Button
-                                    className='text-slate-600 bg-slate-100 hover:bg-slate-200'
-                                    onClick={() => toggleModalAdd(true)}>
-                                    <i className='fas fa-plus' />
-                                 </Button>
-                                 <Button
-                                    disabled={activity?.notas?.length === 0}
-                                    className='text-slate-600 bg-slate-100 hover:bg-slate-200 disabled:hover:bg-slate-200/50'
-                                    onClick={() => toggleModalEdit(true)}>
-                                    <i className='fas fa-pen' />
-                                 </Button>
-                              </section>
+
+                              {type_detail !== 'pr' &&
+                                 <section className='flex gap-2'>
+                                    <Button
+                                       className='text-slate-600 bg-slate-100 hover:bg-slate-200'
+                                       onClick={() => toggleModalAdd(true)}>
+                                       <i className='fas fa-plus' />
+                                    </Button>
+                                    <Button
+                                       disabled={activity?.notas?.length === 0}
+                                       className='text-slate-600 bg-slate-100 hover:bg-slate-200 disabled:hover:bg-slate-200/50'
+                                       onClick={() => toggleModalEdit(true)}>
+                                       <i className='fas fa-pen' />
+                                    </Button>
+                                 </section>
+                              }
+
                            </div>
                            <ul className='max-h-[540px] overflow-custom'>
                               {activity?.notas?.length > 0 && activity?.notas !== undefined ? (
@@ -1062,6 +1072,7 @@ const Detail = () => {
                                           {file.nom_docum}
                                        </a>
                                        <button
+                                          hidden={type_detail === 'pr'}
                                           className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
                                           onClick={() =>
                                              deleteDocument({
@@ -1079,18 +1090,20 @@ const Detail = () => {
                                  </li>
                               )}
                            </ul>
-                           <input
-                              key={cleanFile}
-                              className='
-                                 file:rounded-full file:bg-blue-50 file:py-2 file:px-4 file:text-sm
-                                 file:hover:bg-blue-100 file:text-blue-400 file:border-none
-                                 file:transition file:duration-500 file:cursor-pointer file:font-semibold
-                                 file:hover:shadow-lg file:hover:shadow-blue-400/20 text-slate-400 text-sm
-                                 file:mt-5 max-w-max'
-                              type='file'
-                              name='file'
-                              onChange={e => setFiles(e.target.files[0])}
-                           />
+                           {type_detail !== 'pr' &&
+                              <input
+                                 key={cleanFile}
+                                 className='
+                                    file:rounded-full file:bg-blue-50 file:py-2 file:px-4 file:text-sm
+                                    file:hover:bg-blue-100 file:text-blue-400 file:border-none
+                                    file:transition file:duration-500 file:cursor-pointer file:font-semibold
+                                    file:hover:shadow-lg file:hover:shadow-blue-400/20 text-slate-400 text-sm
+                                    file:mt-5 max-w-max'
+                                 type='file'
+                                 name='file'
+                                 onChange={e => setFiles(e.target.files[0])}
+                              />
+                           }
                         </aside>
 
                         <aside>
@@ -1160,93 +1173,98 @@ const Detail = () => {
                         </aside>
                      </ViewSection>
 
-                     <ViewFooter>
-                        <section className='flex gap-2'>
-                           <Button
-                              className='text-red-400 bg-red-50 hover:bg-red-100'
-                              onClick={() =>
-                                 deleteActivity({
-                                    id_actividad: activity.id_det,
-                                    encargado: optionsArray.users.find(ou => ou.label === activity.encargado_actividad),
-                                    isFather,
-                                    isTicket
-                                 })
-                              }>
-                              <i className='fas fa-trash' />
-                           </Button>
+                     {type_detail !== 'pr' &&
+                        <ViewFooter>
+                           <section className='flex gap-2'>
+                              <Button
+                                 title='Eliminar'
+                                 className='text-red-400 bg-red-50 hover:bg-red-100'
+                                 onClick={() =>
+                                    deleteActivity({
+                                       id_actividad: activity.id_det,
+                                       encargado: optionsArray.users.find(ou => ou.label === activity.encargado_actividad),
+                                       isFather,
+                                       isTicket
+                                    })
+                                 }>
+                                 <i className='fas fa-trash' />
+                              </Button>
 
-                           <Button
-                              hidden={!(activity.id_tipo_actividad === 1)}
-                              className='text-slate-600 bg-slate-100 hover:bg-slate-200'
-                              onClick={openModalClone}>
-                              <i className='fas fa-clone' />
-                           </Button>
+                              <Button
+                                 title='Clonar'
+                                 hidden={!(activity.id_tipo_actividad === 1)}
+                                 className='text-slate-600 bg-slate-100 hover:bg-slate-200'
+                                 onClick={openModalClone}>
+                                 <i className='fas fa-clone' />
+                              </Button>
 
-                           {isTicket && (
-                              <a
-                                 className='text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg h-9 px-2.5 text-center block pt-1.5 transition duration-300'
-                                 target='_blank'
-                                 rel='noreferrer'
-                                 title='Eventos'
-                                 href={`https://tickets.zproduccion.cl/#/in/${activity.num_ticket_edit}`}>
-                                 <i className='fas fa-ticket-alt' />
-                              </a>
-                           )}
+                              {isTicket && (
+                                 <a
+                                    className='text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg h-9 px-2.5 text-center block pt-1.5 transition duration-300'
+                                    target='_blank'
+                                    rel='noreferrer'
+                                    title='Tickets (Eventos)'
+                                    href={`https://tickets.zproduccion.cl/#/in/${activity.num_ticket_edit}`}>
+                                    <i className='fas fa-ticket-alt' />
+                                 </a>
+                              )}
 
-                           <Button
-                              hidden={activity.estado === 1|| (activity.es_padre === 1 && activity.es_hijo === 0 && isTicket)}
-                              className={
-                                 activity.estado_play_pausa === 2
-                                    ? 'text-red-400 bg-red-50 hover:bg-red-100'
-                                    : 'text-emerald-400 bg-emerald-50 hover:bg-emerald-100'
-                              }
-                              onClick={handleOnPlayPause}>
-                              <i
+                              <Button
+                                 hidden={activity.estado === 1|| (activity.es_padre === 1 && activity.es_hijo === 0 && isTicket)}
                                  className={
                                     activity.estado_play_pausa === 2
-                                       ? 'fas fa-pause fa-sm'
-                                       : 'fas fa-play fa-sm'
+                                       ? 'text-red-400 bg-red-50 hover:bg-red-100'
+                                       : 'text-emerald-400 bg-emerald-50 hover:bg-emerald-100'
                                  }
-                              />
-                           </Button>
+                                 title={activity.estado_play_pausa === 2 ? 'Pausar' : 'Reanudar'}
+                                 onClick={handleOnPlayPause}>
+                                 <i
+                                    className={
+                                       activity.estado_play_pausa === 2
+                                          ? 'fas fa-pause fa-sm'
+                                          : 'fas fa-play fa-sm'
+                                    }
+                                 />
+                              </Button>
 
-                           <Button
-                              hidden={activity.estado !== 2 || activity.id_tipo_actividad !== 1 || (isFather && isTicket)}
-                              title='Pasar actividad a revisión'
-                              className='text-orange-400 bg-orange-50 hover:bg-orange-100'
-                              onClick={validateActivityIsRunning}
-                           >
-                              <i className='fas fa-eye' />
-                           </Button>
+                              <Button
+                                 hidden={activity.estado !== 2 || activity.id_tipo_actividad !== 1 || (isFather && isTicket)}
+                                 title='Pasar actividad a revisión'
+                                 className='text-orange-400 bg-orange-50 hover:bg-orange-100'
+                                 onClick={validateActivityIsRunning}
+                              >
+                                 <i className='fas fa-eye' />
+                              </Button>
 
-                           <Button
-                              hidden={(activity.id_tipo_actividad === 1 && !isFather) || activity.estado === 1 || !isTicket}
-                              title='Teminar actividad'
-                              className='text-amber-500 bg-amber-100 hover:bg-amber-200'
-                              onClick={() => finishActivity(activity.id_tipo_actividad, isFather)}
-                           >
-                              {/* <i className='fas fa-check-double' /> */}
-                              terminar
-                           </Button>
+                              <Button
+                                 hidden={(activity.id_tipo_actividad === 1 && !isFather) || activity.estado === 1 || !isTicket}
+                                 title='Teminar actividad'
+                                 className='text-amber-500 bg-amber-100 hover:bg-amber-200'
+                                 onClick={() => finishActivity(activity.id_tipo_actividad, isFather)}
+                              >
+                                 {/* <i className='fas fa-check-double' /> */}
+                                 terminar
+                              </Button>
 
-                        </section>
+                           </section>
 
-                        <section className='flex justify-end gap-2'>
-                           <Button
-                              className='text-red-500 hover:bg-red-100 disabled:hover:bg-transparent'
-                              onClick={() =>
-                                 navigate(routes.activity, { replace: true })
-                              }>
-                              Cancelar
-                           </Button>
-                           <Button
-                              disabled={validation().isSave}
-                              className='text-emerald-500 hover:bg-emerald-100 place-self-end disabled:hover:bg-transparent'
-                              onClick={onSave}>
-                              Guardar
-                           </Button>
-                        </section>
-                     </ViewFooter>
+                           <section className='flex justify-end gap-2'>
+                              <Button
+                                 className='text-red-500 hover:bg-red-100 disabled:hover:bg-transparent'
+                                 onClick={() =>
+                                    navigate(routes.activity, { replace: true })
+                                 }>
+                                 Cancelar
+                              </Button>
+                              <Button
+                                 disabled={validation().isSave}
+                                 className='text-emerald-500 hover:bg-emerald-100 place-self-end disabled:hover:bg-transparent'
+                                 onClick={onSave}>
+                                 Guardar
+                              </Button>
+                           </section>
+                        </ViewFooter>
+                     }
                   </View>
                </ViewContainer>
 

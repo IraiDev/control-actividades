@@ -42,8 +42,13 @@ const Input = ({
                e.target.select()
             }}
             type={type}
-            className={`${padding} rounded-md bg-white text-slate-700 border border-zinc-300/70 transition duration-200 focus:ring-2 focus:shadow-lg ${width}`}
-            placeholder={placeholder}
+            className={`
+               ${padding} 
+               ${width}
+               disabled:bg-zinc-100 disabled:text-slate-400
+               rounded-md bg-white text-slate-700 border border-zinc-300/70 transition duration-200 focus:ring-2 focus:shadow-lg
+               `}
+            placeholder={disabled ? '' : placeholder}
             onKeyPress={event => {
                if (!isNumber) return
                if (!/[\d.]/.test(event.key)) {

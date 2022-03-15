@@ -57,6 +57,7 @@ const View = props => {
       isChildrenAndChildren,
       isDeliveryActivity,
       isTicket,
+      isPR
    } = props
 
    const navigate = useNavigate()
@@ -160,7 +161,7 @@ const View = props => {
                </Button>
 
                <Button 
-                  hidden={isFather}
+                  hidden={isFather || isPR}
                   className='bg-amber-100/60 hover:bg-amber-100 text-amber-500 text-sm absolute left-1/2 transform -translate-x-1/2'
                   onClick={openModal}  
                >
@@ -168,27 +169,29 @@ const View = props => {
                   asignar predecesora
                </Button>
 
-               <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
-                  <PrioritySelector
-                     disabled={priority === 1000}
-                     onClick={onNone}
-                  />
-                  <PrioritySelector
-                     disabled={priority === 600}
-                     color='bg-green-500/70'
-                     onClick={onLow}
-                  />
-                  <PrioritySelector
-                     disabled={priority === 400}
-                     color='bg-yellow-500/80'
-                     onClick={onMid}
-                  />
-                  <PrioritySelector
-                     disabled={priority === 100}
-                     color='bg-red-500/70'
-                     onClick={onHigh}
-                  />
-               </div>
+               {!isPR &&
+                  <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
+                     <PrioritySelector
+                        disabled={priority === 1000}
+                        onClick={onNone}
+                     />
+                     <PrioritySelector
+                        disabled={priority === 600}
+                        color='bg-green-500/70'
+                        onClick={onLow}
+                     />
+                     <PrioritySelector
+                        disabled={priority === 400}
+                        color='bg-yellow-500/80'
+                        onClick={onMid}
+                     />
+                     <PrioritySelector
+                        disabled={priority === 100}
+                        color='bg-red-500/70'
+                        onClick={onHigh}
+                     />
+                  </div>
+               }
             </header>
 
             <h1 className='text-xl text-center font-semibold capitalize truncate'>
