@@ -61,7 +61,6 @@ export const useDetail = (id) => {
 
          setIsLoading(false)
          if (ok) {
-            console.log(tareas[0])
             setActivity(tareas[0])
          } else {
             console.log('Error')

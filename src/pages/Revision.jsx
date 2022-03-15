@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ActivityContext } from '../context/ActivityContext'
 import { useActivityPr } from '../hooks/useActivityPr'
 import { useForm } from '../hooks/useForm'
@@ -18,10 +19,10 @@ import TBody from '../components/table2/TBody'
 import Td from '../components/table2/Td'
 import Th from '../components/table2/Th'
 import THead from '../components/table2/THead'
-import TrPRControls from '../components/table2/customTR/TrPRControls'
 import Modal from '../components/ui/Modal'
 import TextArea from '../components/ui/TextArea'
 import MarkActivity from '../components/ui/MarkActivity'
+import TdControlDistribution from '../components/table2/customTD/TdControlDistribution'
 
 const Revision = () => {
    const { 
@@ -41,6 +42,8 @@ const Revision = () => {
       optionsArray,
       prFilters
    } = useContext(ActivityContext)
+
+   const navigate = useNavigate()
 
    // states
    const [multiline, setMultiline] = useState(false)
@@ -160,19 +163,6 @@ const Revision = () => {
    const handleToggleRejectActivity = () => {
       toggleCheckActivity({id_actividad: activityData.id, estado: activityData.estado, revisado: false, glosa_rechazo: reject_gloss})
       onCloseModal()
-   }
-
-   const calculateTime = (act) => {
-
-      const te = Number(act?.tiempo_cliente.toFixed(4))
-
-      const time = te - Number(act?.tiempos_distribuidos?.reduce((a, b) => Number(a.toFixed(4)) + Number(b?.tiempo_dist_act.toFixed(4)), 0).toFixed(4))
-      const length = act?.tiempos_distribuidos?.length
-
-      return {
-         time: Number(time.toFixed(4)),
-         length
-      }
    }
 
    useEffect(() => {
@@ -591,12 +581,13 @@ const Revision = () => {
                <TBody>
                   {activitiesPR.length > 0 &&
                      activitiesPR.map((act, i) => (
-                        <TrPRControls
+                        <tr
                            key={act.id_det}
-                           className={act.id_det === isActive ? 'bg-purple-100' : ''}
-                           getId={(id_callback) =>setIsActive(id_callback)}
-                           callback={(times) => onDistribution({distribuciones: times, id_actividad: act.id_det})}
-                           {...act}
+                           className={`
+                              cursor-pointer text-[13px]
+                              ${act.id_det === isActive ? 'bg-purple-100' : ''}
+                           `}
+                           onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
                         >
                               
                            <Td><Numerator className='mx-auto' number={i + 1} /></Td>
@@ -618,15 +609,15 @@ const Revision = () => {
                            </Td>
 
                            <Td>
-                              <div className='relative'> 
-                                 {act.id_det}
+                              <div className='flex items-center justify-center gap-3'> 
                                  <MarkActivity 
-                                    position='absolute top-0 left-0'
+                                    position='block'
                                     condicion={act.num_ticket_edit > 0}
                                     hidden={!(act.es_padre === 1 && act.es_hijo === 0)} 
                                  >
                                     <i className='fas fa-hat-cowboy fa-lg' />
                                  </MarkActivity>
+                                 {act.id_det}
                               </div>
                            </Td>
 
@@ -668,9 +659,8 @@ const Revision = () => {
                               {act.func_objeto}
                            </Td>
 
-                           <Td isStickyRight >
-                                 
-                              { act.estado !== 5 ?
+                           {act.estado !== 5 ?
+                              <Td isStickyRight >
                                  <div className='flex gap-2 justify-center'>
                                     <Button 
                                        className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 border border-emerald-300'
@@ -686,30 +676,16 @@ const Revision = () => {
                                        <i className='fas fa-times' />
                                     </Button>
                                  </div>
-
-                              : 
-                                 <span 
-                                    title='tiempo restante para distribuir'
-                                    className={`
-
-                                       px-2 py-1 font-bold rounded-full text-sm
-                                          ${calculateTime(act).time === 0 ? 'text-green-500 bg-green-200' 
-                                             : calculateTime(act).length === 0 ? 'text-red-500 bg-red-200'
-                                                : calculateTime(act).length > 0 ? 'text-amber-500 bg-amber-200' : ''}
-                                       
-                                    `}
-                                 >
-                                    {
-                                       <>
-                                          <i className='fas fa-clock mr-3' />
-                                          {calculateTime(act).time}
-                                       </>
-                                    }
-                                 </span>
-                              }
-
-                           </Td>
-                        </TrPRControls>
+                              </Td>
+                           :
+                              <TdControlDistribution 
+                                 getId={(id_callback) => setIsActive(id_callback)}
+                                 callback={(times) => onDistribution({distribuciones: times, id_actividad: act.id_det})}
+                                 isStickyRight 
+                                 {...act}  
+                              />  
+                           }
+                        </tr>
                      ))}
                </TBody>
 

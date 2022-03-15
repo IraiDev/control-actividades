@@ -716,9 +716,9 @@ const Detail = () => {
             title: activity.actividad || 'Sin titulo',
             description: activity.func_objeto || '',
             gloss: activity.glosa_explicativa || '',
-            ticket: activity.num_ticket_edit,
-            priority: activity.num_prioridad,
-            time: activity.tiempo_estimado,
+            ticket: activity.num_ticket_edit || '',
+            priority: activity.num_prioridad || '',
+            time: activity.tiempo_estimado || '',
          })
 
          setOptions({
