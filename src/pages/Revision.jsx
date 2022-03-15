@@ -58,11 +58,11 @@ const Revision = () => {
       desc, 
       ticket,
       reject_gloss,
-   }, onChangeValues, reset] = useForm({
-      id: prFilters.id_actividad,
-      title: prFilters.titulo,
-      desc: prFilters.descripcion,
-      ticket: prFilters.numero_ticket,
+   }, onChangeValues, reset, onPreset] = useForm({
+      id: '',
+      title: '',
+      desc: '',
+      ticket: '',
       reject_gloss: '',
    })
 
@@ -102,11 +102,12 @@ const Revision = () => {
    const onClear = () => {
       savePRFilters({ reset: true })
       setOptions({
-         st: [],
+         st: {value: 3, label: 'PARA REVISION'},
          pr: [],
          ue: [],
          us: [],
          sp: [],
+         ita: [],
       })
       reset()
       setSoloPadre(false)
@@ -177,8 +178,33 @@ const Revision = () => {
    useEffect(() => {
       setOptions({
          st: optionsArray?.status?.find(os => os.value === prFilters.estado[0]),
-         // pr: optionsArray?.projects?.filter(os => prFilters.proyecto.filter(os.value)),
+         pr: optionsArray?.projects?.filter(op => {
+            return prFilters.proyecto.includes(op.value)
+         }),
+         ue: optionsArray?.users?.filter(ou => {
+            return prFilters.encargado.includes(ou.value)
+         }),
+         us: optionsArray?.users?.filter(ou => {
+            return prFilters.solicitante.includes(ou.value)
+         }),
+         ur: optionsArray?.users?.filter(ou => {
+            return prFilters.revisor.includes(ou.value)
+         }),
+         sp: optionsArray?.subProjects?.filter(os => {
+            return prFilters.subProy.includes(os.value)
+         }),
+         ita: optionsArray?.activity_type?.filter(oi => {
+            return prFilters.id_tipo_actividad.includes(oi.value)
+         }),
       })
+
+      onPreset({
+         id: prFilters.id_actividad, 
+         title: prFilters.titulo, 
+         desc: prFilters.descripcion, 
+         ticket: prFilters.numero_ticket
+      })
+
 
       // eslint-disable-next-line
    }, [optionsArray])
@@ -213,7 +239,6 @@ const Revision = () => {
                      <Th>
                         <SelectFilter
                            className='w-[182px]'
-                           placeholder='tipo actividad'
                            type='table'
                            value={options.ita}
                            options={activity_type}

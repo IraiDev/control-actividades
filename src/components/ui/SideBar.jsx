@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { ActivityContext } from '../../context/ActivityContext'
 import { routes } from '../../types/types'
@@ -6,6 +6,7 @@ import { useForm } from '../../hooks/useForm'
 import Button from './Button'
 import InputFilter from '../filter/InputFilter'
 import SelectFilter from '../filter/SelectFilter'
+import { UiContext } from '../../context/UiContext'
 
 const { home, activity } = routes
 
@@ -18,8 +19,11 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
       setOrder, 
       order, 
       setPager, 
-      pager
+      pager,
+      filters
    } = useContext(ActivityContext)
+
+   const { view } = useContext(UiContext)
    
    const [userCheck, setUserCheck] = useState(false)
    
@@ -30,7 +34,7 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
       numPriority, 
       ticket, 
       desc 
-   }, onChangeValues, reset] = useForm({
+   }, onChangeValues, reset, onPreset] = useForm({
       id: '',
       title: '',
       numPriority: '',
@@ -38,7 +42,7 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
       ticket: ''
    })
 
-   const { projects, subProjects, users, status, priorities } = optionsArray
+   const { projects, subProjects, users, status, priorities, activity_type } = optionsArray
 
    const onFilter = () => {
       const filters = {
@@ -53,6 +57,8 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
             options.ur?.length > 0 ? options.ur.map(item => item.id) : [],
          subProy:
             options.sp?.length > 0 ? options.sp.map(item => item.value) : [],
+         id_tipo_actividad: 
+            options.ita?.length > 0 ? options.ita.map(item => item.value) : [],
          color: options.pi?.value || '',
          id_actividad: id,
          titulo: title,
@@ -76,6 +82,7 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
          us: [],
          ur: [],
          sp: [],
+         ita: [],
          pi: '',
       })
       reset()
@@ -88,6 +95,40 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
       const v = Object.values(order).some(v => v === value)
       return k && v
    }
+
+   useEffect(() => {
+      setOptions({
+         st: optionsArray?.status?.find(os => os.value === filters.estado),
+         pr: optionsArray?.projects?.filter(op => {
+            return filters.proyecto.includes(op.value)
+         }),
+         ue: optionsArray?.users?.filter(ou => {
+            return filters.encargado.includes(ou.value)
+         }),
+         us: optionsArray?.users?.filter(ou => {
+            return filters.solicitante.includes(ou.value)
+         }),
+         ur: optionsArray?.users?.filter(ou => {
+            return filters.revisor.includes(ou.value)
+         }),
+         sp: optionsArray?.subProjects?.filter(os => {
+            return filters.subProy.includes(os.value)
+         }),
+         ita: optionsArray?.activity_type?.filter(oi => {
+            return filters.id_tipo_actividad.includes(oi.value)
+         }),
+      })
+
+      onPreset({
+         id: filters.id_actividad, 
+         title: filters.titulo, 
+         desc: filters.descripcion, 
+         ticket: filters.numero_ticket
+      })
+
+
+      // eslint-disable-next-line
+   }, [optionsArray, view])
 
    return (
       <nav
@@ -191,6 +232,28 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
          <hr className='mx-3 my-4' />
 
          <section className='grid gap-3'>
+
+         <SelectFilter
+               value={options.ita}
+               options={activity_type}
+               field='tipo actividad'
+               isMulti
+               onChange={option => setOptions({ ...options, ita: option })}
+               filterDown={() =>
+                  setOrder({ orden_tipo_actividad: 'desc' })
+               }
+               filterUp={() =>
+                  setOrder({ orden_tipo_actividad: 'asc' })
+               }
+               upActive={setActive({
+                  param: 'orden_tipo_actividad',
+                  value: 'asc',
+               })}
+               downActive={setActive({
+                  param: 'orden_tipo_actividad',
+                  value: 'desc',
+               })}
+            />
 
             <SelectFilter
                value={options.us}

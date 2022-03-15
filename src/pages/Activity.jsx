@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useForm } from '../hooks/useForm'
 import { useNavigate } from 'react-router-dom'
 import { UiContext } from '../context/UiContext'
@@ -108,7 +108,8 @@ const Activity = () => {
       setPager, 
       setOrder, 
       order, 
-      user
+      user,
+      filters
    } = useContext(ActivityContext)
 
    // states
@@ -123,7 +124,7 @@ const Activity = () => {
       numPriority, 
       desc, 
       ticket 
-   }, onChangeValues, reset] =
+   }, onChangeValues, reset, onPreset] =
    useForm({
       id: '',
       title: '',
@@ -133,7 +134,7 @@ const Activity = () => {
    })
 
    // destructuring
-   const { projects, subProjects, users, status } = optionsArray
+   const { projects, subProjects, users, status, activity_type } = optionsArray
 
    const onFilter = () => {
 
@@ -149,6 +150,8 @@ const Activity = () => {
             options.ur?.length > 0 ? options.ur.map(item => item.id) : [],
          subProy:
             options.sp?.length > 0 ? options.sp.map(item => item.value) : [],
+         id_tipo_actividad: 
+            options.ita?.length > 0 ? options.ita.map(item => item.value) : [],
          color: options.pi?.value || '',
          id_actividad: id,
          numero_ticket: ticket,
@@ -171,6 +174,7 @@ const Activity = () => {
          us: [],
          sp: [],
          ur: [],
+         ita: [],
          pi: '',
       })
       reset()
@@ -293,6 +297,40 @@ const Activity = () => {
       })
    }
 
+   useEffect(() => {
+      setOptions({
+         st: optionsArray?.status?.find(os => os.value === filters.estado),
+         pr: optionsArray?.projects?.filter(op => {
+            return filters.proyecto.includes(op.value)
+         }),
+         ue: optionsArray?.users?.filter(ou => {
+            return filters.encargado.includes(ou.value)
+         }),
+         us: optionsArray?.users?.filter(ou => {
+            return filters.solicitante.includes(ou.value)
+         }),
+         ur: optionsArray?.users?.filter(ou => {
+            return filters.revisor.includes(ou.value)
+         }),
+         sp: optionsArray?.subProjects?.filter(os => {
+            return filters.subProy.includes(os.value)
+         }),
+         ita: optionsArray?.activity_type?.filter(oi => {
+            return filters.id_tipo_actividad.includes(oi.value)
+         }),
+      })
+
+      onPreset({
+         id: filters.id_actividad, 
+         title: filters.titulo, 
+         desc: filters.descripcion, 
+         ticket: filters.numero_ticket
+      })
+
+
+      // eslint-disable-next-line
+   }, [optionsArray, view])
+
    return (
       <>
          {view ? (
@@ -365,6 +403,33 @@ const Activity = () => {
 
                      <tr className='text-center capitalize'>
                         <Th></Th>
+
+                        <Th>
+                        <SelectFilter
+                           className='w-[182px]'
+                           type='table'
+                           value={options.ita}
+                           options={activity_type}
+                           isMulti
+                           onChange={option =>
+                              setOptions({ ...options, ita: option })
+                           }
+                           filterDown={() =>
+                              setOrder({ orden_tipo_actividad: 'desc' })
+                           }
+                           filterUp={() =>
+                              setOrder({ orden_tipo_actividad: 'asc' })
+                           }
+                           upActive={setActive({
+                              param: 'orden_tipo_actividad',
+                              value: 'asc',
+                           })}
+                           downActive={setActive({
+                              param: 'orden_tipo_actividad',
+                              value: 'desc',
+                           })}
+                        />
+                     </Th>
 
                         <Th>
                            <InputFilter
@@ -628,6 +693,7 @@ const Activity = () => {
 
                      <tr className='text-center capitalize'>
                         <Th primary>Nᵒ</Th>
+                        <Th primary>tipo actividad</Th>
                         <Th primary>ID</Th>
                         <Th primary>ticket</Th>
                         <Th primary>proyecto</Th>
@@ -707,6 +773,22 @@ const Activity = () => {
                                        </span>
                                     }
                                  </div>
+                              </Td>
+
+                              <Td>
+                                 <span className={`
+                                       px-2 py-0.5 font-bold rounded-md text-sm mt-2 block w-max mx-auto capitalize
+                                       ${
+                                          act.id_tipo_actividad === 1 ? 'bg-indigo-200 text-indigo-500' 
+                                             : act.id_tipo_actividad === 2 ? 'bg-emerald-200 text-emerald-500' 
+                                             : act.id_tipo_actividad === 3 ? 'bg-red-200 text-red-500' 
+                                             : act.id_tipo_actividad === 4 ? 'bg-orange-200 text-orange-500' 
+                                             : 'bg-zinc-100 text-black'
+                                       }
+                                    `}
+                                 >
+                                    {act.desc_tipo_actividad}
+                                 </span>
                               </Td>
 
                               <Td>

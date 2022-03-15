@@ -14,12 +14,12 @@ export const useForm = (initialState = {}) => {
     })
   }
 
-  const handlePreset = (scope) => {
+  const handlePreset = (obj = {}) => {
     setValues({
       ...values,
-      ...scope,
+      ...obj
     })
   }
 
-  return [values, handleInputChange, handlePreset, reset]
+  return [values, handleInputChange, reset, handlePreset]
 }
