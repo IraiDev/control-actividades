@@ -162,11 +162,14 @@ const Revision = () => {
    }
 
    const calculateTime = (act) => {
-      const time = Number(act?.tiempo_cliente.toFixed(2)) - act?.tiempos_distribuidos?.reduce((a, b) => Number(a) + Number(b?.tiempo_dist_act), 0).toFixed(2)
+
+      const te = Number(act?.tiempo_cliente.toFixed(2))
+
+      const time = te - Number(act?.tiempos_distribuidos?.reduce((a, b) => Number(a.toFixed(2)) + Number(b?.tiempo_dist_act.toFixed(2)), 0).toFixed(2))
       const length = act?.tiempos_distribuidos?.length
 
       return {
-         time,
+         time: Number(time.toFixed(2)),
          length
       }
    }
@@ -190,7 +193,7 @@ const Revision = () => {
                      <Th>
                         <label 
                            htmlFor='solo_padres'
-                           className='flex gap-2 items-center mt-2 px-2 py-1 mx-auto w-max font-normal rounded-full bg-zinc-200 cursor-pointer'
+                           className='flex gap-2 items-center text-sm font-semibold mt-2 px-2 py-1 mx-auto w-max rounded-full bg-zinc-200 cursor-pointer'
                         >
                            Solo padres
                            <input 
@@ -443,6 +446,8 @@ const Revision = () => {
                         />
                      </Th>
 
+                     <Th></Th>
+
                      {/* titulo */}
                      <Th>
                         <InputFilter
@@ -515,6 +520,7 @@ const Revision = () => {
                      <Th primary >encargado</Th>
                      <Th primary >revisor</Th>
                      <Th primary >estado</Th>
+                     <Th primary >Tiempo (hrs)</Th>
                      <Th primary >
                         <div className='flex items-baseline justify-center gap-2'>
                            actividad
@@ -610,6 +616,15 @@ const Revision = () => {
 
                            <Td>{status?.find(s => s.value === act.estado).label}</Td>
 
+                           <Td>
+                              <span 
+                                 title='Tiemppo total cobrable'
+                                 className='px-2 py-0.5 rounded-full bg-green-300/80 font-bold'
+                              >
+                                 {act?.tiempo_cliente.toFixed(2)}
+                              </span>
+                           </Td>
+
                            <Td
                               isMultiLine={multiline}
                               width='max-w-[150px]'
@@ -645,22 +660,24 @@ const Revision = () => {
                                  </div>
 
                               : 
-                              <span className={`
+                                 <span 
+                                    title='tiempo restante para distribuir'
+                                    className={`
 
-                                    px-2 py-1 font-bold rounded-full text-sm
-                                       ${calculateTime(act).time === 0 ? 'text-green-500 bg-green-200' 
-                                          : calculateTime(act).length === 0 ? 'text-amber-500 bg-amber-200'
-                                             : 'text-red-500 bg-red-200'}
-                                    
-                                 `}
-                              >
-                                 {
-                                    <>
-                                       <i className='fas fa-clock mr-3' />
-                                       {calculateTime(act).time}
-                                    </>
-                                 }
-                              </span>
+                                       px-2 py-1 font-bold rounded-full text-sm
+                                          ${calculateTime(act).time === 0 ? 'text-green-500 bg-green-200' 
+                                             : calculateTime(act).length === 0 ? 'text-red-500 bg-red-200'
+                                                : calculateTime(act).length > 0 ? 'text-amber-500 bg-amber-200' : ''}
+                                       
+                                    `}
+                                 >
+                                    {
+                                       <>
+                                          <i className='fas fa-clock mr-3' />
+                                          {calculateTime(act).time}
+                                       </>
+                                    }
+                                 </span>
                               }
 
                            </Td>
