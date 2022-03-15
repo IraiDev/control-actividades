@@ -27,6 +27,7 @@ import Box from '../components/ui/Box'
 import Switch from '../components/ui/Switch'
 import queryString from 'query-string'
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
+import FloatMenu from '../components/ui/FloatMenu'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
@@ -153,6 +154,7 @@ const Detail = () => {
       createDetention,
       updateDetention,
       deleteDetention,
+      runActivityPending
    } = useDetail(id)
 
    const date = moment(activity.fecha_tx).format('yyyy-MM-DD')
@@ -215,16 +217,18 @@ const Detail = () => {
       fdetencion,
       msg_revision,
       tiempo_cliente,
-      tiempo_zionit
+      tiempo_zionit,
+      tiempo_estimado
    },
-      onChangeValues, reset] = useForm({
+      onChangeValues, reset, onPreset] = useForm({
          hinicio: moment(new Date()).format('HH:mm:ss'),
          hdetencion: '',
          finicio: moment(new Date()).format('YYYY-MM-DD'),
          fdetencion: moment(new Date()).format('YYYY-MM-DD'),
          msg_revision: '',
          tiempo_cliente: 0,
-         tiempo_zionit: 0
+         tiempo_zionit: 0,
+         tiempo_estimado: activity.tiempo_estimado
       })
 
    // destructuring
@@ -750,7 +754,7 @@ const Detail = () => {
    useEffect(() => {
       setValues({
          ...values,
-         tiempo_total: Number(activity.tiempo_trabajado).toFixed(2) - (Number(tiempo_cliente) + Number(tiempo_zionit)),
+         tiempo_total: Number(activity.tiempo_trabajado).toFixed(4) - (Number(tiempo_cliente) + Number(tiempo_zionit)),
       })
 
       // eslint-disable-next-line
@@ -1266,6 +1270,17 @@ const Detail = () => {
                                     }
                                  />
                               </Button>
+
+                              <FloatMenu
+                                 hidden={activity.estado === 2 || (isFather && isTicket)}
+                                 name='tiempo_estimado'
+                                 value={tiempo_estimado}
+                                 onChange={onChangeValues}
+                                 onClick={() => {
+                                    runActivityPending({tiempo_estimado})
+                                 }}
+                                 reset={reset}
+                              />
    
                               </section>
 
@@ -1370,7 +1385,7 @@ const Detail = () => {
                            <h5 className='text-xs mb-2.5'>Tiempo Total  (hrs)</h5>
                            <NumberFormat 
                               value={values.tiempo_total} 
-                              decimalScale={2} 
+                              decimalScale={4} 
                               fixedDecimalScale={false}
                               displayType='text' 
                            />
