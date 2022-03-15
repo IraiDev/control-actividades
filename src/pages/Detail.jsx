@@ -220,7 +220,7 @@ const Detail = () => {
       tiempo_zionit,
       tiempo_estimado
    },
-      onChangeValues, reset, onPreset] = useForm({
+      onChangeValues, reset] = useForm({
          hinicio: moment(new Date()).format('HH:mm:ss'),
          hdetencion: '',
          finicio: moment(new Date()).format('YYYY-MM-DD'),
@@ -1180,15 +1180,15 @@ const Detail = () => {
 
                      {type_detail !== 'pr' &&
                         <ViewFooter>
-                           <section className='flex gap-2 items-center'>
+                           <section className='flex gap-1 items-center'>
                               
                               <Menu
                                  direction='top'
                                  align='start'
                                  menuButton={
-                                    <MenuButton className='flex items-center gap-3 border-2 border-slate-500 text-slate-600 hover:bg-slate-100 px-2 h-9 rounded-lg font-semibold transition duration-200'>
-                                       Acciones
+                                    <MenuButton className='flex items-center gap-3 bg-slate-100 hover:bg-slate-200/60 text-slate-600 px-2 h-9 rounded-lg font-semibold transition duration-200'>
                                        <i className='fas fa-bars' />
+                                       Acciones
                                     </MenuButton>
                                  }>
                                     <MenuItem
@@ -1273,6 +1273,8 @@ const Detail = () => {
 
                               <FloatMenu
                                  hidden={activity.estado === 2 || (isFather && isTicket)}
+                                 size='w-11 h-9'
+                                 className='bg-slate-100 hover:bg-slate-200/60 text-slate-600'
                                  name='tiempo_estimado'
                                  value={tiempo_estimado}
                                  onChange={onChangeValues}
