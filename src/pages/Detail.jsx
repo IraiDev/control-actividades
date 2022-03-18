@@ -287,6 +287,24 @@ const Detail = () => {
       }
    }
 
+   const validateMod = (returnObj = false) => {
+      const vPR = options.pr.value !== activity.id_proy
+      const vSub = options.sp?.value !== activity.id_subproyecto
+      const vSo = options.us.label !== activity.user_solicita
+      const vEn = options.ue.label !== activity.encargado_actividad
+      const vRe = options.ur.label !== activity.abrev_revisor
+      const vTitle = title?.trim() !== activity.actividad
+      const vDesc = description?.trim() !== activity.func_objeto
+      const vGloss = gloss?.trim() !== activity.glosa_explicativa
+      const vTicket = ticket?.toString().trim() !== activity.num_ticket_edit.toString().trim()
+      const vPriority = priority?.toString().trim() !== activity.num_prioridad.toString()
+      const vTime = time?.toString().trim() !== activity.tiempo_estimado.toString()
+
+      const validate = vPR || vSub || vSo || vEn || vRe || vTitle || vDesc || vGloss || vTicket || vPriority || vTime
+
+      return returnObj ? { res: validate } : validate
+   }
+
    let userStyles = {
       priority: 'S/P',
       styles: 'bg-slate-400 hover:border-gray-400',
@@ -337,55 +355,103 @@ const Detail = () => {
       reset()
    }
 
+   // abre el modal clonar y carga la data de los campos de modal clonar
    const openModalClone = () => {
 
-      const fieldData = (ticket = 0) => {
-         setCloneFields({
-            cTicket: ticket,
-            cTitle: title,
-            cDescription: description,
-            cPriority: priority,
-            cTime: time,
-            cGloss: gloss,
-         })
+      const validate = validateMod()
 
-         setCloneOptions({
-            pr: projects.find(p => p.value === activity.id_proy),
-            sp: subProjects.find(
-               s =>
-                  s.id === activity.id_proy &&
-                  s.value === activity.id_sub_proyecto
-            ),
-            us: users.find(u => u.value === activity.user_solicita),
-            ue: users.find(u => u.value === activity.encargado_actividad),
-            ur: users?.find(u => u.id === activity.id_revisor),
-         })
+      const action = async () => {
+
+         if(validate) await onSave()
+
+         const fieldData = (ticket = 0) => {
+            setCloneFields({
+               cTicket: ticket,
+               cTitle: title,
+               cDescription: description,
+               cPriority: priority,
+               cTime: time,
+               cGloss: gloss,
+            })
+
+            setCloneOptions({
+               pr: options.pr,
+               sp: options.sp,
+               us: options.us,
+               ue: options.ue,
+               ur: options.ur,
+            })
+         }
+
+         if (!isTicket) {
+            fieldData()
+            toggleModalClone(true)
+            return
+         }
+
+         fieldData(ticket)
+         toggleModalClone(true)
       }
 
-      if (!isTicket) {
-         fieldData()
-         toggleModalClone(true)
+      if (validate) {
+         Alert({
+            title: '¡Atención!',
+            content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
+            confirmText: 'Si, guardar',
+            cancelText: 'Cancelar Clonar',
+            action,
+            cancelAction: () => onCloseModals()
+         })
+
          return
       }
 
-      fieldData(ticket)
-      toggleModalClone(true)
+      action()
    }
 
+   // play/pause desde el detalle
    const handleOnPlayPause = () => {
-      if (activity.estado_play_pausa === 2) {
-         toggleModalPause(true)
-         setValues({
-            ...values,
-            id_ref: activity.id_det,
-            title: activity.actividad || 'Sin titulo',
-            content: activity.func_objeto || 'Sin descripcion',
-         })
-      } else {
-         onPlayPause({ id_actividad: activity.id_det })
+
+      const validate = validateMod()
+      
+      const action = async () => {
+
+         if(validate) await onSave()
+
+         if (activity.estado_play_pausa === 2) {
+            // si esta en play entra aqui para poner pausa, desde el detalle
+            toggleModalPause(true)
+            setValues({
+               ...values,
+               id_ref: activity.id_det,
+               title: activity.actividad || 'Sin titulo',
+               content: activity.func_objeto || 'Sin descripcion',
+            })
+         } else {
+            // si esta en pausa entra aqui para poner play, desde el detalle
+            onPlayPause({ id_actividad: activity.id_det })
+         }
+
       }
+
+      if (validate) {
+         Alert({
+            title: '¡Atención!',
+            content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
+            confirmText: 'Si, guardar y continuar',
+            cancelText: 'Cancelar Play/Pause',
+            action,
+            cancelAction: () => onCloseModals()
+         })
+
+         return
+      }
+
+      action()
+
    }
 
+   // guarda la pausa de la actividad desde el modal de pausas
    const onPause = () => {
       if (values.desc.trim() === '') {
          Alert({
@@ -400,6 +466,7 @@ const Detail = () => {
       onCloseModals()
    }
 
+   // pregunta si desea eliminar la actividad
    const onDelete = ({ id, desc }) => {
       Alert({
          icon: 'warn',
@@ -414,7 +481,8 @@ const Detail = () => {
       })
    }
 
-   const onUpdate = () => {
+   // actualiza la nota de la actividad
+   const onUpdateNote = () => {
       if (values.desc.trim() === '') {
          Alert({
             title: 'Atención',
@@ -430,7 +498,8 @@ const Detail = () => {
       })
    }
 
-   const onAdd = () => {
+   // crea una nueva nota de la actividad
+   const onAddNote = () => {
       if (values.desc.trim() === '') {
          Alert({
             title: 'Atención',
@@ -443,6 +512,7 @@ const Detail = () => {
       onCloseModals()
    }
 
+   // realiza la accion de guardar los cambios realizados en la actividad
    const onSave = async () => {
       const formData = new FormData()
       options?.pr && formData.append('proyecto', options.pr.value)
@@ -465,6 +535,7 @@ const Detail = () => {
       onCleanFile(Math.random().toString(36))
    }
 
+   // realiza la accione de clonar la actividad
    const onClone = async () => {
       const formData = new FormData()
       cloneOptions?.pr && formData.append('proyecto', cloneOptions.pr.value)
@@ -490,6 +561,7 @@ const Detail = () => {
       onCleanFile(Math.random().toString(36))
    }
 
+   // provee el formato de los timers
    const timeFormat = time => {
       let hours = time._data.hours
       let minutes = time._data.minutes
@@ -508,81 +580,131 @@ const Detail = () => {
       }
    }
 
-   const validateActivityIsRunning = () => {
+   // cambia el estado de la actividad a PR y valida si hay modificaciones sin guardar
+   const handleOpenModalRevision = () => {
 
-      const callback = () => {
-         const action = async () => {
-         
-            if (isRuning) await onPlayPause({ id_actividad: activity.id_det, mensaje: 'Pausa para pasar a revisión' })
-            setValues({...values, tiempo_total: activity.tiempo_trabajado})
-            toggleModalPR(true)
+      // valida si la actividad esta corriendo antes de pasar a PR
 
+      const validate = validateMod()
+
+      const action = async () => {
+
+         if(validate) await onSave()
+
+         const callback = () => {
+            const action = async () => {
+            
+               if (isRuning) await onPlayPause({ id_actividad: activity.id_det, mensaje: 'Pausa para pasar a revisión' })
+               setValues({...values, tiempo_total: activity.tiempo_trabajado})
+               toggleModalPR(true)
+   
+            }
+      
+            if(isRuning) {
+               Alert({
+                  title: 'Atención',
+                  content: 'Debes pausar la actividad para cambiar el estado a Revisión\n¿Pausar actividad?',
+                  confirmText: 'Si, Pausar actividad',
+                  calcelText: 'No, cancelar',
+                  action
+               })
+               return
+            }
+            
+            action()
          }
    
-         if(isRuning) {
-            Alert({
-               title: 'Atención',
-               content: 'Debes pausar la actividad para cambiar el estado a Revisión\n¿Pausar actividad?',
-               confirmText: 'Si, Pausar actividad',
-               calcelText: 'No, cancelar',
-               action
-            })
-            return
-         }
-         
-         action()
+         validatePredecessor({
+            array: activity.predecesoras, 
+            callback, 
+            state: 3, 
+            options: optionsArray
+         })
+
       }
 
-      validatePredecessor({
-         array: activity.predecesoras, 
-         callback, 
-         state: 3, 
-         options: optionsArray
-      })
-   }
-
-   const finishActivity = (type, isFather) => {
-
-      if(isFather) {
+      if(validate) {
          Alert({
-            title: 'Atención',
-            content: '¿Esta seguro de terminar la actividada Pare original?',
-            confirmText: 'Si, Terminar actividad',
-            calcelText: 'No, cancelar',
-            action: () => {
-               toggleState({ estado: 5 })
-               navigate(routes.activity, {replace: true})
-            }
+            title: '¡Atención!',
+            content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
+            confirmText: 'Si, Guardar y continuar',
+            cancelText: 'Cancelar',
+            action,
          })
+
          return
       }
 
-      const callback = () => {
-
-         if(type === 3) return setModalReject(true)
-
-         const action = () => {
-            toggleState({ tiempo_cliente: activity.tiempo_trabajado, estado: 5 })
-            navigate(routes.activity, { replace: true })
-         }
-
-         Alert({
-            title: 'Atención',
-            content: '¿Estas seguro de terminar la actividad?',
-            confirmText: 'Si, terminar',
-            cancelText: 'No, cancelar',
-            action
-         })
-      }
-
-      validatePredecessor({
-         array: activity.predecesoras, 
-         callback, 
-         state: 5, 
-         options: optionsArray
-      })
+      action()
    }
 
+   // termina la actividad, solo para actividades de coordinacion, padres y de revisión
+   // ademas valida si hay modificaciones sin guardar
+   const finishActivity = (type, isFather) => {
+
+      const validate = validateMod()
+
+      const action = async () => {
+
+         if(validate) await onSave()
+
+         if(isFather) {
+            Alert({
+               title: 'Atención',
+               content: '¿Esta seguro de terminar la actividada Pare original?',
+               confirmText: 'Si, Terminar actividad',
+               calcelText: 'No, cancelar',
+               action: () => {
+                  toggleState({ estado: 5 })
+                  navigate(routes.activity, {replace: true})
+               }
+            })
+            return
+         }
+   
+         const callback = () => {
+   
+            if(type === 3) return setModalReject(true)
+   
+            const action = () => {
+               toggleState({ tiempo_cliente: activity.tiempo_trabajado, estado: 5 })
+               navigate(routes.activity, { replace: true })
+            }
+   
+            Alert({
+               title: 'Atención',
+               content: '¿Estas seguro de terminar la actividad?',
+               confirmText: 'Si, terminar',
+               cancelText: 'No, cancelar',
+               action
+            })
+         }
+   
+         validatePredecessor({
+            array: activity.predecesoras, 
+            callback, 
+            state: 5, 
+            options: optionsArray
+         })
+
+      }
+
+      if(validate) {
+         Alert({
+            title: '¡Atención!',
+            content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
+            confirmText: 'Si, Guardar y continuar',
+            cancelText: 'Cancelar',
+            action,
+         })
+
+         return
+      }
+
+      action()
+   }
+
+   // finaliza la acividad de entrega y verifica si esta fue aprobada o rechazada
    const handleFinshDeliveryActivity = () => {
 
       if ((sw.a.value === false && sw.b.value === false)) {
@@ -600,7 +722,8 @@ const Detail = () => {
       navigate(routes.activity, { replace: true })
    }
 
-   const handleUpdateState = () => {
+   // cambia el estado de la actividad a PR despues de distribuir tiempo cliente y tiempo zionit
+   const handleUpdateActivityState = () => {
 
       if (values.tiempo_total !== 0) {
          Alert({
@@ -616,8 +739,10 @@ const Detail = () => {
       toggleState({ mensaje_revision: msg_revision, tiempo_cliente, tiempo_zionit })
       navigate(routes.activity, { replace: true })
       reset()
+
    }
 
+   // crea un nueva detancion
    const handleCreateDetention = () => {
       // funcion helper, para validar las fechas y si los campos hora estan llenos
       const validate = validateDate({
@@ -642,6 +767,7 @@ const Detail = () => {
       reset()
    }
 
+   // actualiza la detencion apuntada
    const handleUpdateDetention = ({
       id_pausa,
       fecha_inicio,
@@ -692,6 +818,7 @@ const Detail = () => {
       })
    }
 
+   // elimina la detencion apuntada
    const handleDeleteDetention = id_pausa => {
       Alert({
          title: 'Atención',
@@ -702,23 +829,130 @@ const Detail = () => {
       })
    }
 
+   // actualiza la prioridad to-do de la actividad
    const onChangePriority = (number, id) => {
-      updatePriority({
-         prioridad_numero: number,
-         id_actividad: id,
-      })
+      
+      const validate = validateMod() 
+
+      const action = async  () => {
+
+         if(validate) await onSave()
+
+         updatePriority({
+            prioridad_numero: number,
+            id_actividad: id,
+         })
+
+      }
+
+      if(validate) {
+         Alert({
+            title: '¡Atención!',
+            content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
+            confirmText: 'Si, Guardar y continuar',
+            cancelText: 'Cancelar',
+            action,
+         })
+
+         return
+      }
+
+      action()
+
+   }
+
+   // abre el modal de detenciones y valida si hay modificaciones sin guardar
+   const handleOpenModalTimer = () => {
+
+      const validate = validateMod()
+      
+      const action = async  () => {
+
+         if(validate) await onSave()
+
+         toggleModalTimer(true)
+
+      }
+
+      if(validate) {
+         Alert({
+            title: '¡Atención!',
+            content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
+            confirmText: 'Si, Guardar y continuar',
+            calcelText: 'Cancelar',
+            action
+         })
+         return
+      }
+
+      action()
+
+   }
+
+   // abre el modal de editar o agrregar nota y valida si hay modificaciones sin guardar
+   const handleOpenModalAddOrEdit = (isAddOrEdit) => {
+
+      const validate = validateMod()
+      
+      const action = async  () => {
+
+         if(validate) await onSave()
+
+         isAddOrEdit ? toggleModalAdd(true) : toggleModalEdit(true)
+
+      }
+
+      if(validate) {
+         Alert({
+            title: '¡Atención!',
+            content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
+            confirmText: 'Si, Guardar y continuar',
+            calcelText: 'Cancelar',
+            action
+         })
+         return
+      }
+
+      action()
+
+   }
+
+   const handleCancel = () => {
+
+      const validate = validateMod()
+
+      const action = async () => {
+         
+         navigate(routes.activity, { replace: true })
+
+      }
+
+      if(validate) {
+         Alert({
+            title: '¡Atención!',
+            content: 'Se han realizado modificaciones que no han sido guardadas, si continua estas se perderan, ¿Desea continuar?',
+            confirmText: 'Si y continuar',
+            cancelText: 'Volver',
+            action
+         })
+
+         return 
+      }
+
+      action()
+
    }
 
    useEffect(() => {
       if (Object.keys(activity).length > 0) {
          setFields({
             ...fields,
-            title: activity.actividad || 'Sin titulo',
-            description: activity.func_objeto || '',
-            gloss: activity.glosa_explicativa || '',
-            ticket: activity.num_ticket_edit || '',
-            priority: activity.num_prioridad || '',
-            time: activity.tiempo_estimado || '',
+            title: activity?.actividad || 'Sin titulo',
+            description: activity?.func_objeto || '',
+            gloss: activity?.glosa_explicativa || '',
+            ticket: activity?.num_ticket_edit,
+            priority: activity?.num_prioridad || '',
+            time: activity?.tiempo_estimado,
          })
 
          setOptions({
@@ -783,6 +1017,8 @@ const Detail = () => {
                      isDeliveryActivity={activity.id_tipo_actividad === 3}
                      isTicket={activity.num_ticket_edit > 0}
                      isPR={type_detail === 'pr'}
+                     validateMod={validateMod}
+                     callback={onSave}
                      {...activity}
                   >
 
@@ -992,7 +1228,6 @@ const Detail = () => {
                                  }
                               />
 
-                              {/* TODO: aqui quede, desabilitando campos */}
                               <Input
                                  highlight
                                  disabled={type_detail === 'pr'}
@@ -1020,13 +1255,13 @@ const Detail = () => {
                                  <section className='flex gap-2'>
                                     <Button
                                        className='text-slate-600 bg-slate-100 hover:bg-slate-200'
-                                       onClick={() => toggleModalAdd(true)}>
+                                       onClick={() => handleOpenModalAddOrEdit(true)}>
                                        <i className='fas fa-plus' />
                                     </Button>
                                     <Button
                                        disabled={activity?.notas?.length === 0}
                                        className='text-slate-600 bg-slate-100 hover:bg-slate-200 disabled:hover:bg-slate-200/50'
-                                       onClick={() => toggleModalEdit(true)}>
+                                       onClick={() => handleOpenModalAddOrEdit(false)}>
                                        <i className='fas fa-pen' />
                                     </Button>
                                  </section>
@@ -1169,7 +1404,7 @@ const Detail = () => {
                               <Button
                                  hidden={detentions.length === 0}
                                  className='bg-orange-50 hover:bg-orange-100 text-orange-500'
-                                 onClick={() => toggleModalTimer(true)}>
+                                 onClick={handleOpenModalTimer}>
                                  <i className='far fa-clock' /> 
                                  Modificar tiempos
                               </Button>
@@ -1238,7 +1473,7 @@ const Detail = () => {
                                     {!(activity.estado !== 2 || activity.id_tipo_actividad !== 1 || (isFather && isTicket)) &&
                                        <MenuItem
                                           className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
-                                          onClick={validateActivityIsRunning}
+                                          onClick={handleOpenModalRevision}
                                        >
                                           Para Revisión
                                           <i className='fas fa-eye text-orange-400' />
@@ -1294,13 +1529,11 @@ const Detail = () => {
                            <section className='flex justify-end gap-2'>
                               <Button
                                  className='text-red-500 hover:bg-red-100 disabled:hover:bg-transparent'
-                                 onClick={() =>
-                                    navigate(routes.activity, { replace: true })
-                                 }>
+                                 onClick={handleCancel}>
                                  Cancelar
                               </Button>
                               <Button
-                                 disabled={validation().isSave}
+                                 disabled={validation().isSave || !validateMod(true).res}
                                  className='text-emerald-500 hover:bg-emerald-100 place-self-end disabled:hover:bg-transparent'
                                  onClick={onSave}>
                                  Guardar
@@ -1431,7 +1664,7 @@ const Detail = () => {
                         </Button>
                         <Button
                            className='text-emerald-500 hover:bg-emerald-100'
-                           onClick={handleUpdateState}>
+                           onClick={handleUpdateActivityState}>
                            pasar a revisión
                         </Button>
                      </section>
@@ -1751,7 +1984,7 @@ const Detail = () => {
                         />
                         <Button
                            className='text-blue-500 hover:bg-blue-100 place-self-end'
-                           onClick={onUpdate}>
+                           onClick={onUpdateNote}>
                            modificar nota
                         </Button>
                      </div>
@@ -1808,7 +2041,7 @@ const Detail = () => {
                         />
                         <Button
                            className='text-blue-500 hover:bg-blue-100 place-self-end'
-                           onClick={onAdd}>
+                           onClick={onAddNote}>
                            crear nota
                         </Button>
                      </div>

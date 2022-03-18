@@ -57,7 +57,9 @@ const View = props => {
       isChildrenAndChildren,
       isDeliveryActivity,
       isTicket,
-      isPR
+      isPR,
+      validateMod,
+      callback
    } = props
 
    const navigate = useNavigate()
@@ -123,14 +125,36 @@ const View = props => {
       setSw(initSw)
    }
 
-   const openModal = async () => {
+   const openModal = () => {
 
-      const { list, activities } = await getPredecessor({id_actividad: id, id_ticket: props.num_ticket_edit})
+      const validate = validateMod()
 
-      setRestrictions(list)
-      setArrOptions(activities?.map(a => ({value: a.id_det, label: a.descripcion_actividad, tooltip: a.actividad})))
+      const action = async () => {
 
-      setShowModal(true)
+         if(validate) await callback()
+
+         const { list, activities } = await getPredecessor({id_actividad: id, id_ticket: props.num_ticket_edit})
+
+         setRestrictions(list)
+         setArrOptions(activities?.map(a => ({value: a.id_det, label: a.descripcion_actividad, tooltip: a.actividad})))
+
+         setShowModal(true)
+
+      }
+
+      if(validate) {
+         Alert({
+            title: '¡Atención!',
+            content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
+            confirmText: 'Si, Guardar y continuar',
+            calcelText: 'Cancelar',
+            action
+         })
+
+         return
+      }
+
+      action()
    }
 
    const onCloseModal = () => {
@@ -148,6 +172,32 @@ const View = props => {
       })
    }
 
+   const handleBack = () => {
+
+      const validate = validateMod()
+
+      const action = async () => {
+         
+         navigate(type_detail === 'pr' ? '/revision-actividades' : '/actividades', { replace: true })
+
+      }
+
+      if(validate) {
+         Alert({
+            title: '¡Atención!',
+            content: 'Se han realizado modificaciones que no han sido guardadas, si continua estas se perderan, ¿Desea continuar?',
+            confirmText: 'Si y continuar',
+            cancelText: 'Volver',
+            action
+         })
+
+         return 
+      }
+
+      action()
+
+   }
+
    return (
       <>
          <div className='relative bg-white p-4 sm:p-10 rounded-lg shadow-lg shadow-gray-600/10 border grid gap-3'>
@@ -155,7 +205,7 @@ const View = props => {
             <header className='relative flex flex-wrap items-center justify-between'>
                <Button
                   className='hover:text-blue-500'
-                  onClick={() => navigate(type_detail === 'pr' ? '/revision-actividades' : '/actividades', { replace: true })}
+                  onClick={handleBack}
                >
                   <i className='fas fa-arrow-left fa-lg' />
                </Button>
