@@ -78,6 +78,14 @@ const CustomSelect = ({ value, onChange }) => {
    )
 }
 
+const SpanFilter = ({ children, condition }) => {
+   return (
+      <span className={ condition ? 'text-amber-400 bg-white/40 rounded-lg px-2 py-0.5' : '' }>
+         { children }
+      </span>
+   )
+}
+
 const Activity = () => {
    const navigate = useNavigate()
 
@@ -404,7 +412,7 @@ const Activity = () => {
                      <tr className='text-center capitalize'>
                         <Th></Th>
 
-                        <Th>
+                     <Th>
                         <SelectFilter
                            className='w-[182px]'
                            type='table'
@@ -693,19 +701,19 @@ const Activity = () => {
 
                      <tr className='text-center capitalize'>
                         <Th primary>Nᵒ</Th>
-                        <Th primary>tipo actividad</Th>
-                        <Th primary>ID</Th>
-                        <Th primary>ticket</Th>
-                        <Th primary>proyecto</Th>
-                        <Th primary>sub proyecto</Th>
-                        <Th primary>solicitante</Th>
-                        <Th primary>encargado</Th>
-                        <Th primary>revisor</Th>
-                        <Th primary>prioridad</Th>
+                        <Th primary><SpanFilter>tipo actividad</SpanFilter></Th>
+                        <Th primary><SpanFilter>ID</SpanFilter></Th>
+                        <Th primary><SpanFilter>ticket</SpanFilter></Th>
+                        <Th primary><SpanFilter>proyecto</SpanFilter></Th>
+                        <Th primary><SpanFilter>sub proyecto</SpanFilter></Th>
+                        <Th primary><SpanFilter>solicitante</SpanFilter></Th>
+                        <Th primary><SpanFilter>encargado</SpanFilter></Th>
+                        <Th primary><SpanFilter>revisor</SpanFilter></Th>
+                        <Th primary><SpanFilter>prioridad</SpanFilter></Th>
                         {/* <Th primary>fecha</Th> */}
                         <Th primary>
                            <div className='flex items-baseline justify-center gap-2'>
-                              actividad
+                              <SpanFilter>actividad</SpanFilter>
                               <Button
                                  className='hover:bg-white/5'
                                  onClick={() => setMultiline(!multiline)}>
@@ -720,7 +728,7 @@ const Activity = () => {
                         </Th>
                         <Th primary>
                            <div className='flex items-baseline justify-center gap-2'>
-                              descripcion
+                              <SpanFilter>descripcion</SpanFilter>
                               <Button
                                  className='hover:bg-white/5'
                                  onClick={() => setMultiline(!multiline)}>
@@ -733,7 +741,7 @@ const Activity = () => {
                               </Button>
                            </div>
                         </Th>
-                        <Th primary>estado</Th>
+                        <Th primary><SpanFilter>estado</SpanFilter></Th>
                         <Th primary isStickyRight ></Th>
                      </tr>
 

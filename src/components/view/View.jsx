@@ -194,9 +194,19 @@ const View = props => {
                }
             </header>
 
-            <h1 className='text-xl text-center font-semibold capitalize truncate'>
+            <h1 
+               className='text-xl text-center font-semibold capitalize truncate'
+               title={title}
+            >
                {title || 'Sin titulo'}
+               <span 
+                  className='text-zinc-500 font-normal text-base ml-2'
+                  title='Ultima detención'
+               >
+                  [Ult. Det.: {'2022-03-18 11:24'}]
+               </span>
             </h1>
+
             {children}
 
             <MarkActivity 

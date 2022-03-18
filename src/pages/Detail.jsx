@@ -1170,8 +1170,8 @@ const Detail = () => {
                                  hidden={detentions.length === 0}
                                  className='bg-orange-50 hover:bg-orange-100 text-orange-500'
                                  onClick={() => toggleModalTimer(true)}>
-                                 <i className='far fa-clock' /> Modificar
-                                 tiempos
+                                 <i className='far fa-clock' /> 
+                                 Modificar tiempos
                               </Button>
                            </div>
 
@@ -1186,7 +1186,10 @@ const Detail = () => {
                                  direction='top'
                                  align='start'
                                  menuButton={
-                                    <MenuButton className='flex items-center gap-3 bg-slate-100 hover:bg-slate-200/60 text-slate-600 px-2 h-9 rounded-lg font-semibold transition duration-200'>
+                                    <MenuButton 
+                                       className='flex items-center gap-3 bg-slate-100 hover:bg-slate-200/60 text-slate-600 disabled:text-opacity-40 px-2 h-9 rounded-lg font-semibold transition duration-200 disabled:line-through disabled:cursor-not-allowed disabled:bg-slate-50'
+                                       disabled={validation().isSave}
+                                    >
                                        <i className='fas fa-bars' />
                                        Acciones
                                     </MenuButton>
@@ -1254,6 +1257,7 @@ const Detail = () => {
                               </Menu>
    
                               <Button
+                                 disabled={validation().isSave}
                                  hidden={activity.estado === 1|| (activity.es_padre === 1 && activity.es_hijo === 0 && isTicket)}
                                  className={
                                     activity.estado_play_pausa === 2
@@ -1272,6 +1276,7 @@ const Detail = () => {
                               </Button>
 
                               <FloatMenu
+                                 disabled={validation().isSave}
                                  hidden={activity.estado === 2 || (isFather && isTicket)}
                                  size='w-11 h-9'
                                  className='bg-slate-100 hover:bg-slate-200/60 text-slate-600'

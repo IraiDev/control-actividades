@@ -11,6 +11,7 @@ const FloatMenu = ({
    hidden = false,
    className = 'hover:bg-black/5',
    size = 'w-11 h-7',
+   disabled = false
 }) => {
    const [showContextMenu, setShowContextMenu] = useState(false)
 
@@ -21,6 +22,7 @@ const FloatMenu = ({
    return (
       <div className='relative'>
          <Button
+            disabled={disabled}
             size={size}
             title='pasa actividad a estado En trabajo'
             className={className}
