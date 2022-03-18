@@ -142,13 +142,33 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
          }
          ${isOpen === null && 'hidden'}
          ${isOpen ? 'animate__slideInLeft' : 'animate__slideOutLeft'}
-         `}>
+         `}
+      >
+
          <header className='flex items-center justify-between p-5'>
             <h1 className='capitalize text-gray-500'>Filtros</h1>
             <Button onClick={toggleSideBar} className='hover:bg-zinc-100'>
                <i className='fas fa-times' />
             </Button>
          </header>
+
+         <div className='flex justify-between mb-7 px-4'>
+            <Button
+               className='bg-zinc-100 hover:bg-zinc-200'
+               isShadow
+               onClick={onClear}>
+               Limpiar <i className='fas fa-eraser' />
+            </Button>
+            <Button
+               className='bg-blue-500 hover:bg-blue-600 text-white'
+               isShadow
+               onClick={() => {
+                  onFilter()
+                  toggleSideBar()
+               }}>
+               filtrar <i className='fas fa-filter' />
+            </Button>
+         </div>
 
          <section>
             <InputFilter

@@ -23,6 +23,7 @@ import Modal from '../components/ui/Modal'
 import TextArea from '../components/ui/TextArea'
 import MarkActivity from '../components/ui/MarkActivity'
 import TdControlDistribution from '../components/table2/customTD/TdControlDistribution'
+import SpanFilter from '../components/filter/SpanFilter'
 
 const Revision = () => {
    const { 
@@ -178,7 +179,7 @@ const Revision = () => {
             return prFilters.solicitante.includes(ou.value)
          }),
          ur: optionsArray?.users?.filter(ou => {
-            return prFilters.revisor.includes(ou.value)
+            return prFilters.revisor.includes(ou.id)
          }),
          sp: optionsArray?.subProjects?.filter(os => {
             return prFilters.subProy.includes(os.value)
@@ -528,20 +529,62 @@ const Revision = () => {
                   </tr>
 
                   <tr className='text-center capitalize'>
-                     <Th primary >Nᵒ</Th>
-                     <Th primary >Tipo actividad</Th>
-                     <Th primary >ID</Th>
-                     <Th primary >ticket</Th>
-                     <Th primary >proyecto</Th>
-                     <Th primary >sub proyecto</Th>
-                     <Th primary >solicitante</Th>
-                     <Th primary >encargado</Th>
-                     <Th primary >revisor</Th>
-                     <Th primary >estado</Th>
-                     <Th primary >Tiempo (hrs)</Th>
+                     <Th primary >
+                        Nᵒ
+                     </Th>
+                     <Th primary >
+                        <SpanFilter condition={prFilters.id_tipo_actividad.length > 0}>
+                           Tipo actividad
+                        </SpanFilter>
+                     </Th>
+                     <Th primary >
+                        <SpanFilter condition={prFilters.id_actividad.length > 0}>
+                           ID
+                        </SpanFilter>
+                     </Th>
+                     <Th primary >
+                        <SpanFilter condition={prFilters.numero_ticket.length > 0}>
+                           ticket
+                        </SpanFilter>
+                     </Th>
+                     <Th primary >
+                        <SpanFilter condition={prFilters.proyecto.length > 0}>
+                           proyecto
+                        </SpanFilter>
+                     </Th>
+                     <Th primary >
+                        <SpanFilter condition={prFilters.subProy.length > 0}>
+                           sub proyecto
+                        </SpanFilter>
+                     </Th>
+                     <Th primary >
+                        <SpanFilter condition={prFilters.solicitante.length > 0}>
+                           solicitante
+                        </SpanFilter>
+                     </Th>
+                     <Th primary >
+                        <SpanFilter condition={prFilters.encargado.length > 0}>
+                           encargado
+                        </SpanFilter>
+                     </Th>
+                     <Th primary >
+                        <SpanFilter condition={prFilters.revisor.length > 0}>
+                           revisor
+                        </SpanFilter>
+                     </Th>
+                     <Th primary >
+                        <SpanFilter condition={prFilters.estado.length > 0}>
+                           estado
+                        </SpanFilter>
+                     </Th>
+                     <Th primary >
+                        Tiempo (hrs)
+                     </Th>
                      <Th primary >
                         <div className='flex items-baseline justify-center gap-2'>
-                           actividad
+                           <SpanFilter condition={prFilters.titulo.length > 0}>
+                              actividad
+                           </SpanFilter>
                            <Button
                               className='hover:bg-white/5'
                               onClick={() => setMultiline(!multiline)}>
@@ -558,7 +601,9 @@ const Revision = () => {
                      
                      <Th primary >
                         <div className='flex items-baseline justify-center gap-2'>
-                           descripcion
+                           <SpanFilter condition={prFilters.descripcion.length > 0}>
+                              descripcion
+                           </SpanFilter>
                            <Button
                               className='hover:bg-white/5'
                               onClick={() => setMultiline(!multiline)}>

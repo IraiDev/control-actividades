@@ -27,8 +27,6 @@ export const useDetail = (id) => {
          const body = await resp.json()
          const { ok, tareas } = body
 
-         console.log(tareas[0])
-
          setIsLoading(false)
          if (ok) {
             setActivity(tareas[0])
@@ -71,6 +69,37 @@ export const useDetail = (id) => {
          console.log(e)
          setIsLoading(false)
       }
+   }
+
+   const getPRDetentions = async ({ id_actividad }) => {
+
+      try {
+         const resp = await fetchToken(
+            'task/get-detentions',
+            { id_actividad },
+            'POST'
+         )
+         const body = await resp.json()
+         const { ok, response } = body
+
+         console.log('detenciones pr',response)
+
+         if (ok) {
+            setDetentions(response)
+            await fetchPRDetail()
+         }
+         else {
+            Alert({
+               icon: 'error',
+               title: 'Atención',
+               content: response,
+               showCancelButton: false,
+            })
+         }
+      } catch (err) {
+         console.log(err)
+      }
+
    }
 
    const newNote = async ({ id_actividad, description }) => {
@@ -677,7 +706,7 @@ export const useDetail = (id) => {
    useEffect(() => {
 
       if (id) {
-         type_detail === 'pr' && fetchPRDetail() 
+         type_detail === 'pr' && getPRDetentions({ id_actividad: id }) 
          type_detail !== 'pr' && getDetentions({ id_actividad: id })
       }
 

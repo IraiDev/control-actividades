@@ -2,7 +2,8 @@ const Box = ({
    children, 
    isBlock = false, 
    className = 'mt-3 bg-zinc-100',
-   colCount = 7
+   colCount = 7,
+   hidden = false
 }) => {
 
    let cols = ''
@@ -36,6 +37,8 @@ const Box = ({
          cols = 'grid-cols-7'
          break
    }
+
+   if(hidden) return null
 
    if (isBlock) {
       return (

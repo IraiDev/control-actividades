@@ -288,17 +288,19 @@ const Detail = () => {
    }
 
    const validateMod = (returnObj = false) => {
-      const vPR = options.pr.value !== activity.id_proy
-      const vSub = options.sp?.value !== activity.id_subproyecto
-      const vSo = options.us.label !== activity.user_solicita
-      const vEn = options.ue.label !== activity.encargado_actividad
-      const vRe = options.ur.label !== activity.abrev_revisor
+      const vPR = options?.pr?.value !== activity.id_proy
+      const vSub = options?.sp?.value !== activity.id_subproyecto
+      const vSo = options?.us?.label !== activity.user_solicita
+      const vEn = options?.ue?.label !== activity.encargado_actividad
+      const vRe = activity?.abrev_revisor ? options?.ur?.label !== activity?.abrev_revisor : false
       const vTitle = title?.trim() !== activity.actividad
       const vDesc = description?.trim() !== activity.func_objeto
-      const vGloss = gloss?.trim() !== activity.glosa_explicativa
-      const vTicket = ticket?.toString().trim() !== activity.num_ticket_edit.toString().trim()
-      const vPriority = priority?.toString().trim() !== activity.num_prioridad.toString()
-      const vTime = time?.toString().trim() !== activity.tiempo_estimado.toString()
+      const vGloss = activity.glosa_explicativa ? gloss?.trim() !== activity.glosa_explicativa : false
+      const vTicket = ticket?.toString().trim() !== activity.num_ticket_edit?.toString().trim()
+      const vPriority = activity.num_prioridad ? priority?.toString().trim() !== activity.num_prioridad?.toString().trim() : false
+      const vTime = activity.tiempo_estimado ? time?.toString().trim() !== activity.tiempo_estimado?.toString() : false
+
+      console.log({ vPR, vSub, vSo, vEn, vRe, vTitle, vDesc, vGloss, vTicket, vPriority, vTime })
 
       const validate = vPR || vSub || vSo || vEn || vRe || vTitle || vDesc || vGloss || vTicket || vPriority || vTime
 
@@ -947,12 +949,12 @@ const Detail = () => {
       if (Object.keys(activity).length > 0) {
          setFields({
             ...fields,
-            title: activity?.actividad || 'Sin titulo',
-            description: activity?.func_objeto || '',
-            gloss: activity?.glosa_explicativa || '',
-            ticket: activity?.num_ticket_edit,
-            priority: activity?.num_prioridad || '',
-            time: activity?.tiempo_estimado,
+            title: activity?.actividad ?? 'Sin titulo',
+            description: activity?.func_objeto ?? '',
+            gloss: activity?.glosa_explicativa ?? '',
+            ticket: activity?.num_ticket_edit ?? '',
+            priority: activity?.num_prioridad ?? '',
+            time: activity?.tiempo_estimado ?? '',
          })
 
          setOptions({
@@ -1166,7 +1168,7 @@ const Detail = () => {
                            </section>
                         </aside>
 
-                        <section className='col-span-1 md:col-span-3 grid gap-2'>
+                        <section className='col-span-1 md:col-span-3 grid mt-2 lg:mt-0 gap-2'>
                            <Input
                               disabled={type_detail === 'pr'}
                               isRequired={type_detail !== 'pr'}
@@ -1245,7 +1247,7 @@ const Detail = () => {
                            </div>
                         </section>
 
-                        <aside className='col-span-1 md:col-span-3 mt-5 md:mt-0'>
+                        <aside className='col-span-1 md:col-span-3 mt-5 lg:mt-0'>
                            <div className='flex justify-between items-center mb-3'>
                               <h5 className='text-sm font-semibold'>
                                  Notas (Informes):{' '}
@@ -1404,9 +1406,12 @@ const Detail = () => {
                               <Button
                                  hidden={detentions.length === 0}
                                  className='bg-orange-50 hover:bg-orange-100 text-orange-500'
-                                 onClick={handleOpenModalTimer}>
+                                 onClick={handleOpenModalTimer}
+                              >
                                  <i className='far fa-clock' /> 
-                                 Modificar tiempos
+
+                                 { type_detail !== 'pr' ? 'Modificar tiempos' : 'Ver Tiempos' }
+                                 
                               </Button>
                            </div>
 
@@ -1524,7 +1529,7 @@ const Detail = () => {
                                  reset={reset}
                               />
    
-                              </section>
+                           </section>
 
                            <section className='flex justify-end gap-2'>
                               <Button
@@ -1674,246 +1679,278 @@ const Detail = () => {
                {/* modal detentions */}
                {modalTimer &&
                   <Modal
-                  showModal={modalTimer}
-                  isBlur={false}
-                  onClose={onCloseModals}
-                  className='max-w-7xl'
-                  padding='p-4 md:p-6'
-                  title='Modificar tiempos de actividad'>
+                     showModal={modalTimer}
+                     isBlur={false}
+                     onClose={onCloseModals}
+                     className='max-w-7xl'
+                     padding='p-4 md:p-6'
+                     title={ type_detail !== 'pr' 
+                        ? `Detenciones de actividad ${activity.id_det}`
+                        : `Detenciones de actividad ${activity.id_det}` 
+                        }
+                     >
 
-                  <div className='grid gap-1 mt-10 w-[1216px] overflow-auto'>
+                     <div className='grid gap-1 mt-10 w-[1216px] pr-6 xl:pr-0 overflow-auto'>
 
-                     <Box className='bg-zinc-100' isBlock >
+                        <Box 
+                           colCount={type_detail !== 'pr' ? 7 : 6 } 
+                           className='bg-zinc-100' 
+                           isBlock 
+                        >
 
-                        <Span />
+                           <Span />
 
-                        <Span colCount={2}>desde</Span>
+                           <Span colCount={2}>desde</Span>
 
-                        <Span colCount={2}>hasta</Span>
+                           <Span colCount={2}>hasta</Span>
 
-                        <Span colCount={2}>control</Span>
+                           <Span colCount={type_detail !== 'pr' ? 1 : 2 } >control</Span>
 
-                     </Box>
+                        </Box>
 
-                     <Box className='bg-zinc-100' isBlock >
+                        <Box 
+                           colCount={type_detail !== 'pr' ? 7 : 6 } 
+                           className='bg-zinc-100' 
+                           isBlock 
+                        >
 
-                        <Span>Nº</Span>
+                           <Span>Nº</Span>
 
-                        <Span>fecha</Span>
+                           <Span>fecha</Span>
 
-                        <Span>hora</Span>
+                           <Span>hora</Span>
 
-                        <Span>fecha</Span>
+                           <Span>fecha</Span>
 
-                        <Span>hora</Span>
+                           <Span>hora</Span>
 
-                        <Span>tiempo (hrs)</Span>
+                           <Span>tiempo (hrs)</Span>
 
-                     </Box>
+                        </Box>
 
-                     <Box isBlock>
+                        <Box 
+                           hidden={type_detail === 'pr'}
+                           colCount={type_detail !== 'pr' ? 7 : 6 } 
+                           isBlock
+                        >
 
-                        <Span>Nueva detención</Span>
+                           <Span>Nueva detención</Span>
 
-                        <Input
-                           className='my-2'
-                           type='date'
-                           name='finicio'
-                           value={finicio}
-                           onChange={onChangeValues}
-                        />
+                           <Input
+                              className='my-2'
+                              type='date'
+                              name='finicio'
+                              value={finicio}
+                              onChange={onChangeValues}
+                           />
 
-                        <InputMask
-                           mask='99:99:99'
-                           maskChar=''
-                           name='hinicio'
-                           value={hinicio}
-                           onChange={onChangeValues}>
-                           {inputProps => (
-                              <Input
-                                 className='my-2'
-                                 placeholder='ej: hh:mm:ss'
-                                 name={inputProps.name}
-                                 onChange={inputProps.onChange}
-                                 value={inputProps.value}
-                              />
-                           )}
-                        </InputMask>
+                           <InputMask
+                              mask='99:99:99'
+                              maskChar=''
+                              name='hinicio'
+                              value={hinicio}
+                              onChange={onChangeValues}>
+                              {inputProps => (
+                                 <Input
+                                    className='my-2'
+                                    placeholder='ej: hh:mm:ss'
+                                    name={inputProps.name}
+                                    onChange={inputProps.onChange}
+                                    value={inputProps.value}
+                                 />
+                              )}
+                           </InputMask>
 
-                        <Input
-                           className='my-2'
-                           type='date'
-                           name='fdetencion'
-                           value={fdetencion}
-                           onChange={onChangeValues}
-                        />
+                           <Input
+                              className='my-2'
+                              type='date'
+                              name='fdetencion'
+                              value={fdetencion}
+                              onChange={onChangeValues}
+                           />
 
-                        <InputMask
-                           mask='99:99:99'
-                           maskChar=''
-                           name='hdetencion'
-                           value={hdetencion}
-                           onChange={onChangeValues}>
-                           {inputProps => (
-                              <Input
-                                 className='my-2'
-                                 placeholder='ej: hh:mm:ss'
-                                 name={inputProps.name}
-                                 onChange={inputProps.onChange}
-                                 value={inputProps.value}
-                              />
-                           )}
-                        </InputMask>
+                           <InputMask
+                              mask='99:99:99'
+                              maskChar=''
+                              name='hdetencion'
+                              value={hdetencion}
+                              onChange={onChangeValues}>
+                              {inputProps => (
+                                 <Input
+                                    className='my-2'
+                                    placeholder='ej: hh:mm:ss'
+                                    name={inputProps.name}
+                                    onChange={inputProps.onChange}
+                                    value={inputProps.value}
+                                 />
+                              )}
+                           </InputMask>
 
-                        <Span>
-                           {moment(`${fdetencion} ${hdetencion}`).isValid() && moment(`${finicio} ${hinicio}`).isValid() ?
-                              <NumberFormat 
-                                 value={moment(`${fdetencion} ${hdetencion}`).diff(moment(`${finicio} ${hinicio}`),'hours', true)}
-                                 decimalScale={2}
-                                 fixedDecimalScale={false}
-                                 displayType='text' 
-                              />
-                              : 0
+                           <Span>
+                              {moment(`${fdetencion} ${hdetencion}`).isValid() && moment(`${finicio} ${hinicio}`).isValid() ?
+                                 <NumberFormat 
+                                    value={moment(`${fdetencion} ${hdetencion}`).diff(moment(`${finicio} ${hinicio}`),'hours', true)}
+                                    decimalScale={2}
+                                    fixedDecimalScale={false}
+                                    displayType='text' 
+                                 />
+                                 : 0
+                              }
+                           </Span>
+
+                           {type_detail !== 'pr' && 
+                              <Button
+                                 className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 mx-auto'
+                                 onClick={handleCreateDetention}>
+                                 agregar
+                              </Button>
                            }
-                        </Span>
+                        </Box>
 
-                        <Button
-                           className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 mx-auto'
-                           onClick={handleCreateDetention}>
-                           agregar
-                        </Button>
-                     </Box>
+                        {type_detail !== 'pr' &&
+                           <h5 className='py-3 px-3'>Detenciones</h5>
+                        }
 
-                     <h5 className='py-3 px-3'>Detenciones</h5>
+                        <div className='max-h-72 overflow-custom grid gap-1'>
 
-                     <div className='max-h-72 overflow-custom grid gap-1'>
+                           {detentions.length > 0 &&
+                              detentions.map((d, i) => (
 
-                        {detentions.length > 0 &&
-                           detentions.map((d, i) => (
-
-                              <Box isBlock key={d.id_pausa}>
-
-                                 <Numerator className='mx-auto' number={i + 1} />
-
-                                 <Input
-                                    className='my-2'
-                                    type='date'
-                                    value={timeValues[i]?.fecha_inicio || ''}
-                                    onChange={e =>
-                                       setTimeValues(
-                                          timeValues.map(t => {
-                                             if (t.id === d.id_pausa) {
-                                                console.log('entro a la pausa')
-                                                return { ...t, fecha_inicio: e.target.value }
-                                             }
-                                             return t
-                                       }))
-                                    }
-                                 />
-
-                                 <InputMask
-                                    mask='99:99:99'
-                                    maskChar=''
-                                    value={timeValues[i]?.hora_inicio || ''}
-                                    onChange={e =>
-                                       setTimeValues(
-                                          timeValues.map(t => {
-                                             if (t.id === d.id_pausa) {
-                                                return { ...t, hora_inicio: e.target.value }
-                                             }
-                                             return t
-                                       }))
-                                    }
+                                 <Box 
+                                    colCount={type_detail !== 'pr' ? 7 : 6 } 
+                                    isBlock 
+                                    key={d.id_pausa}
                                  >
-                                    {inputProps => (
-                                       <Input
-                                          className='my-2'
-                                          onChange={inputProps.onChange}
-                                          value={inputProps.value}
-                                       />
-                                    )}
-                                 </InputMask>
 
-                                 <Input
-                                    className='my-2'
-                                    type='date'
-                                    value={timeValues[i]?.fecha_detencion || ''}
-                                    onChange={e =>
-                                       setTimeValues(
-                                          timeValues.map(t => {
-                                             if (t.id === d.id_pausa) {
-                                                return { ...t, fecha_detencion: e.target.value }
-                                             }
-                                             return t
-                                       }))
-                                    }
-                                 />
+                                    <Numerator className='mx-auto' number={i + 1} />
 
-                                 <InputMask
-                                    mask='99:99:99'
-                                    maskChar=''
-                                    value={timeValues[i]?.hora_detencion || ''}
-                                    onChange={e =>
-                                       setTimeValues(
-                                          timeValues.map(t => {
-                                             if (t.id === d.id_pausa) {
-                                                return { ...t, hora_detencion: e.target.value }
-                                             }
-                                             return t
-                                       }))
-                                    }
-                                 >
-                                    {inputProps => (
-                                       <Input
-                                          className='my-2'
-                                          onChange={inputProps.onChange}
-                                          value={inputProps.value}
-                                       />
-                                    )}
-                                 </InputMask>
+                                    <Input
+                                       disabled={type_detail === 'pr'}
+                                       className='my-2'
+                                       type='date'
+                                       value={timeValues[i]?.fecha_inicio || ''}
+                                       onChange={e =>
+                                          setTimeValues(
+                                             timeValues.map(t => {
+                                                if (t.id === d.id_pausa) {
+                                                   console.log('entro a la pausa')
+                                                   return { ...t, fecha_inicio: e.target.value }
+                                                }
+                                                return t
+                                          }))
+                                       }
+                                    />
 
-                                 <Span>
-                                    {moment(`${d.fecha_detencion} ${d.hora_detencion}`).isValid() && moment(`${d.fecha_inicio} ${d.hora_inicio}`).isValid() &&
-                                       <NumberFormat 
-                                          value={moment(`${d.fecha_detencion} ${d.hora_detencion}`).diff(moment(`${d.fecha_inicio} ${d.hora_inicio}`),'hours', true)}
-                                          decimalScale={2}
-                                          fixedDecimalScale={false}
-                                          displayType='text' 
-                                       />
-                                    }
-                                 </Span>
-
-                                 <div className='flex justify-center gap-2'>
-
-                                    <Button
-                                       disabled={!moment(`${d.fecha_detencion} ${d.hora_detencion}`).isValid()}
-                                       className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 disabled:hover:bg-emerald-200/50'
-                                       onClick={() =>
-                                          handleUpdateDetention({
-                                             id_pausa: d.id_pausa,
-                                             fecha_inicio: timeValues[i]?.fecha_inicio,
-                                             fecha_detencion:  timeValues[i]?.fecha_detencion,
-                                             hora_inicio:  timeValues[i]?.hora_inicio,
-                                             hora_detencion: timeValues[i]?.hora_detencion,
-                                          })
+                                    <InputMask
+                                       mask='99:99:99'
+                                       maskChar=''
+                                       value={timeValues[i]?.hora_inicio || ''}
+                                       readOnly={type_detail === 'pr'}
+                                       onChange={e =>
+                                          setTimeValues(
+                                             timeValues.map(t => {
+                                                if (t.id === d.id_pausa) {
+                                                   return { ...t, hora_inicio: e.target.value }
+                                                }
+                                                return t
+                                          }))
                                        }
                                     >
-                                       <i className='fas fa-check' />
-                                    </Button>
+                                       {inputProps => (
+                                          <Input
+                                             disabled={inputProps.readOnly}
+                                             className='my-2'
+                                             onChange={inputProps.onChange}
+                                             value={inputProps.value}
+                                          />
+                                       )}
+                                    </InputMask>
 
-                                    <Button
-                                       disabled={!moment(`${d.fecha_detencion} ${d.hora_detencion}`).isValid()}
-                                       className='bg-red-100 hover:bg-red-200 text-red-500 disabled:hover:bg-red-200/50'
-                                       onClick={() => handleDeleteDetention(d.id_pausa)}
+                                    <Input
+                                       disabled={type_detail === 'pr'}
+                                       className='my-2'
+                                       type='date'
+                                       value={timeValues[i]?.fecha_detencion || ''}
+                                       onChange={e =>
+                                          setTimeValues(
+                                             timeValues.map(t => {
+                                                if (t.id === d.id_pausa) {
+                                                   return { ...t, fecha_detencion: e.target.value }
+                                                }
+                                                return t
+                                          }))
+                                       }
+                                    />
+
+                                    <InputMask
+                                       mask='99:99:99'
+                                       maskChar=''
+                                       value={timeValues[i]?.hora_detencion || ''}
+                                       readOnly={type_detail === 'pr'}
+                                       onChange={e =>
+                                          setTimeValues(
+                                             timeValues.map(t => {
+                                                if (t.id === d.id_pausa) {
+                                                   return { ...t, hora_detencion: e.target.value }
+                                                }
+                                                return t
+                                          }))
+                                       }
                                     >
-                                       <i className='fas fa-trash' />
-                                    </Button>
+                                       {inputProps => (
+                                          <Input
+                                             disabled={inputProps.readOnly}
+                                             className='my-2'
+                                             onChange={inputProps.onChange}
+                                             value={inputProps.value}
+                                          />
+                                       )}
+                                    </InputMask>
 
-                                 </div>
-                              </Box>
-                           ))}
+                                    <Span>
+                                       {moment(`${d.fecha_detencion} ${d.hora_detencion}`).isValid() && moment(`${d.fecha_inicio} ${d.hora_inicio}`).isValid() &&
+                                          <NumberFormat 
+                                             value={moment(`${d.fecha_detencion} ${d.hora_detencion}`).diff(moment(`${d.fecha_inicio} ${d.hora_inicio}`),'hours', true)}
+                                             decimalScale={2}
+                                             fixedDecimalScale={false}
+                                             displayType='text' 
+                                          />
+                                       }
+                                    </Span>
+
+                                    {type_detail !== 'pr' && 
+                                       <div className='flex justify-center gap-2'>
+
+                                          <Button
+                                             disabled={!moment(`${d.fecha_detencion} ${d.hora_detencion}`).isValid()}
+                                             className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 disabled:hover:bg-emerald-200/50'
+                                             onClick={() =>
+                                                handleUpdateDetention({
+                                                   id_pausa: d.id_pausa,
+                                                   fecha_inicio: timeValues[i]?.fecha_inicio,
+                                                   fecha_detencion:  timeValues[i]?.fecha_detencion,
+                                                   hora_inicio:  timeValues[i]?.hora_inicio,
+                                                   hora_detencion: timeValues[i]?.hora_detencion,
+                                                })
+                                             }
+                                          >
+                                             <i className='fas fa-check' />
+                                          </Button>
+
+                                          <Button
+                                             disabled={!moment(`${d.fecha_detencion} ${d.hora_detencion}`).isValid()}
+                                             className='bg-red-100 hover:bg-red-200 text-red-500 disabled:hover:bg-red-200/50'
+                                             onClick={() => handleDeleteDetention(d.id_pausa)}
+                                          >
+                                             <i className='fas fa-trash' />
+                                          </Button>
+
+                                       </div>
+                                    }
+                                 </Box>
+                              ))}
+                        </div>
                      </div>
-                  </div>
                   </Modal>}
 
                {/* modal edit */}

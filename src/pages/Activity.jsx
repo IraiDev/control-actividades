@@ -23,6 +23,7 @@ import THead from '../components/table2/THead'
 import Th from '../components/table2/Th'
 import Td from '../components/table2/Td'
 import MarkActivity from '../components/ui/MarkActivity'
+import SpanFilter from '../components/filter/SpanFilter'
 
 const PrioritySelector = ({ onClick, color = 'bg-slate-400', disabled }) => {
    return (
@@ -78,13 +79,7 @@ const CustomSelect = ({ value, onChange }) => {
    )
 }
 
-const SpanFilter = ({ children, condition }) => {
-   return (
-      <span className={ condition ? 'text-amber-400 bg-white/40 rounded-lg px-2 py-0.5' : '' }>
-         { children }
-      </span>
-   )
-}
+
 
 const Activity = () => {
    const navigate = useNavigate()
@@ -164,6 +159,7 @@ const Activity = () => {
          id_actividad: id,
          numero_ticket: ticket,
          titulo: title,
+         descripcion: desc,
          prioridad_ra: numPriority,
          offset: 0,
       }
@@ -412,37 +408,37 @@ const Activity = () => {
                      <tr className='text-center capitalize'>
                         <Th></Th>
 
-                     <Th>
-                        <SelectFilter
-                           className='w-[182px]'
-                           type='table'
-                           value={options.ita}
-                           options={activity_type}
-                           isMulti
-                           onChange={option =>
-                              setOptions({ ...options, ita: option })
-                           }
-                           filterDown={() =>
-                              setOrder({ orden_tipo_actividad: 'desc' })
-                           }
-                           filterUp={() =>
-                              setOrder({ orden_tipo_actividad: 'asc' })
-                           }
-                           upActive={setActive({
-                              param: 'orden_tipo_actividad',
-                              value: 'asc',
-                           })}
-                           downActive={setActive({
-                              param: 'orden_tipo_actividad',
-                              value: 'desc',
-                           })}
-                        />
-                     </Th>
+                        <Th>
+                           <SelectFilter
+                              className='w-[182px]'
+                              type='table'
+                              value={options.ita}
+                              options={activity_type}
+                              isMulti
+                              onChange={option =>
+                                 setOptions({ ...options, ita: option })
+                              }
+                              filterDown={() =>
+                                 setOrder({ orden_tipo_actividad: 'desc' })
+                              }
+                              filterUp={() =>
+                                 setOrder({ orden_tipo_actividad: 'asc' })
+                              }
+                              upActive={setActive({
+                                 param: 'orden_tipo_actividad',
+                                 value: 'asc',
+                              })}
+                              downActive={setActive({
+                                 param: 'orden_tipo_actividad',
+                                 value: 'desc',
+                              })}
+                           />
+                        </Th>
 
                         <Th>
                            <InputFilter
                               type='table'
-                              width='w-16'
+                              width='w-24'
                               isNumber
                               name='id'
                               value={id}
@@ -701,19 +697,57 @@ const Activity = () => {
 
                      <tr className='text-center capitalize'>
                         <Th primary>Nᵒ</Th>
-                        <Th primary><SpanFilter>tipo actividad</SpanFilter></Th>
-                        <Th primary><SpanFilter>ID</SpanFilter></Th>
-                        <Th primary><SpanFilter>ticket</SpanFilter></Th>
-                        <Th primary><SpanFilter>proyecto</SpanFilter></Th>
-                        <Th primary><SpanFilter>sub proyecto</SpanFilter></Th>
-                        <Th primary><SpanFilter>solicitante</SpanFilter></Th>
-                        <Th primary><SpanFilter>encargado</SpanFilter></Th>
-                        <Th primary><SpanFilter>revisor</SpanFilter></Th>
-                        <Th primary><SpanFilter>prioridad</SpanFilter></Th>
+                        <Th primary>
+                           <SpanFilter condition={filters.id_tipo_actividad.length > 0}>
+                              tipo actividad
+                           </SpanFilter>
+                        </Th>
+                        <Th primary>
+                           <SpanFilter condition={filters.id_actividad.length > 0}>
+                              ID
+                           </SpanFilter>
+                        </Th>
+                        <Th primary>
+                           <SpanFilter condition={filters.numero_ticket.length > 0}>
+                              ticket
+                           </SpanFilter>
+                        </Th>
+                        <Th primary>
+                           <SpanFilter condition={filters.proyecto.length > 0}>
+                              proyecto
+                           </SpanFilter>
+                        </Th>
+                        <Th primary>
+                           <SpanFilter condition={filters.subProy.length > 0}>
+                              sub proyecto
+                           </SpanFilter>
+                        </Th>
+                        <Th primary>
+                           <SpanFilter condition={filters.solicitante.length > 0}>
+                              solicitante
+                           </SpanFilter>
+                        </Th>
+                        <Th primary>
+                           <SpanFilter condition={filters.encargado.length > 0}>
+                              encargado
+                           </SpanFilter>
+                        </Th>
+                        <Th primary>
+                           <SpanFilter condition={filters.revisor.length > 0}>
+                              revisor
+                           </SpanFilter>
+                        </Th>
+                        <Th primary>
+                           <SpanFilter condition={filters.prioridad_ra.length > 0}>
+                              prioridad
+                           </SpanFilter>
+                        </Th>
                         {/* <Th primary>fecha</Th> */}
                         <Th primary>
                            <div className='flex items-baseline justify-center gap-2'>
-                              <SpanFilter>actividad</SpanFilter>
+                              <SpanFilter condition={filters.titulo.length > 0}>
+                                 actividad
+                              </SpanFilter>
                               <Button
                                  className='hover:bg-white/5'
                                  onClick={() => setMultiline(!multiline)}>
@@ -728,7 +762,9 @@ const Activity = () => {
                         </Th>
                         <Th primary>
                            <div className='flex items-baseline justify-center gap-2'>
-                              <SpanFilter>descripcion</SpanFilter>
+                              <SpanFilter condition={filters.descripcion.length > 0}>
+                                 descripcion
+                              </SpanFilter>
                               <Button
                                  className='hover:bg-white/5'
                                  onClick={() => setMultiline(!multiline)}>
@@ -741,7 +777,11 @@ const Activity = () => {
                               </Button>
                            </div>
                         </Th>
-                        <Th primary><SpanFilter>estado</SpanFilter></Th>
+                        <Th primary>
+                           <SpanFilter condition={filters.estado !== ''}>
+                              estado
+                           </SpanFilter>
+                        </Th>
                         <Th primary isStickyRight ></Th>
                      </tr>
 
