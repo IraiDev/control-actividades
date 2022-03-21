@@ -28,6 +28,8 @@ import Switch from '../components/ui/Switch'
 import queryString from 'query-string'
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
 import FloatMenu from '../components/ui/FloatMenu'
+import MapSection from '../components/map/MapSection'
+import MapArrow from '../components/map/MapArrow'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
@@ -289,7 +291,7 @@ const Detail = () => {
 
    const validateMod = (returnObj = false) => {
       const vPR = options?.pr?.value !== activity.id_proy
-      const vSub = options?.sp?.value !== activity.id_subproyecto
+      const vSub = activity.id_sub_proyecto ? options?.sp?.value !== activity.id_sub_proyecto : false
       const vSo = options?.us?.label !== activity.user_solicita
       const vEn = options?.ue?.label !== activity.encargado_actividad
       const vRe = activity?.abrev_revisor ? options?.ur?.label !== activity?.abrev_revisor : false
@@ -299,8 +301,6 @@ const Detail = () => {
       const vTicket = ticket?.toString().trim() !== activity.num_ticket_edit?.toString().trim()
       const vPriority = activity.num_prioridad ? priority?.toString().trim() !== activity.num_prioridad?.toString().trim() : false
       const vTime = activity.tiempo_estimado ? time?.toString().trim() !== activity.tiempo_estimado?.toString() : false
-
-      console.log({ vPR, vSub, vSo, vEn, vRe, vTitle, vDesc, vGloss, vTicket, vPriority, vTime })
 
       const validate = vPR || vSub || vSo || vEn || vRe || vTitle || vDesc || vGloss || vTicket || vPriority || vTime
 
@@ -1030,7 +1030,35 @@ const Detail = () => {
                            isCustom={options?.ur?.id !== options?.ue?.id} 
                            customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
                            position='top-20'
-                        />}
+                        />
+                     }
+
+                     <ViewSection>
+
+                        <div className='flex mx-auto gap-3 mb-5'>
+
+                           <MapSection id={ activity.id_det } number={ 1 } state='pendiente' />
+
+                              <MapArrow />
+                              
+                           <MapSection id={ activity.id_det } number={ 2 } state='pendiente' />
+
+                              <MapArrow />
+
+                           <MapSection id={ activity.id_det } number={ 5 } state='pendiente' />
+
+                              <MapArrow />
+
+                           <MapSection id={ activity.id_det } number={ 6 } state='pendiente' />
+
+                              <MapArrow />
+
+                           <MapSection id={ activity.id_det } number={ 7 } state='pendiente' />
+
+
+                        </div>
+
+                     </ViewSection>
 
                      <ViewSection lg cols={8}>
 
@@ -1353,7 +1381,11 @@ const Detail = () => {
                               Tiempos de la actividad:
                            </h5>
 
-                           <div className='grid grid-cols-3 content-center place-content-center'>
+                           <div className={`
+                                 grid content-center place-content-center
+                                 ${type_detail === 'pr' ? 'grid-cols-2' : 'grid-cols-3'}
+                              `}
+                           >
                               <TimerContainer subtitle='estimado'>
                                  {
                                     timeFormat(
@@ -1382,24 +1414,26 @@ const Detail = () => {
                                  />
                               </TimerContainer>
 
-                              <TimerContainer
-                                 subtitle='hoy'
-                                 color={
-                                    activity.estado_play_pausa === 2 ? 'red' : 'green'
-                                 }>
-                                 <Timer
-                                    pause={activity.estado_play_pausa === 2}
-                                    refresh={activity}
-                                    time={
-                                       timeFormat(
-                                          moment.duration(
-                                             activity.tiempo_hoy,
-                                             'hours'
-                                          )
-                                       ).section
-                                    }
-                                 />
-                              </TimerContainer>
+                              {type_detail !== 'pr' &&
+                                 <TimerContainer
+                                    subtitle='hoy'
+                                    color={
+                                       activity.estado_play_pausa === 2 ? 'red' : 'green'
+                                    }>
+                                    <Timer
+                                       pause={activity.estado_play_pausa === 2}
+                                       refresh={activity}
+                                       time={
+                                          timeFormat(
+                                             moment.duration(
+                                                activity.tiempo_hoy,
+                                                'hours'
+                                             )
+                                          ).section
+                                       }
+                                    />
+                                 </TimerContainer>
+                              }
                            </div>
 
                            <div className='flex justify-center mt-5 '>

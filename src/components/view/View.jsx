@@ -11,6 +11,7 @@ import CustomSelect from '../ui/CustomSelect'
 import Numerator from '../ui/Numerator'
 import Box from '../ui/Box'
 import queryString from 'query-string'
+import moment from 'moment'
 
 const initOptions = {
    act: {value: null, label: 'niguno'},
@@ -253,7 +254,7 @@ const View = props => {
                   className='text-zinc-500 font-normal text-base ml-2'
                   title='Ultima detención'
                >
-                  [Ult. Det.: {'2022-03-18 11:24'}]
+                  [Ult. Detencion.: {moment(`${props.fecha_trabajo} ${props.hora_trabajo}`).format('DD-MM-yyyy, HH:MM') ?? 'Sin fecha'}]
                </span>
             </h1>
 

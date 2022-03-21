@@ -703,6 +703,31 @@ export const useDetail = (id) => {
 
    }
 
+   const getMap = async ({id_actividad = id, estado}) => {
+
+      try {
+
+         const resp = await fetchToken('task/sons-distribution', { id_actividad, estado }, 'POST')
+         const body = await resp.json()
+
+         if (body.ok) {
+            return body.response
+         } else {
+            Alert({
+               icon: 'error',
+               title: 'Atención',
+               content: body.response,
+               showCancelButton: false,
+            })
+            return []
+         }
+         
+      } catch (err) {
+         console.log(err)
+      }
+
+   }
+
    useEffect(() => {
 
       if (id) {
@@ -733,6 +758,7 @@ export const useDetail = (id) => {
       toggleState,
       updatePredecessor,
       getPredecessor,
-      runActivityPending
+      runActivityPending,
+      getMap
    }
 }

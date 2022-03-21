@@ -24,6 +24,7 @@ import TextArea from '../components/ui/TextArea'
 import MarkActivity from '../components/ui/MarkActivity'
 import TdControlDistribution from '../components/table2/customTD/TdControlDistribution'
 import SpanFilter from '../components/filter/SpanFilter'
+import moment from 'moment'
 
 const Revision = () => {
    const { 
@@ -467,6 +468,8 @@ const Revision = () => {
 
                      <Th></Th>
 
+                     <Th></Th>
+
                      {/* titulo */}
                      <Th>
                         <InputFilter
@@ -578,6 +581,11 @@ const Revision = () => {
                         </SpanFilter>
                      </Th>
                      <Th primary >
+                        <span title='Fecha y hora de paso a revision'>
+                           fecha P.R.
+                        </span>
+                     </Th>
+                     <Th primary >
                         Tiempo (hrs)
                      </Th>
                      <Th primary >
@@ -679,6 +687,8 @@ const Revision = () => {
                            <Td>{act.abrev_revisor || '--'}</Td>
 
                            <Td>{status?.find(s => s.value === act.estado).label}</Td>
+
+                           <Td>{moment(`${act.fecha_revicion} ${act.hora_revicion}`).format('DD-MM-yyyy, HH:MM') ?? 'sin fecha'}</Td>
 
                            <Td>
                               <span 
