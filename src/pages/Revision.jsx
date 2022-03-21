@@ -198,7 +198,7 @@ const Revision = () => {
 
 
       // eslint-disable-next-line
-   }, [optionsArray])
+   }, [optionsArray, prFilters])
 
    return (
       <>

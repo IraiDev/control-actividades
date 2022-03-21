@@ -128,7 +128,7 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
 
 
       // eslint-disable-next-line
-   }, [optionsArray, view])
+   }, [optionsArray, view, filters])
 
    return (
       <nav

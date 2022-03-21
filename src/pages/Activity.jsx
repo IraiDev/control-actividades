@@ -333,7 +333,7 @@ const Activity = () => {
 
 
       // eslint-disable-next-line
-   }, [optionsArray, view])
+   }, [optionsArray, view, filters])
 
    return (
       <>
