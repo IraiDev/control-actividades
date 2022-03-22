@@ -1033,32 +1033,7 @@ const Detail = () => {
                         />
                      }
 
-                     <ViewSection>
-
-                        <div className='flex mx-auto gap-3 mb-5'>
-
-                           <MapSection id={ activity.id_det } number={ 1 } state='pendiente' />
-
-                              <MapArrow />
-                              
-                           <MapSection id={ activity.id_det } number={ 2 } state='pendiente' />
-
-                              <MapArrow />
-
-                           <MapSection id={ activity.id_det } number={ 5 } state='pendiente' />
-
-                              <MapArrow />
-
-                           <MapSection id={ activity.id_det } number={ 6 } state='pendiente' />
-
-                              <MapArrow />
-
-                           <MapSection id={ activity.id_det } number={ 7 } state='pendiente' />
-
-
-                        </div>
-
-                     </ViewSection>
+                     
 
                      <ViewSection lg cols={8}>
 
