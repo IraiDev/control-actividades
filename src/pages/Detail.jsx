@@ -2325,7 +2325,9 @@ const Detail = () => {
 
                         <section className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                            <TextArea
-                              field='descripción (*)'
+                              field='descripción'
+                              highlight
+                              isRequired
                               value={cDescription}
                               onChange={e =>
                                  setCloneFields({

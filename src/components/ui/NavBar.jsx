@@ -455,7 +455,7 @@ const NavBar = () => {
                   <TextArea
                      highlight
                      isRequired
-                     field='descripccion'
+                     field='descripción'
                      name='desc'
                      value={desc}
                      onChange={onChangeValues}
