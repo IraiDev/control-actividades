@@ -657,7 +657,7 @@ const Activity = () => {
                            <SelectFilter
                               type='table'
                               value={options.st}
-                              options={status}
+                              options={status.filter(s => s.value === 1 || s.value === 2)}
                               onChange={option =>
                                  setOptions({ ...options, st: option })
                               }

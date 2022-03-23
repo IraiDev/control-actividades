@@ -235,6 +235,7 @@ const Revision = () => {
                            value={options.ita}
                            options={activity_type}
                            isMulti
+                           height='auto'
                            onChange={option =>
                               setOptions({ ...options, ita: option })
                            }
@@ -306,6 +307,7 @@ const Revision = () => {
                            value={options.pr}
                            options={projects}
                            isMulti
+                           height={400}
                            showTooltip
                            onChange={option =>
                               setOptions({ ...options, pr: option })
@@ -332,6 +334,7 @@ const Revision = () => {
                         <SelectFilter
                            className='w-36'
                            type='table'
+                           height={400}
                            value={options.sp}
                            options={
                               options.pr?.length > 1
@@ -359,6 +362,7 @@ const Revision = () => {
                            value={options.us}
                            options={users}
                            isMulti
+                           height='auto'
                            onChange={option =>
                               setOptions({ ...options, us: option })
                            }
@@ -388,6 +392,7 @@ const Revision = () => {
                            value={options.ue}
                            options={users}
                            isMulti
+                           height='auto'
                            onChange={option =>
                               setOptions({ ...options, ue: option })
                            }
@@ -417,6 +422,7 @@ const Revision = () => {
                            value={options.ur}
                            options={users}
                            isMulti
+                           height='auto'
                            onChange={option =>
                               setOptions({ ...options, ur: option })
                            }
@@ -443,8 +449,9 @@ const Revision = () => {
                            className='w-[200px]'
                            type='table'
                            value={options.st}
-                           options={status?.filter(s => s.value === 12 || s.value === 3 || s.value === 5)}
+                           options={status?.filter(s => s.value === 12 || s.value === 3 || s.value === 5 || s.value === 13)}
                            placeholder='Seleccione'
+                           height='auto'
                            defaultOptions
                            onChange={option =>
                               setOptions({ ...options, st: option })

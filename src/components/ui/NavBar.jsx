@@ -87,7 +87,7 @@ const MenuContent = ({ content }) => {
    )
 }
 
-const CloneSelect = ({options, value, onChange, field, isRequired = false, isDefaultOptions = false}) => {
+const CloneSelect = ({options, value, onChange, field, isRequired = false, isDefaultOptions = true}) => {
    return(
       <div className='capitalize text-xs mb-2'>
          <span className='flex gap-2 items-baseline font-semibold text-sm px-2 w-max mb-2 py-0.5 bg-amber-200/80 rounded-md'>
@@ -130,7 +130,7 @@ const NavBar = () => {
    ] = useForm({
       title: '',
       priority: '150',
-      time: '',
+      time: '1',
       desc: '',
       gloss: '',
    })

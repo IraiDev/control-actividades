@@ -469,6 +469,7 @@ export const useDetail = (id) => {
       hora_inicio,
       hora_detencion,
    }) => {
+      setIsLoading(true)
       try {
          const resp = await fetchToken(
             'task/create-pause',
@@ -482,6 +483,8 @@ export const useDetail = (id) => {
             'POST'
          )
          const body = await resp.json()
+
+         setIsLoading(false)
 
          if (body.ok) {
             getDetentions({ id_actividad: id })
@@ -501,6 +504,7 @@ export const useDetail = (id) => {
             })
          }
       } catch (err) {
+         setIsLoading(false)
          console.log(err)
       }
    }
@@ -512,6 +516,7 @@ export const useDetail = (id) => {
       hora_inicio,
       hora_detencion,
    }) => {
+      setIsLoading(true)
       try {
          const resp = await fetchToken(
             'task/update-pause',
@@ -525,6 +530,8 @@ export const useDetail = (id) => {
             'PUT'
          )
          const body = await resp.json()
+
+         setIsLoading(false)
 
          if (body.ok) {
             getDetentions({ id_actividad: id })
@@ -544,11 +551,13 @@ export const useDetail = (id) => {
             })
          }
       } catch (err) {
+         setIsLoading(false)
          console.log(err)
       }
    }
 
    const deleteDetention = async ({ id_pausa }) => {
+      setIsLoading(true)
       try {
          const resp = await fetchToken(
             'task/delete-pause',
@@ -556,6 +565,8 @@ export const useDetail = (id) => {
             'DELETE'
          )
          const body = await resp.json()
+
+         setIsLoading(false)
 
          if (body.ok) {
             getDetentions({ id_actividad: id })
@@ -575,11 +586,13 @@ export const useDetail = (id) => {
             })
          }
       } catch (err) {
+         setIsLoading(false)
          console.log(err)
       }
    }
 
    const runActivityPending = async ({ id_actividad = id, estado = 2, tiempo_estimado}) => {
+      setIsLoading(true)
       try {
          const resp = await fetchToken(
             'task/change-activity-state',
@@ -599,6 +612,7 @@ export const useDetail = (id) => {
             })
          }
       } catch (err) {
+         setIsLoading(false)
          console.log(err)
       }
    }
@@ -611,6 +625,7 @@ export const useDetail = (id) => {
       tiempo_zionit = 0,
       rechazada = false 
    }) => {
+      setIsLoading(true)
       try {
          const resp = await fetchToken(
             'task/change-activity-state',
@@ -618,6 +633,8 @@ export const useDetail = (id) => {
             'POST'
          )
          const body = await resp.json()
+
+         setIsLoading(false)
 
          if (body.ok) {
             saveFilters({ payload: { reload: !filters.reload } })
@@ -639,6 +656,7 @@ export const useDetail = (id) => {
             })
          }
       } catch (err) {
+         setIsLoading(false)
          console.log(err)
       }
    }

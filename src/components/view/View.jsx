@@ -254,7 +254,10 @@ const View = props => {
                   className='text-zinc-500 font-normal text-base ml-2'
                   title='Ultima detención'
                >
-                  [Ult. Detencion.: {moment(`${props.fecha_trabajo} ${props.hora_trabajo}`).format('DD-MM-yyyy, HH:MM') ?? 'Sin fecha'}]
+                  [Ult. Detencion.: {
+                     moment(`${props.fecha_trabajo} ${props.hora_trabajo}`).isValid() ?
+                     moment(`${props.fecha_trabajo} ${props.hora_trabajo}`).format('DD-MM-yyyy, HH:MM') : 'Sin detenciones'
+                  }]
                </span>
             </h1>
 

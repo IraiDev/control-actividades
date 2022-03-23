@@ -52,12 +52,12 @@ const defaultPauses = [
 ]
 
 const initOptions = {
-   pr: { label: 'ninguno', value: null },
-   sp: { label: 'ninguno', value: null },
-   us: { label: 'ninguno', value: null },
-   ue: { label: 'ninguno', value: null },
-   ur: { label: 'ninguno', value: null },
-   ta: { label: 'ninguno', value: null },
+   pr: { label: 'ninguno', value: 0 },
+   sp: { label: 'ninguno', value: 0 },
+   us: { label: 'ninguno', value: 0 },
+   ue: { label: 'ninguno', value: 0 },
+   ur: { label: 'ninguno', value: 0 },
+   ta: { label: 'ninguno', value: 0 },
 }
 
 const CheckBox = ({ value, onChange }) => {
@@ -98,7 +98,7 @@ const CloneSelect = ({options, value, onChange, field, isRequired = false, isDef
             maxMenuHeight={170}
             className='capitalize text-sm'
             placeholder='Seleccione'
-            options={isDefaultOptions ? [{ value: null, label: 'ninguna' }].concat(options) : options}
+            options={isDefaultOptions ? [{ value: 0, label: 'ninguno' }].concat(options) : options}
             value={value}
             onChange={onChange}
          />
@@ -196,7 +196,7 @@ const Detail = () => {
       description: '',
       priority: '',
       ticket: '',
-      time: '',
+      time: 1,
       gloss: '',
    })
 
@@ -205,7 +205,7 @@ const Detail = () => {
       cDescription: '',
       cPriority: '',
       cTicket: '',
-      cTime: '',
+      cTime: 1,
       cGloss: '',
    })
 
@@ -237,75 +237,6 @@ const Detail = () => {
    const { title, description, gloss, ticket, priority, time } = fields
    const { cTitle, cDescription, cPriority, cTicket, cTime, cGloss } = cloneFields
    const { projects, subProjects, users, activity_type } = optionsArray
-
-   const validation = () => {
-      const vTitle = title.trim() === ''
-      const vDesc = description.trim() === ''
-      const vPriority = priority?.toString().trim() === ''
-      const vTime = time?.toString().trim() === ''
-      const vProject = options.pr?.value === undefined || options.pr?.value === null
-      const vSolicita = options.us?.value === undefined || options.us?.value === null
-      const vEncargado = options.ue?.value === undefined || options.ue?.value === null
-      const vRevisor = options.ur?.value === undefined || options.ur?.value === null
-      const vRdisE = options.ur?.id === options.ue?.id
-
-      const onSaveValidation =
-         vTitle ||
-         vDesc ||
-         vPriority ||
-         vTime ||
-         vProject ||
-         vSolicita ||
-         vEncargado || 
-         vRevisor ||
-         vRdisE
-
-      const vTitleC = cTitle.trim() === ''
-      const vDescC = cDescription.trim() === ''
-      const vPriorityC = cPriority?.toString().trim() === ''
-      const vTimeC = cTime?.toString().trim() === ''
-      const vProjectC = cloneOptions.pr?.value === undefined
-      const vSolicitaC = cloneOptions.us?.value === undefined
-      const vEncargadoC = cloneOptions.ue?.value === undefined
-      const vRevisorC = cloneOptions.ur?.value === undefined
-      const vTipo_actividadC = cloneOptions.ta?.value === undefined
-      const vRdisEC = cloneOptions.ur.id === cloneOptions.ue.id
-
-      const onCloneValidation =
-         vTitleC ||
-         vDescC ||
-         vPriorityC ||
-         vTimeC ||
-         vProjectC ||
-         vSolicitaC ||
-         vEncargadoC ||
-         vRevisorC ||
-         vTipo_actividadC ||
-         vRdisEC
-
-      return {
-         isSave: onSaveValidation,
-         isClone: onCloneValidation,
-      }
-   }
-
-   const validateMod = (returnObj = false) => {
-      const vPR = options?.pr?.value !== activity.id_proy
-      const vSub = activity.id_sub_proyecto ? options?.sp?.value !== activity.id_sub_proyecto : false
-      const vSo = options?.us?.label !== activity.user_solicita
-      const vEn = options?.ue?.label !== activity.encargado_actividad
-      const vRe = activity?.abrev_revisor ? options?.ur?.label !== activity?.abrev_revisor : false
-      const vTitle = title?.trim() !== activity.actividad
-      const vDesc = description?.trim() !== activity.func_objeto
-      const vGloss = activity.glosa_explicativa ? gloss?.trim() !== activity.glosa_explicativa : false
-      const vTicket = ticket?.toString().trim() !== activity.num_ticket_edit?.toString().trim()
-      const vPriority = activity.num_prioridad ? priority?.toString().trim() !== activity.num_prioridad?.toString().trim() : false
-      const vTime = activity.tiempo_estimado ? time?.toString().trim() !== activity.tiempo_estimado?.toString() : false
-
-      const validate = vPR || vSub || vSo || vEn || vRe || vTitle || vDesc || vGloss || vTicket || vPriority || vTime
-
-      return returnObj ? { res: validate } : validate
-   }
 
    let userStyles = {
       priority: 'S/P',
@@ -340,6 +271,76 @@ const Detail = () => {
 
       default:
          break
+   }
+
+   const validation = () => {
+      const vTitle = title.trim() === ''
+      const vDesc = description.trim() === ''
+      const vPriority = priority?.toString().trim() === '' || Number(priority) <= 0
+      const vTime = time?.toString().trim() === '' || Number(time) <= 0
+      const vProject = options.pr?.value === 0
+      const vSolicita = options.us?.value === 0
+      const vEncargado = options.ue?.value === 0
+      const vRevisor = options.ur?.value === 0
+      const vRdisE = options.ur?.id === options.ue?.id
+
+      const onSaveValidation =
+         vTitle ||
+         vDesc ||
+         vPriority ||
+         vTime ||
+         vProject ||
+         vSolicita ||
+         vEncargado || 
+         vRevisor ||
+         vRdisE
+
+      const vTitleC = cTitle.trim() === ''
+      const vDescC = cDescription.trim() === ''
+      const vPriorityC = cPriority?.toString().trim() === '' || Number(cPriority) <= 0
+      const vTimeC = cTime?.toString().trim() === '' || Number(cTime) <= 0
+      const vProjectC = cloneOptions.pr?.value === 0 || cloneOptions.pr?.value === undefined
+      const vSolicitaC = cloneOptions.us?.value === 0 || cloneOptions.us?.value === undefined
+      const vEncargadoC = cloneOptions.ue?.value === 0 || cloneOptions.ue?.value === undefined
+      const vRevisorC = cloneOptions.ur?.value === 0 || cloneOptions.ur?.value === undefined
+      const vTipo_actividadC = cloneOptions.ta?.value === 0 || cloneOptions.ta?.value === undefined
+      const vRdisEC = cloneOptions.ur.id === cloneOptions.ue.id
+
+      const onCloneValidation =
+         vTitleC ||
+         vDescC ||
+         vPriorityC ||
+         vTimeC ||
+         vProjectC ||
+         vSolicitaC ||
+         vEncargadoC ||
+         vRevisorC ||
+         vTipo_actividadC ||
+         vRdisEC
+
+      return {
+         isSave: onSaveValidation,
+         isClone: onCloneValidation,
+      }
+   }
+
+   const validateMod = (returnObj = false) => {
+
+      const vPR = options?.pr?.value !== activity.id_proy
+      const vSub = options?.sp?.value !== activity.id_sub_proyecto
+      const vSo = options?.us?.label !== activity.user_solicita
+      const vEn = options?.ue?.label !== activity.encargado_actividad
+      const vRe = activity?.abrev_revisor ? options?.ur?.label !== activity?.abrev_revisor : false
+      const vTitle = title?.trim() !== activity.actividad
+      const vDesc = description?.trim() !== activity.func_objeto
+      const vGloss = activity.glosa_explicativa !== null ? gloss?.trim() !== activity.glosa_explicativa : false
+      const vTicket = ticket?.toString().trim() !== activity.num_ticket_edit?.toString().trim()
+      const vPriority = priority?.toString().trim() !== activity.num_prioridad?.toString().trim() && Number(priority) >= 0
+      const vTime = time?.toString().trim() !== activity.tiempo_estimado?.toString() && Number(time) > 0
+
+      const validate = vPR || vSub || vSo || vEn || vRe || vTitle || vDesc || vGloss || vTicket || vPriority || vTime
+
+      return returnObj ? { res: validate } : validate
    }
 
    const onCloseModals = () => {
@@ -653,7 +654,7 @@ const Detail = () => {
          if(isFather) {
             Alert({
                title: 'Atención',
-               content: '¿Esta seguro de terminar la actividada Pare original?',
+               content: '¿Esta seguro de terminar la actividada Padre original?',
                confirmText: 'Si, Terminar actividad',
                calcelText: 'No, cancelar',
                action: () => {
@@ -668,24 +669,44 @@ const Detail = () => {
    
             if(type === 3) return setModalReject(true)
    
-            const action = () => {
-               toggleState({ tiempo_cliente: activity.tiempo_trabajado, estado: 5 })
+            const action = async () => {
+               await toggleState({ tiempo_cliente: activity.tiempo_trabajado, estado: 13 })
                navigate(routes.activity, { replace: true })
             }
    
             Alert({
                title: 'Atención',
-               content: '¿Estas seguro de terminar la actividad?',
-               confirmText: 'Si, terminar',
+               content: `¿Estas seguro de ${isFather ? 'terminar' : 'procesar'} la actividad?`,
+               confirmText: `Si, ${isFather ? 'terminar' : 'procesar'}`,
                cancelText: 'No, cancelar',
                action
             })
          }
-   
+
+         if(isRuning) {
+            Alert({
+               title: 'Atención',
+               content: 'Debes pausar la actividad para terminarla\n¿Pausar actividad?',
+               confirmText: 'Si, Pausar actividad',
+               calcelText: 'No, cancelar',
+               action: async () => {
+                  await onPlayPause({ id_actividad: activity.id_det, mensaje: 'Pausa para procesar actividad' })
+                  validatePredecessor({
+                     array: activity.predecesoras, 
+                     callback, 
+                     state: 13, 
+                     options: optionsArray
+                  })
+               }
+            })
+
+            return
+         }
+
          validatePredecessor({
             array: activity.predecesoras, 
             callback, 
-            state: 5, 
+            state: 13, 
             options: optionsArray
          })
 
@@ -720,12 +741,12 @@ const Detail = () => {
 
       const find = sw.a.value ? false : true
 
-      toggleState({ tiempo_cliente: activity.tiempo_trabajado, estado: 5, rechazada: find })
+      toggleState({ tiempo_cliente: activity.tiempo_trabajado, estado: 13, rechazada: find })
       navigate(routes.activity, { replace: true })
    }
 
    // cambia el estado de la actividad a PR despues de distribuir tiempo cliente y tiempo zionit
-   const handleUpdateActivityState = () => {
+   const handleUpdateActivityState = async () => {
 
       if (values.tiempo_total !== 0) {
          Alert({
@@ -738,13 +759,13 @@ const Detail = () => {
          return
       }
 
-      toggleState({ mensaje_revision: msg_revision, tiempo_cliente, tiempo_zionit })
+      await toggleState({ mensaje_revision: msg_revision, tiempo_cliente, tiempo_zionit })
       navigate(routes.activity, { replace: true })
       reset()
 
    }
 
-   // crea un nueva detancion
+   // crea un nueva detencion
    const handleCreateDetention = () => {
       // funcion helper, para validar las fechas y si los campos hora estan llenos
       const validate = validateDate({
@@ -945,6 +966,36 @@ const Detail = () => {
 
    }
 
+   // cambia el estado de la actividad de pendiente a en trabajo, asigna un tiempo estimado
+   // ademas vlaida antes de hacer la accion si hay modificaciones sin guardar
+   const handleRunActivityPending = () => {
+
+      const validate = validateMod()
+
+      const action = async () => {
+
+         if(validate) await onSave()
+         
+         runActivityPending({tiempo_estimado})
+
+      }
+
+      if(validate) {
+         Alert({
+            title: '¡Atención!',
+            content: 'Se han realizado modificaciones que no han sido guardadas, si continua estas se perderan, ¿Desea continuar?',
+            confirmText: 'Si y continuar',
+            cancelText: 'Volver',
+            action
+         })
+
+         return 
+      }
+
+      action()
+
+   }
+
    useEffect(() => {
       if (Object.keys(activity).length > 0) {
          setFields({
@@ -959,11 +1010,7 @@ const Detail = () => {
 
          setOptions({
             pr: projects?.find(p => p.value === activity.id_proy),
-            sp: subProjects?.find(
-               s =>
-                  s.id === activity.id_proy &&
-                  s.value === activity.id_sub_proyecto
-            ),
+            sp: subProjects?.find(s => s.value === activity.id_sub_proyecto) || initOptions.sp,
             us: users?.find(u => u.label === activity.user_solicita),
             ue: users?.find(u => u.label === activity.encargado_actividad),
             ur: users?.find(u => u.id === activity.id_revisor),
@@ -1032,8 +1079,6 @@ const Detail = () => {
                            position='top-20'
                         />
                      }
-
-                     
 
                      <ViewSection lg cols={8}>
 
@@ -1116,7 +1161,7 @@ const Detail = () => {
                                  options={projects}
                                  value={options.pr}
                                  onChange={option =>
-                                    setOptions({ ...options, pr: option })
+                                    setOptions({ ...options, pr: option, sp: initOptions.sp })
                                  }
                               />
                               <CloneSelect
@@ -1499,7 +1544,7 @@ const Detail = () => {
                                           className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
                                           onClick={() => finishActivity(activity.id_tipo_actividad, isFather)}
                                        >
-                                          Terminar
+                                          {isFather ? 'Terminar' : 'Procesar'}
                                           <i className='fas fa-check-double text-indigo-400' />
                                        </MenuItem>
                                     }
@@ -1532,9 +1577,7 @@ const Detail = () => {
                                  name='tiempo_estimado'
                                  value={tiempo_estimado}
                                  onChange={onChangeValues}
-                                 onClick={() => {
-                                    runActivityPending({tiempo_estimado})
-                                 }}
+                                 onClick={handleRunActivityPending}
                                  reset={reset}
                               />
    
