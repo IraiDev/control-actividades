@@ -202,8 +202,6 @@ const View = props => {
    }
    
    useEffect(() => {
-      
-      console.log(pausas)
 
       if(pausas.length <= 0) return
 

@@ -16,6 +16,7 @@ import CardFooter from '../CardFooter'
 import CardContent from '../CardContent'
 import FloatMenu from '../../ui/FloatMenu'
 import moment from 'moment'
+import { fetchToken } from '../../../helpers/fetch'
 
 const defaultNotes = [
    { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -96,25 +97,81 @@ const ActivityCard = props => {
    }
 
    const handleUpdateState = () => {
-      if (Number(time) <= 0) {
+
+      const userAbrev = optionsArray.users.find(u => u.id === user.id).label
+
+      const playValidate = props.encargado_actividad !== userAbrev
+
+      const action = () => {
+
+         if (Number(time) <= 0) {
+            Alert({
+               icon: 'warn',
+               title: 'Atencion',
+               content:
+                  'Ingrese un tiempo estimado valido (Campo no debe estar vacio ni debe ser 0)',
+               showCancelButton: false,
+            })
+            return
+         }
+
+         const callback = async () => {
+
+            try {
+               const resp = await fetchToken('task/get-times')
+               const body = await resp.json()
+      
+               if (body.ok) {
+      
+                  const userState = body.tiempos.find(item => item.usuario === userAbrev).estado
+      
+                  if (userState) {
+                     Alert({
+                        icon: 'warn',
+                        title: 'Atención',
+                        content: 'Actualemnte el encargado de esta actividad cuenta con una actividad en la cual esta trabajando </br> ¿Desea poner en marcha igualmente esta actividad?',
+                        confirmText: 'si, poner en marcha',
+                        cancelText: 'no, cancelar',
+                        action: () => toggleState({ tiempo_estimado: time })
+                     })
+                     return
+                  }
+      
+                  toggleState({ tiempo_estimado: time })
+      
+               }
+            } catch (error) {
+               console.log('getTimes error: ', error)
+            }
+
+         }
+   
+         validatePredecessor({
+            array: props.predecesoras, 
+            callback, 
+            state: 2, 
+            options: optionsArray
+         })
+   
+         reset()
+
+      }
+
+      if (playValidate) {
          Alert({
             icon: 'warn',
-            title: 'Atencion',
-            content:
-               'Ingrese un tiempo estimado valido (Campo no debe estar vacio ni debe ser 0)',
-            showCancelButton: false,
+            title: 'Atención',
+            content: `No eres el encargado de esta actividad </br> ¿Deseas ponerla en marcha igualmente?`,
+            confirmText: 'si, poner en marcha',
+            cancelText: 'no, cancelar',
+            action
          })
+
          return
       }
 
-      validatePredecessor({
-         array: props.predecesoras, 
-         callback: () => toggleState({ tiempo_estimado: time }), 
-         state: 2, 
-         options: optionsArray
-      })
+      action()
 
-      reset()
    }
 
    const handlePauseActivity = () => {

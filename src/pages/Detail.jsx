@@ -30,6 +30,7 @@ import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
 import FloatMenu from '../components/ui/FloatMenu'
 import MapSection from '../components/map/MapSection'
 import MapArrow from '../components/map/MapArrow'
+import { fetchToken } from '../helpers/fetch'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
@@ -138,7 +139,7 @@ const Detail = () => {
    const { id } = useParams()
    const { search } = useLocation()
    const { type_detail = '' } = queryString.parse(search)
-   const { optionsArray } = useContext(ActivityContext)
+   const { optionsArray, user } = useContext(ActivityContext)
    const {
       activity,
       detentions,
@@ -417,24 +418,59 @@ const Detail = () => {
    // play/pause desde el detalle
    const handleOnPlayPause = () => {
 
-      const validate = validateMod()
+      const pauseState = activity.estado_play_pausa === 2
+
+      const userAbrev = users.find(u => u.id === user.id).label
+
+      const playValidate = activity.encargado_actividad !== userAbrev
+
+      const action = () => {
+
+         const validate = validateMod()
       
-      const action = async () => {
+         const callback = async () => {
 
-         if(validate) await onSave()
+            if(validate) await onSave()
 
-         if (activity.estado_play_pausa === 2) {
-            // si esta en play entra aqui para poner pausa, desde el detalle
-            toggleModalPause(true)
-            setValues({
-               ...values,
-               id_ref: activity.id_det,
-               title: activity.actividad || 'Sin titulo',
-               content: activity.func_objeto || 'Sin descripcion',
-            })
-         } else {
-            // si esta en pausa entra aqui para poner play, desde el detalle
-            onPlayPause({ id_actividad: activity.id_det })
+            if (pauseState) {
+               // si esta en play entra aqui para poner pausa, desde el detalle
+               toggleModalPause(true)
+               setValues({
+                  ...values,
+                  id_ref: activity.id_det,
+                  title: activity.actividad || 'Sin titulo',
+                  content: activity.func_objeto || 'Sin descripcion',
+               })
+            } else {
+               // si esta en pausa entra aqui para poner play, desde el detalle
+
+               try {
+                  const resp = await fetchToken('task/get-times')
+                  const body = await resp.json()
+         
+                  if (body.ok) {
+         
+                     const userState = body.tiempos.find(item => item.usuario === userAbrev).estado
+         
+                     if (userState) {
+                        Alert({
+                           icon: 'warn',
+                           title: 'Atención',
+                           content: 'Actualemnte el encargado de esta actividad cuenta con una actividad en la cual esta trabajando </br> ¿Desea poner en marcha igualmente esta actividad?',
+                           confirmText: 'si, poner en marcha',
+                           cancelText: 'no, cancelar',
+                           action: () => onPlayPause({ id_actividad: activity.id_det })
+                        })
+                        return
+                     }
+         
+                     onPlayPause({ id_actividad: activity.id_det })
+         
+                  }
+               } catch (error) {
+                  console.log('getTimes error: ', error)
+               }
+
          }
 
       }
@@ -445,30 +481,70 @@ const Detail = () => {
             content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
             confirmText: 'Si, guardar y continuar',
             cancelText: 'Cancelar Play/Pause',
-            action,
+            action: () => callback(),
             cancelAction: () => onCloseModals()
          })
 
          return
       }
 
-      action()
+      callback()
 
+      }
+
+      if (playValidate) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: `No eres el encargado de esta actividad </br> ¿Deseas ${pauseState ? 'pausar' : 'poner en marcha'} igualmente esta actividad?`,
+            confirmText: `si, ${pauseState ? 'pausar' : 'poner en marcha'}`,
+            cancelText: 'no, cancelar',
+            action
+         })
+
+         return
+      }
+
+      action()
    }
 
    // guarda la pausa de la actividad desde el modal de pausas
    const onPause = () => {
-      if (values.desc === '') {
+
+      const userAbrev = users.find(u => u.id === user.id).label
+
+      const playValidate = activity.encargado_actividad !== userAbrev
+
+      const action = () => {
+
+         if (values.desc === '') {
+            Alert({
+               icon: 'warn',
+               title: 'Atención',
+               content: 'No puedes guardar una pausa sin un mensaje',
+               showCancelButton: false,
+            })
+            return
+         }
+         onPlayPause({ id_actividad: activity.id_det, mensaje: values.desc })
+         onCloseModals()
+
+      }
+
+      if (playValidate) {
          Alert({
             icon: 'warn',
             title: 'Atención',
-            content: 'No puedes guardar una pausa sin un mensaje',
-            showCancelButton: false,
+            content: `No eres el encargado de esta actividad </br> ¿Deseas pausarla igualmente?`,
+            confirmText: 'si, pausar',
+            cancelText: 'no, cancelar',
+            action
          })
+
          return
       }
-      onPlayPause({ id_actividad: activity.id_det, mensaje: values.desc })
-      onCloseModals()
+
+      action()
    }
 
    // pregunta si desea eliminar la actividad
@@ -972,26 +1048,79 @@ const Detail = () => {
    // ademas vlaida antes de hacer la accion si hay modificaciones sin guardar
    const handleRunActivityPending = () => {
 
-      const validate = validateMod()
+      const userAbrev = users.find(u => u.id === user.id).label
 
-      const action = async () => {
+      const playValidate = activity.encargado_actividad !== userAbrev
 
-         if(validate) await onSave()
-         
-         runActivityPending({tiempo_estimado})
+      const action = () => {
+
+         const validate = validateMod()
+
+         const callback = async () => {
+
+            try {
+               const resp = await fetchToken('task/get-times')
+               const body = await resp.json()
+      
+               if (body.ok) {
+      
+                  const userState = body.tiempos.find(item => item.usuario === userAbrev).estado
+      
+                  if (userState) {
+                     Alert({
+                        icon: 'warn',
+                        title: 'Atención',
+                        content: 'Actualemnte el encargado de esta actividad cuenta con una actividad en la cual esta trabajando </br> ¿Desea poner en marcha igualemnte esta actividad?',
+                        confirmText: 'si, poner en marcha',
+                        cancelText: 'no, cancelar',
+                        action: async () => {
+
+                           if(validate) await onSave()
+            
+                           runActivityPending({tiempo_estimado})
+                        }
+                     })
+                     return
+                  }
+      
+                  if(validate) await onSave()
+            
+                  runActivityPending({tiempo_estimado})
+      
+               }
+            } catch (error) {
+               console.log('getTimes error: ', error)
+            }
+
+         }
+
+         if(validate) {
+            Alert({
+               title: '¡Atención!',
+               content: 'Se han realizado modificaciones que no han sido guardadas, si continua estas se perderan, ¿Desea continuar?',
+               confirmText: 'Si y continuar',
+               cancelText: 'Volver',
+               action: () => callback()
+            })
+
+            return 
+         }
+
+         callback()
 
       }
 
-      if(validate) {
+      if (playValidate) {
          Alert({
-            title: '¡Atención!',
-            content: 'Se han realizado modificaciones que no han sido guardadas, si continua estas se perderan, ¿Desea continuar?',
-            confirmText: 'Si y continuar',
-            cancelText: 'Volver',
+            icon: 'warn',
+            title: 'Atención',
+            content: `No eres el encargado de esta actividad </br> ¿Deseas poner en marcha igualmente esta actividad?`,
+            confirmText: 'si, poner en marcha',
+            cancelText: 'no, cancelar',
             action
          })
 
-         return 
+         return
       }
 
       action()

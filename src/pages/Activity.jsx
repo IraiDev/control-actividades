@@ -236,7 +236,7 @@ const Activity = () => {
                   Alert({
                      icon: 'warn',
                      title: 'Atención',
-                     content: 'Actualemnte el encargado de esta actividad cuenta con una actividad en la cual esta trabajando </br> ¿Desea poner en marcha igualemnte esta actividad?',
+                     content: 'Actualemnte el encargado de esta actividad cuenta con una actividad en la cual esta trabajando </br> ¿Desea poner en marcha igualmente esta actividad?',
                      confirmText: 'si, poner en marcha',
                      cancelText: 'no, cancelar',
                      action: () => onPlayPause({ id_actividad })
