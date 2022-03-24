@@ -56,7 +56,7 @@ const initOptions = {
    sp: { label: 'ninguno', value: 0 },
    us: { label: 'ninguno', value: 0 },
    ue: { label: 'ninguno', value: 0 },
-   ur: { label: 'ninguno', value: 0 },
+   ur: { label: 'ninguno', value: 0, id: 0 },
    ta: { label: 'ninguno', value: 0 },
 }
 
@@ -330,7 +330,7 @@ const Detail = () => {
       const vSub = options?.sp?.value !== activity.id_sub_proyecto
       const vSo = options?.us?.label !== activity.user_solicita
       const vEn = options?.ue?.label !== activity.encargado_actividad
-      const vRe = activity?.abrev_revisor ? options?.ur?.label !== activity?.abrev_revisor : false
+      const vRe = activity?.id_revisor ? options?.ur?.id !== activity?.id_revisor : false
       const vTitle = title !== activity.actividad
       const vDesc = description !== activity.func_objeto
       const vGloss = activity.glosa_explicativa !== null ? gloss !== activity.glosa_explicativa : false
@@ -338,7 +338,7 @@ const Detail = () => {
       const vPriority = priority !== activity.num_prioridad && priority >= 0
       const vTime = time !== activity.tiempo_estimado && time > 0
 
-      console.log({ vPR, vSub, vSo, vEn, vRe, vTitle, vDesc, vGloss, vTicket, vPriority, vTime })
+      // console.log({ vPR, vSub, vSo, vEn, vRe, vTitle, vDesc, vGloss, vTicket, vPriority, vTime })
 
       const validate = vPR || vSub || vSo || vEn || vRe || vTitle || vDesc || vGloss || vTicket || vPriority || vTime
 
@@ -1070,6 +1070,7 @@ const Detail = () => {
                      isPR={type_detail === 'pr'}
                      validateMod={validateMod}
                      callback={onSave}
+                     lastDetention={activity.pausas}
                      {...activity}
                   >
 

@@ -724,10 +724,10 @@ const Revision = () => {
                            {act.estado === 5 || act.estado === 13 ?
 
                               <TdControlDistribution 
-                              getId={(id_callback) => setIsActive(id_callback)}
-                              callback={(times) => onDistribution({distribuciones: times, id_actividad: act.id_det})}
-                              isStickyRight 
-                              {...act}  
+                                 getId={(id_callback) => setIsActive(id_callback)}
+                                 callback={(times) => onDistribution({distribuciones: times, id_actividad: act.id_det})}
+                                 isStickyRight 
+                                 {...act}  
                               /> 
                               
                            :

@@ -57,7 +57,7 @@ const ActivityCard = props => {
 
    const navigate = useNavigate()
 
-   const {optionsArray} = useContext(ActivityContext)
+   const {optionsArray, user} = useContext(ActivityContext)
 
    const [{ desc, time }, onChangeValues, reset] = useForm({
       desc: '',
@@ -115,6 +115,29 @@ const ActivityCard = props => {
       })
 
       reset()
+   }
+
+   const handlePauseActivity = () => {
+
+      const userAbrev = optionsArray.users.find(u => u.id === user.id).label
+
+      const playValidate = props.encargado_actividad !== userAbrev
+
+      if (playValidate) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: `No eres el encargado de esta actividad </br> ¿Deseas pausarla igualmente?`,
+            confirmText: 'si, pausar',
+            cancelText: 'no, cancelar',
+            action: () => toggleModalPause(true)
+         })
+
+         return
+      }
+
+      toggleModalPause(true)
+
    }
 
    return (
@@ -252,8 +275,8 @@ const ActivityCard = props => {
                   size='w-7 h-7'
                   onClick={
                      ESTADO_play
-                        ? () => toggleModalPause(true)
-                        : () => playActivity({ id_actividad: props.id_det }) 
+                        ? () => handlePauseActivity()
+                        : () => playActivity({ id_actividad: props.id_det, encargado: props.encargado_actividad })
                   }>
                   <i
                      className={

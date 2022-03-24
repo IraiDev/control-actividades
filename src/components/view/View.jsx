@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { ActivityContext } from '../../context/ActivityContext'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useDetail } from '../../hooks/useDetail'
@@ -60,7 +60,8 @@ const View = props => {
       isTicket,
       isPR,
       validateMod,
-      callback
+      callback,
+      pausas
    } = props
 
    const navigate = useNavigate()
@@ -77,6 +78,7 @@ const View = props => {
 
    const [options, setOptions] = useState(initOptions)
    const [arrOptions, setArrOptions] = useState([])
+   const [lastDetention, setLastDetention] = useState(null)
 
    const handleAddRestriction = () => {
 
@@ -198,6 +200,25 @@ const View = props => {
       action()
 
    }
+   
+   useEffect(() => {
+      
+      console.log(pausas)
+
+      if(pausas.length <= 0) return
+
+      const last = pausas.filter(p => p.boton === 1)
+
+      if (last.length > 0) {
+
+         const date = `${last[0].fecha_detencion} ${last[0].hora_detencion}`
+
+         setLastDetention(moment(date).format('DD-MM-yyyy, HH:MM') )
+         
+      }
+
+   }, [pausas])
+   
 
    return (
       <>
@@ -254,10 +275,7 @@ const View = props => {
                   className='text-zinc-500 font-normal text-base ml-2'
                   title='Ultima detención'
                >
-                  [Ult. Detencion.: {
-                     moment(`${props.fecha_trabajo} ${props.hora_trabajo}`).isValid() ?
-                     moment(`${props.fecha_trabajo} ${props.hora_trabajo}`).format('DD-MM-yyyy, HH:MM') : 'Sin detenciones'
-                  }]
+                  [Ult. Det.: { lastDetention ? lastDetention : 'Sin detenciones' }]
                </span>
             </h1>
 

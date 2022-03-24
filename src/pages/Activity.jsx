@@ -24,6 +24,7 @@ import Th from '../components/table2/Th'
 import Td from '../components/table2/Td'
 import MarkActivity from '../components/ui/MarkActivity'
 import SpanFilter from '../components/filter/SpanFilter'
+import { fetchToken } from '../helpers/fetch'
 
 const PrioritySelector = ({ onClick, color = 'bg-slate-400', disabled }) => {
    return (
@@ -216,8 +217,56 @@ const Activity = () => {
       }
    }
 
-   const onPlayActivity = ({ id_actividad }) => {
-      onPlayPause({ id_actividad })
+   const onPlayActivity = ({ id_actividad, encargado }) => {
+
+      const userAbrev = users.find(u => u.id === user.id).label
+
+      const playValidate = encargado !== userAbrev
+
+      const action = async () => {
+         try {
+            const resp = await fetchToken('task/get-times')
+            const body = await resp.json()
+   
+            if (body.ok) {
+   
+               const userState = body.tiempos.find(item => item.usuario === userAbrev).estado
+   
+               if (userState) {
+                  Alert({
+                     icon: 'warn',
+                     title: 'Atención',
+                     content: 'Actualemnte el encargado de esta actividad cuenta con una actividad en la cual esta trabajando </br> ¿Desea poner en marcha igualemnte esta actividad?',
+                     confirmText: 'si, poner en marcha',
+                     cancelText: 'no, cancelar',
+                     action: () => onPlayPause({ id_actividad })
+                  })
+                  return
+               }
+   
+               onPlayPause({ id_actividad })
+   
+            }
+         } catch (error) {
+            console.log('getTimes error: ', error)
+         }
+      }
+
+      if (playValidate) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'No eres el encargado de esta actividad, ¿Deseas ponerla en marcha igualemnte?',
+            confirmText: 'si, poner en marcha',
+            cancelText: 'no, cancelar',
+            action
+         })
+
+         return
+      }
+      
+      action()
+
    }
 
    const onDeleteActivity = ({ id_actividad, title = 'sin titulo', encargado, isFather, isTicket }) => {
