@@ -80,8 +80,6 @@ const CustomSelect = ({ value, onChange }) => {
    )
 }
 
-
-
 const Activity = () => {
    const navigate = useNavigate()
 
@@ -99,7 +97,7 @@ const Activity = () => {
    } = useActivity()
 
    // constext
-   const { 
+   const {  
       view, 
       setView, 
       setIsLoading 
