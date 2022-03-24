@@ -331,12 +331,14 @@ const Detail = () => {
       const vSo = options?.us?.label !== activity.user_solicita
       const vEn = options?.ue?.label !== activity.encargado_actividad
       const vRe = activity?.abrev_revisor ? options?.ur?.label !== activity?.abrev_revisor : false
-      const vTitle = title?.trim() !== activity.actividad
-      const vDesc = description?.trim() !== activity.func_objeto
-      const vGloss = activity.glosa_explicativa !== null ? gloss?.trim() !== activity.glosa_explicativa : false
-      const vTicket = ticket?.toString().trim() !== activity.num_ticket_edit?.toString().trim()
-      const vPriority = priority?.toString().trim() !== activity.num_prioridad?.toString().trim() && Number(priority) >= 0
-      const vTime = time?.toString().trim() !== activity.tiempo_estimado?.toString() && Number(time) > 0
+      const vTitle = title !== activity.actividad
+      const vDesc = description !== activity.func_objeto
+      const vGloss = activity.glosa_explicativa !== null ? gloss !== activity.glosa_explicativa : false
+      const vTicket = ticket !== activity.num_ticket_edit
+      const vPriority = priority !== activity.num_prioridad && priority >= 0
+      const vTime = time !== activity.tiempo_estimado && time > 0
+
+      console.log({ vPR, vSub, vSo, vEn, vRe, vTitle, vDesc, vGloss, vTicket, vPriority, vTime })
 
       const validate = vPR || vSub || vSo || vEn || vRe || vTitle || vDesc || vGloss || vTicket || vPriority || vTime
 
@@ -456,7 +458,7 @@ const Detail = () => {
 
    // guarda la pausa de la actividad desde el modal de pausas
    const onPause = () => {
-      if (values.desc.trim() === '') {
+      if (values.desc === '') {
          Alert({
             icon: 'warn',
             title: 'Atención',

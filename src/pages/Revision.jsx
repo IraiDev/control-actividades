@@ -721,7 +721,16 @@ const Revision = () => {
                               {act.func_objeto}
                            </Td>
 
-                           {act.estado !== 5 ?
+                           {act.estado === 5 || act.estado === 13 ?
+
+                              <TdControlDistribution 
+                              getId={(id_callback) => setIsActive(id_callback)}
+                              callback={(times) => onDistribution({distribuciones: times, id_actividad: act.id_det})}
+                              isStickyRight 
+                              {...act}  
+                              /> 
+                              
+                           :
                               <Td isStickyRight >
                                  <div className='flex gap-2 justify-center'>
                                     <Button 
@@ -738,14 +747,7 @@ const Revision = () => {
                                        <i className='fas fa-times' />
                                     </Button>
                                  </div>
-                              </Td>
-                           :
-                              <TdControlDistribution 
-                                 getId={(id_callback) => setIsActive(id_callback)}
-                                 callback={(times) => onDistribution({distribuciones: times, id_actividad: act.id_det})}
-                                 isStickyRight 
-                                 {...act}  
-                              />  
+                              </Td> 
                            }
                         </tr>
                      ))}
