@@ -227,11 +227,42 @@ const ActivityCard = props => {
 
                <CardSection colCount={3}>
                   <aside className='capitalize'>
+
+                     <P tag='solicita' value={props.encargado_actividad} />
+
+                     <P tag='Prioridad' value={props.num_prioridad} />
+
+                     <span className='block text-transparent h-1.5' ></span>
+
                      <P tag='solicita' value={props.user_solicita} />
+
+                     <P tag='revisor' value={props.abrev_revisor || '--'} />
+
+                  </aside>
+
+                  <section className='capitalize'>
+
+                     <span className='block text-transparent' >h</span>
+
+                     <P tag='creacion' value={moment(fecha_tx).format('DD-MM-YY')} />
+
+                     <span className='block text-transparent h-1.5' ></span>
+
+                     <P tag='Tipo' value={props.desc_tipo_actividad} />
+
+                     <P tag='estado' value={ESTADO_PAUSA ? ' pendiente' : ' en trabajo'} />
+
+                  </section>
+
+                  <aside className='capitalize'>
 
                      <P tag='proy' value={props.abrev} />
 
-                     <span className='flex gap-2 max-w-max rounded'>
+                     <P tag='sub p' value={props.nombre_sub_proy || '- -'} />
+
+                     <span className='block text-transparent h-1.5' ></span>
+
+                     <span className='flex gap-1 max-w-max rounded'>
                         <strong>ID:</strong> 
                         <p className={`
 
@@ -253,64 +284,23 @@ const ActivityCard = props => {
                               : props.num_ticket_edit
                         }
                      />
-                  </aside>
-
-                  <section className='capitalize'>
-                     <P tag='encargado' value={props.encargado_actividad} />
-
-                     <P tag='sub p' value={props.nombre_sub_proy || '- -'} />
-
-                     <P tag='Prioridad' value={props.num_prioridad} />
-
-                     <P tag='Tipo' value={props.desc_tipo_actividad} />
-
-                  </section>
-
-                  <aside className='capitalize'>
-                     <P
-                        tag='revisor'
-                        value={props.abrev_revisor || '--'}
-                     />
-
-                     <P
-                        tag='fecha'
-                        value={moment(fecha_tx).format('DD-MM-YY')}
-                     />
-
-                     <P
-                        tag='estado'
-                        value={ESTADO_PAUSA ? ' pendiente' : ' en trabajo'}
-                     />
 
                   </aside>
                </CardSection>
 
                <CardSection subtitle='descripcion'>
-                  <p className='bg-black/5 min-h-[80px] whitespace-pre-wrap rounded-md p-2 overflow-custom max-h-36 mix-blend-luminosity'>
+                  <p className='bg-black/5 whitespace-pre-wrap rounded-md p-2 overflow-custom max-h-36 mix-blend-luminosity'>
                      {props.func_objeto}
                   </p>
-               </CardSection>
 
-               <CardSection subtitle='notas (informes)'>
-                  <ul className='max-h-36 overflow-custom whitespace-pre-wrap mix-blend-luminosity'>
-                     {props.notas.length > 0 ? (
-                        props.notas.map((note, i) => (
-                           <LiNote
-                              key={note.id_nota}
-                              numberNote={i + 1}
-                              className={
-                                 prioridad_etiqueta === 1000
-                                    ? 'text-slate-700/50'
-                                    : 'text-white/60'
-                              }
-                              {...note}
-                           />
-                        ))
-                     ) : (
-                        <p className='text-xs'>No hay notas...</p>
-                     )}
-                  </ul>
+                  {props.notas.length > 0 &&
+                     <span className='rounded-full px-1.5 py-1 bg-amber-200/50 text-amber-500 border border-amber-400 font-bold w-max mt-2 text-xs'>
+                        Tiene {props.notas.length} notas
+                     </span>
+                  }
+                  
                </CardSection>
+               
             </CardContent>
 
             <CardFooter>

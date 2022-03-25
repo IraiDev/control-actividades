@@ -22,9 +22,9 @@ import THead from '../components/table2/THead'
 import Modal from '../components/ui/Modal'
 import TextArea from '../components/ui/TextArea'
 import MarkActivity from '../components/ui/MarkActivity'
-import TdControlDistribution from '../components/table2/customTD/TdControlDistribution'
 import SpanFilter from '../components/filter/SpanFilter'
 import moment from 'moment'
+import TdSwitch from '../components/table2/customTD/TdSwitch'
 
 const Revision = () => {
    const { 
@@ -78,7 +78,7 @@ const Revision = () => {
    const onFilter = () => {
       const filters = {
          estado: 
-            options.st ? [options?.st?.value] : [],
+            options.st?.length > 0 ? options.st.map(item => item.value) : [],
          proyecto:
             options.pr?.length > 0 ? options.pr.map(item => item.value) : [],
          encargado:
@@ -353,6 +353,77 @@ const Revision = () => {
                         />
                      </Th>
 
+                     <Th></Th>
+
+                     {/* titulo */}
+                     <Th>
+                        <InputFilter
+                           type='table'
+                           width='w-28'
+                           name='title'
+                           value={title}
+                           onChange={onChangeValues}
+                           filterDown={() =>
+                              setPROrder({ orden_actividad: 'desc' })
+                           }
+                           filterUp={() =>
+                              setPROrder({ orden_actividad: 'asc' })
+                           }
+                           upActive={setActive({
+                              param: 'orden_actividad',
+                              value: 'asc',
+                           })}
+                           downActive={setActive({
+                              param: 'orden_actividad',
+                              value: 'desc',
+                           })}
+                        />
+                     </Th>
+
+                     {/* descripcion */}
+                     <Th>
+                        <InputFilter
+                           type='table'
+                           width='w-96'
+                           name='desc'
+                           value={desc}
+                           onChange={onChangeValues}
+                           isOrder={false}
+                        />
+
+                     </Th>
+
+                     {/* estado */}
+                     <Th>
+                        <SelectFilter
+                           className='w-[200px]'
+                           type='table'
+                           value={options.st}
+                           options={status?.filter(s => s.value === 12 || s.value === 3 || s.value === 5 || s.value === 13)}
+                           placeholder='Seleccione'
+                           isMulti
+                           height='auto'
+                           defaultOptions
+                           onChange={option =>
+                              setOptions({ ...options, st: option })
+                           }
+                           filterDown={() =>
+                              setPROrder({ orden_estado: 'desc' })
+                           }
+                           filterUp={() =>
+                              setPROrder({ orden_estado: 'asc' })
+                           }
+                           upActive={setActive({
+                              param: 'orden_estado',
+                              value: 'asc',
+                           })}
+                           downActive={setActive({
+                              param: 'orden_estado',
+                              value: 'desc',
+                           })}
+                        />
+                     </Th>
+
                      {/* solicitante */}
                      <Th>
                         <SelectFilter
@@ -443,77 +514,7 @@ const Revision = () => {
                         />
                      </Th>
 
-                     {/* estado */}
-                     <Th>
-                        <SelectFilter
-                           className='w-[200px]'
-                           type='table'
-                           value={options.st}
-                           options={status?.filter(s => s.value === 12 || s.value === 3 || s.value === 5 || s.value === 13)}
-                           placeholder='Seleccione'
-                           height='auto'
-                           defaultOptions
-                           onChange={option =>
-                              setOptions({ ...options, st: option })
-                           }
-                           filterDown={() =>
-                              setPROrder({ orden_estado: 'desc' })
-                           }
-                           filterUp={() =>
-                              setPROrder({ orden_estado: 'asc' })
-                           }
-                           upActive={setActive({
-                              param: 'orden_estado',
-                              value: 'asc',
-                           })}
-                           downActive={setActive({
-                              param: 'orden_estado',
-                              value: 'desc',
-                           })}
-                        />
-                     </Th>
-
                      <Th></Th>
-
-                     <Th></Th>
-
-                     {/* titulo */}
-                     <Th>
-                        <InputFilter
-                           type='table'
-                           width='w-28'
-                           name='title'
-                           value={title}
-                           onChange={onChangeValues}
-                           filterDown={() =>
-                              setPROrder({ orden_actividad: 'desc' })
-                           }
-                           filterUp={() =>
-                              setPROrder({ orden_actividad: 'asc' })
-                           }
-                           upActive={setActive({
-                              param: 'orden_actividad',
-                              value: 'asc',
-                           })}
-                           downActive={setActive({
-                              param: 'orden_actividad',
-                              value: 'desc',
-                           })}
-                        />
-                     </Th>
-
-                     {/* descripcion */}
-                     <Th>
-                        <InputFilter
-                           type='table'
-                           width='w-96'
-                           name='desc'
-                           value={desc}
-                           onChange={onChangeValues}
-                           isOrder={false}
-                        />
-
-                     </Th>
 
                      {/* actions */}
                      <Th isStickyRight >
@@ -568,31 +569,6 @@ const Revision = () => {
                         </SpanFilter>
                      </Th>
                      <Th primary >
-                        <SpanFilter condition={prFilters.solicitante.length > 0}>
-                           solicitante
-                        </SpanFilter>
-                     </Th>
-                     <Th primary >
-                        <SpanFilter condition={prFilters.encargado.length > 0}>
-                           encargado
-                        </SpanFilter>
-                     </Th>
-                     <Th primary >
-                        <SpanFilter condition={prFilters.revisor.length > 0}>
-                           revisor
-                        </SpanFilter>
-                     </Th>
-                     <Th primary >
-                        <SpanFilter condition={prFilters.estado.length > 0}>
-                           estado
-                        </SpanFilter>
-                     </Th>
-                     <Th primary >
-                        <span title='Fecha y hora de paso a revision'>
-                           fecha P.R.
-                        </span>
-                     </Th>
-                     <Th primary >
                         Tiempo (hrs)
                      </Th>
                      <Th primary >
@@ -613,7 +589,6 @@ const Revision = () => {
                            </Button>
                         </div>
                      </Th>
-                     
                      <Th primary >
                         <div className='flex items-baseline justify-center gap-2'>
                            <SpanFilter condition={prFilters.descripcion.length > 0}>
@@ -632,7 +607,31 @@ const Revision = () => {
                            </Button>
                         </div>
                      </Th>
-
+                     <Th primary >
+                        <SpanFilter condition={prFilters.estado.length > 0}>
+                           estado
+                        </SpanFilter>
+                     </Th>
+                     <Th primary >
+                        <SpanFilter condition={prFilters.solicitante.length > 0}>
+                           solicita
+                        </SpanFilter>
+                     </Th>
+                     <Th primary >
+                        <SpanFilter condition={prFilters.encargado.length > 0}>
+                           encargado
+                        </SpanFilter>
+                     </Th>
+                     <Th primary >
+                        <SpanFilter condition={prFilters.revisor.length > 0}>
+                           revisor
+                        </SpanFilter>
+                     </Th>
+                     <Th primary >
+                        <span title='Fecha y hora de paso a revision'>
+                           fecha P.R.
+                        </span>
+                     </Th>
                      <Th primary isStickyRight ><i className='fas fa-check' /></Th>
                   </tr>
 
@@ -687,16 +686,6 @@ const Revision = () => {
 
                            <Td>{act.nombre_sub_proy ?? '--'}</Td>
 
-                           <Td>{act.user_solicita}</Td>
-
-                           <Td>{act.encargado_actividad}</Td>
-
-                           <Td>{act.abrev_revisor || '--'}</Td>
-
-                           <Td>{status?.find(s => s.value === act.estado).label}</Td>
-
-                           <Td>{moment(`${act.fecha_revicion} ${act.hora_revicion}`).format('DD-MM-yyyy, HH:MM') ?? 'sin fecha'}</Td>
-
                            <Td>
                               <span 
                                  title='Tiemppo total cobrable'
@@ -721,34 +710,23 @@ const Revision = () => {
                               {act.func_objeto}
                            </Td>
 
-                           {act.estado === 5 || act.estado === 13 ?
+                           <Td>{status?.find(s => s.value === act.estado).label}</Td>
 
-                              <TdControlDistribution 
-                                 getId={(id_callback) => setIsActive(id_callback)}
-                                 callback={(times) => onDistribution({distribuciones: times, id_actividad: act.id_det})}
-                                 isStickyRight 
-                                 {...act}  
-                              /> 
-                              
-                           :
-                              <Td isStickyRight >
-                                 <div className='flex gap-2 justify-center'>
-                                    <Button 
-                                       className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 border border-emerald-300'
-                                       onClick={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: true, estado: act.estado})}
-                                    >
-                                       <i className='fas fa-check' />
-                                    </Button>
+                           <Td>{act.user_solicita}</Td>
 
-                                    <Button 
-                                       className='bg-red-100 hover:bg-red-200 text-red-500 border border-red-300 px-3'
-                                       onClick={() => onChangeCheckedActivity({id: act.id_det, title: act.actividad, revisado: false, estado: act.estado})}  
-                                    >
-                                       <i className='fas fa-times' />
-                                    </Button>
-                                 </div>
-                              </Td> 
-                           }
+                           <Td>{act.encargado_actividad}</Td>
+
+                           <Td>{act.abrev_revisor || '--'}</Td>
+
+                           <Td>{moment(`${act.fecha_revicion} ${act.hora_revicion}`).format('DD-MM-yyyy, HH:MM') ?? 'sin fecha'}</Td>
+
+                           <TdSwitch 
+                              state={act.estado}
+                              onDistribution={({distribuciones, id_actividad}) => onDistribution({distribuciones, id_actividad})}
+                              getId={(id_callback) => setIsActive(id_callback)}
+                              onChangeCheckedActivity={({id, title, revisado, estado}) => onChangeCheckedActivity({id, title, revisado, estado})} 
+                              {...act} 
+                           />
                         </tr>
                      ))}
                </TBody>

@@ -771,7 +771,7 @@ const Activity = () => {
                         </Th>
                         <Th primary>
                            <SpanFilter condition={filters.solicitante.length > 0}>
-                              solicitante
+                              solicita
                            </SpanFilter>
                         </Th>
                         <Th primary>

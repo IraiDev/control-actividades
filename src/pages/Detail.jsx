@@ -1229,7 +1229,7 @@ const Detail = () => {
                                  value={activity.nombre_sub_proy ?? 'S/SP'}
                               />
                               <P
-                                 tag='Solicitante'
+                                 tag='Solicita'
                                  value={activity.user_solicita}
                               />
                               <P
@@ -1316,7 +1316,7 @@ const Detail = () => {
                                  isDefaultOptions
                                  isRequired={type_detail !== 'pr'}
                                  disabled={type_detail === 'pr'}
-                                 field='Solicitante'
+                                 field='Solicita'
                                  options={users}
                                  value={options.us}
                                  onChange={option =>
@@ -2382,7 +2382,7 @@ const Detail = () => {
 
                               <CloneSelect
                                  isRequired
-                                 field='Solicitante'
+                                 field='Solicita'
                                  options={users}
                                  value={cloneOptions.us}
                                  onChange={option =>

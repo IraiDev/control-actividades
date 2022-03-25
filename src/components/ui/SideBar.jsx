@@ -278,7 +278,7 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
             <SelectFilter
                value={options.us}
                options={users}
-               field='solicitante'
+               field='solicita'
                isMulti
                onChange={option => setOptions({ ...options, us: option })}
                filterDown={() => setOrder({ orden_solicitante: 'desc' })}

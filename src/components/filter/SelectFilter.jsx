@@ -38,13 +38,14 @@ const SelectFilter = ({
    upActive,
    downActive,
    type = 'sidebar',
-   placeholder = 'seleccione',
+   placeholder = '',
    isOrder = true,
    defaultOptions = false,
    className = '',
    showTooltip = false,
    height = 170
 }) => {
+
    if (type === 'table') {
       return (
          <div className={`flex justify-between items-center mt-2 mx-auto ${className}`}>
@@ -77,7 +78,7 @@ const SelectFilter = ({
                   styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                   downActive
                   className='capitalize text-sm font-normal'
-                  placeholder={placeholder}
+                  placeholder=''
                   options={
                      isMulti
                         ? options
@@ -115,7 +116,7 @@ const SelectFilter = ({
 
             <Select
                className='w-full capitalize text-sm'
-               placeholder='Seleccione'
+               placeholder=''
                options={
                   isMulti
                      ? options

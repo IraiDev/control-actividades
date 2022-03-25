@@ -72,6 +72,7 @@ const InputFilter = ({
                name={name}
                value={value}
                onChange={onChange}
+               placeholder=''
             />
 
          </section>
