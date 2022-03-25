@@ -13,6 +13,7 @@ const Card = (props) => {
       isReviewedActivity,
       isChildrenAndFather,
       isDeliveryActivity,
+      isChildrenAndFatherAndCoor,
       isTicket,
       className,
    } = props
@@ -80,6 +81,16 @@ const Card = (props) => {
          >
             <i className='fas fa-child' />
             <i className='fas fa-hat-cowboy' />
+            {props?.id_det_padre} 
+         </MarkActivity>
+
+         <MarkActivity 
+            condicion={isTicket}
+            hidden={!isChildrenAndFatherAndCoor} 
+         >
+            <i className='far fa-calendar-alt' />
+            <i className='fas fa-hat-cowboy' />
+            <i className='fas fa-child' />
             {props?.id_det_padre} 
          </MarkActivity>
 

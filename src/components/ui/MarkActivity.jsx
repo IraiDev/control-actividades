@@ -10,10 +10,10 @@ const MarkActivity = ({
    if (hidden) return null
 
    return (
-      <div className={`bg-white rounded-md ${position}`}>
+      <div className={`bg-white rounded-full ${position}`}>
          <span 
             className={`
-               flex items-center gap-2 font-bold px-2 py-1 rounded-md shadow-md text-xs
+               flex items-center gap-2 font-bold px-2 py-1 rounded-full shadow-md text-xs
                ${condicion ? 'bg-amber-200/80 text-amber-600': 'bg-indigo-100/80 text-indigo-500'}
             `}
             title={title}

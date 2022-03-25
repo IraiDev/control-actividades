@@ -17,6 +17,7 @@ import CardContent from '../CardContent'
 import FloatMenu from '../../ui/FloatMenu'
 import moment from 'moment'
 import { fetchToken } from '../../../helpers/fetch'
+import Tag from '../../ui/Tag'
 
 const defaultNotes = [
    { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -78,6 +79,7 @@ const ActivityCard = props => {
    const isFather = props.es_padre === 1 && props.es_hijo === 0
    const isChildren = props.es_hijo === 1 && props.es_padre === 0
    const isChildrenAndFather = props.es_hijo === 1 && props.es_padre === 1
+   const isChildrenAndFatherAndCoor = props.es_hijo === 1 && props.es_padre === 1 && props.id_tipo_actividad === 4
    const isReviewedActivity = props.id_tipo_actividad === 2
    const isCoorActivity = props.id_tipo_actividad === 4
    const isDeliveryActivity = props.id_tipo_actividad === 3
@@ -209,6 +211,7 @@ const ActivityCard = props => {
             isChildrenAndFather={isChildrenAndFather}
             isReviewedActivity={isReviewedActivity}
             isDeliveryActivity={isDeliveryActivity}
+            isChildrenAndFatherAndCoor={isChildrenAndFatherAndCoor}
             isTicket={isTicket}
             {...props}
          >
@@ -219,7 +222,6 @@ const ActivityCard = props => {
                   title='Actividad con predecesores y restricciones'
                >
                   <i className='fas fa-link' />
-                  {/* <i className='fas fa-lock' /> */}
                </span>
             }
 
@@ -248,7 +250,7 @@ const ActivityCard = props => {
 
                      <span className='block text-transparent h-1.5' ></span>
 
-                     <P tag='Tipo' value={props.desc_tipo_actividad} />
+                     {/* <P tag='Tipo' value={props.desc_tipo_actividad} /> */}
 
                      <P tag='estado' value={ESTADO_PAUSA ? ' pendiente' : ' en trabajo'} />
 
@@ -288,16 +290,25 @@ const ActivityCard = props => {
                   </aside>
                </CardSection>
 
+               <br />
+
                <CardSection subtitle='descripcion'>
                   <p className='bg-black/5 whitespace-pre-wrap rounded-md p-2 overflow-custom max-h-36 mix-blend-luminosity'>
                      {props.func_objeto}
                   </p>
 
-                  {props.notas.length > 0 &&
-                     <span className='rounded-full px-1.5 py-1 bg-amber-200/50 text-amber-500 border border-amber-400 font-bold w-max mt-2 text-xs'>
-                        Tiene {props.notas.length} notas
-                     </span>
-                  }
+                  <div className='flex gap-3'>
+
+                     <Tag>
+                        Tipo: {props.desc_tipo_actividad}
+                     </Tag>
+
+                     {props.notas.length > 0 &&
+                        <Tag>
+                           Tiene {props.notas.length} notas
+                        </Tag>
+                     }
+                  </div>
                   
                </CardSection>
                

@@ -86,7 +86,10 @@ const CheckBox = ({ value, onChange }) => {
    )
 }
 
-const CloneSelect = ({options, value, onChange, field, isRequired = false, isDefaultOptions = false, disabled = false}) => {
+const CloneSelect = ({options, value, onChange, field, isRequired = false, isDefaultOptions = false, disabled = false, hidden = false}) => {
+
+   if(hidden) return null
+
    return(
       <div className='capitalize text-xs'>
          <span className='flex gap-2 items-baseline font-semibold text-sm px-2 w-max mb-2 py-0.5 bg-amber-200/80 rounded-md'>
@@ -282,8 +285,8 @@ const Detail = () => {
       const vProject = options.pr?.value === 0
       const vSolicita = options.us?.value === 0
       const vEncargado = options.ue?.value === 0
-      const vRevisor = options.ur?.value === 0
-      const vRdisE = options.ur?.id === options.ue?.id
+      const vRevisor = activity.id_tipo_actividad === 1 ? options.ur?.value === 0 : false
+      const vRdisE = activity.id_tipo_actividad === 1 ? options.ur?.id === options.ue?.id : false
 
       const onSaveValidation =
          vTitle ||
@@ -303,9 +306,9 @@ const Detail = () => {
       const vProjectC = cloneOptions.pr?.value === 0 || cloneOptions.pr?.value === undefined
       const vSolicitaC = cloneOptions.us?.value === 0 || cloneOptions.us?.value === undefined
       const vEncargadoC = cloneOptions.ue?.value === 0 || cloneOptions.ue?.value === undefined
-      const vRevisorC = cloneOptions.ur?.value === 0 || cloneOptions.ur?.value === undefined
+      const vRevisorC = cloneOptions?.ta?.value === 1 ? cloneOptions.ur?.value === 0 || cloneOptions.ur?.value === undefined : false
       const vTipo_actividadC = cloneOptions.ta?.value === 0 || cloneOptions.ta?.value === undefined
-      const vRdisEC = cloneOptions.ur.id === cloneOptions.ue.id
+      const vRdisEC = cloneOptions?.ta?.value === 1 ? cloneOptions.ur.id === cloneOptions.ue.id : false
 
       const onCloneValidation =
          vTitleC ||
@@ -331,7 +334,7 @@ const Detail = () => {
       const vSub = options?.sp?.value !== activity.id_sub_proyecto
       const vSo = options?.us?.label !== activity.user_solicita
       const vEn = options?.ue?.label !== activity.encargado_actividad
-      const vRe = activity?.id_revisor ? options?.ur?.id !== activity?.id_revisor : false
+      const vRe = activity?.id_revisor && (activity.id_tipo_actividad !== 4 || activity.id_tipo_actividad !== 3) ? options?.ur?.id !== activity?.id_revisor : false
       const vTitle = title !== activity.actividad
       const vDesc = description !== activity.func_objeto
       const vGloss = activity.glosa_explicativa !== null ? gloss !== activity.glosa_explicativa : false
@@ -385,7 +388,7 @@ const Detail = () => {
                sp: options.sp,
                us: options.us,
                ue: options.ue,
-               ur: options.ur,
+               ur: options.ur ?? {value: 0, label: 'ninguno'},
             })
          }
 
@@ -623,7 +626,7 @@ const Detail = () => {
       cloneOptions?.sp && formData.append('sub_proyecto', cloneOptions.sp.value)
       cloneOptions?.us && formData.append('solicita', cloneOptions.us.label)
       cloneOptions?.ue && formData.append('encargado', cloneOptions.ue.label)
-      cloneOptions?.ur && formData.append('revisor', cloneOptions.ur.id)
+      cloneOptions?.ta?.value === 1 && cloneOptions?.ur && formData.append('revisor',  cloneOptions.ur.id)
       cloneOptions?.ta && formData.append('tipo_actividad', cloneOptions.ta.value)
       formData.append('prioridad', cPriority)
       formData.append('ticket', cTicket)
@@ -1045,7 +1048,7 @@ const Detail = () => {
    }
 
    // cambia el estado de la actividad de pendiente a en trabajo, asigna un tiempo estimado
-   // ademas vlaida antes de hacer la accion si hay modificaciones sin guardar
+   // ademas valida antes de hacer la accion si hay modificaciones sin guardar
    const handleRunActivityPending = () => {
 
       const userAbrev = users.find(u => u.id === user.id).label
@@ -1335,6 +1338,7 @@ const Detail = () => {
                                  }
                               />
                               <CloneSelect
+                                 hidden={activity.id_tipo_actividad === 4 || activity.id_tipo_actividad === 3}
                                  isDefaultOptions
                                  isRequired={type_detail !== 'pr'}
                                  disabled={type_detail === 'pr'}
@@ -1635,7 +1639,7 @@ const Detail = () => {
                                        <i className='fas fa-trash text-red-400' />
                                     </MenuItem>
    
-                                    {(activity.id_tipo_actividad === 1) &&
+                                    {(activity.id_tipo_actividad !== 3) &&
                                        <MenuItem
                                           className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
                                           onClick={openModalClone}
@@ -2347,7 +2351,7 @@ const Detail = () => {
                      <div className='grid gap-5'>
 
                         <header className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                           <aside className='grid gap-2'>
+                           <aside className='flex-row space-y-2'>
 
                               <CloneSelect
                                  isRequired
@@ -2407,7 +2411,8 @@ const Detail = () => {
                               />
 
                               <CloneSelect
-                                 isRequired
+                                 hidden={cloneOptions?.ta?.value !== 1}
+                                 isRequired={cloneOptions?.ta?.value === 1}
                                  field='Revisor'
                                  options={users}
                                  value={cloneOptions.ur}
