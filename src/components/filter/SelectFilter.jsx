@@ -1,7 +1,7 @@
 import React from 'react'
 import Button from '../ui/Button'
 import Select, { components } from 'react-select'
-import Tooltip, {TooltipPrimitive} from '@atlaskit/tooltip'
+import Tooltip, { TooltipPrimitive } from '@atlaskit/tooltip'
 import styled from '@emotion/styled';
 
 const InlineDialog = styled(TooltipPrimitive)`
@@ -34,11 +34,10 @@ const SelectFilter = ({
    onChange,
    filterUp,
    filterDown,
-   defaultLabel = 'todos',
+   defaultLabel = 'Todos',
    upActive,
    downActive,
    type = 'sidebar',
-   placeholder = '',
    isOrder = true,
    defaultOptions = false,
    className = '',
@@ -52,9 +51,8 @@ const SelectFilter = ({
             {isOrder && (
                <Button
                   disabled={upActive}
-                  className={`hover:text-blue-500 mt-1 ${
-                     upActive ? 'text-blue-500' : ''
-                  }`}
+                  className={`hover:text-blue-500 mt-1 ${upActive ? 'text-blue-500' : ''
+                     }`}
                   onClick={filterUp}>
                   <i className='fas fa-angle-up' />
                </Button>
@@ -64,7 +62,7 @@ const SelectFilter = ({
                {field && <p className='text-xs text-center capitalize mb-1'>{field}</p>}
                <Select
                   components={
-                     showTooltip ? { 
+                     showTooltip ? {
                         Option,
                         DropdownIndicator: () => null,
                         IndicatorSeparator: () => null,
@@ -73,7 +71,7 @@ const SelectFilter = ({
                         IndicatorSeparator: () => null,
                      }
                   }
-                  menuPortalTarget={document.getElementById("select-root")} 
+                  menuPortalTarget={document.getElementById("select-root")}
                   isClearable={false}
                   styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                   downActive
@@ -81,8 +79,8 @@ const SelectFilter = ({
                   placeholder=''
                   options={
                      isMulti
-                        ? options
-                        : !defaultOptions ?[{ value: null, label: defaultLabel }].concat(options) : options
+                        ? defaultOptions ? [{ value: null, label: defaultLabel }].concat(options) : options
+                        : !defaultOptions ? [{ value: null, label: defaultLabel }].concat(options) : options
                   }
                   value={value}
                   onChange={onChange}
@@ -94,9 +92,8 @@ const SelectFilter = ({
             {isOrder && (
                <Button
                   disabled={downActive}
-                  className={`hover:text-blue-500 mt-1 ${
-                     downActive ? 'text-blue-500' : ''
-                  }`}
+                  className={`hover:text-blue-500 mt-1 ${downActive ? 'text-blue-500' : ''
+                     }`}
                   onClick={filterDown}>
                   <i className='fas fa-angle-down' />
                </Button>
@@ -131,23 +128,21 @@ const SelectFilter = ({
 
          <Button
             disabled={upActive}
-            className={`hover:text-blue-500 mt-5 ${
-               upActive ? 'text-blue-500' : 'text-gray-700'
-            }`}
+            className={`hover:text-blue-500 mt-5 ${upActive ? 'text-blue-500' : 'text-gray-700'
+               }`}
             onClick={filterUp}>
             <i className='fas fa-angle-up text-lg' />
          </Button>
 
          <Button
             disabled={downActive}
-            className={`hover:text-blue-500 mt-5 ${
-               downActive ? 'text-blue-500' : 'text-gray-700'
-            }`}
+            className={`hover:text-blue-500 mt-5 ${downActive ? 'text-blue-500' : 'text-gray-700'
+               }`}
             onClick={filterDown}>
             <i className='fas fa-angle-down text-lg' />
 
          </Button>
-         
+
       </div>
    )
 }

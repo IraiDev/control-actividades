@@ -39,7 +39,7 @@ const PrioritySelector = ({ onClick, color = 'bg-slate-400', disabled }) => {
    )
 }
 
-const BoxSelector = ({priority, lowPriority, mediumPriority, highPriority, nonePriority}) => {
+const BoxSelector = ({ priority, lowPriority, mediumPriority, highPriority, nonePriority }) => {
    return (
       <div className='flex gap-1.5 p-1.5 rounded-full bg-black/10'>
          <PrioritySelector
@@ -97,19 +97,19 @@ const Activity = () => {
    } = useActivity()
 
    // constext
-   const {  
-      view, 
-      setView, 
-      setIsLoading 
+   const {
+      view,
+      setView,
+      setIsLoading
    } = useContext(UiContext)
 
-   const { 
-      optionsArray, 
-      saveFilters, 
-      pager, 
-      setPager, 
-      setOrder, 
-      order, 
+   const {
+      optionsArray,
+      saveFilters,
+      pager,
+      setPager,
+      setOrder,
+      order,
       user,
       filters
    } = useContext(ActivityContext)
@@ -120,20 +120,20 @@ const Activity = () => {
 
    // hooks
    const size = useWindowSize()
-   const [{ 
-      id, 
-      title, 
-      numPriority, 
-      desc, 
-      ticket 
+   const [{
+      id,
+      title,
+      numPriority,
+      desc,
+      ticket
    }, onChangeValues, reset, onPreset] =
-   useForm({
-      id: '',
-      title: '',
-      numPriority: '',
-      desc: '',
-      ticket: '',
-   })
+      useForm({
+         id: '',
+         title: '',
+         numPriority: '',
+         desc: '',
+         ticket: '',
+      })
 
    // destructuring
    const { projects, subProjects, users, status, activity_type } = optionsArray
@@ -148,11 +148,11 @@ const Activity = () => {
             options.ue?.length > 0 ? options.ue.map(item => item.label) : [],
          solicitante:
             options.us?.length > 0 ? options.us.map(item => item.label) : [],
-         revisor: 
+         revisor:
             options.ur?.length > 0 ? options.ur.map(item => item.id) : [],
          subProy:
             options.sp?.length > 0 ? options.sp.map(item => item.value) : [],
-         id_tipo_actividad: 
+         id_tipo_actividad:
             options.ita?.length > 0 ? options.ita.map(item => item.value) : [],
          color: options.pi?.value || '',
          id_actividad: id,
@@ -198,9 +198,9 @@ const Activity = () => {
       }, time)
    }
 
-   const onPauseActivity = ({ flag, id_actividad, mensaje }) => {
+   const onPauseActivity = ({ flag, id_actividad, mensaje, tipo_pausa }) => {
       if (flag) {
-         onPlayPause({ id_actividad, mensaje })
+         onPlayPause({ id_actividad, mensaje, tipo_pausa })
       } else {
          if (mensaje.trim() === '') {
             Alert({
@@ -211,7 +211,7 @@ const Activity = () => {
             })
             return
          }
-         onPlayPause({ id_actividad, mensaje })
+         onPlayPause({ id_actividad, mensaje, tipo_pausa })
       }
    }
 
@@ -225,11 +225,11 @@ const Activity = () => {
          try {
             const resp = await fetchToken('task/get-times')
             const body = await resp.json()
-   
+
             if (body.ok) {
-   
+
                const userState = body.tiempos.find(item => item.usuario === userAbrev).estado
-   
+
                if (userState) {
                   Alert({
                      icon: 'warn',
@@ -241,9 +241,9 @@ const Activity = () => {
                   })
                   return
                }
-   
+
                onPlayPause({ id_actividad })
-   
+
             }
          } catch (error) {
             console.log('getTimes error: ', error)
@@ -262,14 +262,14 @@ const Activity = () => {
 
          return
       }
-      
+
       action()
 
    }
 
    const onDeleteActivity = ({ id_actividad, title = 'sin titulo', encargado, isFather, isTicket }) => {
 
-      if(encargado?.id !== user?.id && isFather && isTicket) {
+      if (encargado?.id !== user?.id && isFather && isTicket) {
          Alert({
             icon: 'warn',
             title: 'Atención',
@@ -328,10 +328,10 @@ const Activity = () => {
    const onAddDefaultNote = ({ flag, id_actividad, description }) => {
       flag
          ? updatePriorityAndAddNote({
-              prioridad_numero: 100,
-              id_actividad,
-              description,
-           })
+            prioridad_numero: 100,
+            id_actividad,
+            description,
+         })
          : newNote({ id_actividad, description })
    }
 
@@ -372,9 +372,9 @@ const Activity = () => {
       })
 
       onPreset({
-         id: filters.id_actividad, 
-         title: filters.titulo, 
-         desc: filters.descripcion, 
+         id: filters.id_actividad,
+         title: filters.titulo,
+         desc: filters.descripcion,
          ticket: filters.numero_ticket
       })
 
@@ -547,10 +547,10 @@ const Activity = () => {
                                  options.pr?.length > 1
                                     ? []
                                     : options.pr?.length > 0
-                                    ? subProjects?.filter(
-                                         s => s.id === options.pr[0]?.value
-                                      )
-                                    : subProjects
+                                       ? subProjects?.filter(
+                                          s => s.id === options.pr[0]?.value
+                                       )
+                                       : subProjects
                               }
                               isMulti
                               isOrder={false}
@@ -800,8 +800,8 @@ const Activity = () => {
                                  onClick={() => setMultiline(!multiline)}>
                                  <i
                                     className={multiline
-                                                ? 'fas fa-angle-up'
-                                                : 'fas fa-angle-down'
+                                       ? 'fas fa-angle-up'
+                                       : 'fas fa-angle-down'
                                     }
                                  />
                               </Button>
@@ -817,8 +817,8 @@ const Activity = () => {
                                  onClick={() => setMultiline(!multiline)}>
                                  <i
                                     className={multiline
-                                                ? 'fas fa-angle-up'
-                                                : 'fas fa-angle-down'
+                                       ? 'fas fa-angle-up'
+                                       : 'fas fa-angle-down'
                                     }
                                  />
                               </Button>
@@ -842,14 +842,13 @@ const Activity = () => {
                               className={`
                                  text-[13px] transition duration-300 cursor-pointer
                                  ${i !== activities.length - 1 && 'border-b border-gray-500'}
-                                 ${
-                                    act.prioridad_etiqueta === 600
-                                       ? 'bg-green-400/40 hover:bg-green-400/90'
-                                       : act.prioridad_etiqueta === 400
+                                 ${act.prioridad_etiqueta === 600
+                                    ? 'bg-green-400/40 hover:bg-green-400/90'
+                                    : act.prioridad_etiqueta === 400
                                        ? 'bg-yellow-400/40 hover:bg-yellow-400/90'
                                        : act.prioridad_etiqueta === 100
-                                       ? 'bg-red-400/40 hover:bg-red-400/90'
-                                       : 'bg-white hover:bg-black/10'
+                                          ? 'bg-red-400/40 hover:bg-red-400/90'
+                                          : 'bg-white hover:bg-black/10'
                                  }
                               `}
                               onDoubleClick={() => navigate(`detalle-actividad/${act.id_det}`)}
@@ -858,8 +857,8 @@ const Activity = () => {
                                  <div className='relative flex items-center gap-2'>
                                     <Numerator number={i + 1} />
                                     <PingIndicator hidden={act.estado_play_pausa !== 2} size='small' />
-                                    {act.predecesoras.length > 0 && 
-                                       <span 
+                                    {act.predecesoras.length > 0 &&
+                                       <span
                                           className='h-7 w-7 pt-1'
                                           title='Actividad con predecesores y restricciones'
                                        >
@@ -873,13 +872,12 @@ const Activity = () => {
                               <Td>
                                  <span className={`
                                        px-2 py-0.5 font-bold rounded-md text-sm mt-2 block w-max mx-auto capitalize
-                                       ${
-                                          act.id_tipo_actividad === 1 ? 'bg-indigo-200 text-indigo-500' 
-                                             : act.id_tipo_actividad === 2 ? 'bg-emerald-200 text-emerald-500' 
-                                             : act.id_tipo_actividad === 3 ? 'bg-red-200 text-red-500' 
-                                             : act.id_tipo_actividad === 4 ? 'bg-orange-200 text-orange-500' 
-                                             : 'bg-zinc-100 text-black'
-                                       }
+                                       ${act.id_tipo_actividad === 1 ? 'bg-indigo-200 text-indigo-500'
+                                       : act.id_tipo_actividad === 2 ? 'bg-emerald-200 text-emerald-500'
+                                          : act.id_tipo_actividad === 3 ? 'bg-red-200 text-red-500'
+                                             : act.id_tipo_actividad === 4 ? 'bg-orange-200 text-orange-500'
+                                                : 'bg-zinc-100 text-black'
+                                    }
                                     `}
                                  >
                                     {act.desc_tipo_actividad}
@@ -889,61 +887,61 @@ const Activity = () => {
                               <Td>
                                  <div className={`
                                     flex justify-between gap-1 items-center
-                                    ${act.es_padre && act.num_ticket_edit > 0 ? 'text-amber-600 font-bold' 
+                                    ${act.es_padre && act.num_ticket_edit > 0 ? 'text-amber-600 font-bold'
                                        : act.es_padre && act.num_ticket_edit <= 0 ? 'text-indigo-600 font-bold' : ''
-                                 }
+                                    }
                                  `}>
-                                    <MarkActivity 
-                                       hidden={!(act.es_padre === 0 && act.es_hijo === 1)} 
+                                    <MarkActivity
+                                       hidden={!(act.es_padre === 0 && act.es_hijo === 1)}
                                        condicion={act.num_ticket_edit > 0}
-                                       position='block' 
+                                       position='block'
                                     >
                                        <i className='fas fa-child fa-lg' />
                                        {act?.id_det_padre}
                                     </MarkActivity>
 
-                                    <MarkActivity 
-                                       hidden={!(act.es_hijo === 0 && act.es_padre === 1)} 
+                                    <MarkActivity
+                                       hidden={!(act.es_hijo === 0 && act.es_padre === 1)}
                                        condicion={act.num_ticket_edit > 0}
                                        position='block'
                                     >
                                        <i className='fas fa-hat-cowboy fa-lg' />
-                                       {act?.id_det} 
+                                       {act?.id_det}
                                     </MarkActivity>
 
-                                    <MarkActivity 
-                                       hidden={!(act.id_tipo_actividad === 4)} 
+                                    <MarkActivity
+                                       hidden={!(act.id_tipo_actividad === 4)}
                                        condicion={act.num_ticket_edit > 0}
                                        position='block'
                                     >
                                        <i className='far fa-calendar-alt fa-lg' />
-                                       {act?.id_det_padre} 
+                                       {act?.id_det_padre}
                                     </MarkActivity>
 
-                                    <MarkActivity 
-                                       hidden={!(act.id_tipo_actividad === 2)} 
+                                    <MarkActivity
+                                       hidden={!(act.id_tipo_actividad === 2)}
                                        condicion={act.num_ticket_edit > 0}
                                        position='block'
                                     >
                                        <i className='fas fa-calendar-check fa-lg' />
-                                       {act?.id_det_padre} 
+                                       {act?.id_det_padre}
                                     </MarkActivity>
 
-                                    <MarkActivity 
-                                       hidden={!(act.es_hijo === 1 && act.es_padre === 1)} 
+                                    <MarkActivity
+                                       hidden={!(act.es_hijo === 1 && act.es_padre === 1)}
                                        condicion={act.num_ticket_edit > 0}
                                        position='block'
                                     >
                                        <i className='fas fa-child' />
                                        <i className='fas fa-hat-cowboy' />
-                                       {act?.id_det_padre} 
+                                       {act?.id_det_padre}
                                     </MarkActivity>
-                                    <MarkActivity 
+                                    <MarkActivity
                                        condicion={act.num_ticket_edit > 0}
-                                       hidden={!(act.id_tipo_actividad === 3)} 
+                                       hidden={!(act.id_tipo_actividad === 3)}
                                     >
                                        <i className='fas fa-truck fa-lg' />
-                                       {act?.id_det_padre} 
+                                       {act?.id_det_padre}
                                     </MarkActivity>
 
                                     <span />
@@ -977,8 +975,8 @@ const Activity = () => {
                                  {act.actividad || 'Sin Titulo'}
                               </Td>
 
-                              <Td 
-                                 isMultiLine={multiline} 
+                              <Td
+                                 isMultiLine={multiline}
                                  align='text-left'
                               >
                                  {act.func_objeto}
@@ -1001,10 +999,10 @@ const Activity = () => {
                               >
                                  <BoxSelector
                                     priority={act.prioridad_etiqueta}
-                                    nonePriority={() => updatePriority({prioridad_numero: 1000, id_actividad: act.id_det,})}
-                                    lowPriority={() => updatePriority({prioridad_numero: 600, id_actividad: act.id_det,})}
-                                    mediumPriority={() => updatePriority({prioridad_numero: 400, id_actividad: act.id_det,})}
-                                    highPriority={() => updatePriority({prioridad_numero: 100, id_actividad: act.id_det,})}
+                                    nonePriority={() => updatePriority({ prioridad_numero: 1000, id_actividad: act.id_det, })}
+                                    lowPriority={() => updatePriority({ prioridad_numero: 600, id_actividad: act.id_det, })}
+                                    mediumPriority={() => updatePriority({ prioridad_numero: 400, id_actividad: act.id_det, })}
+                                    highPriority={() => updatePriority({ prioridad_numero: 100, id_actividad: act.id_det, })}
                                  />
                               </TdActivityControls>
 
@@ -1036,17 +1034,15 @@ const Activity = () => {
             <div className='flex gap-2'>
                <Button
                   disabled={view}
-                  className={`hover:text-blue-500 hover:bg-zinc-100 ${
-                     view && 'text-blue-500'
-                  }`}
+                  className={`hover:text-blue-500 hover:bg-zinc-100 ${view && 'text-blue-500'
+                     }`}
                   onClick={() => toggleView(true)}>
                   <i className='fas fa-border-all' />
                </Button>
                <Button
                   disabled={!view}
-                  className={`hover:text-blue-500 hover:bg-zinc-100 ${
-                     !view && 'text-blue-500'
-                  }`}
+                  className={`hover:text-blue-500 hover:bg-zinc-100 ${!view && 'text-blue-500'
+                     }`}
                   onClick={() => toggleView(false)}>
                   <i className='fas fa-th-list' />
                </Button>

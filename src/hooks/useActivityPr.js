@@ -28,6 +28,12 @@ export const useActivityPr = () => {
             setTotal(total_tareas)
          } else {
             console.log('Error')
+            Alert({
+               icon: 'error',
+               title: 'Error',
+               content: body.response,
+               showCancelButton: false,
+            })
          }
       } catch (e) {
          console.log(e)

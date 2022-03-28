@@ -243,12 +243,12 @@ export const useDetail = (id) => {
       }
    }
 
-   const onPlayPause = async ({ id_actividad, mensaje }) => {
+   const onPlayPause = async ({ id_actividad, mensaje, tipo_pausa }) => {
       setIsLoading(true)
       try {
          const resp = await fetchToken(
             'task/play-pause',
-            { id_actividad, mensaje },
+            { id_actividad, mensaje, tipo_pausa },
             'POST'
          )
          const body = await resp.json()

@@ -28,9 +28,10 @@ import Switch from '../components/ui/Switch'
 import queryString from 'query-string'
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
 import FloatMenu from '../components/ui/FloatMenu'
-import MapSection from '../components/map/MapSection'
-import MapArrow from '../components/map/MapArrow'
+// import MapSection from '../components/map/MapSection'
+// import MapArrow from '../components/map/MapArrow'
 import { fetchToken } from '../helpers/fetch'
+import CustomSelect from '../components/ui/CustomSelect'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
@@ -59,6 +60,7 @@ const initOptions = {
    ue: { label: 'ninguno', value: 0 },
    ur: { label: 'ninguno', value: 0, id: 0 },
    ta: { label: 'ninguno', value: 0 },
+   pt: { label: 'ninguno', value: 0 },
 }
 
 const CheckBox = ({ value, onChange }) => {
@@ -67,10 +69,9 @@ const CheckBox = ({ value, onChange }) => {
          htmlFor='id'
          className={`flex gap-2 items-baseline capitalize px-2.5 py-1.5 border 
             rounded-full transition duration-200 cursor-pointer
-            ${
-               value
-                  ? 'border-red-500 text-red-500 hover:bg-red-50'
-                  : 'border-blue-500 text-blue-500 hover:bg-blue-50'
+            ${value
+               ? 'border-red-500 text-red-500 hover:bg-red-50'
+               : 'border-blue-500 text-blue-500 hover:bg-blue-50'
             }
             `}>
          {value ? 'quitar' : 'agregar'}
@@ -86,11 +87,11 @@ const CheckBox = ({ value, onChange }) => {
    )
 }
 
-const CloneSelect = ({options, value, onChange, field, isRequired = false, isDefaultOptions = false, disabled = false, hidden = false}) => {
+const CloneSelect = ({ options, value, onChange, field, isRequired = false, isDefaultOptions = false, disabled = false, hidden = false }) => {
 
-   if(hidden) return null
+   if (hidden) return null
 
-   return(
+   return (
       <div className='capitalize text-xs'>
          <span className='flex gap-2 items-baseline font-semibold text-sm px-2 w-max mb-2 py-0.5 bg-amber-200/80 rounded-md'>
             {field}
@@ -110,7 +111,7 @@ const CloneSelect = ({options, value, onChange, field, isRequired = false, isDef
    )
 }
 
-const Span = ({children, colCount = 1}) => {
+const Span = ({ children, colCount = 1 }) => {
 
    let cols = ''
 
@@ -214,7 +215,7 @@ const Detail = () => {
    })
 
    const [timeValues, setTimeValues] = useState([])
-   const [sw, setSw] = useState({a: {value: false, resp: true}, b: {value: false, resp: false}})
+   const [sw, setSw] = useState({ a: { value: false, resp: true }, b: { value: false, resp: false } })
 
    const [{
       hinicio,
@@ -295,7 +296,7 @@ const Detail = () => {
          vTime ||
          vProject ||
          vSolicita ||
-         vEncargado || 
+         vEncargado ||
          vRevisor ||
          vRdisE
 
@@ -358,7 +359,7 @@ const Detail = () => {
       toggleModalPR(false)
       setModalReject(false)
       setCloneFiles(null)
-      setSw({a: {value: false, resp: false}, b: {value: false, resp: true}})
+      setSw({ a: { value: false, resp: false }, b: { value: false, resp: true } })
       onCleanFile(Math.random().toString(36))
       setValues({ desc: '', id: null, id_ref: null })
       reset()
@@ -371,7 +372,7 @@ const Detail = () => {
 
       const action = async () => {
 
-         if(validate) await onSave()
+         if (validate) await onSave()
 
          const fieldData = (ticket = 0) => {
             setCloneFields({
@@ -388,7 +389,7 @@ const Detail = () => {
                sp: options.sp,
                us: options.us,
                ue: options.ue,
-               ur: options.ur ?? {value: 0, label: 'ninguno'},
+               ur: options.ur ?? { value: 0, label: 'ninguno' },
             })
          }
 
@@ -430,10 +431,10 @@ const Detail = () => {
       const action = () => {
 
          const validate = validateMod()
-      
+
          const callback = async () => {
 
-            if(validate) await onSave()
+            if (validate) await onSave()
 
             if (pauseState) {
                // si esta en play entra aqui para poner pausa, desde el detalle
@@ -450,11 +451,11 @@ const Detail = () => {
                try {
                   const resp = await fetchToken('task/get-times')
                   const body = await resp.json()
-         
+
                   if (body.ok) {
-         
+
                      const userState = body.tiempos.find(item => item.usuario === userAbrev).estado
-         
+
                      if (userState) {
                         Alert({
                            icon: 'warn',
@@ -466,32 +467,32 @@ const Detail = () => {
                         })
                         return
                      }
-         
+
                      onPlayPause({ id_actividad: activity.id_det })
-         
+
                   }
                } catch (error) {
                   console.log('getTimes error: ', error)
                }
 
+            }
+
          }
 
-      }
+         if (validate) {
+            Alert({
+               title: '¡Atención!',
+               content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
+               confirmText: 'Si, guardar y continuar',
+               cancelText: 'Cancelar Play/Pause',
+               action: () => callback(),
+               cancelAction: () => onCloseModals()
+            })
 
-      if (validate) {
-         Alert({
-            title: '¡Atención!',
-            content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
-            confirmText: 'Si, guardar y continuar',
-            cancelText: 'Cancelar Play/Pause',
-            action: () => callback(),
-            cancelAction: () => onCloseModals()
-         })
+            return
+         }
 
-         return
-      }
-
-      callback()
+         callback()
 
       }
 
@@ -512,42 +513,35 @@ const Detail = () => {
    }
 
    // guarda la pausa de la actividad desde el modal de pausas
-   const onPause = () => {
+   const onPause = ({ isDefaultPause, mensaje }) => {
 
-      const userAbrev = users.find(u => u.id === user.id).label
-
-      const playValidate = activity.encargado_actividad !== userAbrev
-
-      const action = () => {
-
-         if (values.desc === '') {
-            Alert({
-               icon: 'warn',
-               title: 'Atención',
-               content: 'No puedes guardar una pausa sin un mensaje',
-               showCancelButton: false,
-            })
-            return
-         }
-         onPlayPause({ id_actividad: activity.id_det, mensaje: values.desc })
-         onCloseModals()
-
-      }
-
-      if (playValidate) {
+      if (!options.pt) {
          Alert({
             icon: 'warn',
             title: 'Atención',
-            content: `No eres el encargado de esta actividad </br> ¿Deseas pausarla igualmente?`,
-            confirmText: 'si, pausar',
-            cancelText: 'no, cancelar',
-            action
+            content: `Debes seleccionar un tipo de pausa`,
+            showCancelButton: false,
          })
 
          return
       }
 
-      action()
+      if (values.desc === '' && !isDefaultPause) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'No puedes guardar una pausa sin un mensaje',
+            showCancelButton: false,
+         })
+         return
+      }
+
+      onPlayPause({
+         id_actividad: activity.id_det,
+         mensaje: isDefaultPause ? mensaje : values.desc,
+         tipo_pausa: options.pt.value,
+      })
+      onCloseModals()
    }
 
    // pregunta si desea eliminar la actividad
@@ -626,7 +620,7 @@ const Detail = () => {
       cloneOptions?.sp && formData.append('sub_proyecto', cloneOptions.sp.value)
       cloneOptions?.us && formData.append('solicita', cloneOptions.us.label)
       cloneOptions?.ue && formData.append('encargado', cloneOptions.ue.label)
-      cloneOptions?.ta?.value === 1 && cloneOptions?.ur && formData.append('revisor',  cloneOptions.ur.id)
+      cloneOptions?.ta?.value === 1 && cloneOptions?.ur && formData.append('revisor', cloneOptions.ur.id)
       cloneOptions?.ta && formData.append('tipo_actividad', cloneOptions.ta.value)
       formData.append('prioridad', cPriority)
       formData.append('ticket', cTicket)
@@ -673,18 +667,18 @@ const Detail = () => {
 
       const action = async () => {
 
-         if(validate) await onSave()
+         if (validate) await onSave()
 
          const callback = () => {
             const action = async () => {
-            
+
                if (isRuning) await onPlayPause({ id_actividad: activity.id_det, mensaje: 'Pausa para pasar a revisión' })
-               setValues({...values, tiempo_total: activity.tiempo_trabajado})
+               setValues({ ...values, tiempo_total: activity.tiempo_trabajado })
                toggleModalPR(true)
-   
+
             }
-      
-            if(isRuning) {
+
+            if (isRuning) {
                Alert({
                   title: 'Atención',
                   content: 'Debes pausar la actividad para cambiar el estado a Revisión\n¿Pausar actividad?',
@@ -694,20 +688,20 @@ const Detail = () => {
                })
                return
             }
-            
+
             action()
          }
-   
+
          validatePredecessor({
-            array: activity.predecesoras, 
-            callback, 
-            state: 3, 
+            array: activity.predecesoras,
+            callback,
+            state: 3,
             options: optionsArray
          })
 
       }
 
-      if(validate) {
+      if (validate) {
          Alert({
             title: '¡Atención!',
             content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
@@ -730,9 +724,9 @@ const Detail = () => {
 
       const action = async () => {
 
-         if(validate) await onSave()
+         if (validate) await onSave()
 
-         if(isFather) {
+         if (isFather) {
             Alert({
                title: 'Atención',
                content: '¿Esta seguro de terminar la actividada Padre original?',
@@ -740,21 +734,21 @@ const Detail = () => {
                calcelText: 'No, cancelar',
                action: () => {
                   toggleState({ estado: 5 })
-                  navigate(routes.activity, {replace: true})
+                  navigate(routes.activity, { replace: true })
                }
             })
             return
          }
-   
+
          const callback = () => {
-   
-            if(type === 3) return setModalReject(true)
-   
+
+            if (type === 3) return setModalReject(true)
+
             const action = async () => {
                await toggleState({ tiempo_cliente: activity.tiempo_trabajado, estado: 13 })
                navigate(routes.activity, { replace: true })
             }
-   
+
             Alert({
                title: 'Atención',
                content: `¿Estas seguro de ${isFather ? 'terminar' : 'procesar'} la actividad?`,
@@ -764,7 +758,7 @@ const Detail = () => {
             })
          }
 
-         if(isRuning) {
+         if (isRuning) {
             Alert({
                title: 'Atención',
                content: 'Debes pausar la actividad para terminarla\n¿Pausar actividad?',
@@ -773,9 +767,9 @@ const Detail = () => {
                action: async () => {
                   await onPlayPause({ id_actividad: activity.id_det, mensaje: 'Pausa para procesar actividad' })
                   validatePredecessor({
-                     array: activity.predecesoras, 
-                     callback, 
-                     state: 13, 
+                     array: activity.predecesoras,
+                     callback,
+                     state: 13,
                      options: optionsArray
                   })
                }
@@ -785,15 +779,15 @@ const Detail = () => {
          }
 
          validatePredecessor({
-            array: activity.predecesoras, 
-            callback, 
-            state: 13, 
+            array: activity.predecesoras,
+            callback,
+            state: 13,
             options: optionsArray
          })
 
       }
 
-      if(validate) {
+      if (validate) {
          Alert({
             title: '¡Atención!',
             content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
@@ -892,20 +886,20 @@ const Detail = () => {
             timeValues.map(t =>
                t.id === id_pausa
                   ? {
-                       ...t,
-                       [`hini${id_pausa}`]: detentions.find(
-                          d => d.id_pausa === id_pausa
-                       ).hora_inicio,
-                       [`hdet${id_pausa}`]: detentions.find(
-                          d => d.id_pausa === id_pausa
-                       ).hora_detencion,
-                       [`ini${id_pausa}`]: detentions.find(
-                          d => d.id_pausa === id_pausa
-                       ).fecha_inicio,
-                       [`det${id_pausa}`]: detentions.find(
-                          d => d.id_pausa === id_pausa
-                       ).fecha_detencion,
-                    }
+                     ...t,
+                     [`hini${id_pausa}`]: detentions.find(
+                        d => d.id_pausa === id_pausa
+                     ).hora_inicio,
+                     [`hdet${id_pausa}`]: detentions.find(
+                        d => d.id_pausa === id_pausa
+                     ).hora_detencion,
+                     [`ini${id_pausa}`]: detentions.find(
+                        d => d.id_pausa === id_pausa
+                     ).fecha_inicio,
+                     [`det${id_pausa}`]: detentions.find(
+                        d => d.id_pausa === id_pausa
+                     ).fecha_detencion,
+                  }
                   : t
             )
          )
@@ -935,12 +929,12 @@ const Detail = () => {
 
    // actualiza la prioridad to-do de la actividad
    const onChangePriority = (number, id) => {
-      
-      const validate = validateMod() 
 
-      const action = async  () => {
+      const validate = validateMod()
 
-         if(validate) await onSave()
+      const action = async () => {
+
+         if (validate) await onSave()
 
          updatePriority({
             prioridad_numero: number,
@@ -949,7 +943,7 @@ const Detail = () => {
 
       }
 
-      if(validate) {
+      if (validate) {
          Alert({
             title: '¡Atención!',
             content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
@@ -969,16 +963,16 @@ const Detail = () => {
    const handleOpenModalTimer = () => {
 
       const validate = validateMod()
-      
-      const action = async  () => {
 
-         if(validate) await onSave()
+      const action = async () => {
+
+         if (validate) await onSave()
 
          toggleModalTimer(true)
 
       }
 
-      if(validate) {
+      if (validate) {
          Alert({
             title: '¡Atención!',
             content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
@@ -997,16 +991,16 @@ const Detail = () => {
    const handleOpenModalAddOrEdit = (isAddOrEdit) => {
 
       const validate = validateMod()
-      
-      const action = async  () => {
 
-         if(validate) await onSave()
+      const action = async () => {
+
+         if (validate) await onSave()
 
          isAddOrEdit ? toggleModalAdd(true) : toggleModalEdit(true)
 
       }
 
-      if(validate) {
+      if (validate) {
          Alert({
             title: '¡Atención!',
             content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
@@ -1026,12 +1020,12 @@ const Detail = () => {
       const validate = validateMod()
 
       const action = async () => {
-         
+
          navigate(routes.activity, { replace: true })
 
       }
 
-      if(validate) {
+      if (validate) {
          Alert({
             title: '¡Atención!',
             content: 'Se han realizado modificaciones que no han sido guardadas, si continua estas se perderan, ¿Desea continuar?',
@@ -1040,7 +1034,7 @@ const Detail = () => {
             action
          })
 
-         return 
+         return
       }
 
       action()
@@ -1064,11 +1058,11 @@ const Detail = () => {
             try {
                const resp = await fetchToken('task/get-times')
                const body = await resp.json()
-      
+
                if (body.ok) {
-      
+
                   const userState = body.tiempos.find(item => item.usuario === userAbrev).estado
-      
+
                   if (userState) {
                      Alert({
                         icon: 'warn',
@@ -1078,18 +1072,18 @@ const Detail = () => {
                         cancelText: 'no, cancelar',
                         action: async () => {
 
-                           if(validate) await onSave()
-            
-                           runActivityPending({tiempo_estimado})
+                           if (validate) await onSave()
+
+                           runActivityPending({ tiempo_estimado })
                         }
                      })
                      return
                   }
-      
-                  if(validate) await onSave()
-            
-                  runActivityPending({tiempo_estimado})
-      
+
+                  if (validate) await onSave()
+
+                  runActivityPending({ tiempo_estimado })
+
                }
             } catch (error) {
                console.log('getTimes error: ', error)
@@ -1097,7 +1091,7 @@ const Detail = () => {
 
          }
 
-         if(validate) {
+         if (validate) {
             Alert({
                title: '¡Atención!',
                content: 'Se han realizado modificaciones que no han sido guardadas, si continua estas se perderan, ¿Desea continuar?',
@@ -1106,7 +1100,7 @@ const Detail = () => {
                action: () => callback()
             })
 
-            return 
+            return
          }
 
          callback()
@@ -1185,7 +1179,7 @@ const Detail = () => {
                   <View
                      title={activity.actividad}
                      priority={activity.prioridad_etiqueta}
-                     type={{desc: activity.desc_tipo_actividad, id: activity.tipo_actividad}}
+                     type={{ desc: activity.desc_tipo_actividad, id: activity.tipo_actividad }}
                      onHigh={() => onChangePriority(100, activity.id_det)}
                      onMid={() => onChangePriority(400, activity.id_det)}
                      onLow={() => onChangePriority(600, activity.id_det)}
@@ -1206,10 +1200,10 @@ const Detail = () => {
                      {...activity}
                   >
 
-                     {type_detail !== 'pr' && 
-                        <AlertBar 
-                           validation={validation().isSave} 
-                           isCustom={options?.ur?.id !== options?.ue?.id} 
+                     {type_detail !== 'pr' &&
+                        <AlertBar
+                           validation={validation().isSave}
+                           isCustom={options?.ur?.id !== options?.ue?.id}
                            customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
                            position='top-20'
                         />
@@ -1274,11 +1268,11 @@ const Detail = () => {
                               />
                               <span className={`
                                  px-2 py-0.5 font-semibold rounded-full text-sm mt-2 block w-max
-                                 ${activity.id_tipo_actividad === 1 ? 'bg-indigo-100 text-indigo-500' 
-                                    : activity.id_tipo_actividad === 2 ? 'bg-emerald-100 text-emerald-500' 
-                                    : activity.id_tipo_actividad === 3 ? 'bg-red-100 text-red-500' 
-                                    : activity.id_tipo_actividad === 4 ? 'bg-orange-100 text-orange-500' 
-                                    : 'bg-zinc-100 text-black'
+                                 ${activity.id_tipo_actividad === 1 ? 'bg-indigo-100 text-indigo-500'
+                                    : activity.id_tipo_actividad === 2 ? 'bg-emerald-100 text-emerald-500'
+                                       : activity.id_tipo_actividad === 3 ? 'bg-red-100 text-red-500'
+                                          : activity.id_tipo_actividad === 4 ? 'bg-orange-100 text-orange-500'
+                                             : 'bg-zinc-100 text-black'
                                  }
                               `}>
                                  Tipo: {activity.desc_tipo_actividad}
@@ -1306,8 +1300,8 @@ const Detail = () => {
                                  options={
                                     options?.pr?.value
                                        ? subProjects?.filter(
-                                            s => s.id === options?.pr?.value
-                                         )
+                                          s => s.id === options?.pr?.value
+                                       )
                                        : subProjects
                                  }
                                  value={options.sp}
@@ -1598,10 +1592,10 @@ const Detail = () => {
                                  className='bg-orange-50 hover:bg-orange-100 text-orange-500'
                                  onClick={handleOpenModalTimer}
                               >
-                                 <i className='far fa-clock' /> 
+                                 <i className='far fa-clock' />
 
-                                 { type_detail !== 'pr' ? 'Modificar tiempos' : 'Ver Tiempos' }
-                                 
+                                 {type_detail !== 'pr' ? 'Modificar tiempos' : 'Ver Tiempos'}
+
                               </Button>
                            </div>
 
@@ -1611,12 +1605,12 @@ const Detail = () => {
                      {type_detail !== 'pr' &&
                         <ViewFooter>
                            <section className='flex gap-1 items-center'>
-                              
+
                               <Menu
                                  direction='top'
                                  align='start'
                                  menuButton={
-                                    <MenuButton 
+                                    <MenuButton
                                        className='flex items-center gap-3 bg-slate-100 hover:bg-slate-200/60 text-slate-600 disabled:text-opacity-40 px-2 h-9 rounded-lg font-semibold transition duration-200 disabled:line-through disabled:cursor-not-allowed disabled:bg-slate-50'
                                        disabled={validation().isSave}
                                     >
@@ -1624,71 +1618,71 @@ const Detail = () => {
                                        Acciones
                                     </MenuButton>
                                  }>
+                                 <MenuItem
+                                    className='flex justify-between items-center gap-2 border-y border-zinc-200/60'
+                                    onClick={() =>
+                                       deleteActivity({
+                                          id_actividad: activity.id_det,
+                                          encargado: optionsArray.users.find(ou => ou.label === activity.encargado_actividad),
+                                          isFather,
+                                          isTicket
+                                       })
+                                    }
+                                 >
+                                    Eliminar
+                                    <i className='fas fa-trash text-red-400' />
+                                 </MenuItem>
+
+                                 {(activity.id_tipo_actividad !== 3) &&
                                     <MenuItem
-                                       className='flex justify-between items-center gap-2 border-y border-zinc-200/60'
-                                       onClick={() =>
-                                          deleteActivity({
-                                             id_actividad: activity.id_det,
-                                             encargado: optionsArray.users.find(ou => ou.label === activity.encargado_actividad),
-                                             isFather,
-                                             isTicket
-                                          })
-                                       }
+                                       className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
+                                       onClick={openModalClone}
                                     >
-                                       Eliminar
-                                       <i className='fas fa-trash text-red-400' />
+                                       Clonar
+                                       <i className='fas fa-clone text-zinc-600' />
                                     </MenuItem>
-   
-                                    {(activity.id_tipo_actividad !== 3) &&
-                                       <MenuItem
-                                          className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
-                                          onClick={openModalClone}
-                                       >
-                                          Clonar
-                                          <i className='fas fa-clone text-zinc-600' />
-                                       </MenuItem>
-                                    }
-   
-                                    {isTicket && 
-                                       <MenuItem
-                                          className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
-                                       >
-                                          <a
-                                             className='w-full flex items-center justify-between gap-2'
-                                             target='_blank'
-                                             rel='noreferrer'
-                                             title='Tickets (Eventos)'
-                                             href={`https://tickets.zproduccion.cl/#/in/${activity.num_ticket_edit}`}>
-                                             Ticket   
-                                             <i className='fas fa-ticket-alt text-blue-400' />
-                                          </a>
-                                       </MenuItem>
-                                    }
-   
-                                    {!(activity.estado !== 2 || activity.id_tipo_actividad !== 1 || (isFather && isTicket)) &&
-                                       <MenuItem
-                                          className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
-                                          onClick={handleOpenModalRevision}
-                                       >
-                                          Para Revisión
-                                          <i className='fas fa-eye text-orange-400' />
-                                       </MenuItem>
-                                    }
-   
-                                    {!((activity.id_tipo_actividad === 1 && !isFather) || activity.estado === 1 || !isTicket) &&
-                                       <MenuItem
-                                          className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
-                                          onClick={() => finishActivity(activity.id_tipo_actividad, isFather)}
-                                       >
-                                          {isFather ? 'Terminar' : 'Procesar'}
-                                          <i className='fas fa-check-double text-indigo-400' />
-                                       </MenuItem>
-                                    }
+                                 }
+
+                                 {isTicket &&
+                                    <MenuItem
+                                       className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
+                                    >
+                                       <a
+                                          className='w-full flex items-center justify-between gap-2'
+                                          target='_blank'
+                                          rel='noreferrer'
+                                          title='Tickets (Eventos)'
+                                          href={`https://tickets.zproduccion.cl/#/in/${activity.num_ticket_edit}`}>
+                                          Ticket
+                                          <i className='fas fa-ticket-alt text-blue-400' />
+                                       </a>
+                                    </MenuItem>
+                                 }
+
+                                 {!(activity.estado !== 2 || activity.id_tipo_actividad !== 1 || (isFather && isTicket)) &&
+                                    <MenuItem
+                                       className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
+                                       onClick={handleOpenModalRevision}
+                                    >
+                                       Para Revisión
+                                       <i className='fas fa-eye text-orange-400' />
+                                    </MenuItem>
+                                 }
+
+                                 {!((activity.id_tipo_actividad === 1 && !isFather) || activity.estado === 1 || !isTicket) &&
+                                    <MenuItem
+                                       className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
+                                       onClick={() => finishActivity(activity.id_tipo_actividad, isFather)}
+                                    >
+                                       {isFather ? 'Terminar' : 'Procesar'}
+                                       <i className='fas fa-check-double text-indigo-400' />
+                                    </MenuItem>
+                                 }
                               </Menu>
-   
+
                               <Button
                                  disabled={validation().isSave}
-                                 hidden={activity.estado === 1|| (activity.es_padre === 1 && activity.es_hijo === 0 && isTicket)}
+                                 hidden={activity.estado === 1 || (activity.es_padre === 1 && activity.es_hijo === 0 && isTicket)}
                                  className={
                                     activity.estado_play_pausa === 2
                                        ? 'text-red-400 bg-red-50 hover:bg-red-100'
@@ -1716,7 +1710,7 @@ const Detail = () => {
                                  onClick={handleRunActivityPending}
                                  reset={reset}
                               />
-   
+
                            </section>
 
                            <section className='flex justify-end gap-2'>
@@ -1740,128 +1734,128 @@ const Detail = () => {
                {/* modal reject */}
                {modalReject &&
                   <Modal
-                  showModal={modalReject}
-                  isBlur={false}
-                  onClose={onCloseModals}
-                  className='max-w-xl'
-                  padding='p-4 md:p-6'
-                  title='Terminar actividad de entrega'>
+                     showModal={modalReject}
+                     isBlur={false}
+                     onClose={onCloseModals}
+                     className='max-w-xl'
+                     padding='p-4 md:p-6'
+                     title='Terminar actividad de entrega'>
 
-                  <div>
+                     <div>
 
-                     <p className='text-center mt-10'>
-                        ¿La actividad fue aprobada o rechazada por el cliente?
-                     </p>
+                        <p className='text-center mt-10'>
+                           ¿La actividad fue aprobada o rechazada por el cliente?
+                        </p>
 
-                     <section className='flex justify-around mt-5 w-80 mx-auto'>
-                        
-                        <Switch 
-                           value={sw.a.value} 
-                           name='Aprobada' 
-                           onChange={(value) => setSw({a: {...sw.a, value}, b: {...sw.b, value: false}})}
-                         />
-                        
-                        <Switch 
-                           value={sw.b.value} 
-                           name='Rechazada' 
-                           onChange={(value) => setSw({a: {...sw.a, value: false}, b: {...sw.b, value}})}
-                         />
-                        
-                     </section>
-                     
-                     <section className='flex justify-between mt-10'>
-                        <Button
-                           className='text-red-500 hover:bg-red-100'
-                           onClick={onCloseModals}>
-                           Cancelar
-                        </Button>
-                        <Button
-                           className='text-emerald-500 hover:bg-emerald-100'
-                           onClick={handleFinshDeliveryActivity}>
-                           terminar actividad
-                        </Button>
-                     </section>
-                  </div>
+                        <section className='flex justify-around mt-5 w-80 mx-auto'>
+
+                           <Switch
+                              value={sw.a.value}
+                              name='Aprobada'
+                              onChange={(value) => setSw({ a: { ...sw.a, value }, b: { ...sw.b, value: false } })}
+                           />
+
+                           <Switch
+                              value={sw.b.value}
+                              name='Rechazada'
+                              onChange={(value) => setSw({ a: { ...sw.a, value: false }, b: { ...sw.b, value } })}
+                           />
+
+                        </section>
+
+                        <section className='flex justify-between mt-10'>
+                           <Button
+                              className='text-red-500 hover:bg-red-100'
+                              onClick={onCloseModals}>
+                              Cancelar
+                           </Button>
+                           <Button
+                              className='text-emerald-500 hover:bg-emerald-100'
+                              onClick={handleFinshDeliveryActivity}>
+                              terminar actividad
+                           </Button>
+                        </section>
+                     </div>
                   </Modal>}
 
                {/* modal PR */}
                {modalPR &&
                   <Modal
-                  showModal={modalPR}
-                  isBlur={false}
-                  onClose={onCloseModals}
-                  className='max-w-xl'
-                  padding='p-4 md:p-6'
-                  title='Pasar a revisión'>
+                     showModal={modalPR}
+                     isBlur={false}
+                     onClose={onCloseModals}
+                     className='max-w-xl'
+                     padding='p-4 md:p-6'
+                     title='Pasar a revisión'>
 
-                  <div>
+                     <div>
 
-                     <section className='grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3 mb-7'>
+                        <section className='grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3 mb-7'>
 
-                        <Input 
-                           field='Tiempo Cliente (hrs)' 
-                           name='tiempo_cliente'
-                           value={tiempo_cliente} 
-                           onChange={onChangeValues}
-                           isNumber
-                        />
-
-                        <Input 
-                           field='Tiempo Zionit  (hrs)' 
-                           name='tiempo_zionit'
-                           value={tiempo_zionit} 
-                           onChange={onChangeValues}
-                           isNumber
-                        />
-
-                        <div className='mt-2 text-center'>
-                           <h5 className='text-xs mb-2.5'>Tiempo Total  (hrs)</h5>
-                           <NumberFormat 
-                              value={values.tiempo_total} 
-                              decimalScale={4} 
-                              fixedDecimalScale={false}
-                              displayType='text' 
+                           <Input
+                              field='Tiempo Cliente (hrs)'
+                              name='tiempo_cliente'
+                              value={tiempo_cliente}
+                              onChange={onChangeValues}
+                              isNumber
                            />
-                        </div>
 
-                     </section>
-
-                     {isTicket &&
-                        <section className='flex gap-2 justify-between items-baseline'>
-                           
-                           <p className='text-sm text-gray-600'>
-                              ¿Desea agregar un mensaje al pasar a revisión?
-                           </p>
-
-                           <CheckBox
-                              value={showContent}
-                              onChange={e => setshowContent(e.target.checked)}
+                           <Input
+                              field='Tiempo Zionit  (hrs)'
+                              name='tiempo_zionit'
+                              value={tiempo_zionit}
+                              onChange={onChangeValues}
+                              isNumber
                            />
-                              
+
+                           <div className='mt-2 text-center'>
+                              <h5 className='text-xs mb-2.5'>Tiempo Total  (hrs)</h5>
+                              <NumberFormat
+                                 value={values.tiempo_total}
+                                 decimalScale={4}
+                                 fixedDecimalScale={false}
+                                 displayType='text'
+                              />
+                           </div>
+
                         </section>
-                     }
 
-                     {showContent && (
-                        <TextArea
-                           field='mensaje'
-                           name='msg_revision'
-                           value={msg_revision}
-                           onChange={onChangeValues}
-                        />
-                     )}
-                     <section className='flex justify-between mt-5'>
-                        <Button
-                           className='text-red-500 hover:bg-red-100'
-                           onClick={onCloseModals}>
-                           Cancelar
-                        </Button>
-                        <Button
-                           className='text-emerald-500 hover:bg-emerald-100'
-                           onClick={handleUpdateActivityState}>
-                           pasar a revisión
-                        </Button>
-                     </section>
-                  </div>
+                        {isTicket &&
+                           <section className='flex gap-2 justify-between items-baseline'>
+
+                              <p className='text-sm text-gray-600'>
+                                 ¿Desea agregar un mensaje al pasar a revisión?
+                              </p>
+
+                              <CheckBox
+                                 value={showContent}
+                                 onChange={e => setshowContent(e.target.checked)}
+                              />
+
+                           </section>
+                        }
+
+                        {showContent && (
+                           <TextArea
+                              field='mensaje'
+                              name='msg_revision'
+                              value={msg_revision}
+                              onChange={onChangeValues}
+                           />
+                        )}
+                        <section className='flex justify-between mt-5'>
+                           <Button
+                              className='text-red-500 hover:bg-red-100'
+                              onClick={onCloseModals}>
+                              Cancelar
+                           </Button>
+                           <Button
+                              className='text-emerald-500 hover:bg-emerald-100'
+                              onClick={handleUpdateActivityState}>
+                              pasar a revisión
+                           </Button>
+                        </section>
+                     </div>
                   </Modal>}
 
                {/* modal detentions */}
@@ -1872,18 +1866,18 @@ const Detail = () => {
                      onClose={onCloseModals}
                      className='max-w-7xl'
                      padding='p-4 md:p-6'
-                     title={ type_detail !== 'pr' 
+                     title={type_detail !== 'pr'
                         ? `Detenciones de actividad ${activity.id_det}`
-                        : `Detenciones de actividad ${activity.id_det}` 
-                        }
-                     >
+                        : `Detenciones de actividad ${activity.id_det}`
+                     }
+                  >
 
                      <div className='grid gap-1 mt-10 w-[1216px] pr-6 xl:pr-0 overflow-auto'>
 
-                        <Box 
-                           colCount={type_detail !== 'pr' ? 7 : 6 } 
-                           className='bg-zinc-100' 
-                           isBlock 
+                        <Box
+                           colCount={type_detail !== 'pr' ? 7 : 6}
+                           className='bg-zinc-100'
+                           isBlock
                         >
 
                            <Span />
@@ -1892,14 +1886,14 @@ const Detail = () => {
 
                            <Span colCount={2}>hasta</Span>
 
-                           <Span colCount={type_detail !== 'pr' ? 1 : 2 } >control</Span>
+                           <Span colCount={type_detail !== 'pr' ? 1 : 2} >control</Span>
 
                         </Box>
 
-                        <Box 
-                           colCount={type_detail !== 'pr' ? 7 : 6 } 
-                           className='bg-zinc-100' 
-                           isBlock 
+                        <Box
+                           colCount={type_detail !== 'pr' ? 7 : 6}
+                           className='bg-zinc-100'
+                           isBlock
                         >
 
                            <Span>Nº</Span>
@@ -1916,9 +1910,9 @@ const Detail = () => {
 
                         </Box>
 
-                        <Box 
+                        <Box
                            hidden={type_detail === 'pr'}
-                           colCount={type_detail !== 'pr' ? 7 : 6 } 
+                           colCount={type_detail !== 'pr' ? 7 : 6}
                            isBlock
                         >
 
@@ -1976,17 +1970,17 @@ const Detail = () => {
 
                            <Span>
                               {moment(`${fdetencion} ${hdetencion}`).isValid() && moment(`${finicio} ${hinicio}`).isValid() ?
-                                 <NumberFormat 
-                                    value={moment(`${fdetencion} ${hdetencion}`).diff(moment(`${finicio} ${hinicio}`),'hours', true)}
+                                 <NumberFormat
+                                    value={moment(`${fdetencion} ${hdetencion}`).diff(moment(`${finicio} ${hinicio}`), 'hours', true)}
                                     decimalScale={2}
                                     fixedDecimalScale={false}
-                                    displayType='text' 
+                                    displayType='text'
                                  />
                                  : 0
                               }
                            </Span>
 
-                           {type_detail !== 'pr' && 
+                           {type_detail !== 'pr' &&
                               <Button
                                  className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 mx-auto'
                                  onClick={handleCreateDetention}>
@@ -2004,9 +1998,9 @@ const Detail = () => {
                            {detentions.length > 0 &&
                               detentions.map((d, i) => (
 
-                                 <Box 
-                                    colCount={type_detail !== 'pr' ? 7 : 6 } 
-                                    isBlock 
+                                 <Box
+                                    colCount={type_detail !== 'pr' ? 7 : 6}
+                                    isBlock
                                     key={d.id_pausa}
                                  >
 
@@ -2025,7 +2019,7 @@ const Detail = () => {
                                                    return { ...t, fecha_inicio: e.target.value }
                                                 }
                                                 return t
-                                          }))
+                                             }))
                                        }
                                     />
 
@@ -2041,7 +2035,7 @@ const Detail = () => {
                                                    return { ...t, hora_inicio: e.target.value }
                                                 }
                                                 return t
-                                          }))
+                                             }))
                                        }
                                     >
                                        {inputProps => (
@@ -2066,7 +2060,7 @@ const Detail = () => {
                                                    return { ...t, fecha_detencion: e.target.value }
                                                 }
                                                 return t
-                                          }))
+                                             }))
                                        }
                                     />
 
@@ -2082,7 +2076,7 @@ const Detail = () => {
                                                    return { ...t, hora_detencion: e.target.value }
                                                 }
                                                 return t
-                                          }))
+                                             }))
                                        }
                                     >
                                        {inputProps => (
@@ -2097,16 +2091,16 @@ const Detail = () => {
 
                                     <Span>
                                        {moment(`${d.fecha_detencion} ${d.hora_detencion}`).isValid() && moment(`${d.fecha_inicio} ${d.hora_inicio}`).isValid() &&
-                                          <NumberFormat 
-                                             value={moment(`${d.fecha_detencion} ${d.hora_detencion}`).diff(moment(`${d.fecha_inicio} ${d.hora_inicio}`),'hours', true)}
+                                          <NumberFormat
+                                             value={moment(`${d.fecha_detencion} ${d.hora_detencion}`).diff(moment(`${d.fecha_inicio} ${d.hora_inicio}`), 'hours', true)}
                                              decimalScale={2}
                                              fixedDecimalScale={false}
-                                             displayType='text' 
+                                             displayType='text'
                                           />
                                        }
                                     </Span>
 
-                                    {type_detail !== 'pr' && 
+                                    {type_detail !== 'pr' &&
                                        <div className='flex justify-center gap-2'>
 
                                           <Button
@@ -2116,8 +2110,8 @@ const Detail = () => {
                                                 handleUpdateDetention({
                                                    id_pausa: d.id_pausa,
                                                    fecha_inicio: timeValues[i]?.fecha_inicio,
-                                                   fecha_detencion:  timeValues[i]?.fecha_detencion,
-                                                   hora_inicio:  timeValues[i]?.hora_inicio,
+                                                   fecha_detencion: timeValues[i]?.fecha_detencion,
+                                                   hora_inicio: timeValues[i]?.hora_inicio,
                                                    hora_detencion: timeValues[i]?.hora_detencion,
                                                 })
                                              }
@@ -2157,10 +2151,9 @@ const Detail = () => {
                               activity.notas.map(note => (
                                  <li
                                     key={note.id_nota}
-                                    className={`flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 cursor-pointer shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200 ${
-                                       values.id === note.id_nota &&
+                                    className={`flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 cursor-pointer shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200 ${values.id === note.id_nota &&
                                        'border-2 border-blue-400'
-                                    }`}
+                                       }`}
                                     onClick={() => {
                                        setValues({
                                           desc: note.desc_nota,
@@ -2273,20 +2266,23 @@ const Detail = () => {
                   </Modal>}
 
                {/* modal pause */}
-               {modalPause && 
+               {modalPause &&
                   <Modal
                      showModal={modalPause}
                      isBlur={false}
                      onClose={onCloseModals}
                      className='max-w-2xl'
                      padding='p-4 md:p-6'
-                     title={`Pausar actividad: ${activity.actividad}, ${activity.id_det}`}>
+                     title={`Pausar actividad: ${activity.actividad}, ${activity.id_det}`}
+                  >
+
                      <div className='grid gap-5'>
                         <h5 className='text-sm'>Descripcion actividad: </h5>
                         <p className='text-sm whitespace-pre-wrap max-h-44 overflow-custom p-1.5 rounded-lg bg-black/5'>
                            {values.content}
                         </p>
                         <h5 className='text-sm'>Pausas rapidas: </h5>
+
                         <ul className='max-h-56 overflow-custom'>
                            {defaultPauses.map(pause => (
                               <li
@@ -2297,18 +2293,21 @@ const Detail = () => {
                                  </p>
                                  <button
                                     className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
-                                    onClick={() => {
-                                       onPlayPause({
-                                          id_actividad: activity.id_det,
-                                          mensaje: pause.desc,
-                                       })
-                                       onCloseModals()
-                                    }}>
+                                    onClick={() => onPause({ isDefaultPause: true, mensaje: pause.desc })}>
                                     <i className='fas fa-pause fa-sm' />
                                  </button>
                               </li>
                            ))}
                         </ul>
+
+                        <CustomSelect
+                           label='Tipo de pausa'
+                           options={optionsArray?.pause_type}
+                           isDefaultOptions
+                           value={options?.pt}
+                           onChange={(option) => setOptions({ ...options, pt: option })}
+                        />
+
                         <TextArea
                            field='Mensaje pausa'
                            value={values.desc}
@@ -2324,27 +2323,27 @@ const Detail = () => {
                            </Button>
                            <Button
                               className='w-max text-red-500 hover:bg-red-100'
-                              onClick={onPause}>
+                              onClick={() => onPause({ isDefaultPause: false })}>
                               Pausar actividad
                            </Button>
                         </footer>
                      </div>
+
                   </Modal>}
 
                {/* modal clone */}
-               {modalClone && 
+               {modalClone &&
                   <Modal
                      showModal={modalClone}
                      isBlur={false}
                      onClose={onCloseModals}
                      padding='p-4 md:p-6'
-                     title={`Clonar actividad: ${activity.id_det}, ${
-                        activity.actividad || 'Sin titulo'
-                     }`}>
+                     title={`Clonar actividad: ${activity.id_det}, ${activity.actividad || 'Sin titulo'
+                        }`}>
 
-                     <AlertBar 
-                        validation={validation().isClone} 
-                        isCustom={cloneOptions?.ur?.id !== cloneOptions?.ue?.id} 
+                     <AlertBar
+                        validation={validation().isClone}
+                        isCustom={cloneOptions?.ur?.id !== cloneOptions?.ue?.id}
                         customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
                      />
 
@@ -2371,8 +2370,8 @@ const Detail = () => {
                                  options={
                                     options.pr?.value
                                        ? subProjects?.filter(
-                                             s => s.id === options.pr?.value
-                                          )
+                                          s => s.id === options.pr?.value
+                                       )
                                        : subProjects
                                  }
                                  value={cloneOptions.sp}

@@ -1,5 +1,5 @@
 import Select, { components } from 'react-select'
-import Tooltip, {TooltipPrimitive} from '@atlaskit/tooltip'
+import Tooltip, { TooltipPrimitive } from '@atlaskit/tooltip'
 import styled from '@emotion/styled';
 
 const InlineDialog = styled(TooltipPrimitive)`
@@ -34,6 +34,7 @@ const CustomSelect = ({
    width,
    className,
    showTooltip = false,
+   isDefaultOptions = false
 }) => (
    <div className={`grid gap-1 capitalize text-sm ${width} ${className}`}>
       {label}
@@ -43,7 +44,10 @@ const CustomSelect = ({
          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
          placeholder='Seleccione'
          className='capitalize w-full'
-         options={[{ value: null, label: defaultLabel }].concat(options)}
+         options={!isDefaultOptions ?
+            [{ value: null, label: defaultLabel }].concat(options)
+            : options
+         }
          value={value}
          onChange={onChange}
          maxMenuHeight={menuHeight}

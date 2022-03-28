@@ -27,15 +27,15 @@ import moment from 'moment'
 import TdSwitch from '../components/table2/customTD/TdSwitch'
 
 const Revision = () => {
-   const { 
-      activitiesPR, 
+   const {
+      activitiesPR,
       total,
       toggleCheckActivity,
       onDistribution
    } = useActivityPr()
 
    // context
-   const { 
+   const {
       savePRFilters,
       prPager,
       setPRPager,
@@ -57,10 +57,10 @@ const Revision = () => {
 
    // hooks
    const size = useWindowSize()
-   const [{ 
-      id, 
-      title, 
-      desc, 
+   const [{
+      id,
+      title,
+      desc,
       ticket,
       reject_gloss,
    }, onChangeValues, reset, onPreset] = useForm({
@@ -76,21 +76,22 @@ const Revision = () => {
 
    // functions
    const onFilter = () => {
+
       const filters = {
-         estado: 
-            options.st?.length > 0 ? options.st.map(item => item.value) : [],
+         estado:
+            options.st?.length > 0 && options.st.some(o => o.value !== null) ? options.st.map(item => item.value) : [],
          proyecto:
-            options.pr?.length > 0 ? options.pr.map(item => item.value) : [],
+            options.pr?.length > 0 && options.pr.some(o => o.value !== null) ? options.pr.map(item => item.value) : [],
          encargado:
-            options.ue?.length > 0 ? options.ue.map(item => item.label) : [],
+            options.ue?.length > 0 && options.ue.some(o => o.value !== null) ? options.ue.map(item => item.label) : [],
          solicitante:
-            options.us?.length > 0 ? options.us.map(item => item.label) : [],
+            options.us?.length > 0 && options.us.some(o => o.value !== null) ? options.us.map(item => item.label) : [],
          subProy:
-            options.sp?.length > 0 ? options.sp.map(item => item.value) : [],
+            options.sp?.length > 0 && options.sp.some(o => o.value !== null) ? options.sp.map(item => item.value) : [],
          revisor:
-            options.ur?.length > 0 ? options.ur.map(item => item.id) : [],
-         id_tipo_actividad: 
-            options.ita?.length > 0 ? options.ita.map(item => item.value) : [],
+            options.ur?.length > 0 && options.ur.some(o => o.value !== null) ? options.ur.map(item => item.id) : [],
+         id_tipo_actividad:
+            options.ita?.length > 0 && options.ita.some(o => o.value !== null) ? options.ita.map(item => item.value) : [],
          id_actividad: id,
          titulo: title,
          numero_ticket: ticket,
@@ -107,7 +108,7 @@ const Revision = () => {
    const onClear = () => {
       savePRFilters({ reset: true })
       setOptions({
-         st: {value: 3, label: 'PARA REVISION'},
+         st: { value: 3, label: 'PARA REVISION' },
          pr: [],
          ue: [],
          us: [],
@@ -138,8 +139,8 @@ const Revision = () => {
       savePRFilters({ payload: { offset, limit: prPager.limit } })
    }
 
-   const openModalReject = (id, estado) => { 
-      setActivityData({...activityData, id, estado})
+   const openModalReject = (id, estado) => {
+      setActivityData({ ...activityData, id, estado })
       toggleModalReject(true)
    }
 
@@ -148,52 +149,56 @@ const Revision = () => {
       reset()
    }
 
-   const onChangeCheckedActivity = ({id, title, estado, revisado}) => {
+   const onChangeCheckedActivity = ({ id, title, estado, revisado }) => {
 
       Alert({
          title: 'Atención',
-         content: `${revisado ? 'Aprobar':'Rechazar'} revisión de la siguiente actividad: <strong>${title}</strong>, <strong>${id}</strong>`,
-         confirmText: `${revisado ? 'Si, Aprobar':'Si, Rechazar'}`,
+         content: `${revisado ? 'Aprobar' : 'Rechazar'} revisión de la siguiente actividad: <strong>${title}</strong>, <strong>${id}</strong>`,
+         confirmText: `${revisado ? 'Si, Aprobar' : 'Si, Rechazar'}`,
          cancelText: 'No, cancelar',
-         action: () => {revisado ?
-            toggleCheckActivity({id_actividad: id, estado, revisado})
-            : openModalReject(id, estado)
+         action: () => {
+            revisado ?
+               toggleCheckActivity({ id_actividad: id, estado, revisado })
+               : openModalReject(id, estado)
          }
       })
    }
 
    const handleToggleRejectActivity = () => {
-      toggleCheckActivity({id_actividad: activityData.id, estado: activityData.estado, revisado: false, glosa_rechazo: reject_gloss})
+      toggleCheckActivity({ id_actividad: activityData.id, estado: activityData.estado, revisado: false, glosa_rechazo: reject_gloss })
       onCloseModal()
    }
 
    useEffect(() => {
+
       setOptions({
-         st: optionsArray?.status?.find(os => os.value === prFilters.estado[0]),
-         pr: optionsArray?.projects?.filter(op => {
+         st: !options?.st?.some(o => o.value === null) ? optionsArray?.status?.filter(os => {
+            return prFilters.estado.includes(os.value)
+         }) : [{ value: null, label: 'Todos' }],
+         pr: !options?.pr?.some(o => o.value === null) ? optionsArray?.projects?.filter(op => {
             return prFilters.proyecto.includes(op.value)
-         }),
-         ue: optionsArray?.users?.filter(ou => {
+         }) : [{ value: null, label: 'Todos' }],
+         ue: !options?.ue?.some(o => o.value === null) ? optionsArray?.users?.filter(ou => {
             return prFilters.encargado.includes(ou.value)
-         }),
-         us: optionsArray?.users?.filter(ou => {
+         }) : [{ value: null, label: 'Todos' }],
+         us: !options?.us?.some(o => o.value === null) ? optionsArray?.users?.filter(ou => {
             return prFilters.solicitante.includes(ou.value)
-         }),
-         ur: optionsArray?.users?.filter(ou => {
+         }) : [{ value: null, label: 'Todos' }],
+         ur: !options?.ur?.some(o => o.value === null) ? optionsArray?.users?.filter(ou => {
             return prFilters.revisor.includes(ou.id)
-         }),
-         sp: optionsArray?.subProjects?.filter(os => {
+         }) : [{ value: null, label: 'Todos' }],
+         sp: !options?.sp?.some(o => o.value === null) ? optionsArray?.subProjects?.filter(os => {
             return prFilters.subProy.includes(os.value)
-         }),
-         ita: optionsArray?.activity_type?.filter(oi => {
+         }) : [{ value: null, label: 'Todos' }],
+         ita: !options?.ita?.some(o => o.value === null) ? optionsArray?.activity_type?.filter(oi => {
             return prFilters.id_tipo_actividad.includes(oi.value)
-         }),
+         }) : [{ value: null, label: 'Todos' }],
       })
 
       onPreset({
-         id: prFilters.id_actividad, 
-         title: prFilters.titulo, 
-         desc: prFilters.descripcion, 
+         id: prFilters.id_actividad,
+         title: prFilters.titulo,
+         desc: prFilters.descripcion,
          ticket: prFilters.numero_ticket
       })
 
@@ -212,19 +217,19 @@ const Revision = () => {
                   <tr className='text-center capitalize'>
 
                      <Th>
-                        <label 
+                        <label
                            htmlFor='solo_padres'
                            className='flex gap-2 items-center text-sm font-semibold mt-2 px-2 py-1 mx-auto w-max rounded-full bg-zinc-200 cursor-pointer'
                         >
                            Solo padres
-                           <input 
+                           <input
                               className='mt-1 cursor-pointer'
-                              id='solo_padres' 
+                              id='solo_padres'
                               type="checkbox"
-                              checked={soloPadre} 
+                              checked={soloPadre}
                               onChange={e => setSoloPadre(e.target.checked)}
                            />
-                          
+
                         </label>
                      </Th>
 
@@ -235,6 +240,7 @@ const Revision = () => {
                            value={options.ita}
                            options={activity_type}
                            isMulti
+                           defaultOptions
                            height='auto'
                            onChange={option =>
                               setOptions({ ...options, ita: option })
@@ -307,6 +313,7 @@ const Revision = () => {
                            value={options.pr}
                            options={projects}
                            isMulti
+                           defaultOptions
                            height={400}
                            showTooltip
                            onChange={option =>
@@ -340,12 +347,13 @@ const Revision = () => {
                               options.pr?.length > 1
                                  ? []
                                  : options.pr?.length > 0
-                                 ? subProjects?.filter(
-                                    s => s.id === options.pr[0]?.value
-                                 )
-                                 : subProjects
+                                    ? subProjects?.filter(
+                                       s => s.id === options.pr[0]?.value
+                                    )
+                                    : subProjects
                            }
                            isMulti
+                           defaultOptions
                            isOrder={false}
                            onChange={option =>
                               setOptions({ ...options, sp: option })
@@ -433,6 +441,7 @@ const Revision = () => {
                            value={options.us}
                            options={users}
                            isMulti
+                           defaultOptions
                            height='auto'
                            onChange={option =>
                               setOptions({ ...options, us: option })
@@ -463,6 +472,7 @@ const Revision = () => {
                            value={options.ue}
                            options={users}
                            isMulti
+                           defaultOptions
                            height='auto'
                            onChange={option =>
                               setOptions({ ...options, ue: option })
@@ -493,6 +503,7 @@ const Revision = () => {
                            value={options.ur}
                            options={users}
                            isMulti
+                           defaultOptions
                            height='auto'
                            onChange={option =>
                               setOptions({ ...options, ur: option })
@@ -648,19 +659,18 @@ const Revision = () => {
                            `}
                            onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
                         >
-                              
+
                            <Td><Numerator className='mx-auto' number={i + 1} /></Td>
 
                            <Td>
                               <span className={`
                                     px-2 py-0.5 font-bold rounded-md text-sm mt-2 block w-max mx-auto capitalize
-                                    ${
-                                       act.id_tipo_actividad === 1 ? 'bg-indigo-200 text-indigo-500' 
-                                          : act.id_tipo_actividad === 2 ? 'bg-emerald-200 text-emerald-500' 
-                                          : act.id_tipo_actividad === 3 ? 'bg-red-200 text-red-500' 
-                                          : act.id_tipo_actividad === 4 ? 'bg-orange-200 text-orange-500' 
-                                          : 'bg-zinc-100 text-black'
-                                    }
+                                    ${act.id_tipo_actividad === 1 ? 'bg-indigo-200 text-indigo-500'
+                                    : act.id_tipo_actividad === 2 ? 'bg-emerald-200 text-emerald-500'
+                                       : act.id_tipo_actividad === 3 ? 'bg-red-200 text-red-500'
+                                          : act.id_tipo_actividad === 4 ? 'bg-orange-200 text-orange-500'
+                                             : 'bg-zinc-100 text-black'
+                                 }
                                  `}
                               >
                                  {act.desc_tipo_actividad}
@@ -668,11 +678,11 @@ const Revision = () => {
                            </Td>
 
                            <Td>
-                              <div className='flex items-center justify-center gap-3'> 
-                                 <MarkActivity 
+                              <div className='flex items-center justify-center gap-3'>
+                                 <MarkActivity
                                     position='block'
                                     condicion={act.num_ticket_edit > 0}
-                                    hidden={!(act.es_padre === 1 && act.es_hijo === 0)} 
+                                    hidden={!(act.es_padre === 1 && act.es_hijo === 0)}
                                  >
                                     <i className='fas fa-hat-cowboy fa-lg' />
                                  </MarkActivity>
@@ -687,7 +697,7 @@ const Revision = () => {
                            <Td>{act.nombre_sub_proy ?? '--'}</Td>
 
                            <Td>
-                              <span 
+                              <span
                                  title='Tiemppo total cobrable'
                                  className='px-2 py-0.5 rounded-full bg-green-300/80 font-bold'
                               >
@@ -703,8 +713,8 @@ const Revision = () => {
                               {act.actividad || 'Sin Titulo'}
                            </Td>
 
-                           <Td 
-                              isMultiLine={multiline} 
+                           <Td
+                              isMultiLine={multiline}
                               align='text-left'
                            >
                               {act.func_objeto}
@@ -720,12 +730,12 @@ const Revision = () => {
 
                            <Td>{moment(`${act.fecha_revicion} ${act.hora_revicion}`).format('DD-MM-yyyy, HH:MM') ?? 'sin fecha'}</Td>
 
-                           <TdSwitch 
+                           <TdSwitch
                               state={act.estado}
-                              onDistribution={({distribuciones, id_actividad}) => onDistribution({distribuciones, id_actividad})}
+                              onDistribution={({ distribuciones, id_actividad }) => onDistribution({ distribuciones, id_actividad })}
                               getId={(id_callback) => setIsActive(id_callback)}
-                              onChangeCheckedActivity={({id, title, revisado, estado}) => onChangeCheckedActivity({id, title, revisado, estado})} 
-                              {...act} 
+                              onChangeCheckedActivity={({ id, title, revisado, estado }) => onChangeCheckedActivity({ id, title, revisado, estado })}
+                              {...act}
                            />
                         </tr>
                      ))}
@@ -752,7 +762,7 @@ const Revision = () => {
                onChange={onChangePage}
                page={prPager.page}
             />
-            
+
             <StaticSelect value={prPager.limit} onChange={onChangeSelect} />
 
          </FooterPage>
@@ -765,7 +775,7 @@ const Revision = () => {
             padding='p-6'
             title='Motivo rechazo revisión'
          >
-            <TextArea 
+            <TextArea
                field='descripción'
                name='reject_gloss'
                value={reject_gloss}
@@ -773,8 +783,8 @@ const Revision = () => {
             />
 
             <footer className='flex justify-between mt-7'>
-               
-               <Button 
+
+               <Button
                   className='bg-red-100 hover:bg-red-200 text-red-500'
                   onClick={() => {
                      toggleModalReject(false)
@@ -784,7 +794,7 @@ const Revision = () => {
                   cancelar
                </Button>
 
-               <Button 
+               <Button
                   className='bg-yellow-100 hover:bg-yellow-200 text-yellow-500'
                   onClick={handleToggleRejectActivity}
                >

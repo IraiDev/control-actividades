@@ -5,7 +5,6 @@ import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu'
 import { validatePredecessor } from '../../../helpers/helpersFunc'
 import { useForm } from '../../../hooks/useForm'
 import { Alert } from '../../../helpers/alerts'
-import LiNote from '../../ui/LiNote'
 import Modal from '../../ui/Modal'
 import TextArea from '../../ui/TextArea'
 import Button from '../../ui/Button'
@@ -18,6 +17,7 @@ import FloatMenu from '../../ui/FloatMenu'
 import moment from 'moment'
 import { fetchToken } from '../../../helpers/fetch'
 import Tag from '../../ui/Tag'
+import CustomSelect from '../../ui/CustomSelect'
 
 const defaultNotes = [
    { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -59,7 +59,7 @@ const ActivityCard = props => {
 
    const navigate = useNavigate()
 
-   const {optionsArray, user} = useContext(ActivityContext)
+   const { optionsArray, user } = useContext(ActivityContext)
 
    const [{ desc, time }, onChangeValues, reset] = useForm({
       desc: '',
@@ -67,6 +67,7 @@ const ActivityCard = props => {
    })
 
    const [values, setValues] = useState({ desc: '', id: null })
+   const [options, setOptions] = useState({ value: null, label: 'ninguno' })
 
    // modals
    const [modalEdit, toggleModalEdit] = useState(false)
@@ -92,6 +93,7 @@ const ActivityCard = props => {
       toggleModalAdd(false)
       toggleModalPause(false)
       setValues({ desc: '', id: null })
+      setOptions({ value: null, label: 'ninguno' })
    }
 
    const handleNavigate = () => {
@@ -122,11 +124,11 @@ const ActivityCard = props => {
             try {
                const resp = await fetchToken('task/get-times')
                const body = await resp.json()
-      
+
                if (body.ok) {
-      
+
                   const userState = body.tiempos.find(item => item.usuario === userAbrev).estado
-      
+
                   if (userState) {
                      Alert({
                         icon: 'warn',
@@ -138,23 +140,23 @@ const ActivityCard = props => {
                      })
                      return
                   }
-      
+
                   toggleState({ tiempo_estimado: time })
-      
+
                }
             } catch (error) {
                console.log('getTimes error: ', error)
             }
 
          }
-   
+
          validatePredecessor({
-            array: props.predecesoras, 
-            callback, 
-            state: 2, 
+            array: props.predecesoras,
+            callback,
+            state: 2,
             options: optionsArray
          })
-   
+
          reset()
 
       }
@@ -176,7 +178,7 @@ const ActivityCard = props => {
 
    }
 
-   const handlePauseActivity = () => {
+   const handleOpenModalPause = () => {
 
       const userAbrev = optionsArray.users.find(u => u.id === user.id).label
 
@@ -199,6 +201,28 @@ const ActivityCard = props => {
 
    }
 
+   const handlePauseActivity = ({ isDefaultPause, mensaje }) => {
+
+      if (options.value === null) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'Debe seleccionar un tipo de pausa',
+            showCancelButton: false,
+         })
+         return
+      }
+
+      pauseActivity({
+         flag: isDefaultPause,
+         id_actividad: props.id_det,
+         mensaje: isDefaultPause ? mensaje : values.desc,
+         tipo_pausa: options.value,
+      })
+
+      onCloseModals()
+   }
+
    return (
       <>
          <Card
@@ -216,8 +240,8 @@ const ActivityCard = props => {
             {...props}
          >
 
-            {isRestricted && 
-               <span 
+            {isRestricted &&
+               <span
                   className='h-7 w-7 flex justify-center items-center mx-auto absolute top-3 right-12'
                   title='Actividad con predecesores y restricciones'
                >
@@ -230,7 +254,7 @@ const ActivityCard = props => {
                <CardSection colCount={3}>
                   <aside className='capitalize'>
 
-                     <P tag='solicita' value={props.encargado_actividad} />
+                     <P tag='Encargado' value={props.encargado_actividad} />
 
                      <P tag='Prioridad' value={props.num_prioridad} />
 
@@ -265,14 +289,14 @@ const ActivityCard = props => {
                      <span className='block text-transparent h-1.5' ></span>
 
                      <span className='flex gap-1 max-w-max rounded'>
-                        <strong>ID:</strong> 
+                        <strong>ID:</strong>
                         <p className={`
 
                               px-1 rounded font-semibold
                               ${(isFather || isChildrenAndFather) && isTicket ? 'text-amber-600 bg-amber-200/80'
-                                    : isFather || isChildrenAndFather ? 'text-indigo-600 bg-indigo-200/80' : ''}
+                              : isFather || isChildrenAndFather ? 'text-indigo-600 bg-indigo-200/80' : ''}
                            
-                           `} 
+                           `}
                         >
                            {props.id_det}
                         </p>
@@ -309,9 +333,9 @@ const ActivityCard = props => {
                         </Tag>
                      }
                   </div>
-                  
+
                </CardSection>
-               
+
             </CardContent>
 
             <CardFooter>
@@ -326,14 +350,14 @@ const ActivityCard = props => {
                   }}
                   reset={reset}
                />
-               
+
                <Button
                   hidden={ESTADO_PAUSA || (isFather && isTicket)}
                   className='hover:bg-black/5'
                   size='w-7 h-7'
                   onClick={
                      ESTADO_play
-                        ? () => handlePauseActivity()
+                        ? () => handleOpenModalPause()
                         : () => playActivity({ id_actividad: props.id_det, encargado: props.encargado_actividad })
                   }>
                   <i
@@ -346,7 +370,7 @@ const ActivityCard = props => {
                </Button>
 
                <span />
-               
+
                <div>
                   <Menu
                      direction='top'
@@ -480,10 +504,9 @@ const ActivityCard = props => {
                      props.notas.map(note => (
                         <li
                            key={note.id_nota}
-                           className={`flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 shadow mb-1.5 hover:bg-black/10 transition duration-200 ${
-                              values.id === note.id_nota &&
+                           className={`flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 shadow mb-1.5 hover:bg-black/10 transition duration-200 ${values.id === note.id_nota &&
                               'border-2 border-blue-400'
-                           }`}>
+                              }`}>
                            <span
                               className='w-full cursor-pointer text-gray-600 hover:text-blue-400 transition duration-200'
                               onClick={() =>
@@ -551,15 +574,15 @@ const ActivityCard = props => {
             onClose={onCloseModals}
             className='max-w-2xl'
             padding='p-4 md:p-6'
-            title={`Pausar actividad: ${props.actividad || 'Sin titulo'}, ${
-               props.id_det
-            }`}>
+            title={`Pausar actividad: ${props.actividad || 'Sin titulo'}, ${props.id_det
+               }`}>
             <div className='grid gap-5'>
                <h5 className='text-sm'>Descripcion actividad: </h5>
                <p className='text-sm whitespace-pre-wrap max-h-44 overflow-custom p-1.5 rounded-lg bg-black/5'>
                   {props.func_objeto}
                </p>
                <h5 className='text-sm'>Pausas rapidas: </h5>
+
                <ul className='max-h-56 overflow-custom'>
                   {defaultPauses.map(pause => (
                      <li
@@ -568,19 +591,21 @@ const ActivityCard = props => {
                         <p className='text-gray-600 text-sm'>{pause.desc}</p>
                         <button
                            className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
-                           onClick={() => {
-                              pauseActivity({
-                                 flag: true,
-                                 id_actividad: props.id_det,
-                                 mensaje: pause.desc,
-                              })
-                              onCloseModals()
-                           }}>
+                           onClick={() => handlePauseActivity({ isDefaultPause: false, mensaje: pause.desc })}>
                            <i className='fas fa-pause fa-sm' />
                         </button>
                      </li>
                   ))}
                </ul>
+
+               <CustomSelect
+                  label='Tipo de pausa'
+                  options={optionsArray?.pause_type}
+                  isDefaultOptions
+                  value={options}
+                  onChange={(option) => setOptions(option)}
+               />
+
                <TextArea
                   field='Mensaje pausa'
                   value={values.desc}
@@ -595,14 +620,7 @@ const ActivityCard = props => {
                   </Button>
                   <Button
                      className='text-red-500 hover:bg-red-100 place-self-end'
-                     onClick={() => {
-                        pauseActivity({
-                           flag: false,
-                           id_actividad: props.id_det,
-                           mensaje: values.desc,
-                        })
-                        onCloseModals()
-                     }}>
+                     onClick={() => handlePauseActivity({ isDefaultPause: false })}>
                      pausar actividad
                   </Button>
                </footer>

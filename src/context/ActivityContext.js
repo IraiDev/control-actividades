@@ -145,6 +145,13 @@ function ActivityProvider({ children }) {
                      tooltip: item.desc_tipo_actividad,
                   }
                }),
+               pause_type: body.tipos_pausa.map(item => {
+                  return {
+                     label: item.desc_tipo_pausa,
+                     value: item.id_tipo_pausa,
+                     active: item.estado,
+                  }
+               }),
             })
          } else {
             Alert({
