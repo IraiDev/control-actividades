@@ -581,6 +581,15 @@ const ActivityCard = props => {
                <p className='text-sm whitespace-pre-wrap max-h-44 overflow-custom p-1.5 rounded-lg bg-black/5'>
                   {props.func_objeto}
                </p>
+
+               <CustomSelect
+                  label='Tipo de pausa'
+                  options={optionsArray?.pause_type}
+                  isDefaultOptions
+                  value={options}
+                  onChange={(option) => setOptions(option)}
+               />
+
                <h5 className='text-sm'>Pausas rapidas: </h5>
 
                <ul className='max-h-56 overflow-custom'>
@@ -591,20 +600,12 @@ const ActivityCard = props => {
                         <p className='text-gray-600 text-sm'>{pause.desc}</p>
                         <button
                            className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
-                           onClick={() => handlePauseActivity({ isDefaultPause: false, mensaje: pause.desc })}>
+                           onClick={() => handlePauseActivity({ isDefaultPause: true, mensaje: pause.desc })}>
                            <i className='fas fa-pause fa-sm' />
                         </button>
                      </li>
                   ))}
                </ul>
-
-               <CustomSelect
-                  label='Tipo de pausa'
-                  options={optionsArray?.pause_type}
-                  isDefaultOptions
-                  value={options}
-                  onChange={(option) => setOptions(option)}
-               />
 
                <TextArea
                   field='Mensaje pausa'

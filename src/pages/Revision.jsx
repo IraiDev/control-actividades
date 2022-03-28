@@ -31,7 +31,8 @@ const Revision = () => {
       activitiesPR,
       total,
       toggleCheckActivity,
-      onDistribution
+      onDistribution,
+      onPlayPause
    } = useActivityPr()
 
    // context
@@ -169,27 +170,43 @@ const Revision = () => {
       onCloseModal()
    }
 
+   const onPlay = ({ id_actividad }) => {
+
+      onPlayPause({ id_actividad, tipo_pausa: 3 })
+
+   }
+
+   const onPause = ({ mensaje, tipo_pausa, id_actividad }) => {
+      onPlayPause({ mensaje, tipo_pausa, id_actividad })
+   }
+
    useEffect(() => {
 
       setOptions({
          st: !options?.st?.some(o => o.value === null) ? optionsArray?.status?.filter(os => {
             return prFilters.estado.includes(os.value)
          }) : [{ value: null, label: 'Todos' }],
+
          pr: !options?.pr?.some(o => o.value === null) ? optionsArray?.projects?.filter(op => {
             return prFilters.proyecto.includes(op.value)
          }) : [{ value: null, label: 'Todos' }],
+
          ue: !options?.ue?.some(o => o.value === null) ? optionsArray?.users?.filter(ou => {
             return prFilters.encargado.includes(ou.value)
          }) : [{ value: null, label: 'Todos' }],
+
          us: !options?.us?.some(o => o.value === null) ? optionsArray?.users?.filter(ou => {
             return prFilters.solicitante.includes(ou.value)
          }) : [{ value: null, label: 'Todos' }],
+
          ur: !options?.ur?.some(o => o.value === null) ? optionsArray?.users?.filter(ou => {
             return prFilters.revisor.includes(ou.id)
          }) : [{ value: null, label: 'Todos' }],
+
          sp: !options?.sp?.some(o => o.value === null) ? optionsArray?.subProjects?.filter(os => {
             return prFilters.subProy.includes(os.value)
          }) : [{ value: null, label: 'Todos' }],
+
          ita: !options?.ita?.some(o => o.value === null) ? optionsArray?.activity_type?.filter(oi => {
             return prFilters.id_tipo_actividad.includes(oi.value)
          }) : [{ value: null, label: 'Todos' }],
@@ -407,7 +424,7 @@ const Revision = () => {
                            className='w-[200px]'
                            type='table'
                            value={options.st}
-                           options={status?.filter(s => s.value === 12 || s.value === 3 || s.value === 5 || s.value === 13)}
+                           options={status}
                            placeholder='Seleccione'
                            isMulti
                            height='auto'
@@ -735,6 +752,8 @@ const Revision = () => {
                               onDistribution={({ distribuciones, id_actividad }) => onDistribution({ distribuciones, id_actividad })}
                               getId={(id_callback) => setIsActive(id_callback)}
                               onChangeCheckedActivity={({ id, title, revisado, estado }) => onChangeCheckedActivity({ id, title, revisado, estado })}
+                              onPlay={() => onPlay({ id_actividad: act.id_det })}
+                              onPause={({ mensaje, tipo_pausa }) => onPause({ mensaje, tipo_pausa, id_actividad: act.id_det })}
                               {...act}
                            />
                         </tr>

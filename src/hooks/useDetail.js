@@ -435,6 +435,8 @@ export const useDetail = (id) => {
       })
    }
 
+   // FIXME: ver si tengo el id_tipo_pausa por aqui
+
    const getDetentions = async ({ id_actividad }) => {
       try {
          const resp = await fetchToken(
@@ -468,6 +470,7 @@ export const useDetail = (id) => {
       fecha_detencion,
       hora_inicio,
       hora_detencion,
+      tipo_pausa
    }) => {
       setIsLoading(true)
       try {
@@ -479,6 +482,7 @@ export const useDetail = (id) => {
                fecha_detencion,
                hora_inicio,
                hora_detencion,
+               tipo_pausa
             },
             'POST'
          )
@@ -515,6 +519,7 @@ export const useDetail = (id) => {
       fecha_detencion,
       hora_inicio,
       hora_detencion,
+      tipo_pausa
    }) => {
       setIsLoading(true)
       try {
@@ -526,6 +531,7 @@ export const useDetail = (id) => {
                fecha_detencion,
                hora_inicio,
                hora_detencion,
+               tipo_pausa
             },
             'PUT'
          )

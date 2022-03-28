@@ -111,6 +111,28 @@ export const useActivityPr = () => {
       }
    }
 
+    const onPlayPause = async ({ id_actividad, mensaje, tipo_pausa }) => {
+      setIsLoading(true)
+      try {
+         const resp = await fetchToken('task/play-pause', { id_actividad, mensaje, tipo_pausa }, 'POST')
+         const body = await resp.json()
+
+         setIsLoading(false)
+         if (body.ok) fetchActivities()
+         else {
+            Alert({
+               icon: 'error',
+               title: 'Error',
+               content: body.response,
+               showCancelButton: false,
+            })
+         }
+      } catch (err) {
+         console.log(err)
+         setIsLoading(false)
+      }
+   }
+
    useEffect(() => {
       fetchActivities()
       // eslint-disable-next-line
@@ -120,6 +142,7 @@ export const useActivityPr = () => {
       activitiesPR,
       total,
       toggleCheckActivity,
-      onDistribution
+      onDistribution,
+      onPlayPause
    }
 }

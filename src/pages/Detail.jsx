@@ -61,6 +61,7 @@ const initOptions = {
    ur: { label: 'ninguno', value: 0, id: 0 },
    ta: { label: 'ninguno', value: 0 },
    pt: { label: 'ninguno', value: 0 },
+   ptc: { label: 'ninguno', value: null },
 }
 
 const CheckBox = ({ value, onChange }) => {
@@ -182,6 +183,7 @@ const Detail = () => {
    // options
    const [options, setOptions] = useState(initOptions)
    const [cloneOptions, setCloneOptions] = useState(initOptions)
+   const [optionDetentions, setOptionDetentions] = useState([])
 
    // files
    const [files, setFiles] = useState(null)
@@ -241,7 +243,7 @@ const Detail = () => {
    // destructuring
    const { title, description, gloss, ticket, priority, time } = fields
    const { cTitle, cDescription, cPriority, cTicket, cTime, cGloss } = cloneFields
-   const { projects, subProjects, users, activity_type } = optionsArray
+   const { projects, subProjects, users, activity_type, pause_type } = optionsArray
 
    let userStyles = {
       priority: 'S/P',
@@ -855,11 +857,22 @@ const Detail = () => {
          return
       }
 
+      if (options.ptc.value === null) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'Por favor seleccione una <strong>tipo de pausa</strong>',
+            showCancelButton: false,
+         })
+         return
+      }
+
       createDetention({
          fecha_inicio: finicio,
          fecha_detencion: fdetencion,
          hora_inicio: hinicio,
          hora_detencion: hdetencion,
+         tipo_pausa: options.ptc.value,
       })
 
       reset()
@@ -872,6 +885,7 @@ const Detail = () => {
       fecha_detencion,
       hora_inicio,
       hora_detencion,
+      tipo_pausa
    }) => {
       // funcion helper, para validar las fechas y si los campos hora estan llenos
       const validate = validateDate({
@@ -903,7 +917,7 @@ const Detail = () => {
                   : t
             )
          )
-         console.log('se cancelo el update detention')
+
          return
       }
 
@@ -913,6 +927,7 @@ const Detail = () => {
          fecha_detencion,
          hora_inicio,
          hora_detencion,
+         tipo_pausa
       })
    }
 
@@ -1142,6 +1157,7 @@ const Detail = () => {
             us: users?.find(u => u.label === activity.user_solicita),
             ue: users?.find(u => u.label === activity.encargado_actividad),
             ur: users?.find(u => u.id === activity.id_revisor),
+            ptc: initOptions.ptc
          })
 
          setTimeValues(
@@ -1170,6 +1186,18 @@ const Detail = () => {
 
       // eslint-disable-next-line
    }, [tiempo_cliente, tiempo_zionit, activity])
+
+   useEffect(() => {
+
+      setOptionDetentions(detentions.map(d => {
+         return {
+            id: d.id_pausa,
+            tipo_pausa: d.id_tipo_pausa,
+         }
+      }))
+
+
+   }, [detentions])
 
    return (
       <>
@@ -1875,7 +1903,7 @@ const Detail = () => {
                      <div className='grid gap-1 mt-10 w-[1216px] pr-6 xl:pr-0 overflow-auto'>
 
                         <Box
-                           colCount={type_detail !== 'pr' ? 7 : 6}
+                           colCount={type_detail !== 'pr' ? 8 : 7}
                            className='bg-zinc-100'
                            isBlock
                         >
@@ -1886,12 +1914,12 @@ const Detail = () => {
 
                            <Span colCount={2}>hasta</Span>
 
-                           <Span colCount={type_detail !== 'pr' ? 1 : 2} >control</Span>
+                           <Span colCount={type_detail !== 'pr' ? 2 : 3} >control</Span>
 
                         </Box>
 
                         <Box
-                           colCount={type_detail !== 'pr' ? 7 : 6}
+                           colCount={type_detail !== 'pr' ? 8 : 7}
                            className='bg-zinc-100'
                            isBlock
                         >
@@ -1904,7 +1932,9 @@ const Detail = () => {
 
                            <Span>fecha</Span>
 
-                           <Span>hora</Span>
+                           <Span >hora</Span>
+
+                           <Span >tipo pausa</Span>
 
                            <Span>tiempo (hrs)</Span>
 
@@ -1912,7 +1942,7 @@ const Detail = () => {
 
                         <Box
                            hidden={type_detail === 'pr'}
-                           colCount={type_detail !== 'pr' ? 7 : 6}
+                           colCount={type_detail !== 'pr' ? 8 : 7}
                            isBlock
                         >
 
@@ -1920,6 +1950,7 @@ const Detail = () => {
 
                            <Input
                               className='my-2'
+                              padding='py-1.5 px-2'
                               type='date'
                               name='finicio'
                               value={finicio}
@@ -1946,6 +1977,7 @@ const Detail = () => {
                            <Input
                               className='my-2'
                               type='date'
+                              padding='py-1.5 px-2'
                               name='fdetencion'
                               value={fdetencion}
                               onChange={onChangeValues}
@@ -1967,6 +1999,13 @@ const Detail = () => {
                                  />
                               )}
                            </InputMask>
+
+                           <CustomSelect
+                              isDefaultOptions
+                              options={pause_type}
+                              value={options.ptc}
+                              onChange={option => setOptions({ ...options, ptc: option })}
+                           />
 
                            <Span>
                               {moment(`${fdetencion} ${hdetencion}`).isValid() && moment(`${finicio} ${hinicio}`).isValid() ?
@@ -1995,11 +2034,11 @@ const Detail = () => {
 
                         <div className='max-h-72 overflow-custom grid gap-1'>
 
-                           {detentions.length > 0 &&
+                           {detentions.length > 0 && optionDetentions.length === detentions.length &&
                               detentions.map((d, i) => (
 
                                  <Box
-                                    colCount={type_detail !== 'pr' ? 7 : 6}
+                                    colCount={type_detail !== 'pr' ? 8 : 7}
                                     isBlock
                                     key={d.id_pausa}
                                  >
@@ -2009,13 +2048,13 @@ const Detail = () => {
                                     <Input
                                        disabled={type_detail === 'pr'}
                                        className='my-2'
+                                       padding='py-1.5 px-2'
                                        type='date'
                                        value={timeValues[i]?.fecha_inicio || ''}
                                        onChange={e =>
                                           setTimeValues(
                                              timeValues.map(t => {
                                                 if (t.id === d.id_pausa) {
-                                                   console.log('entro a la pausa')
                                                    return { ...t, fecha_inicio: e.target.value }
                                                 }
                                                 return t
@@ -2051,6 +2090,7 @@ const Detail = () => {
                                     <Input
                                        disabled={type_detail === 'pr'}
                                        className='my-2'
+                                       padding='py-1.5 px-2'
                                        type='date'
                                        value={timeValues[i]?.fecha_detencion || ''}
                                        onChange={e =>
@@ -2089,6 +2129,20 @@ const Detail = () => {
                                        )}
                                     </InputMask>
 
+                                    <CustomSelect
+                                       isDefaultOptions
+                                       options={pause_type}
+                                       value={pause_type.find(pt => pt.value === optionDetentions[i].tipo_pausa) || { value: null, label: 'ninguno' }}
+                                       onChange={option => {
+                                          setOptionDetentions(optionDetentions.map(od => {
+                                             if (od.id === d.id_pausa) {
+                                                return { ...od, tipo_pausa: option.value }
+                                             }
+                                             return od
+                                          }))
+                                       }}
+                                    />
+
                                     <Span>
                                        {moment(`${d.fecha_detencion} ${d.hora_detencion}`).isValid() && moment(`${d.fecha_inicio} ${d.hora_inicio}`).isValid() &&
                                           <NumberFormat
@@ -2113,6 +2167,7 @@ const Detail = () => {
                                                    fecha_detencion: timeValues[i]?.fecha_detencion,
                                                    hora_inicio: timeValues[i]?.hora_inicio,
                                                    hora_detencion: timeValues[i]?.hora_detencion,
+                                                   tipo_pausa: optionDetentions[i].tipo_pausa
                                                 })
                                              }
                                           >
@@ -2281,6 +2336,15 @@ const Detail = () => {
                         <p className='text-sm whitespace-pre-wrap max-h-44 overflow-custom p-1.5 rounded-lg bg-black/5'>
                            {values.content}
                         </p>
+
+                        <CustomSelect
+                           label='Tipo de pausa'
+                           options={optionsArray?.pause_type}
+                           isDefaultOptions
+                           value={options?.pt}
+                           onChange={(option) => setOptions({ ...options, pt: option })}
+                        />
+
                         <h5 className='text-sm'>Pausas rapidas: </h5>
 
                         <ul className='max-h-56 overflow-custom'>
@@ -2299,14 +2363,6 @@ const Detail = () => {
                               </li>
                            ))}
                         </ul>
-
-                        <CustomSelect
-                           label='Tipo de pausa'
-                           options={optionsArray?.pause_type}
-                           isDefaultOptions
-                           value={options?.pt}
-                           onChange={(option) => setOptions({ ...options, pt: option })}
-                        />
 
                         <TextArea
                            field='Mensaje pausa'

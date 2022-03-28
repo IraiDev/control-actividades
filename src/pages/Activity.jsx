@@ -201,18 +201,20 @@ const Activity = () => {
    const onPauseActivity = ({ flag, id_actividad, mensaje, tipo_pausa }) => {
       if (flag) {
          onPlayPause({ id_actividad, mensaje, tipo_pausa })
-      } else {
-         if (mensaje.trim() === '') {
-            Alert({
-               icon: 'warn',
-               title: 'Atención',
-               content: 'No puedes guardar una pausa sin un mensaje',
-               showCancelButton: false,
-            })
-            return
-         }
-         onPlayPause({ id_actividad, mensaje, tipo_pausa })
+         return
       }
+
+      if (mensaje.trim() === '') {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'No puedes guardar una pausa sin un mensaje XDDDDD',
+            showCancelButton: false,
+         })
+         return
+      }
+      onPlayPause({ id_actividad, mensaje, tipo_pausa })
+
    }
 
    const onPlayActivity = ({ id_actividad, encargado }) => {
