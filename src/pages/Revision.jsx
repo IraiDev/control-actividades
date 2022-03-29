@@ -715,7 +715,7 @@ const Revision = () => {
 
                            <Td>
                               <span
-                                 title='Tiemppo total cobrable'
+                                 title='Tiempo total cobrable'
                                  className='px-2 py-0.5 rounded-full bg-green-300/80 font-bold'
                               >
                                  {act?.tiempo_cliente.toFixed(4)}

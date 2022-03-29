@@ -2038,7 +2038,7 @@ const Detail = () => {
                               {moment(`${fdetencion} ${hdetencion}`).isValid() && moment(`${finicio} ${hinicio}`).isValid() ?
                                  <NumberFormat
                                     value={moment(`${fdetencion} ${hdetencion}`).diff(moment(`${finicio} ${hinicio}`), 'hours', true)}
-                                    decimalScale={2}
+                                    decimalScale={4}
                                     fixedDecimalScale={false}
                                     displayType='text'
                                  />
@@ -2180,7 +2180,7 @@ const Detail = () => {
                                        {moment(`${d.fecha_detencion} ${d.hora_detencion}`).isValid() && moment(`${d.fecha_inicio} ${d.hora_inicio}`).isValid() &&
                                           <NumberFormat
                                              value={moment(`${d.fecha_detencion} ${d.hora_detencion}`).diff(moment(`${d.fecha_inicio} ${d.hora_inicio}`), 'hours', true)}
-                                             decimalScale={2}
+                                             decimalScale={4}
                                              fixedDecimalScale={false}
                                              displayType='text'
                                           />
