@@ -7,13 +7,16 @@ const UiProvider = ({ children }) => {
 
   const [isLoading, setIsLoading] = useState(false)
   const [view, setView] = useState(true)
+  const [idSelect, setIdSelect] = useState(null)
 
   return (
     <UiContext.Provider value={{
       isLoading,
       setIsLoading,
       view,
-      setView
+      setView,
+      setIdSelect,
+      idSelect
     }}>
       <>
         {children}

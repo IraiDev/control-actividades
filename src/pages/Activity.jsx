@@ -893,57 +893,85 @@ const Activity = () => {
                                        : act.es_padre && act.num_ticket_edit <= 0 ? 'text-indigo-600 font-bold' : ''
                                     }
                                  `}>
+                                    {/* hija */}
                                     <MarkActivity
-                                       hidden={!(act.es_padre === 0 && act.es_hijo === 1)}
+                                       hidden={!(act.es_padre === 0 && act.es_hijo === 1 && act.id_tipo_actividad === 1)}
                                        condicion={act.num_ticket_edit > 0}
                                        position='block'
+                                       id={act?.id_det_padre}
                                     >
                                        <i className='fas fa-child fa-lg' />
-                                       {act?.id_det_padre}
+                                       {/* {act?.id_det_padre} */}
                                     </MarkActivity>
 
+                                    {/* padre */}
                                     <MarkActivity
-                                       hidden={!(act.es_hijo === 0 && act.es_padre === 1)}
+                                       hidden={!(act.es_hijo === 0 && act.es_padre === 1 && act.id_tipo_actividad === 1)}
                                        condicion={act.num_ticket_edit > 0}
                                        position='block'
+                                       id={act?.id_det}
                                     >
                                        <i className='fas fa-hat-cowboy fa-lg' />
-                                       {act?.id_det}
+                                       {/* {act?.id_det} */}
                                     </MarkActivity>
 
+                                    {/* coordinacion */}
                                     <MarkActivity
-                                       hidden={!(act.id_tipo_actividad === 4)}
+                                       hidden={!(act.id_tipo_actividad === 4 && act.es_padre !== 1 && act.es_hijo === 1)}
                                        condicion={act.num_ticket_edit > 0}
                                        position='block'
+                                       id={act?.id_det_padre}
                                     >
                                        <i className='far fa-calendar-alt fa-lg' />
-                                       {act?.id_det_padre}
+                                       {/* {act?.id_det_padre} */}
                                     </MarkActivity>
 
-                                    <MarkActivity
+
+                                    {/* de revision
+                                       <MarkActivity
                                        hidden={!(act.id_tipo_actividad === 2)}
                                        condicion={act.num_ticket_edit > 0}
                                        position='block'
+                                       id={act?.id_det_padre}
                                     >
                                        <i className='fas fa-calendar-check fa-lg' />
                                        {act?.id_det_padre}
                                     </MarkActivity>
+                                     */}
 
+                                    {/* hija y padre */}
                                     <MarkActivity
-                                       hidden={!(act.es_hijo === 1 && act.es_padre === 1)}
+                                       hidden={!(act.es_hijo === 1 && act.es_padre === 1 && act.id_tipo_actividad === 1)}
                                        condicion={act.num_ticket_edit > 0}
                                        position='block'
+                                       id={act?.id_det_padre}
                                     >
                                        <i className='fas fa-child' />
                                        <i className='fas fa-hat-cowboy' />
-                                       {act?.id_det_padre}
+                                       {/* {act?.id_det_padre} */}
                                     </MarkActivity>
+
+                                    {/* coor, hija y padre */}
+                                    <MarkActivity
+                                       condicion={act.num_ticket_edit > 0}
+                                       hidden={!(act.es_hijo === 1 && act.es_padre === 1 && act.id_tipo_actividad === 4)}
+                                       position='block'
+                                       id={act?.id_det_padre}
+                                    >
+                                       <i className='far fa-calendar-alt' />
+                                       <i className='fas fa-hat-cowboy' />
+                                       <i className='fas fa-child' />
+                                       {/* {props?.id_det_padre} */}
+                                    </MarkActivity>
+
                                     <MarkActivity
                                        condicion={act.num_ticket_edit > 0}
                                        hidden={!(act.id_tipo_actividad === 3)}
+                                       position='block'
+                                       id={act?.id_det_padre}
                                     >
                                        <i className='fas fa-truck fa-lg' />
-                                       {act?.id_det_padre}
+                                       {/* {act?.id_det_padre} */}
                                     </MarkActivity>
 
                                     <span />

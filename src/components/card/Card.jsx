@@ -24,14 +24,13 @@ const Card = (props) => {
 
             p-3 pb-2 rounded-xl shadow-lg grid content-between transition duration-200 hover:scale-[1.01] transform 
             text-sm shadow-zinc-400/40 hover:shadow-xl hover:shadow-zinc-400/40 relative
-            ${
-               priority === 1000
-                  ? 'bg-white text-slate-600'
-                  : priority === 600
+            ${priority === 1000
+               ? 'bg-white text-slate-600'
+               : priority === 600
                   ? 'text-white bg-green-700/70'
                   : priority === 400
-                  ? 'text-white bg-yellow-600/70'
-                  : priority === 100 && 'text-white bg-red-800/70'
+                     ? 'text-white bg-yellow-600/70'
+                     : priority === 100 && 'text-white bg-red-800/70'
             }
 
             ${className}
@@ -43,63 +42,70 @@ const Card = (props) => {
 
          <PingIndicator hidden={!showPing} />
 
-         <MarkActivity 
+         <MarkActivity
             condicion={isTicket}
-            hidden={!isChildren} 
+            hidden={!isChildren}
+            id={props?.id_det_padre}
          >
             <i className='fas fa-child fa-lg' />
-            {props?.id_det_padre}
+            {/* {props?.id_det_padre} */}
          </MarkActivity>
 
-         <MarkActivity 
+         <MarkActivity
             condicion={isTicket}
-            hidden={!isFather} 
+            hidden={!isFather}
+            id={props?.id_det}
          >
             <i className='fas fa-hat-cowboy fa-lg' />
-            {props?.id_det} 
+            {/* {props?.id_det} */}
          </MarkActivity>
 
-         <MarkActivity 
+         <MarkActivity
             condicion={isTicket}
-            hidden={!isCoorActivity} 
+            hidden={!isCoorActivity}
+            id={props?.id_det_padre}
          >
             <i className='far fa-calendar-alt fa-lg' />
-            {props?.id_det_padre} 
+            {/* {props?.id_det_padre} */}
          </MarkActivity>
 
-         <MarkActivity 
+         <MarkActivity
             condicion={isTicket}
-            hidden={!isReviewedActivity} 
+            hidden={!isReviewedActivity}
+            id={props?.id_det_padre}
          >
             <i className='fas fa-calendar-check fa-lg' />
-            {props?.id_det_padre} 
+            {/* {props?.id_det_padre} */}
          </MarkActivity>
 
-         <MarkActivity 
+         <MarkActivity
             condicion={isTicket}
-            hidden={!isChildrenAndFather} 
+            hidden={!isChildrenAndFather}
+            id={props?.id_det_padre}
          >
             <i className='fas fa-child' />
             <i className='fas fa-hat-cowboy' />
-            {props?.id_det_padre} 
+            {/* {props?.id_det_padre} */}
          </MarkActivity>
 
-         <MarkActivity 
+         <MarkActivity
             condicion={isTicket}
-            hidden={!isChildrenAndFatherAndCoor} 
+            hidden={!isChildrenAndFatherAndCoor}
+            id={props?.id_det_padre}
          >
             <i className='far fa-calendar-alt' />
             <i className='fas fa-hat-cowboy' />
             <i className='fas fa-child' />
-            {props?.id_det_padre} 
+            {/* {props?.id_det_padre} */}
          </MarkActivity>
 
-         <MarkActivity 
+         <MarkActivity
             condicion={isTicket}
-            hidden={!isDeliveryActivity} 
+            hidden={!isDeliveryActivity}
+            id={props?.id_det_padre}
          >
             <i className='fas fa-truck fa-lg' />
-            {props?.id_det_padre} 
+            {/* {props?.id_det_padre} */}
          </MarkActivity>
 
       </div>
