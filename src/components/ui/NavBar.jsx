@@ -31,44 +31,43 @@ const initOptions = {
    ur: { label: 'ninguno', value: null },
 }
 
+const { activity, home } = routes
+
 const EnvType = ({ env, isHide = false }) => (
    <>
       {env.length > 0 && (
          <h5
-            className={`text-lg text-red-400 font-semibold ${
-               isHide && 'hidden md:block'
-            }`}>
+            className={`text-lg text-red-400 font-semibold ${isHide && 'hidden md:block'
+               }`}>
             Serv: {env}
          </h5>
       )}
    </>
 )
 
-const { activity, home } = routes
-
 const MenuContent = ({ content }) => {
 
-   const { 
-      saveFilters, 
-      setPager, 
-      pager 
+   const {
+      saveFilters,
+      setPager,
+      pager
    } = useContext(ActivityContext)
 
-   const onFilter = () => {
+   // const onFilter = () => {
 
-      setPager({ ...pager, page: 1 })
-      saveFilters({ payload: {id_actividad: content.id_det, offset: 0,} })
-   }
+   //    setPager({ ...pager, page: 1 })
+   //    saveFilters({ payload: { id_actividad: content.id_det, offset: 0, } })
+   // }
 
    return (
-      <div 
-         className='grid text-slate-700 max-w-[150px]'
-         onClick={onFilter}
+      <div
+         className='grid text-slate-700 w-72'
+      // onClick={onFilter}
       >
 
          <span className='text-xs'>
             <strong>Fecha:</strong>{' '}
-            {moment(content.fecha_hora_crea).format('DD/MM/yyyy, HH:mm')}
+            {/* {moment(content.fecha_hora_crea).format('DD/MM/yyyy, HH:mm')} */}
          </span>
 
          <span className='text-xs truncate'>
@@ -76,19 +75,19 @@ const MenuContent = ({ content }) => {
          </span>
 
          <span className='text-xs truncate'>
-            <strong>Desc.:</strong> {content.desc_nota}
+            <strong>Desc.:</strong> {content.descripcion}
          </span>
 
          <span className='text-xs'>
-            <strong>Por:</strong> {content.user_crea_nota.abrev_user}
+            <strong>Por:</strong> {content.abrev_user_crea}
          </span>
 
       </div>
    )
 }
 
-const CloneSelect = ({options, value, onChange, field, isRequired = false, isDefaultOptions = true}) => {
-   return(
+const CloneSelect = ({ options, value, onChange, field, isRequired = false, isDefaultOptions = true }) => {
+   return (
       <div className='capitalize text-xs mb-2'>
          <span className='flex gap-2 items-baseline font-semibold text-sm px-2 w-max mb-2 py-0.5 bg-amber-200/80 rounded-md'>
             {field}
@@ -237,12 +236,12 @@ const NavBar = () => {
                      >
                         Filtros <i className='fas fa-filter' />
                      </Button>
-                   : <span />
+                     : <span />
                   }
                </>
-             : 
+               :
                <section className='font-semibold flex gap-2 items-baseline'>
-                  <i className={icon_list} /> 
+                  <i className={icon_list} />
                   <h1>{title_list}</h1>
                </section>
             }
@@ -285,9 +284,9 @@ const NavBar = () => {
                <TimerUsers data={usersTimes} type='button' onClick={getTimes} />
 
                <Menu
-                  direction='right'
+                  direction='bottom'
                   overflow='auto'
-                  position='anchor'
+                  position='auto'
                   menuButton={
                      <MenuButton className='text-slate-700 hover:bg-zinc-200 rounded-lg h-9 px-2.5 transition duration-500 relative'>
                         <span
@@ -301,24 +300,28 @@ const NavBar = () => {
                         <i className='fas fa-bell' />
                      </MenuButton>
                   }>
+
                   {notify.length > 0 ?
                      notify.map(noti => (
+
                         <MenuItem
-                           key={noti.id_nota}
+                           key={noti.id_notificacion}
                            className='text-transparent hover:text-slate-800 flex items-center justify-between'>
                            <MenuContent content={noti} />
                            <Button
                               className='outline-none focus:outline-none hover:text-red-500 ml-5'
                               onClick={() =>
-                                 markNotifications({ id_nota: noti.id_nota })
+                                 markNotifications({ id_nota: noti.id_notificacion })
                               }
                            >
                               <i className='fas fa-eye-slash fa-sm' />
                            </Button>
                         </MenuItem>
+
                      ))
-                  : <MenuItem>No hay notificaciones...</MenuItem>
+                     : <MenuItem>No hay notificaciones...</MenuItem>
                   }
+
                   <MenuItem
                      disabled={notify.length < 1}
                      className={`flex justify-between items-center space-x-2
@@ -326,7 +329,7 @@ const NavBar = () => {
                      `}
                      onClick={markNotifications}
                   >
-                     Marcar como vistas 
+                     Marcar como vistas
                      <i className='fas fa-eye-slash fa-sm' />
                   </MenuItem>
                </Menu>
@@ -352,11 +355,11 @@ const NavBar = () => {
             padding='p-4 md:p-6'
             title='Nueva actividad'>
 
-            <AlertBar 
-               validation={validations().isCreate} 
-               isCustom={options?.ur?.id !== options?.ue?.id} 
+            <AlertBar
+               validation={validations().isCreate}
+               isCustom={options?.ur?.id !== options?.ue?.id}
                customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
-             />
+            />
 
             <div className='grid gap-5'>
 
@@ -377,8 +380,8 @@ const NavBar = () => {
                         options={
                            options.pr?.value
                               ? subProjects?.filter(
-                                   s => s.id === options.pr?.value
-                                )
+                                 s => s.id === options.pr?.value
+                              )
                               : subProjects
                         }
                         value={options.sp}
@@ -447,7 +450,7 @@ const NavBar = () => {
                         onChange={onChangeValues}
                         isNumber
                      />
-                     
+
                   </aside>
                </header>
 

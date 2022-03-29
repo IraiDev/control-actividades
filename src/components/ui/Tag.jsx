@@ -3,7 +3,7 @@ import React from 'react'
 const Tag = ({ children }) => {
    return (
       <div className='bg-white rounded-full py-[3px] mt-2 relative'>
-         <span className='rounded-full px-2 py-[3px] bg-orange-200/80 text-orange-500 border border-orange-500 shadow font-bold w-max text-xs'>
+         <span className='rounded-full px-2 py-[3px] bg-orange-200/80 text-orange-500 border border-orange-400 shadow font-bold w-max text-xs'>
             { children }
          </span>
 

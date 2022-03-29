@@ -11,6 +11,10 @@ export const useNotify = () => {
       const body = await resp.json()
       const { ok, notificaciones } = body
 
+      console.log(body)
+
+      // TODO: aqui hay que trabajar mañana
+
       if (ok) {
         setNotify(notificaciones)
       }
