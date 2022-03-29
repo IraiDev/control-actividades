@@ -11,10 +11,6 @@ export const useNotify = () => {
       const body = await resp.json()
       const { ok, notificaciones } = body
 
-      console.log(body)
-
-      // TODO: aqui hay que trabajar mañana
-
       if (ok) {
         setNotify(notificaciones)
       }
@@ -25,13 +21,13 @@ export const useNotify = () => {
     }
   }
 
-  const markNotifications = async ({ id_nota }) => {
-    const resp = await fetchToken('task/update-notification', { id_nota }, 'POST')
+  const markNotifications = async ({ id_notificacion }) => {
+    const resp = await fetchToken('task/update-notification', { id_notificacion }, 'POST')
     const body = await resp.json()
 
     if (body.ok) {
-      if (id_nota === undefined) return setNotify([])
-      setNotify(notify.filter(n => n.id_nota !== id_nota))
+      if (id_notificacion === undefined) return setNotify([])
+      setNotify(notify.filter(n => n.id_notificacion !== id_notificacion))
     }
     else Alert({
       icon: 'error',

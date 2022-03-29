@@ -45,7 +45,7 @@ const EnvType = ({ env, isHide = false }) => (
    </>
 )
 
-const MenuContent = ({ content }) => {
+const MenuContent = ({ content, onClick }) => {
 
    const {
       saveFilters,
@@ -53,34 +53,45 @@ const MenuContent = ({ content }) => {
       pager
    } = useContext(ActivityContext)
 
-   // const onFilter = () => {
+   const onFilter = () => {
 
-   //    setPager({ ...pager, page: 1 })
-   //    saveFilters({ payload: { id_actividad: content.id_det, offset: 0, } })
-   // }
+      setPager({ ...pager, page: 1 })
+      saveFilters({ payload: { id_actividad: content.id_det, offset: 0, } })
+   }
 
    return (
       <div
-         className='grid text-slate-700 w-72'
-      // onClick={onFilter}
+         className='grid text-transparent hover:text-zinc-700 w-80 py-2'
+         onClick={onFilter}
       >
 
-         <span className='text-xs'>
-            <strong>Fecha:</strong>{' '}
-            {/* {moment(content.fecha_hora_crea).format('DD/MM/yyyy, HH:mm')} */}
-         </span>
+         <section className='grid grid-cols-3 gap-2 text-zinc-700'>
 
-         <span className='text-xs truncate'>
-            <strong>ID:</strong> {content.id_det}
-         </span>
+            <span className='text-sm truncate col-span-2'>
+               <strong>ID: {content.id_det}</strong>
+            </span>
 
-         <span className='text-xs truncate'>
-            <strong>Desc.:</strong> {content.descripcion}
-         </span>
+            <span className='text-xs text-zinc-500/80'>
+               {moment(content.fecha_hora_tx).format('DD/MM/yyyy, HH:mm')}
+            </span>
 
-         <span className='text-xs'>
-            <strong>Por:</strong> {content.abrev_user_crea}
-         </span>
+         </section>
+
+         <section className='grid grid-cols-3 gap-2 mb-2 text-zinc-700'>
+
+            <span className='text-xs col-span-2'>
+               <strong>Lugar:</strong> {content.lugar}
+            </span>
+
+            <span className='text-xs'>
+               <strong>Por:</strong> {content.abrev_user_crea}
+            </span>
+
+         </section>
+
+         <h5 className='text-xs font-bold text-zinc-700'>Descipción</h5>
+
+         <p className='text-xs text-zinc-500/80'>{content.descripcion}</p>
 
       </div>
    )
@@ -288,6 +299,7 @@ const NavBar = () => {
                   overflow='auto'
                   position='auto'
                   menuButton={
+
                      <MenuButton className='text-slate-700 hover:bg-zinc-200 rounded-lg h-9 px-2.5 transition duration-500 relative'>
                         <span
                            className={`
@@ -299,23 +311,30 @@ const NavBar = () => {
                         </span>
                         <i className='fas fa-bell' />
                      </MenuButton>
+
                   }>
 
                   {notify.length > 0 ?
-                     notify.map(noti => (
+                     notify.map((noti, i) => (
 
                         <MenuItem
+
                            key={noti.id_notificacion}
-                           className='text-transparent hover:text-slate-800 flex items-center justify-between'>
+                           className={`
+                              text-transparent hover:text-slate-800 hover:bg-zinc-200/80 relative px-4
+                              ${i % 2 === 0 && 'bg-zinc-100'}
+                           `}
+                        >
+
                            <MenuContent content={noti} />
+
                            <Button
-                              className='outline-none focus:outline-none hover:text-red-500 ml-5'
-                              onClick={() =>
-                                 markNotifications({ id_nota: noti.id_notificacion })
-                              }
+                              className='hover:text-red-500 absolute top-1/2 right-2 transform -translate-y-1/2'
+                              onClick={() => markNotifications({ id_notificacion: noti.id_notificacion })}
                            >
                               <i className='fas fa-eye-slash fa-sm' />
                            </Button>
+
                         </MenuItem>
 
                      ))
@@ -324,7 +343,7 @@ const NavBar = () => {
 
                   <MenuItem
                      disabled={notify.length < 1}
-                     className={`flex justify-between items-center space-x-2
+                     className={`flex justify-between items-center space-x-2 pl-4
                         ${notify.length > 0 && 'hover:text-red-500'}
                      `}
                      onClick={markNotifications}

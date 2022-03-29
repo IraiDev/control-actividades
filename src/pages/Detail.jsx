@@ -1454,44 +1454,71 @@ const Detail = () => {
                         </section>
 
                         <aside className='col-span-1 md:col-span-3 mt-5 lg:mt-0'>
+
                            <div className='flex justify-between items-center mb-3'>
-                              <h5 className='text-sm font-semibold'>
-                                 Notas (Informes):{' '}
-                              </h5>
+
+                              <h5 className='text-sm font-semibold'>Notas (Informes)</h5>
 
                               {type_detail !== 'pr' &&
                                  <section className='flex gap-2'>
+
                                     <Button
                                        className='text-slate-600 bg-slate-100 hover:bg-slate-200'
                                        onClick={() => handleOpenModalAddOrEdit(true)}>
                                        <i className='fas fa-plus' />
                                     </Button>
+
                                     <Button
                                        disabled={activity?.notas?.length === 0}
                                        className='text-slate-600 bg-slate-100 hover:bg-slate-200 disabled:hover:bg-slate-200/50'
                                        onClick={() => handleOpenModalAddOrEdit(false)}>
                                        <i className='fas fa-pen' />
                                     </Button>
+
                                  </section>
                               }
 
                            </div>
+
                            <ul className='max-h-[540px] overflow-custom'>
-                              {activity?.notas?.length > 0 && activity?.notas !== undefined ? (
+                              {activity?.notas?.length > 0 && activity?.notas !== undefined ?
                                  activity?.notas?.map((note, i) => (
+
                                     <li
                                        key={note.id_nota}
-                                       className='bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 mb-2.5 shadow-md shadow-gray-400/20 hover:bg-black/10 transition duration-200'>
-                                       <i className='fas fa-list-ul mr-2' />
-                                       {i + 1}. {note.desc_nota}
+                                       className='bg-black/5 rounded-lg py-1.5 px-3 mr-2.5 mt-2.5 shadow-md shadow-gray-400/20 hover:bg-black/10 transition duration-200 relative'>
+                                       {/* <i className='fas fa-list-ul mr-2' /> */}
+
+                                       <section className='flex justify-between gap-2'>
+
+                                          <span className='text-sm  font-semibold'>
+                                             {i + 1}. Creado por: {note.usuario.abrev_user}
+                                          </span>
+
+                                          <span className='text-xs text-zinc-500/80 mr-3'>
+                                             {moment(note.fecha_hora_crea).format('DD-MM-yyyy, HH:MM')}
+                                          </span>
+
+                                       </section>
+
+                                       <p className='text-sm text-zinc-500/80 px-2'>
+                                          {note.desc_nota}
+                                       </p>
+
+                                       {user.id !== note.usuario.id_user &&
+                                          <i className='fas fa-bell absolute -top-1 -right-1.5 text-zinc-100 rounded-full h-4 w-4 fa-xs bg-slate-600 flex items-center justify-center' />
+                                       }
+
                                     </li>
+
                                  ))
-                              ) : (
+                                 :
                                  <li className='text-sm text-slate-400 ml-2'>
                                     No hay notas...
                                  </li>
-                              )}
+                              }
                            </ul>
+
                         </aside>
                      </ViewSection>
 
