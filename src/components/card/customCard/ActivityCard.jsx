@@ -62,7 +62,7 @@ const ActivityCard = props => {
    const navigate = useNavigate()
 
    const { optionsArray, user } = useContext(ActivityContext)
-   const { idSelect } = useContext(UiContext)
+   const { idSelect, setIdSelect } = useContext(UiContext)
 
    const [{ desc, time }, onChangeValues, reset] = useForm({
       desc: '',
@@ -233,11 +233,11 @@ const ActivityCard = props => {
       }
 
       if ((isFather || isChildrenAndFather) && isTicket) {
-         return { color: 'text-amber-600 bg-amber-200/80' }
+         return { color: 'text-amber-600 bg-amber-200/80 cursor-pointer' }
       }
 
       if (isFather || isChildrenAndFather) {
-         return { color: 'text-indigo-600 bg-indigo-200/80' }
+         return { color: 'text-indigo-600 bg-indigo-200/80 cursor-pointer' }
       }
 
       return { color: '' }
@@ -312,11 +312,12 @@ const ActivityCard = props => {
                      <span className='flex gap-1 max-w-max rounded'>
                         <strong>ID:</strong>
                         <p className={`
-
+                  
                               px-1 rounded font-semibold
                               ${colorID().color}
                            
                            `}
+                           onClick={() => setIdSelect(props.id_det)}
                         >
                            {props.id_det}
                         </p>
