@@ -1486,7 +1486,7 @@ const Detail = () => {
 
                                     <li
                                        key={note.id_nota}
-                                       className='bg-black/5 rounded-lg py-1.5 px-3 mr-2.5 mt-2.5 shadow-md shadow-gray-400/20 hover:bg-black/10 transition duration-200 relative'>
+                                       className='bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 mb-2.5 shadow-md shadow-gray-400/20 hover:bg-black/10 transition duration-200 relative'>
                                        {/* <i className='fas fa-list-ul mr-2' /> */}
 
                                        <section className='flex justify-between gap-2'>
@@ -1495,8 +1495,11 @@ const Detail = () => {
                                              {i + 1}. Creado por: {note.usuario.abrev_user}
                                           </span>
 
-                                          <span className='text-xs text-zinc-500/80 mr-3'>
+                                          <span className='text-xs text-zinc-500/80 flex gap-2 items-center'>
                                              {moment(note.fecha_hora_crea).format('DD-MM-yyyy, HH:MM')}
+                                             {user.id !== note.usuario.id_user &&
+                                                <i className='fas fa-bell fa-sm' />
+                                             }
                                           </span>
 
                                        </section>
@@ -1504,10 +1507,6 @@ const Detail = () => {
                                        <p className='text-sm text-zinc-500/80 px-2'>
                                           {note.desc_nota}
                                        </p>
-
-                                       {user.id !== note.usuario.id_user &&
-                                          <i className='fas fa-bell absolute -top-1 -right-1.5 text-zinc-100 rounded-full h-4 w-4 fa-xs bg-slate-600 flex items-center justify-center' />
-                                       }
 
                                     </li>
 
