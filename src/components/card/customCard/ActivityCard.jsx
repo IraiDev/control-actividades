@@ -18,6 +18,7 @@ import moment from 'moment'
 import { fetchToken } from '../../../helpers/fetch'
 import Tag from '../../ui/Tag'
 import CustomSelect from '../../ui/CustomSelect'
+import { UiContext } from '../../../context/UiContext'
 
 const defaultNotes = [
    { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -61,6 +62,7 @@ const ActivityCard = props => {
    const navigate = useNavigate()
 
    const { optionsArray, user } = useContext(ActivityContext)
+   const { idSelect } = useContext(UiContext)
 
    const [{ desc, time }, onChangeValues, reset] = useForm({
       desc: '',
@@ -224,6 +226,24 @@ const ActivityCard = props => {
       onCloseModals()
    }
 
+   const colorID = () => {
+
+      if (idSelect === props.id_det) {
+         return { color: 'bg-rose-500 text-white rounded-md px-1' }
+      }
+
+      if ((isFather || isChildrenAndFather) && isTicket) {
+         return { color: 'text-amber-600 bg-amber-200/80' }
+      }
+
+      if (isFather || isChildrenAndFather) {
+         return { color: 'text-indigo-600 bg-indigo-200/80' }
+      }
+
+      return { color: '' }
+
+   }
+
    return (
       <>
          <Card
@@ -294,8 +314,7 @@ const ActivityCard = props => {
                         <p className={`
 
                               px-1 rounded font-semibold
-                              ${(isFather || isChildrenAndFather) && isTicket ? 'text-amber-600 bg-amber-200/80'
-                              : isFather || isChildrenAndFather ? 'text-indigo-600 bg-indigo-200/80' : ''}
+                              ${colorID().color}
                            
                            `}
                         >
