@@ -2057,12 +2057,12 @@ const Detail = () => {
 
                         {type_detail !== 'pr' &&
 
-                           <>
+                           <section className='flex items-center gap-2'>
                               <h5 className='py-3 px-3'>Detenciones</h5>
 
-                              <p>ATENCION: Debe guardar cambios linea por linea</p>
+                              <p className='bg-orange-100 text-orange-400 px-3 font-semibold py-0.5 rounded-full'>ATENCION: Debe guardar cambios linea por linea</p>
 
-                           </>
+                           </section>
                         }
 
                         <div className='max-h-72 overflow-custom grid gap-1'>
