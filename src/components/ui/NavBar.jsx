@@ -225,7 +225,6 @@ const NavBar = () => {
       if (pathname === activity || pathname === home) {
          saveFilters({
             payload: {
-               offset: 0,
                reload: !filters.reload,
             },
          })
