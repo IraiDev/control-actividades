@@ -208,7 +208,7 @@ const Activity = () => {
          Alert({
             icon: 'warn',
             title: 'Atención',
-            content: 'No puedes guardar una pausa sin un mensaje XDDDDD',
+            content: 'No puedes guardar una pausa sin un mensaje',
             showCancelButton: false,
          })
          return
