@@ -51,6 +51,7 @@ const defaultPauses = [
    { id: 1112223, desc: 'Para ver otra actividad...' },
    { id: 1112322, desc: 'Por reunion de trabajo...' },
    { id: 1112424, desc: 'Salida a terreno...' },
+   { id: 1112425, desc: 'Fin jornada...' },
 ]
 
 const initOptions = {
@@ -2055,7 +2056,13 @@ const Detail = () => {
                         </Box>
 
                         {type_detail !== 'pr' &&
-                           <h5 className='py-3 px-3'>Detenciones</h5>
+
+                           <>
+                              <h5 className='py-3 px-3'>Detenciones</h5>
+
+                              <p>ATENCION: Debe guardar cambios linea por linea</p>
+
+                           </>
                         }
 
                         <div className='max-h-72 overflow-custom grid gap-1'>

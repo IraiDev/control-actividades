@@ -41,5 +41,5 @@ export const useNotify = () => {
     fetchNotify()
   }, [])
 
-  return { notify, markNotifications }
+  return { notify, markNotifications, fetchNotify }
 }

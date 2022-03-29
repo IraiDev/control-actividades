@@ -45,7 +45,7 @@ const EnvType = ({ env, isHide = false }) => (
    </>
 )
 
-const MenuContent = ({ content, onClick }) => {
+const MenuContent = ({ content }) => {
 
    const {
       saveFilters,
@@ -121,7 +121,7 @@ const NavBar = () => {
    const { saveFilters, filters, optionsArray } = useContext(ActivityContext)
    const { view } = useContext(UiContext)
 
-   const { notify, markNotifications } = useNotify()
+   const { notify, markNotifications, fetchNotify } = useNotify()
    const { cloneActivity: createActivity } = useDetail(null)
    const { pathname, search } = useLocation()
    const { title_list = '', icon_list = '' } = queryString.parse(search)
@@ -220,6 +220,8 @@ const NavBar = () => {
 
    const handleRefresh = () => {
       getTimes()
+      fetchNotify()
+
       if (pathname === activity || pathname === home) {
          saveFilters({
             payload: {
@@ -228,6 +230,7 @@ const NavBar = () => {
             },
          })
       }
+
    }
 
    useEffect(() => {
@@ -285,6 +288,7 @@ const NavBar = () => {
                </Button>
 
                <Button
+                  hidden={pathname !== activity && pathname !== home}
                   className='hover:bg-zinc-200 hidden md:block'
                   title='Actualizar'
                   onClick={handleRefresh}
@@ -303,11 +307,11 @@ const NavBar = () => {
                      <MenuButton className='text-slate-700 hover:bg-zinc-200 rounded-lg h-9 px-2.5 transition duration-500 relative'>
                         <span
                            className={`
-                              h-4 min-w-[16px] bg-red-400 text-white rounded-full 
-                              absolute top-0 right-0 text-xs
+                              h-[18px] w-[18px] bg-red-400 text-white rounded-full 
+                              absolute top-0 right-0 text-xs flex justify-center items-center
                               ${notify.length < 1 && 'hidden'}
                         `}>
-                           {notify.length}
+                           {notify.length > 9 ? '+9' : notify.length}
                         </span>
                         <i className='fas fa-bell' />
                      </MenuButton>
@@ -329,7 +333,7 @@ const NavBar = () => {
                            <MenuContent content={noti} />
 
                            <Button
-                              className='hover:text-red-500 absolute top-1/2 right-2 transform -translate-y-1/2'
+                              className='hover:text-red-500 absolute top-7 right-2'
                               onClick={() => markNotifications({ id_notificacion: noti.id_notificacion })}
                            >
                               <i className='fas fa-eye-slash fa-sm' />

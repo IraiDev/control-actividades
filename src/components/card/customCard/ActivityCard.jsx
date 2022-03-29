@@ -33,6 +33,7 @@ const defaultPauses = [
    { id: 1112223, desc: 'Para ver otra actividad...' },
    { id: 1112322, desc: 'Por reunion de trabajo...' },
    { id: 1112424, desc: 'Salida a terreno...' },
+   { id: 1112425, desc: 'Fin jornada...' },
 ]
 
 const ActivityCard = props => {
