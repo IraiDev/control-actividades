@@ -20,7 +20,7 @@ const ChildContainer = (props) => {
 
             <div className='flex items-center gap-2 min-w-max'>
                Agrupar:
-               <Select className='w-48' />
+               <Select isDisabled className='w-48' placeholder='inactivo' />
             </div>
 
          </header>
