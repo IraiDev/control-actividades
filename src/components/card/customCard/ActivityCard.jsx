@@ -615,16 +615,23 @@ const ActivityCard = props => {
 
                <ul className='max-h-56 overflow-custom'>
                   {defaultPauses.map(pause => (
+
                      <li
                         key={pause.id}
-                        className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'>
+                        className='flex items-center justify-between bg-black/5 rounded-lg py-1.5 px-3 mr-1.5 shadow-md shadow-gray-400/20 mb-1.5 hover:bg-black/10 transition duration-200'
+                     >
+
                         <p className='text-gray-600 text-sm'>{pause.desc}</p>
+
                         <button
                            className='ml-2 text-red-400 hover:text-red-600 transition duration-200 transform hover:hover:scale-125'
-                           onClick={() => handlePauseActivity({ isDefaultPause: true, mensaje: pause.desc })}>
+                           onClick={() => handlePauseActivity({ isDefaultPause: true, mensaje: pause.desc })}
+                        >
                            <i className='fas fa-pause fa-sm' />
                         </button>
+
                      </li>
+
                   ))}
                </ul>
 

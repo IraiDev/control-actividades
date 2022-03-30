@@ -118,7 +118,7 @@ const CloneSelect = ({ options, value, onChange, field, isRequired = false, isDe
 }
 
 const NavBar = () => {
-   const { saveFilters, filters, optionsArray } = useContext(ActivityContext)
+   const { saveFilters, filters, optionsArray, pager, setPager } = useContext(ActivityContext)
    const { view } = useContext(UiContext)
 
    const { notify, markNotifications, fetchNotify } = useNotify()
@@ -215,6 +215,7 @@ const NavBar = () => {
             offset: 0,
          },
       })
+      setPager({ ...pager, page: 1 })
       getTimes()
    }
 
