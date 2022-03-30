@@ -18,6 +18,8 @@ const ChildContainer = (props) => {
 
             <P tag='Ticket' value={props.num_ticket_edit} />
 
+            <span />
+
             {/* <div className='flex items-center gap-2 min-w-max'>
                Agrupar:
                <Select isDisabled className='w-48' placeholder='inactivo' />
