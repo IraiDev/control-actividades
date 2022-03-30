@@ -1,6 +1,6 @@
-import ChildItem from "./ChildItem"
-import Select from 'react-select';
-import P from "../ui/P";
+import ChildItem from './ChildItem'
+// import Select from 'react-select'
+import P from '../ui/P';
 
 
 const ChildContainer = (props) => {
@@ -18,10 +18,10 @@ const ChildContainer = (props) => {
 
             <P tag='Ticket' value={props.num_ticket_edit} />
 
-            <div className='flex items-center gap-2 min-w-max'>
+            {/* <div className='flex items-center gap-2 min-w-max'>
                Agrupar:
                <Select isDisabled className='w-48' placeholder='inactivo' />
-            </div>
+            </div> */}
 
          </header>
 
