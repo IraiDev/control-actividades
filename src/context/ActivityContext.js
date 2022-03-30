@@ -53,6 +53,7 @@ function ActivityProvider({ children }) {
    const [prOrder, setPROrder] = useState({})
    const [prPager, setPRPager] = useState({ page: 1, limit: 12 })
    const [refresh, setRefresh] = useState(false)
+   const [activityRunning, setActivityRunning] = useState({id: null, isRunning: false})
 
    const login = async ({ email }) => {
       try {
@@ -202,7 +203,9 @@ function ActivityProvider({ children }) {
       setPROrder,
       prOrder,
       setRefresh,
-      refresh
+      refresh,
+      activityRunning,
+      setActivityRunning
    }
    return (
       <ActivityContext.Provider value={value}>

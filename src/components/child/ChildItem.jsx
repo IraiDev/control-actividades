@@ -21,6 +21,8 @@ const ChildItem = (props) => {
       })
    }
 
+   console.log(props)
+
    return (
       <div className='grid grid-cols-5 h-20 gap-2 text-xs bg-white rounded-lg shadow-md p-2.5 transition duration-200 transform hover:scale-[1.01]'>
 

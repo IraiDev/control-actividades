@@ -172,6 +172,7 @@ const Detail = () => {
    const isRuning = activity.estado_play_pausa === 2
    const isFather = activity.es_padre === 1 && activity.es_hijo === 0
    const [showContent, setshowContent] = useState(false)
+   const [showChilds, setShowChilds] = useState(false)
 
    // modals
    const [modalEdit, toggleModalEdit] = useState(false)
@@ -246,41 +247,6 @@ const Detail = () => {
    const { title, description, gloss, ticket, priority, time } = fields
    const { cTitle, cDescription, cPriority, cTicket, cTime, cGloss } = cloneFields
    const { projects, subProjects, users, activity_type, pause_type } = optionsArray
-
-   let userStyles = {
-      priority: 'S/P',
-      styles: 'bg-slate-400 hover:border-gray-400',
-   }
-
-   switch (activity.prioridad_etiqueta) {
-      case 600:
-         userStyles = {
-            priority: 'Baja',
-            styles: 'text-white bg-green-500/70',
-            menu: 'text-white bg-green-800',
-            hoverMenu: 'hover:bg-green-700',
-         }
-         break
-      case 400:
-         userStyles = {
-            priority: 'Media',
-            styles: 'text-white bg-yellow-500/80',
-            menu: 'text-white bg-yellow-500',
-            hoverMenu: 'hover:bg-yellow-400',
-         }
-         break
-      case 100:
-         userStyles = {
-            priority: 'Alta',
-            styles: 'text-white bg-red-500/70',
-            menu: 'text-white bg-red-800',
-            hoverMenu: 'hover:bg-red-700',
-         }
-         break
-
-      default:
-         break
-   }
 
    const validation = () => {
       const vTitle = title.trim() === ''
@@ -1239,13 +1205,35 @@ const Detail = () => {
                         />
                      }
 
-                     <ChildContainer {...activity} />
+                     <Button
+                        hidden={activity.es_padre === 0}
+                        className='bg-slate-100 hover:bg-slate-200 mx-auto'
+                        onClick={() => setShowChilds(!showChilds)}
+                     >
+                        {showChilds ? 'Ocultar actividades Hijas' : 'ver actividades Hijas'}
+                        <i className='fas fa-child' />
+                     </Button>
+
+                     {showChilds &&
+                        <ChildContainer data={activity.familyTree} {...activity} />
+                     }
 
                      <ViewSection lg cols={8}>
 
                         <aside className='col-span-1 md:col-span-2'>
                            <header className='text-sm'>
+                              <P tag='ID' value={activity.id_det} />
                               <P
+                                 tag='Ticket'
+                                 value={activity.num_ticket_edit}
+                              />
+                              <P
+                                 tag='Creación'
+                                 value={moment(activity.fecha_tx).format(
+                                    'DD/MM/YYYY'
+                                 )}
+                              />
+                              {/* <P
                                  tag='Encargado'
                                  value={activity.encargado_actividad}
                               />
@@ -1260,7 +1248,7 @@ const Detail = () => {
                               <P
                                  tag='Solicita'
                                  value={activity.user_solicita}
-                              />
+                              /> */}
                               <P
                                  tag='Estado'
                                  value={
@@ -1269,17 +1257,6 @@ const Detail = () => {
                                        : ' en trabajo'
                                  }
                               />
-                              <P tag='ID' value={activity.id_det} />
-                              <P
-                                 tag='Ticket'
-                                 value={activity.num_ticket_edit}
-                              />
-                              <P
-                                 tag='Fecha'
-                                 value={moment(activity.fecha_tx).format(
-                                    'DD/MM/YYYY'
-                                 )}
-                              />
                               <P
                                  tag='Transcurridos'
                                  value={
@@ -1287,7 +1264,7 @@ const Detail = () => {
                                     moment(date).diff(TODAY, 'days') * 2
                                  }
                               />
-                              <P
+                              {/* <P
                                  tag='Prioridad'
                                  value={
                                     <>
@@ -1297,16 +1274,26 @@ const Detail = () => {
                                        {userStyles.priority} ({activity.num_prioridad})
                                     </>
                                  }
-                              />
-                              <span className={`
-                                 px-2 py-0.5 font-semibold rounded-full text-sm mt-2 block w-max
-                                 ${activity.id_tipo_actividad === 1 ? 'bg-indigo-100 text-indigo-500'
-                                    : activity.id_tipo_actividad === 2 ? 'bg-emerald-100 text-emerald-500'
-                                       : activity.id_tipo_actividad === 3 ? 'bg-red-100 text-red-500'
-                                          : activity.id_tipo_actividad === 4 ? 'bg-orange-100 text-orange-500'
-                                             : 'bg-zinc-100 text-black'
-                                 }
-                              `}>
+                              /> */}
+
+                              <span
+                                 className={`
+                                    px-3 py-0.5 rounded-full font-semibold mt-3 block w-max
+                                    ${activity.prioridad_etiqueta === 1000
+                                       ? 'bg-slate-200 text-slate-600'
+                                       : activity.prioridad_etiqueta === 600
+                                          ? 'text-green-700 bg-green-100'
+                                          : activity.prioridad_etiqueta === 400
+                                             ? 'text-yellow-600 bg-yellow-100'
+                                             : activity.prioridad_etiqueta === 100 && 'text-red-500 bg-red-100'
+                                    }
+                                 `}
+                              >
+
+                                 Prioridad: {activity.num_prioridad}
+                              </span>
+
+                              <span className='px-2 py-0.5 font-semibold rounded-full text-sm mt-2 block w-max bg-orange-100 text-orange-500'>
                                  Tipo: {activity.desc_tipo_actividad}
                               </span>
                            </header>
@@ -1529,8 +1516,9 @@ const Detail = () => {
 
                      <ViewSection md cols={2}>
                         <aside>
-                           <h5 className='text-sm mb-3 font-semibold'>
-                              Archivos:{' '}
+                           <h5 className='text-sm mb-3 font-semibold flex gap-2'>
+                              Archivos:
+                              <span className='font-normal text-zinc-500'>(Para guardar un archivo debes agregar una descripción)</span>
                            </h5>
                            <ul className='h-28 overflow-custom border-x p-1.5'>
                               {activity?.tarea_documentos?.length > 0 ? (

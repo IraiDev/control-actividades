@@ -6,7 +6,7 @@ import { fetchToken } from '../helpers/fetch'
 
 export const useActivity = () => {
    const { setIsLoading } = useContext(UiContext)
-   const { filters, order } = useContext(ActivityContext)
+   const { filters, order, setActivityRunning } = useContext(ActivityContext)
    const [activities, setActivities] = useState([])
    const [total, setTotal] = useState(0)
 
@@ -213,7 +213,10 @@ export const useActivity = () => {
          const body = await resp.json()
 
          setIsLoading(false)
-         if (body.ok) fetchActivities()
+         if (body.ok) {
+            setActivityRunning({id: id_actividad, isRunning: mensaje === undefined})
+            fetchActivities()
+         }
          else {
             Alert({
                icon: 'error',
@@ -238,6 +241,7 @@ export const useActivity = () => {
          const body = await resp.json()
 
          if (body.ok) {
+            setActivityRunning({id: id_actividad, isRunning: Number(tiempo_estimado) > 0})
             fetchActivities()
          } else {
             Alert({

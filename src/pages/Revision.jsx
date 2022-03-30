@@ -43,7 +43,8 @@ const Revision = () => {
       setPROrder,
       prOrder,
       optionsArray,
-      prFilters
+      prFilters,
+      activityRunning
    } = useContext(ActivityContext)
 
    const navigate = useNavigate()
@@ -222,6 +223,7 @@ const Revision = () => {
 
       // eslint-disable-next-line
    }, [optionsArray, prFilters])
+
 
    return (
       <>
@@ -673,6 +675,7 @@ const Revision = () => {
                            className={`
                               cursor-pointer text-[13px]
                               ${act.id_det === isActive ? 'bg-purple-100' : ''}
+                              ${activityRunning.id === act.id_det_padre && activityRunning.isRunning ? 'bg-emerald-200/50' : ''}
                            `}
                            onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
                         >
