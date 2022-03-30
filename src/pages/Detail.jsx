@@ -32,6 +32,7 @@ import FloatMenu from '../components/ui/FloatMenu'
 // import MapArrow from '../components/map/MapArrow'
 import { fetchToken } from '../helpers/fetch'
 import CustomSelect from '../components/ui/CustomSelect'
+import ChildContainer from '../components/child/ChildContainer'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
@@ -1237,6 +1238,8 @@ const Detail = () => {
                            position='top-20'
                         />
                      }
+
+                     <ChildContainer {...activity} />
 
                      <ViewSection lg cols={8}>
 

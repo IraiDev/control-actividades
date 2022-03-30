@@ -60,6 +60,9 @@ export const Alert = async props => {
       case 'question':
          icon = 'fa-question-circle fa-lg text-blue-500'
          break
+      case 'none':
+         icon = ''
+         break
       default:
          icon = 'fa-exclamation-circle fa-lg text-blue-500'
          break
