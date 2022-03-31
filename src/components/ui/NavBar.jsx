@@ -233,6 +233,23 @@ const NavBar = () => {
 
    }
 
+   const handleOnlyFathers = () => {
+      getTimes()
+      fetchNotify()
+
+      if (pathname === activity || pathname === home) {
+         saveFilters({
+            payload: {
+               solo_padres: !filters.solo_padres,
+               offset: 0,
+            },
+         })
+
+         setPager({ ...pager, page: 1 })
+      }
+
+   }
+
    useEffect(() => {
       getTimes()
    }, [])
@@ -273,6 +290,19 @@ const NavBar = () => {
                   onClick={() => toggleModal(true)}
                >
                   <i className='fas fa-plus' />
+               </Button>
+
+               <Button
+                  hidden={pathname !== activity && pathname !== home}
+                  title='Solo padres'
+                  className={
+                     filters.solo_padres
+                        ? ' text-blue-500'
+                        : ' text-slate-700' && ' hover:bg-zinc-200'
+                  }
+                  onClick={handleOnlyFathers}
+               >
+                  <i className='fas fa-hat-cowboy' />
                </Button>
 
                <Button

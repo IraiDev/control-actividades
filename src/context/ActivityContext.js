@@ -21,6 +21,7 @@ const initFilters = {
    offset: 0,
    limit: 12,
    reload: false,
+   solo_padres: false
 }
 
 const initPRFilters = {
