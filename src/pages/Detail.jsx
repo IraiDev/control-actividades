@@ -438,6 +438,7 @@ const Detail = () => {
                         return
                      }
 
+                     // pone play a la actividad desde el detalle de esta
                      onPlayPause({ id_actividad: activity.id_det })
 
                   }
@@ -512,6 +513,12 @@ const Detail = () => {
          tipo_pausa: options.pt.value,
       })
       onCloseModals()
+   }
+
+   const onPlayOrPauseChild = ({ mensaje, id_actividad }) => {
+
+      onPlayPause({ id_actividad, mensaje })
+
    }
 
    // pregunta si desea eliminar la actividad
@@ -1206,7 +1213,7 @@ const Detail = () => {
                      }
 
                      <Button
-                        hidden={activity.es_padre === 0}
+                        hidden={activity.es_padre === 0 || type_detail === 'pr'}
                         className='bg-slate-100 hover:bg-slate-200 mx-auto'
                         onClick={() => setShowChilds(!showChilds)}
                      >
@@ -1214,8 +1221,16 @@ const Detail = () => {
                         <i className='fas fa-child' />
                      </Button>
 
-                     {showChilds &&
-                        <ChildContainer data={activity.familyTree} {...activity} />
+                     {showChilds ?
+
+                        <ChildContainer
+                           {...activity}
+                           data={activity.familyTree}
+                           onPause={({ isDefaultPause, mensaje, id_actividad }) => onPlayOrPauseChild({ isDefaultPause, mensaje, id_actividad })}
+                           onPlay={({ id_actividad }) => onPlayOrPauseChild({ id_actividad })}
+                        />
+
+                        : 'No hay actividades Hijas'
                      }
 
                      <ViewSection lg cols={8}>

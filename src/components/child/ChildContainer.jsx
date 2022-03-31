@@ -32,7 +32,13 @@ const ChildContainer = (props) => {
             {
                data.length > 0 &&
                data.map(data => (
-                  <ChildItem key={data.id_det} {...data} number={data.nivel} />
+                  <ChildItem
+                     {...data}
+                     key={data.id_det}
+                     number={data.nivel}
+                     onPlay={() => props.onPlay({ id_actividad: data.id_det })}
+                     onPause={({ mensaje }) => props.onPause({ mensaje, id_actividad: data.id_det })}
+                  />
                ))
             }
 

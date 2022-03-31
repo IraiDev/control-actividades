@@ -12,7 +12,7 @@ export const useDetail = (id) => {
    const {search} = useLocation()
    const { type_detail = '' } = queryString.parse(search)
    const { setIsLoading } = useContext(UiContext)
-   const { filters, saveFilters, refresh, setRefresh, user } = useContext(ActivityContext)
+   const { filters, saveFilters, refresh, setRefresh, user, setActivityRunning } = useContext(ActivityContext)
    const [activity, setActivity] = useState({})
    const [detentions, setDetentions] = useState([])
 
@@ -254,6 +254,7 @@ export const useDetail = (id) => {
          const body = await resp.json()
          setIsLoading(false)
          if (body.ok) {
+            setActivityRunning({id: id_actividad, isRunning: mensaje === undefined})
             fetchDetail()
             getDetentions({ id_actividad: id })
          } else {
@@ -435,8 +436,6 @@ export const useDetail = (id) => {
       })
    }
 
-   // FIXME: ver si tengo el id_tipo_pausa por aqui
-
    const getDetentions = async ({ id_actividad }) => {
       try {
          const resp = await fetchToken(
@@ -608,6 +607,7 @@ export const useDetail = (id) => {
          const body = await resp.json()
 
          if (body.ok) {
+            setActivityRunning({id: id_actividad, isRunning: true})
             fetchDetail()
          } else {
             Alert({

@@ -27,10 +27,10 @@ const Card = (props) => {
             ${priority === 1000
                ? 'bg-white text-slate-600'
                : priority === 600
-                  ? 'text-white bg-green-700/70'
+                  ? 'text-white bg-emerald-500/80'
                   : priority === 400
-                     ? 'text-white bg-yellow-600/70'
-                     : priority === 100 && 'text-white bg-red-800/70'
+                     ? 'text-white bg-amber-500/70'
+                     : priority === 100 && 'text-white bg-red-600/70'
             }
 
             ${className}
