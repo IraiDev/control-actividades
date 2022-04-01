@@ -610,6 +610,7 @@ export const useDetail = (id) => {
             setActivityRunning({id: id_actividad, isRunning: true})
             fetchDetail()
          } else {
+            setIsLoading(false)
             Alert({
                icon: 'error',
                title: 'Atención',

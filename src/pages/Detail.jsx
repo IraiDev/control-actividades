@@ -259,6 +259,19 @@ const Detail = () => {
       const vRevisor = activity.id_tipo_actividad === 1 ? options.ur?.value === 0 : false
       const vRdisE = activity.id_tipo_actividad === 1 ? options.ur?.id === options.ue?.id : false
 
+      const arrlabel = [
+         { label: 'Título', value: vTitle },
+         { label: 'Descripción', value: vDesc },
+         { label: 'Prioridad', value: vPriority },
+         { label: 'Tiempo', value: vTime },
+         { label: 'Proyecto', value: vProject },
+         { label: 'Solicita', value: vSolicita },
+         { label: 'Encargado', value: vEncargado },
+         { label: 'Revisor', value: vRevisor }
+      ]
+
+      const filter = arrlabel.filter(item => item.value)
+
       const onSaveValidation =
          vTitle ||
          vDesc ||
@@ -281,6 +294,20 @@ const Detail = () => {
       const vTipo_actividadC = cloneOptions.ta?.value === 0 || cloneOptions.ta?.value === undefined
       const vRdisEC = cloneOptions?.ta?.value === 1 ? cloneOptions.ur.id === cloneOptions.ue.id : false
 
+      const arrlabel2 = [
+         { label: 'Título', value: vTitleC },
+         { label: 'Descripción', value: vDescC },
+         { label: 'Prioridad', value: vPriorityC },
+         { label: 'Tiempo', value: vTimeC },
+         { label: 'Proyecto', value: vProjectC },
+         { label: 'Solicita', value: vSolicitaC },
+         { label: 'Encargado', value: vEncargadoC },
+         { label: 'Revisor', value: vRevisorC },
+         { label: 'Tipo Actividad', value: vTipo_actividadC },
+      ]
+
+      const filter2 = arrlabel2.filter(item => item.value)
+
       const onCloneValidation =
          vTitleC ||
          vDescC ||
@@ -296,6 +323,8 @@ const Detail = () => {
       return {
          isSave: onSaveValidation,
          isClone: onCloneValidation,
+         saveValue: filter,
+         saveClone: filter2
       }
    }
 
@@ -1209,6 +1238,7 @@ const Detail = () => {
                            isCustom={options?.ur?.id !== options?.ue?.id}
                            customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
                            position='top-20'
+                           fields={validation().saveValue}
                         />
                      }
 
@@ -2439,6 +2469,7 @@ const Detail = () => {
                         validation={validation().isClone}
                         isCustom={cloneOptions?.ur?.id !== cloneOptions?.ue?.id}
                         customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
+                        fields={validation().saveClone}
                      />
 
                      <div className='grid gap-5'>
