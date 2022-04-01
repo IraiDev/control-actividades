@@ -92,7 +92,19 @@ const ChildItem = (props) => {
 
                <section className='grid content-center gap-1'>
 
-                  <P tag='ID' value={props.id_det} />
+                  {/* <P tag='ID' value={props.id_det} /> */}
+                  <span className='flex gap-1 max-w-max rounded'>
+                     <strong>ID:</strong>
+                     <p className={`
+                  
+                           px-1 rounded font-semibold
+                           ${props.es_padre === 1 ? 'bg-orange-200/70 text-orange-500 font-semibold' : ''}
+                        
+                        `}
+                     >
+                        {props.id_det}
+                     </p>
+                  </span>
                   <P tag='ID Padre' value={props.id_det_padre} />
                   <P tag='proyecto' value={props.abrev} />
 
@@ -137,6 +149,11 @@ const ChildItem = (props) => {
                   {props.notas.length > 0 &&
                      <Tag>
                         Tiene {props.notas.length} notas
+                     </Tag>
+                  }
+                  {props.es_padre === 1 &&
+                     <Tag>
+                        <i className='fas fa-hat-cowboy' /> Es padre
                      </Tag>
                   }
 
