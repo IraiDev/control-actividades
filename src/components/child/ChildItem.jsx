@@ -1,4 +1,5 @@
-import { useContext, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ActivityContext } from '../../context/ActivityContext'
 import { Alert } from '../../helpers/alerts'
 import Button from '../ui/Button'
@@ -22,12 +23,14 @@ const ChildItem = (props) => {
 
    const { optionsArray } = useContext(ActivityContext)
 
+   const navigate = useNavigate()
+
    const [modalPause, toggleModalPause] = useState(false)
    const [input, setInput] = useState('')
 
    const [options, setOptions] = useState({ value: 0, label: 'ninguno' })
 
-   const isRuning = props.pausas.length > 0 && props.pausas[0].boton === 2
+   const isRuning = useMemo(() => props.pausas.length > 0 ? props.pausas[0].boton === 2 : false, [props.pausas])
 
    const handleShowDesc = () => {
       Alert({
@@ -77,15 +80,34 @@ const ChildItem = (props) => {
 
    }
 
+   const handleNavigate = () => {
+      props.hideChilds(false)
+      navigate(`/detalle-actividad/${props.id_det}`, { replace: false })
+   }
+
    return (
 
       <>
 
-         <div className='gap-2 text-xs bg-white text-slate-700 rounded-lg shadow-md p-2.5 transition duration-200 transform hover:scale-[1.01]'>
+         <div
+            className='gap-2 text-xs bg-white text-slate-700 rounded-lg shadow-md p-2.5 transition duration-200 transform hover:scale-[1.01]'
+         >
 
-            <header className='flex gap-2 items-center mb-2 px-2 py-1 rounded-lg bg-zinc-100 w-max'>
-               <Numerator number={props.number} />
-               <h1 className='font-semibold text-base'>{props.nombre_proyecto} - {props.actividad}</h1>
+            <header className='flex justify-between items-center gap-2'>
+
+               <div className='flex gap-2 items-center mb-2 px-2 py-1 rounded-lg bg-zinc-100 w-max'>
+                  <Numerator number={props.number} />
+                  <h1 className='font-semibold text-base'>{props.nombre_proyecto} - {props.actividad}</h1>
+               </div>
+
+               <Button
+                  hidden={props.estado !== 1 && props.estado !== 2}
+                  className='bg-black/5 hover:bg-indigo-100 hover:text-indigo-500 text-sm'
+                  onClick={handleNavigate}
+               >
+                  ver detalle
+               </Button>
+
             </header>
 
             <div className='grid grid-cols-5 '>
@@ -106,7 +128,7 @@ const ChildItem = (props) => {
                      </p>
                   </span>
                   <P tag='ID Padre' value={props.id_det_padre} />
-                  <P tag='proyecto' value={props.abrev} />
+                  <P tag='proyecto' value={`${props.abrev} ${props.nombre_sub_proy ? ' / ' + props.nombre_sub_proy : ''}`} />
 
                </section>
 
@@ -140,17 +162,19 @@ const ChildItem = (props) => {
 
                </section>
 
-               <section className='grid content-center'>
+               <section className='grid grid-cols-2 content-center'>
 
-                  <Tag>
-                     Tipo: {props.desc_tipo_actividad}
-                  </Tag>
-
-                  {props.notas.length > 0 &&
+                  <div>
                      <Tag>
-                        Tiene {props.notas.length} notas
+                        Tipo: {props.desc_tipo_actividad}
                      </Tag>
-                  }
+
+                     {props.notas.length > 0 &&
+                        <Tag>
+                           Tiene {props.notas.length} notas
+                        </Tag>
+                     }
+                  </div>
                   {props.es_padre === 1 &&
                      <Tag>
                         <i className='fas fa-hat-cowboy' /> Es padre
@@ -159,33 +183,35 @@ const ChildItem = (props) => {
 
                </section>
 
-               <section className='flex justify-around gap-2 items-center'>
+               <section className='flex justify-between px-10 gap-2 items-center'>
 
                   <Button
-                     className='bg-black/5 hover:bg-black/10'
+                     className='hover:bg-blue-100 text-blue-500 text-sm'
                      onClick={handleShowDesc}
                   >
-                     ver descripción
+                     ver descripción...
                   </Button>
 
-                  <Button
-                     hidden={props.estado !== 1 && props.estado !== 2}
-                     className={
-                        isRuning
-                           ? 'text-red-400 bg-red-50 hover:bg-red-100'
-                           : 'text-emerald-400 bg-emerald-50 hover:bg-emerald-100'
-                     }
-                     title={isRuning ? 'Pausar' : 'Reanudar'}
-                     onClick={isRuning ? () => toggleModalPause(true) : () => props.onPlay()}
-                  >
-                     <i
+                  {props.estado === 2 && props.id_tipo_actividad === 1 ?
+                     <Button
                         className={
                            isRuning
-                              ? 'fas fa-pause fa-sm'
-                              : 'fas fa-play fa-sm'
+                              ? 'text-red-400 bg-red-50 hover:bg-red-100'
+                              : 'text-emerald-400 bg-emerald-50 hover:bg-emerald-100'
                         }
-                     />
-                  </Button>
+                        title={isRuning ? 'Pausar' : 'Reanudar' + ' (SOLO PARA ACTIVIDADES DE TIPO: NORMAL Y ESTADO: EN TRABAJO)'}
+                        onClick={isRuning ? () => toggleModalPause(true) : () => props.onPlay()}
+                     >
+                        <i
+                           className={
+                              isRuning
+                                 ? 'fas fa-pause fa-sm'
+                                 : 'fas fa-play fa-sm'
+                           }
+                        />
+                     </Button>
+                     : <span />
+                  }
                </section>
 
             </div>

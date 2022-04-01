@@ -1,7 +1,7 @@
+import { useEffect, useState } from 'react'
 import ChildItem from './ChildItem'
 import Select from 'react-select'
-import P from '../ui/P';
-import { useEffect, useState } from 'react';
+import P from '../ui/P'
 
 
 const ChildContainer = (props) => {
@@ -10,21 +10,31 @@ const ChildContainer = (props) => {
 
    const [arrayOptionsData, setArrayOptionsData] = useState([])
    const [option, setOption] = useState({ value: null, label: 'Todos' })
-   const [dataProcesada, setDataProcesada] = useState(data)
+   const [dataProcesada, setDataProcesada] = useState([])
 
    useEffect(() => {
+
+      setDataProcesada(data)
 
       const padres = data.filter(d => d.es_padre === 1)
 
       const options = padres.map(p => {
          return {
             value: p.id_det,
-            label: `${p.actividad} - ${p.id_det}`
+            label: <span dangerouslySetInnerHTML={{
+               __html: `
+                  <div class="text-sm w-48 flex gap-1" title="${p.actividad}">
+                     <span class="text-orange-500 bg-orange-200 rounded px-2 font-semibold">${p.nivel}</span>
+                     - <p class="max-w-[5rem] truncate">${p.actividad}</p>
+                     - ${p.id_det}
+                  </div>
+                  `
+            }} />
          }
       })
 
       setArrayOptionsData([{ value: null, label: 'Todos' }, ...options])
-   }, [])
+   }, [data])
 
    const handleChangeOption = (option) => {
 
@@ -32,9 +42,10 @@ const ChildContainer = (props) => {
 
       if (option.value === null) {
          setDataProcesada(data)
-      } else {
-         setDataProcesada(data.filter(d => d.id_det_padre === option.value))
+         return
       }
+
+      setDataProcesada(data.filter(d => d.id_det_padre === option.value))
 
    }
 
@@ -52,10 +63,10 @@ const ChildContainer = (props) => {
 
             <span />
 
-            <div className='flex items-center gap-2 min-w-max'>
+            <div className='flex items-center gap-2 min-w-max' title='Agrupar por hijas de...'>
                Agrupar:
                <Select
-                  className='w-48'
+                  className='w-56'
                   placeholder='inactivo'
                   options={arrayOptionsData}
                   value={option}
@@ -76,6 +87,7 @@ const ChildContainer = (props) => {
                         number={data.nivel}
                         onPlay={() => props.onPlay({ id_actividad: data.id_det })}
                         onPause={({ mensaje }) => props.onPause({ mensaje, id_actividad: data.id_det })}
+                        hideChilds={(status) => props.hideChilds(status)}
                      />
                   ))
                   : <span className='block mx-auto text-zinc-600 text-sm'>No hay hijas para listar</span>

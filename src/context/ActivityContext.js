@@ -112,9 +112,24 @@ function ActivityProvider({ children }) {
                }),
                priorities: body.prioridades.map(item => {
                   return {
-                     label: item.nombre,
+                     // label: item.nombre,
+                     label: <span dangerouslySetInnerHTML={{
+                        __html: `
+                        <div class="flex justify-between gap-2">
+                           <span class="block">${item.nombre}</span>
+                           <span class="rounded-full h-4 w-4 block 
+                           ${
+                              item.color === 1000 ? 'bg-zinc-200' :
+                              item.color === 600 ? 'bg-green-400' :
+                              item.color === 400 ? 'bg-yellow-400' :
+                              item.color === 100 && 'bg-red-400'
+                           }
+                           "/>
+                        </div>
+                        `}} />,
                      value: item.color,
                      tooltip: item.nombre
+                     ,
                   }
                }),
                status: body.estados.map(item => {

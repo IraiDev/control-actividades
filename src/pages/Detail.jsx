@@ -1228,6 +1228,7 @@ const Detail = () => {
                            data={activity.familyTree}
                            onPause={({ isDefaultPause, mensaje, id_actividad }) => onPlayOrPauseChild({ isDefaultPause, mensaje, id_actividad })}
                            onPlay={({ id_actividad }) => onPlayOrPauseChild({ id_actividad })}
+                           hideChilds={(status) => setShowChilds(status)}
                         />
                      }
 

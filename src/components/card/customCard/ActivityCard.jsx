@@ -100,7 +100,7 @@ const ActivityCard = props => {
    }
 
    const handleNavigate = () => {
-      navigate(`detalle-actividad/${props.id_det}`, { replace: true })
+      navigate(`detalle-actividad/${props.id_det}`, { replace: false })
    }
 
    const handleUpdateState = () => {
