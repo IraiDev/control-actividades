@@ -93,20 +93,46 @@ const ChildItem = (props) => {
             className='gap-2 text-xs bg-white text-slate-700 rounded-lg shadow-md p-2.5 transition duration-200 transform hover:scale-[1.01]'
          >
 
-            <header className='flex justify-between items-center gap-2'>
+            <header className='flex justify-between items-baseline gap-2'>
 
                <div className='flex gap-2 items-center mb-2 px-2 py-1 rounded-lg bg-zinc-100 w-max'>
                   <Numerator number={props.number} />
                   <h1 className='font-semibold text-base'>{props.nombre_proyecto} - {props.actividad}</h1>
                </div>
 
-               <Button
-                  hidden={props.estado !== 1 && props.estado !== 2}
-                  className='bg-black/5 hover:bg-indigo-100 hover:text-indigo-500 text-sm'
-                  onClick={handleNavigate}
-               >
-                  ver detalle
-               </Button>
+               <div className='grid grid-cols-3 gap-2 items-center w-80'>
+
+                  <span
+                     className={`
+                           px-3 py-1.5 rounded-full font-semibold w-max text-sm flex items-center gap-2 col-span-2 justify-self-end
+                           ${props.estado === 1 ? 'bg-yellow-100 text-yellow-500'
+                           : props.estado === 2 ? 'text-blue-500 bg-blue-100'
+                              : props.estado === 3 ? 'text-teal-500 bg-teal-100'
+                                 : 'text-green-500 bg-green-100'
+                        }
+                     `}
+                  >
+                     <p className='font-bold'>Estado:</p>
+
+                     {optionsArray?.status?.find(os => os.value === props.estado).label}
+
+                     {props.estado === 1 ? <i className='fas fa-hourglass-start' />
+                        : props.estado === 2 ? <i className='fas fa-user-clock' />
+                           : props.estado === 3 ? <i className='fas fa-check' />
+                              : <i className='fas fa-check-double' />
+                     }
+                  </span>
+
+                  <Button
+                     hidden={props.estado !== 1 && props.estado !== 2}
+                     className='bg-black/5 hover:bg-indigo-100 hover:text-indigo-500 text-sm'
+                     onClick={handleNavigate}
+                  >
+                     ver detalle
+                  </Button>
+
+               </div>
+
 
             </header>
 
@@ -143,7 +169,7 @@ const ChildItem = (props) => {
                <section className='grid content-center gap-1'>
 
                   <P tag='creación' value={moment(props.fecha_tx).format('DD-MM-YY')} />
-                  <P tag='estado' value={optionsArray?.status?.find(os => os.value === props.estado).label} />
+                  {/* <P tag='estado' value={optionsArray?.status?.find(os => os.value === props.estado).label} /> */}
 
                   {/* <P tag='prioridad' value={props.num_prioridad} /> */}
 

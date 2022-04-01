@@ -1,15 +1,21 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import ChildItem from './ChildItem'
 import Select from 'react-select'
 import P from '../ui/P'
+import { ActivityContext } from '../../context/ActivityContext'
 
 
 const ChildContainer = (props) => {
 
    const { data } = props
 
+   const { optionsArray } = useContext(ActivityContext)
+
    const [arrayOptionsData, setArrayOptionsData] = useState([])
-   const [option, setOption] = useState({ value: null, label: 'Todos' })
+   const [option, setOption] = useState({
+      coor: { value: '', label: 'Todos' },
+      status: { value: '', label: 'Todos' },
+   })
    const [dataProcesada, setDataProcesada] = useState([])
 
    useEffect(() => {
@@ -33,22 +39,26 @@ const ChildContainer = (props) => {
          }
       })
 
-      setArrayOptionsData([{ value: null, label: 'Todos' }, ...options])
+      setArrayOptionsData([{ value: '', label: 'Todos' }, ...options])
    }, [data])
 
-   const handleChangeOption = (option) => {
+   useEffect(() => {
 
-      setOption(option)
-
-      if (option.value === null) {
+      if (option.status.value === '' && option.coor.value === '') {
          setDataProcesada(data)
          return
       }
 
-      setDataProcesada(data.filter(d => d.id_det_padre === option.value))
+      let arrTemp = data
+      let arrTempCoor = data
 
-   }
+      arrTemp = option.status.value !== '' ? data.filter(d => (option.status.value === d.estado)) : data
 
+      arrTempCoor = option.coor.value !== '' ? arrTemp.filter(d => (option.coor.value === d.id_det_padre)) : arrTemp
+
+      setDataProcesada(arrTempCoor)
+
+   }, [option])
 
    return (
       <section className='rounded-lg bg-zinc-100 border mb-8 relative'>
@@ -63,14 +73,26 @@ const ChildContainer = (props) => {
 
             <span />
 
-            <div className='flex items-center gap-2 min-w-max' title='Agrupar por hijas de...'>
-               Agrupar:
+            <div className='flex items-center gap-2 min-w-max' title='Filtrar por padres...'>
+               Padres:
                <Select
                   className='w-56'
                   placeholder='inactivo'
                   options={arrayOptionsData}
-                  value={option}
-                  onChange={handleChangeOption}
+                  value={option.coor}
+                  name='coor'
+                  onChange={(otp) => setOption({ ...option, coor: otp })}
+               />
+            </div>
+
+            <div className='flex items-center gap-2 min-w-max' title='Filtrar por estados...'>
+               estado:
+               <Select
+                  className='w-56'
+                  placeholder='inactivo'
+                  options={[{ value: '', label: 'Todos' }, ...optionsArray?.status]}
+                  value={option.status}
+                  onChange={(otp) => setOption({ ...option, status: otp })}
                />
             </div>
 
