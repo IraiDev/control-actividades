@@ -30,16 +30,17 @@ const ChildContainer = (props) => {
          <div className='p-4 max-h-[60vh] overflow-custom flex-col space-y-2'>
 
             {
-               data.length > 0 &&
-               data.map(data => (
-                  <ChildItem
-                     {...data}
-                     key={data.id_det}
-                     number={data.nivel}
-                     onPlay={() => props.onPlay({ id_actividad: data.id_det })}
-                     onPause={({ mensaje }) => props.onPause({ mensaje, id_actividad: data.id_det })}
-                  />
-               ))
+               data.length > 0 ?
+                  data.map(data => (
+                     <ChildItem
+                        {...data}
+                        key={data.id_det}
+                        number={data.nivel}
+                        onPlay={() => props.onPlay({ id_actividad: data.id_det })}
+                        onPause={({ mensaje }) => props.onPause({ mensaje, id_actividad: data.id_det })}
+                     />
+                  ))
+                  : <span className='block mx-auto text-zinc-600 text-sm'>No hay hijas para listar</span>
             }
 
          </div>

@@ -27,7 +27,7 @@ const ChildItem = (props) => {
 
    const [options, setOptions] = useState({ value: 0, label: 'ninguno' })
 
-   const isRuning = props.pausas[0].boton === 2
+   const isRuning = props.pausas.length > 0 && props.pausas[0].boton === 2
 
    const handleShowDesc = () => {
       Alert({

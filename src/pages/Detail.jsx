@@ -1221,7 +1221,7 @@ const Detail = () => {
                         <i className='fas fa-child' />
                      </Button>
 
-                     {showChilds ?
+                     {showChilds &&
 
                         <ChildContainer
                            {...activity}
@@ -1229,8 +1229,6 @@ const Detail = () => {
                            onPause={({ isDefaultPause, mensaje, id_actividad }) => onPlayOrPauseChild({ isDefaultPause, mensaje, id_actividad })}
                            onPlay={({ id_actividad }) => onPlayOrPauseChild({ id_actividad })}
                         />
-
-                        : 'No hay actividades Hijas'
                      }
 
                      <ViewSection lg cols={8}>
