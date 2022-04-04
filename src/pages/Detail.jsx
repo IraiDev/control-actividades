@@ -341,10 +341,11 @@ const Detail = () => {
       const vTicket = ticket !== activity.num_ticket_edit
       const vPriority = priority !== activity.num_prioridad && priority >= 0
       const vTime = time !== activity.tiempo_estimado && time > 0
+      const vFile = files !== null
 
       // console.log({ vPR, vSub, vSo, vEn, vRe, vTitle, vDesc, vGloss, vTicket, vPriority, vTime })
 
-      const validate = vPR || vSub || vSo || vEn || vRe || vTitle || vDesc || vGloss || vTicket || vPriority || vTime
+      const validate = vPR || vSub || vSo || vEn || vRe || vTitle || vDesc || vGloss || vTicket || vPriority || vTime || vFile
 
       return returnObj ? { res: validate } : validate
    }

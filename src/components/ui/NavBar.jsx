@@ -160,7 +160,21 @@ const NavBar = () => {
       const vUrDisUe = options.ur.id === options.ue.id
 
       const onCreateValidation = vTitle || vDesc || vTime || vPriority || vPr || vUs || vUe || vUr || vUrDisUe
-      return { isCreate: onCreateValidation }
+
+      const arrlabel = [
+         { label: 'Título', value: vTitle },
+         { label: 'Descripción', value: vDesc },
+         { label: 'Prioridad', value: vPriority },
+         { label: 'Tiempo', value: vTime },
+         { label: 'Proyecto', value: vPr },
+         { label: 'Solicita', value: vUs },
+         { label: 'Encargado', value: vUe },
+         { label: 'Revisor', value: vUr }
+      ]
+
+      const filter = arrlabel.filter(item => item.value)
+
+      return { isCreate: onCreateValidation, saveValue: filter, }
    }
 
    const getTimes = async () => {
@@ -412,6 +426,7 @@ const NavBar = () => {
                validation={validations().isCreate}
                isCustom={options?.ur?.id !== options?.ue?.id}
                customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
+               fields={validations().saveValue}
             />
 
             <div className='grid gap-5'>
