@@ -133,7 +133,7 @@ const TdControlDistribution = props => {
          Alert({
             icon: 'warn',
             title: 'Atención',
-            content: 'Quieres aplicar cambios sin agregar el item que estas escribiendo, por favor preciona agregar y luego aplica los cambios',
+            content: 'Quieres aplicar cambios sin agregar el item que estas escribiendo, por favor primero presiona agregar y luego aplica los cambios',
             showCancelButton: false,
          })
          return
