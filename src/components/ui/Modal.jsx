@@ -40,9 +40,9 @@ const Modal = ({
             />
 
             <div className={`relative flex items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-transparent p-2 h-full z-40 ${className}`}>
-               
+
                <section className={`rounded-md bg-white shadow-xl relative w-full max-h-full overflow-custom ${padding}`}>
-                  
+
                   <Button
                      onClick={onClose}
                      className='absolute z-50 right-4 top-4 text-slate-700 hover:text-red-500'>

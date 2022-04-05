@@ -10,6 +10,10 @@ import Numerator from '../../ui/Numerator'
 import NumberFormat from 'react-number-format'
 import Box from '../../ui/Box'
 
+const initOptions = {
+   product: { value: null, label: 'ninguno' },
+}
+
 const TdControlDistribution = props => {
 
    const {
@@ -23,7 +27,7 @@ const TdControlDistribution = props => {
 
    const { optionsArray } = useContext(ActivityContext)
 
-   const [options, setOptions] = useState()
+   const [options, setOptions] = useState(initOptions)
    const [modal, setModal] = useState(false)
    const [times, setTimes] = useState([])
    const [tr, setTr] = useState(props.tiempo_trabajado)
@@ -43,7 +47,7 @@ const TdControlDistribution = props => {
             icon: 'warn',
             title: 'Atención',
             content: 'El tiempo ingresado es mayor al tiempo restante, por favor modifique el valor y vuelva a intentarlo',
-            showCancelButton: false, 
+            showCancelButton: false,
          })
 
          return
@@ -101,6 +105,8 @@ const TdControlDistribution = props => {
       const action = () => {
          setTimes(props.tiempos_distribuidos)
          setModal(false)
+         reset()
+         setOptions(initOptions)
       }
 
       Alert({
@@ -111,12 +117,27 @@ const TdControlDistribution = props => {
          confirmText: 'Si, cancelar',
          action
       })
-      
+
    }
 
    const handleApplyChanges = () => {
 
       const some = times.some(dis => Number(dis.tiempo_dist_act) === 0)
+      const length = times.length
+
+      const validation =
+         length <= props.tiempos_distribuidos.length &&
+         (time !== 0 || gloss !== '' || options.product.value !== null)
+
+      if (validation) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'Quieres aplicar cambios sin agregar el item que estas escribiendo, por favor preciona agregar y luego aplica los cambios',
+            showCancelButton: false,
+         })
+         return
+      }
 
       if (tr < 0) {
          Alert({
@@ -140,6 +161,7 @@ const TdControlDistribution = props => {
 
       props.callback(times)
       setModal(false)
+      setOptions(initOptions)
       reset()
    }
 
@@ -182,15 +204,15 @@ const TdControlDistribution = props => {
                ${isStickyLeft ? 'sticky left-0 odd:bg-slate-600 even:bg-slate-700' : isStickyRight ? 'sticky right-0 odd:bg-zinc-200/70 even:bg-zinc-200/70' : ' odd:bg-black/0 even:bg-black/5'}
             
             `}>
-            <span 
+            <span
                onClick={handleOpenModal}
                title='tiempo restante para distribuir'
                className={`
 
                   px-2 py-1 font-bold rounded-full text-sm transition duration-300
-                     ${calculateTime(props).time === 0 ? 'text-green-500 bg-green-200 hover:bg-green-300' 
-                        : calculateTime(props).length === 0 ? 'text-red-500 bg-red-200 hover:bg-red-300'
-                           : calculateTime(props).length > 0 ? 'text-amber-500 bg-amber-200 hover:bg-amber-300' : ''}
+                     ${calculateTime(props).time === 0 ? 'text-green-500 bg-green-200 hover:bg-green-300'
+                     : calculateTime(props).length === 0 ? 'text-red-500 bg-red-200 hover:bg-red-300'
+                        : calculateTime(props).length > 0 ? 'text-amber-500 bg-amber-200 hover:bg-amber-300' : ''}
                   
                `}
             >
@@ -219,7 +241,7 @@ const TdControlDistribution = props => {
                   <h1 className='first-letter:capitalize mb-2'>
                      <span className='font-semibold mr-2'>
                         Titulo:
-                     </span>  
+                     </span>
                      {props.actividad}, {props.id_det}
                   </h1>
 
@@ -230,7 +252,7 @@ const TdControlDistribution = props => {
                </section>
 
                <Box className='bg-white' isBlock >
-                  
+
                   <span className='col-span-1' />
 
                   <span className='col-span-2' />
@@ -250,7 +272,7 @@ const TdControlDistribution = props => {
                   <h3 className='font-semibold text-sm col-span-1 py-2 text-center'>
                      Nº
                   </h3>
-                  
+
                   <h3 className='font-semibold text-sm col-span-2 text-center'>
                      Producto Zionit
                   </h3>
@@ -264,20 +286,20 @@ const TdControlDistribution = props => {
                   </h3>
 
                   <div className='font-semibold text-sm col-span-1 flex items-baseline gap-2 justify-center'>
-                     <NumberFormat 
+                     <NumberFormat
                         className='text-yellow-500'
-                        value={props.tiempo_cliente} 
-                        decimalScale={4} 
+                        value={props.tiempo_cliente}
+                        decimalScale={4}
                         fixedDecimalScale={false}
-                        displayType='text' 
-                     /> 
+                        displayType='text'
+                     />
                      /
-                     <NumberFormat 
+                     <NumberFormat
                         className={tr < 0 ? 'text-red-500' : 'text-emerald-500'}
-                        value={tr} 
-                        decimalScale={4} 
+                        value={tr}
+                        decimalScale={4}
                         fixedDecimalScale={false}
-                        displayType='text' 
+                        displayType='text'
                      />
                   </div>
                </Box>
@@ -335,7 +357,7 @@ const TdControlDistribution = props => {
                         <section className='col-span-2 py-1'>
                            <CustomSelect
                               options={products}
-                              value={products.find(p => Number(times[i]?.id_producto) === Number(p.value)) ?? {value: null, label: 'ninguno'}}
+                              value={products.find(p => Number(times[i]?.id_producto) === Number(p.value)) ?? { value: null, label: 'ninguno' }}
                               onChange={option => {
                                  setTimes(times.map(inp => {
                                     if (inp.id_dist_tiempo_act === dis.id_dist_tiempo_act) {
@@ -385,23 +407,23 @@ const TdControlDistribution = props => {
                         </Button>
 
                      </Box>
-                     
+
                   ))
-                : 
+                  :
                   <span className='text-sm text-zinc-400 pl-8'>
                      No hay distribucion de tiempos...
                   </span>
                }
 
                <footer className='flex justify-between mt-10'>
-                  <Button 
+                  <Button
                      className='bg-red-100 hover:bg-red-200 text-red-500'
                      onClick={onCloseModal}
                   >
                      cancelar
                   </Button>
 
-                  <Button 
+                  <Button
                      className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
                      onClick={handleApplyChanges}
                      title='Esto guardara las modificaciones realizadas en la Base de datos'

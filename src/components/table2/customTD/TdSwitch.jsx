@@ -5,6 +5,7 @@ import Button from '../../ui/Button'
 import Modal from '../../ui/Modal'
 import TextArea from '../../ui/TextArea'
 import { useForm } from '../../../hooks/useForm'
+import { Alert } from '../../../helpers/alerts'
 
 const TdSwitch = (props) => {
 
@@ -26,6 +27,19 @@ const TdSwitch = (props) => {
    }
 
    const handlePauseActivity = () => {
+
+      if (mensaje === '') {
+
+         Alert({
+            icon: 'warn',
+            title: 'Atención!',
+            content: 'Debe ingresar un mensaje para pausar la actividad.',
+            showCancelButton: false
+         })
+         return
+
+      }
+
       onPause({ mensaje, tipo_pausa: 3 })
       onCloseModal()
    }

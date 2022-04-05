@@ -82,8 +82,6 @@ export const useDetail = (id) => {
          const body = await resp.json()
          const { ok, response } = body
 
-         console.log('detenciones pr',response)
-
          if (ok) {
             setDetentions(response)
             await fetchPRDetail()

@@ -23,7 +23,9 @@ const Td = props => {
                ${highlight ? 'font-bold' : 'font-normal'}
                ${isStickyLeft ? 'sticky left-0 odd:bg-slate-600 even:bg-slate-700' : isStickyRight ? 'sticky right-0 odd:bg-zinc-200/70 even:bg-zinc-200/70' : ' odd:bg-black/0 even:bg-black/5'}
             
-            `}>
+            `}
+            onDoubleClick={props.onDoubleClick}
+         >
             {children}
          </td>
       </>

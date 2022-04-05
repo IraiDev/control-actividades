@@ -110,7 +110,7 @@ const Revision = () => {
    const onClear = () => {
       savePRFilters({ reset: true })
       setOptions({
-         st: { value: 3, label: 'PARA REVISION' },
+         st: [{ value: 3, label: 'PARA REVISION' }],
          pr: [],
          ue: [],
          us: [],
@@ -223,6 +223,10 @@ const Revision = () => {
 
       // eslint-disable-next-line
    }, [optionsArray, prFilters])
+
+   useEffect(() => {
+      console.log('filtros pr', prFilters)
+   }, [prFilters])
 
 
    return (
@@ -677,12 +681,18 @@ const Revision = () => {
                               ${act.id_det === isActive ? 'bg-purple-100' : ''}
                               ${activityRunning.id === act.id_det_padre && activityRunning.isRunning ? 'bg-emerald-200/50' : ''}
                            `}
-                           onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
+
                         >
 
-                           <Td><Numerator className='mx-auto' number={i + 1} /></Td>
+                           <Td
+                              onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
+                           >
+                              <Numerator className='mx-auto' number={i + 1} />
+                           </Td>
 
-                           <Td>
+                           <Td
+                              onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
+                           >
                               <span className={`
                                     px-2 py-0.5 font-bold rounded-md text-sm mt-2 block w-max mx-auto capitalize
                                     ${act.id_tipo_actividad === 1 ? 'bg-indigo-200 text-indigo-500'
@@ -697,7 +707,9 @@ const Revision = () => {
                               </span>
                            </Td>
 
-                           <Td>
+                           <Td
+                              onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
+                           >
                               <div className='flex items-center justify-center gap-3'>
                                  <MarkActivity
                                     position='block'
@@ -710,13 +722,27 @@ const Revision = () => {
                               </div>
                            </Td>
 
-                           <Td>{act.num_ticket_edit || '--'}</Td>
+                           <Td
+                              onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
+                           >
+                              {act.num_ticket_edit || '--'}
+                           </Td>
 
-                           <Td>{act.abrev}</Td>
+                           <Td
+                              onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
+                           >
+                              {act.abrev}
+                           </Td>
 
-                           <Td>{act.nombre_sub_proy ?? '--'}</Td>
+                           <Td
+                              onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
+                           >
+                              {act.nombre_sub_proy ?? '--'}
+                           </Td>
 
-                           <Td>
+                           <Td
+                              onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
+                           >
                               <span
                                  title='Tiempo total cobrable'
                                  className='px-2 py-0.5 rounded-full bg-green-300/80 font-bold'
@@ -729,6 +755,7 @@ const Revision = () => {
                               isMultiLine={multiline}
                               width='max-w-[150px]'
                               align='text-left'
+                              onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
                            >
                               {act.actividad || 'Sin Titulo'}
                            </Td>
@@ -736,19 +763,40 @@ const Revision = () => {
                            <Td
                               isMultiLine={multiline}
                               align='text-left'
+                              onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
                            >
                               {act.func_objeto}
                            </Td>
 
-                           <Td>{status?.find(s => s.value === act.estado).label}</Td>
+                           <Td
+                              onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
+                           >
+                              {status?.find(s => s.value === act.estado).label}
+                           </Td>
 
-                           <Td>{act.user_solicita}</Td>
+                           <Td
+                              onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
+                           >
+                              {act.user_solicita}
+                           </Td>
 
-                           <Td>{act.encargado_actividad}</Td>
+                           <Td
+                              onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
+                           >
+                              {act.encargado_actividad}
+                           </Td>
 
-                           <Td>{act.abrev_revisor || '--'}</Td>
+                           <Td
+                              onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
+                           >
+                              {act.abrev_revisor || '--'}
+                           </Td>
 
-                           <Td>{moment(`${act.fecha_revicion} ${act.hora_revicion}`).format('DD-MM-yyyy, HH:MM') ?? 'sin fecha'}</Td>
+                           <Td
+                              onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
+                           >
+                              {moment(`${act.fecha_revicion} ${act.hora_revicion}`).format('DD-MM-yyyy, HH:MM') ?? 'sin fecha'}
+                           </Td>
 
                            <TdSwitch
                               state={act.estado}
