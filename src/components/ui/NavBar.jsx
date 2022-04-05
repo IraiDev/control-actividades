@@ -131,7 +131,7 @@ const NavBar = () => {
    const [isSideBarOpen, toggleSideBar] = useToggle(null)
    const [modal, toggleModal] = useState(false)
 
-   const [files, setFiles] = useState([])
+   const [files, setFiles] = useState(null)
    const [options, setOptions] = useState(initOptions)
    const [
       { title, priority, time, desc, gloss },
@@ -203,7 +203,7 @@ const NavBar = () => {
       formData.append('titulo', title)
       formData.append('descripcion', desc)
       formData.append('glosa', gloss)
-      files && formData.append('archivos', files)
+      files !== null && formData.append('archivos', files)
 
       const ok = await createActivity(formData)
       if (!ok) return
@@ -220,6 +220,7 @@ const NavBar = () => {
       reset()
       toggleModal(false)
       setOptions(initOptions)
+      setFiles(null)
    }
 
    const handleToggleShowActivities = () => {

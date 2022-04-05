@@ -19,6 +19,10 @@ import { fetchToken } from '../../../helpers/fetch'
 import Tag from '../../ui/Tag'
 import CustomSelect from '../../ui/CustomSelect'
 import { UiContext } from '../../../context/UiContext'
+import Select from 'react-select'
+import AlertBar from '../../ui/AlertBar'
+import Input from '../../ui/Input'
+import { useDetail } from '../../../hooks/useDetail'
 
 const defaultNotes = [
    { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -36,6 +40,39 @@ const defaultPauses = [
    { id: 1112424, desc: 'Salida a terreno...' },
    { id: 1112425, desc: 'Fin jornada...' },
 ]
+
+const initOptionsAct = {
+   pr: { value: 0, label: 'ninguno' },
+   sp: { value: 0, label: 'ninguno' },
+   ur: { value: 0, label: 'ninguno' },
+   us: { value: 0, label: 'ninguno' },
+   ue: { value: 0, label: 'ninguno' },
+   ta: { value: 0, label: 'ninguno' },
+}
+
+const CloneSelect = ({ options, value, onChange, field, isRequired = false, isDefaultOptions = true, disabled = false, hidden = false }) => {
+
+   if (hidden) return null
+
+   return (
+      <div className='capitalize text-xs'>
+         <span className='flex gap-2 items-baseline font-semibold text-sm px-2 w-max mb-2 py-0.5 bg-amber-200/80 rounded-md'>
+            {field}
+            {isRequired && <span className='text-red-600 font-semibold'>(*)</span>}
+         </span>
+
+         <Select
+            isDisabled={disabled}
+            maxMenuHeight={170}
+            className='capitalize text-sm'
+            placeholder='Seleccione'
+            options={isDefaultOptions ? [{ value: 0, label: 'ninguno' }].concat(options) : options}
+            value={value}
+            onChange={onChange}
+         />
+      </div>
+   )
+}
 
 const ActivityCard = props => {
    const {
@@ -61,21 +98,41 @@ const ActivityCard = props => {
 
    const navigate = useNavigate()
 
-   const { optionsArray, user } = useContext(ActivityContext)
+   const { cloneActivity } = useDetail(null)
+
+   const { optionsArray, user, filters, saveFilters } = useContext(ActivityContext)
    const { idSelect, setIdSelect } = useContext(UiContext)
+
+   const [files, setFiles] = useState(null)
 
    const [{ desc, time }, onChangeValues, reset] = useForm({
       desc: '',
       time: props.tiempo_estimado,
    })
 
+   const [
+      { desc_act, gloss_act, title_act, prio_act, time_act },
+      onChangeValuesAct,
+      resetAct,
+      handlePresetActValues
+   ] =
+      useForm({
+         desc_act: '',
+         gloss_act: '',
+         title_act: '',
+         prio_act: '150',
+         time_act: '1'
+      })
+
    const [values, setValues] = useState({ desc: '', id: null })
    const [options, setOptions] = useState({ value: null, label: 'ninguno' })
+   const [actOptions, setActOptions] = useState(initOptionsAct)
 
    // modals
    const [modalEdit, toggleModalEdit] = useState(false)
    const [modalAdd, toggleModalAdd] = useState(false)
    const [modalPause, toggleModalPause] = useState(false)
+   const [modalClone, toggleModalClone] = useState(false)
 
    // variables
    const ESTADO_PAUSA = estado === 1
@@ -92,11 +149,15 @@ const ActivityCard = props => {
 
    const onCloseModals = () => {
       reset()
+      resetAct()
       toggleModalEdit(false)
       toggleModalAdd(false)
       toggleModalPause(false)
+      toggleModalClone(false)
       setValues({ desc: '', id: null })
       setOptions({ value: null, label: 'ninguno' })
+      setActOptions(initOptionsAct)
+      setFiles(null)
    }
 
    const handleNavigate = () => {
@@ -242,6 +303,114 @@ const ActivityCard = props => {
 
       return { color: '' }
 
+   }
+
+   const openModalClone = () => {
+
+      const data = {
+         id: props.id_det,
+         title: props.actividad,
+         id_proy: props.id_proy,
+         id_sub_proy: props.id_sub_proyecto,
+         id_revisor: props.id_revisor,
+         desc: props.func_objeto,
+         encargado: props.encargado_actividad,
+         solicita: props.user_solicita,
+         ticket: props.num_ticket_edit,
+         gloss: props.glosa_explicativa,
+      }
+
+      handlePresetActValues({
+         desc_act: data.desc,
+         gloss_act: data.gloss,
+         title_act: data.title
+      })
+
+      setActOptions({
+         ...actOptions,
+         pr: optionsArray.projects.find(item => item.value === data.id_proy),
+         sp: data.id_sub_proy !== 0 ? optionsArray.subProjects.find(item => item.value === data.id_sub_proy) : actOptions.sp,
+         ur: data.id_revisor !== 0 ? optionsArray.users.find(item => item.id === data.id_revisor) : actOptions.ur,
+         us: optionsArray.users.find(item => item.value === data.solicita),
+         ue: optionsArray.users.find(item => item.value === data.encargado),
+      })
+
+      toggleModalClone(true)
+
+   }
+
+   const validation = () => {
+      const vTitle = title_act.trim() === ''
+      const vDesc = desc_act.trim() === ''
+      const vPriority = prio_act?.toString().trim() === '' || Number(prio_act) <= 0
+      const vTime = time_act?.toString().trim() === '' || Number(time_act) <= 0
+      const vProject = actOptions.pr?.value === 0
+      const vSolicita = actOptions.us?.value === 0
+      const vEncargado = actOptions.ue?.value === 0
+      const vRevisor = actOptions.ta?.value === 1 ? actOptions.ur?.value === 0 : false
+      const vRdisE = actOptions.ta?.value === 1 ? actOptions.ur?.id === actOptions.ue?.id : false
+      const vTipo_actividad = actOptions.ta?.value === 0 || actOptions.ta?.value === undefined
+
+      const arrlabel = [
+         { label: 'Título', value: vTitle },
+         { label: 'Descripción', value: vDesc },
+         { label: 'Prioridad', value: vPriority },
+         { label: 'Tiempo', value: vTime },
+         { label: 'Proyecto', value: vProject },
+         { label: 'Solicita', value: vSolicita },
+         { label: 'Encargado', value: vEncargado },
+         { label: 'Revisor', value: vRevisor },
+         { label: 'Tipo Actividad', value: vTipo_actividad },
+      ]
+
+      const filter = arrlabel.filter(item => item.value)
+
+      const onSaveValidation =
+         vTitle ||
+         vDesc ||
+         vPriority ||
+         vTime ||
+         vProject ||
+         vSolicita ||
+         vEncargado ||
+         vRevisor ||
+         vRdisE ||
+         vTipo_actividad
+
+      return {
+         validation: onSaveValidation,
+         values: filter
+      }
+   }
+
+   const onClone = async () => {
+      const formData = new FormData()
+      actOptions?.pr && formData.append('proyecto', actOptions.pr.value)
+      actOptions?.sp && formData.append('sub_proyecto', actOptions.sp.value)
+      actOptions?.us && formData.append('solicita', actOptions.us.label)
+      actOptions?.ue && formData.append('encargado', actOptions.ue.label)
+      actOptions?.ta?.value === 1 && actOptions?.ur && formData.append('revisor', actOptions.ur.id)
+      actOptions?.ta && formData.append('tipo_actividad', actOptions.ta.value)
+      formData.append('prioridad', prio_act)
+      formData.append('ticket', props.num_ticket_edit)
+      formData.append('tiempo_estimado', time_act)
+      formData.append('titulo', title_act)
+      formData.append('descripcion', desc_act)
+      formData.append('glosa', gloss_act)
+      formData.append('id_actividad', props.id_det)
+      files !== null && formData.append('archivos', files)
+
+      console.log(files)
+
+      const ok = await cloneActivity(formData)
+      if (!ok) return
+      saveFilters({
+         payload: {
+            offset: 0,
+            reload: !filters.reload,
+         },
+      })
+      onCloseModals()
    }
 
    return (
@@ -415,6 +584,16 @@ const ActivityCard = props => {
                         Editar nota
                         <i className='fas fa-pen' />
                      </MenuItem>
+
+                     {props.id_tipo_actividad !== 3 &&
+                        <MenuItem
+                           disabled={props.id_tipo_actividad === 4 && !ESTADO_play}
+                           className='flex justify-between items-center gap-2'
+                           onClick={() => openModalClone(props)}>
+                           Clonar Actividad
+                           <i className='fas fa-clone' />
+                        </MenuItem>
+                     }
 
                      <MenuItem
                         className='flex justify-between items-center gap-2'
@@ -655,6 +834,213 @@ const ActivityCard = props => {
                </footer>
             </div>
          </Modal>
+
+         {/* modal clone */}
+         {modalClone &&
+            <Modal
+               showModal={modalClone}
+               isBlur={false}
+               onClose={onCloseModals}
+               padding='p-4 md:p-6'
+               title={`Clonar actividad: ${props.id_det}, ${props.actividad || 'Sin titulo'
+                  }`}>
+
+               <AlertBar
+                  validation={validation().validation}
+                  isCustom={actOptions?.ur?.id !== actOptions?.ue?.id}
+                  customMsg='Revisor y Encargado no pueden ser asignados a la misma persona'
+                  fields={validation().values}
+               />
+
+               <div className='grid gap-5'>
+
+                  <header className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                     <aside className='flex-row space-y-2'>
+
+                        <CloneSelect
+                           isRequired
+                           field='Proyecto'
+                           options={optionsArray?.projects}
+                           value={actOptions.pr}
+                           onChange={option =>
+                              setActOptions({
+                                 ...actOptions,
+                                 pr: option,
+                              })
+                           }
+                        />
+
+                        <CloneSelect
+                           field='Sub proyecto'
+                           options={
+                              options.pr?.value
+                                 ? optionsArray?.subProjects?.filter(
+                                    s => s.id === options.pr?.value
+                                 )
+                                 : optionsArray?.subProjects
+                           }
+                           value={actOptions.sp}
+                           onChange={option =>
+                              setActOptions({
+                                 ...actOptions,
+                                 sp: option,
+                              })
+                           }
+                        />
+
+                        <CloneSelect
+                           isRequired
+                           field='Solicita'
+                           options={optionsArray?.users}
+                           value={actOptions.us}
+                           onChange={option =>
+                              setActOptions({
+                                 ...actOptions,
+                                 us: option,
+                              })
+                           }
+                        />
+
+                        <CloneSelect
+                           isRequired
+                           field='Encargado'
+                           options={optionsArray?.users}
+                           value={actOptions.ue}
+                           onChange={option =>
+                              setActOptions({
+                                 ...actOptions,
+                                 ue: option,
+                              })
+                           }
+                        />
+
+                        <CloneSelect
+                           hidden={actOptions?.ta?.value !== 1}
+                           isRequired={actOptions?.ta?.value === 1}
+                           field='Revisor'
+                           options={optionsArray?.users}
+                           value={actOptions.ur}
+                           onChange={option =>
+                              setActOptions({
+                                 ...actOptions,
+                                 ur: option,
+                              })
+                           }
+                        />
+                     </aside>
+
+                     <aside className='mt-0.5 grid'>
+
+                        <div className='border-2 border-amber-200 rounded p-0.5 mb-3'>
+                           <CloneSelect
+                              isRequired
+                              field='tipo actividad'
+                              options={optionsArray?.activity_type}
+                              value={actOptions.ta}
+                              onChange={option =>
+                                 setActOptions({
+                                    ...actOptions,
+                                    ta: option,
+                                 })
+                              }
+                           />
+                        </div>
+
+                        <Input
+                           isRequired
+                           highlight
+                           className='mb-3'
+                           field='titulo'
+                           value={title_act}
+                           name='title_act'
+                           onChange={onChangeValuesAct}
+                        />
+
+                        <Input
+                           disabled
+                           highlight
+                           className='mb-3'
+                           field='ticket'
+                           isNumber
+                           value={props.num_ticket_edit}
+                        />
+
+                        <Input
+                           isRequired
+                           highlight
+                           className='mb-3'
+                           field='prioridad'
+                           isNumber
+                           value={prio_act}
+                           name='prio_act'
+                           onChange={onChangeValuesAct}
+                        />
+
+                        <Input
+                           isRequired
+                           highlight
+                           className='mb-3'
+                           field='T. estimado'
+                           value={time_act}
+                           name='time_act'
+                           isNumber
+                           onChange={onChangeValuesAct}
+                        />
+                     </aside>
+                  </header>
+
+                  <section className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                     <TextArea
+                        field='descripción'
+                        highlight
+                        isRequired
+                        value={desc_act}
+                        name='desc_act'
+                        onChange={onChangeValuesAct}
+                     />
+                     <TextArea
+                        field='glosa'
+                        value={gloss_act}
+                        name='gloss_act'
+                        onChange={onChangeValuesAct}
+                     />
+                  </section>
+
+                  <footer className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-10'>
+
+                     <input
+                        className='
+                                 file:rounded-full file:bg-blue-50 file:py-2 file:px-4 file:text-sm
+                                 file:hover:bg-blue-100 file:text-blue-400 file:border-none
+                                 file:transition file:duration-500 file:cursor-pointer file:font-semibold
+                                 file:hover:shadow-lg file:hover:shadow-blue-400/20 text-slate-400 text-sm
+                                 file:mt-5 max-w-max'
+                        type='file'
+                        name='file'
+                        onChange={e => setFiles(e.target.files[0])}
+                     />
+
+                     <div className='place-self-end flex gap-2'>
+
+                        <Button
+                           className='text-red-500 hover:bg-red-100'
+                           onClick={onCloseModals}>
+                           Cancelar
+                        </Button>
+
+                        <Button
+                           disabled={validation().isClone}
+                           className='text-yellow-500 hover:bg-yellow-100 place-self-end disabled:hover:bg-transparent'
+                           onClick={onClone}>
+                           clonar actividad
+                        </Button>
+
+                     </div>
+
+                  </footer>
+               </div>
+            </Modal>
+         }
       </>
    )
 }

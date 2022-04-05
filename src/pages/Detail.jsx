@@ -2687,7 +2687,8 @@ const Detail = () => {
 
                         </footer>
                      </div>
-                  </Modal>}
+                  </Modal>
+               }
             </>
          )}
       </>
