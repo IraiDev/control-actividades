@@ -658,8 +658,6 @@ const Detail = () => {
       if (minutes < 10) minutes = '0' + minutes
       if (seconds < 10) seconds = '0' + seconds
 
-      console.log(hours, ' : ', minutes, ' : ', seconds)
-
       return {
          complete: hours + ':' + minutes + ':' + seconds,
          section: {
