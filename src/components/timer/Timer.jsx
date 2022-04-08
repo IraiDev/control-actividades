@@ -28,10 +28,10 @@ const Timer = (props) => {
   }
 
   const stop = () => clearInterval(interv)
-  
+
   useEffect(() => {
     setTime({ s: t?.seconds, m: t?.minutes, h: t?.hours })
-    return ()  => setTime({ s: t?.seconds, m: t?.minutes, h: t?.hours })
+    return () => setTime({ s: t?.seconds, m: t?.minutes, h: t?.hours })
     // eslint-disable-next-line
   }, [t])
 
@@ -40,6 +40,8 @@ const Timer = (props) => {
     return () => stop()
     // eslint-disable-next-line
   }, [props.pause])
+
+  console.log(props.time)
 
   return (
     <div className='flex'>

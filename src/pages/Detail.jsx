@@ -647,18 +647,23 @@ const Detail = () => {
    }
 
    // provee el formato de los timers
-   const timeFormat = time => {
-      let hours = time._data.hours
+   const timeFormat = (time, t) => {
+
+      let days = time._data.days
+      const dayToHours = days * 24
+      let hours = time._data.hours + dayToHours
       let minutes = time._data.minutes
       let seconds = time._data.seconds
       if (hours < 10) hours = '0' + hours
       if (minutes < 10) minutes = '0' + minutes
       if (seconds < 10) seconds = '0' + seconds
 
+      console.log(hours, ' : ', minutes, ' : ', seconds)
+
       return {
          complete: hours + ':' + minutes + ':' + seconds,
          section: {
-            hours: time._data.hours,
+            hours: time._data.hours + dayToHours,
             minutes: time._data.minutes,
             seconds: time._data.seconds,
          },
@@ -1726,6 +1731,8 @@ const Detail = () => {
 
                                  {(activity.id_tipo_actividad !== 3) &&
                                     <MenuItem
+                                       title='Solo se puede clonar actividad de tipo COORDINACION cuando esta esta andando'
+                                       disabled={activity.id_tipo_actividad === 4 && activity.estado_play_pausa !== 2}
                                        className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
                                        onClick={openModalClone}
                                     >

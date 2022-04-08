@@ -587,6 +587,7 @@ const ActivityCard = props => {
 
                      {props.id_tipo_actividad !== 3 &&
                         <MenuItem
+                           title='Solo se puede clonar actividad de tipo COORDINACION cuando esta esta andando'
                            disabled={props.id_tipo_actividad === 4 && !ESTADO_play}
                            className='flex justify-between items-center gap-2'
                            onClick={() => openModalClone(props)}>
