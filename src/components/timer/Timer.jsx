@@ -41,8 +41,6 @@ const Timer = (props) => {
     // eslint-disable-next-line
   }, [props.pause])
 
-  console.log(props.time)
-
   return (
     <div className='flex'>
       <span>{(time.h >= 10) ? time.h : "0" + time.h}</span>:
