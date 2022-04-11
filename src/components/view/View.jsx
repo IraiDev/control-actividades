@@ -14,14 +14,14 @@ import queryString from 'query-string'
 import moment from 'moment'
 
 const initOptions = {
-   act: {value: null, label: 'niguno'},
-   cond: {value: null, label: 'niguno'},
-   acci: {value: null, label: 'niguno'},
+   act: { value: null, label: 'niguno' },
+   cond: { value: null, label: 'niguno' },
+   acci: { value: null, label: 'niguno' },
 }
 
 const initSw = {
-   isHigh: {status: false, name: 'Alta'},
-   isLow: {status: false, name: 'Relajada'},
+   isHigh: { status: false, name: 'Alta' },
+   isLow: { status: false, name: 'Relajada' },
 }
 
 const PrioritySelector = ({
@@ -41,13 +41,13 @@ const PrioritySelector = ({
 
 const View = props => {
 
-   const { 
-      children, 
-      title, 
-      priority, 
-      onHigh, 
-      onMid, 
-      onLow, 
+   const {
+      children,
+      title,
+      priority,
+      onHigh,
+      onMid,
+      onLow,
       onNone,
       id,
       idFather,
@@ -65,12 +65,12 @@ const View = props => {
    } = props
 
    const navigate = useNavigate()
-   const {search} = useLocation()
+   const { search } = useLocation()
    const { type_detail = '' } = queryString.parse(search)
 
-   const {optionsArray} = useContext(ActivityContext)
+   const { optionsArray } = useContext(ActivityContext)
 
-   const {updatePredecessor, getPredecessor} = useDetail(id, props.num_ticket_edit)
+   const { updatePredecessor, getPredecessor } = useDetail(id, props.num_ticket_edit)
 
    const [showModal, setShowModal] = useState(false)
    const [sw, setSw] = useState(initSw)
@@ -122,7 +122,7 @@ const View = props => {
    }
 
    const pushPredecessor = () => {
-      updatePredecessor({predecesoras: restrinccions})
+      updatePredecessor({ predecesoras: restrinccions })
       setShowModal(false)
       setOptions(initOptions)
       setSw(initSw)
@@ -134,18 +134,18 @@ const View = props => {
 
       const action = async () => {
 
-         if(validate) await callback()
+         if (validate) await callback()
 
-         const { list, activities } = await getPredecessor({id_actividad: id, id_ticket: props.num_ticket_edit})
+         const { list, activities } = await getPredecessor({ id_actividad: id, id_ticket: props.num_ticket_edit })
 
          setRestrictions(list)
-         setArrOptions(activities?.map(a => ({value: a.id_det, label: a.descripcion_actividad, tooltip: a.actividad})))
+         setArrOptions(activities?.map(a => ({ value: a.id_det, label: a.descripcion_actividad, tooltip: a.actividad })))
 
          setShowModal(true)
 
       }
 
-      if(validate) {
+      if (validate) {
          Alert({
             title: '¡Atención!',
             content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
@@ -180,12 +180,13 @@ const View = props => {
       const validate = validateMod()
 
       const action = async () => {
-         
-         navigate(type_detail === 'pr' ? '/revision-actividades' : '/actividades', { replace: true })
+
+         // navigate(type_detail === 'pr' ? '/revision-actividades' : '/actividades', { replace: true })
+         navigate(-1)
 
       }
 
-      if(validate) {
+      if (validate) {
          Alert({
             title: '¡Atención!',
             content: 'Se han realizado modificaciones que no han sido guardadas, si continua estas se perderan, ¿Desea continuar?',
@@ -194,16 +195,16 @@ const View = props => {
             action
          })
 
-         return 
+         return
       }
 
       action()
 
    }
-   
+
    useEffect(() => {
 
-      if(pausas.length <= 0) return
+      if (pausas.length <= 0) return
 
       const last = pausas.filter(p => p.boton === 1)
 
@@ -211,12 +212,12 @@ const View = props => {
 
          const date = `${last[0].fecha_detencion} ${last[0].hora_detencion}`
 
-         setLastDetention(moment(date).format('DD-MM-yyyy, HH:MM') )
-         
+         setLastDetention(moment(date).format('DD-MM-yyyy, HH:MM'))
+
       }
 
    }, [pausas])
-   
+
 
    return (
       <>
@@ -230,10 +231,10 @@ const View = props => {
                   <i className='fas fa-arrow-left fa-lg' />
                </Button>
 
-               <Button 
+               <Button
                   hidden={isFather || isPR}
                   className='bg-amber-100/60 hover:bg-amber-100 text-amber-500 text-sm absolute left-1/2 transform -translate-x-1/2'
-                  onClick={openModal}  
+                  onClick={openModal}
                >
                   <i className="fas fa-stream" />
                   asignar predecesora
@@ -264,22 +265,22 @@ const View = props => {
                }
             </header>
 
-            <h1 
+            <h1
                className='text-xl text-center font-semibold capitalize truncate'
                title={title}
             >
                {title || 'Sin titulo'}
-               <span 
+               <span
                   className='text-zinc-500 font-normal text-base ml-2'
                   title='Ultima detención'
                >
-                  [Ult. Det.: { lastDetention ? lastDetention : 'Sin detenciones' }]
+                  [Ult. Det.: {lastDetention ? lastDetention : 'Sin detenciones'}]
                </span>
             </h1>
 
             {children}
 
-            <MarkActivity 
+            <MarkActivity
                condicion={isTicket}
                position='absolute -top-3.5 left-1/2 transform -translate-x-1/2'
                hidden={!isChildren}
@@ -288,49 +289,49 @@ const View = props => {
                {idFather}
             </MarkActivity>
 
-            <MarkActivity 
+            <MarkActivity
                condicion={isTicket}
                position='absolute -top-3.5 left-1/2 transform -translate-x-1/2'
                hidden={!isFather}
             >
                <i className='fas fa-hat-cowboy fa-lg' />
-               {id} 
+               {id}
             </MarkActivity>
 
-            <MarkActivity 
+            <MarkActivity
                condicion={isTicket}
                position='absolute -top-3.5 left-1/2 transform -translate-x-1/2'
                hidden={!isCoorActivity}
             >
                <i className='far fa-calendar-alt fa-lg' />
-               {idFather} 
+               {idFather}
             </MarkActivity>
 
-            <MarkActivity 
+            <MarkActivity
                condicion={isTicket}
                position='absolute -top-3.5 left-1/2 transform -translate-x-1/2'
                hidden={!isReviewedActivity}
             >
                <i className='fas fa-calendar-check fa-lg' />
-               {idFather} 
+               {idFather}
             </MarkActivity>
 
-            <MarkActivity 
+            <MarkActivity
                condicion={isTicket}
                position='absolute -top-3.5 left-1/2 transform -translate-x-1/2'
                hidden={!isChildrenAndChildren}
             >
                <i className='fas fa-child' />
                <i className='fas fa-hat-cowboy' />
-               {idFather} 
+               {idFather}
             </MarkActivity>
 
-            <MarkActivity 
+            <MarkActivity
                condicion={isTicket}
-               hidden={!isDeliveryActivity} 
+               hidden={!isDeliveryActivity}
             >
                <i className='fas fa-truck fa-lg' />
-               {idFather} 
+               {idFather}
             </MarkActivity>
 
          </div>
@@ -343,7 +344,7 @@ const View = props => {
             className='max-w-5xl'
             title='Seleccionar actividades predecesoras'
          >
-            
+
             <div className='mt-10'>
 
                <Box colCount={10} isBlock>
@@ -355,51 +356,51 @@ const View = props => {
                </Box>
 
                <Box colCount={10} isBlock>
-                  
+
                   <span />
 
-                  <CustomSelect 
-                     className='col-span-2' 
+                  <CustomSelect
+                     className='col-span-2'
                      options={optionsArray?.status?.filter(os => (os.value === 2 || os.value === 1) && os.value !== props.estado)}
-                     width='w-full' 
-                     onChange={(option) => setOptions({ ...options, acci: option})}
+                     width='w-full'
+                     onChange={(option) => setOptions({ ...options, acci: option })}
                      value={options.acci}
                   />
 
-                  <CustomSelect 
+                  <CustomSelect
                      showTooltip
-                     className='col-span-2' 
-                     options={arrOptions} 
+                     className='col-span-2'
+                     options={arrOptions}
                      width='w-full'
-                     onChange={(option) => setOptions({ ...options, act: option})}
+                     onChange={(option) => setOptions({ ...options, act: option })}
                      value={options.act}
                   />
 
-                  <CustomSelect 
-                     className='col-span-2' 
+                  <CustomSelect
+                     className='col-span-2'
                      options={optionsArray?.status?.filter(os => os.value !== 0 && os.value !== 10 && os.value !== 8 && os.value !== 11)}
-                     width='w-full' 
-                     onChange={(option) => setOptions({ ...options, cond: option})}
+                     width='w-full'
+                     onChange={(option) => setOptions({ ...options, cond: option })}
                      value={options.cond}
                   />
 
                   <div className='col-span-2'>
-                     <Switch hidden name='Alta' value={sw.isHigh.status} onChange={(value) => setSw({isHigh: {...sw.isHigh, status: value}, isLow: {...sw.isLow, status: false}})} />
-                     
-                     <Switch name='Relajada' value={sw.isLow.status} onChange={(value) => setSw({isLow: {...sw.isLow, status: value}, isHigh: {...sw.isHigh, status: false}})} />
+                     <Switch hidden name='Alta' value={sw.isHigh.status} onChange={(value) => setSw({ isHigh: { ...sw.isHigh, status: value }, isLow: { ...sw.isLow, status: false } })} />
+
+                     <Switch name='Relajada' value={sw.isLow.status} onChange={(value) => setSw({ isLow: { ...sw.isLow, status: value }, isHigh: { ...sw.isHigh, status: false } })} />
                   </div>
 
-                  <Button 
+                  <Button
                      className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 mx-auto'
                      onClick={handleAddRestriction}
                   >
                      Agregar
                   </Button>
-                  
+
                </Box>
 
                <div className='mt-5'>
-                  
+
                   {restrinccions.length > 0 ?
                      restrinccions.map((res, i) => (
 
@@ -408,29 +409,29 @@ const View = props => {
                            <Numerator className='mx-auto' number={1 + i} />
 
                            <span className='col-span-2 text-center'>
-                              {optionsArray?.status.find(({value}) => value === res.estado_accion).label}
+                              {optionsArray?.status.find(({ value }) => value === res.estado_accion).label}
                            </span>
 
                            <span className='col-span-2 text-center'>{res.id_det_condicion}</span>
 
                            <span className='col-span-2 text-center'>
-                              {optionsArray?.status.find(({value}) => value === res.estado_condicion).label}
+                              {optionsArray?.status.find(({ value }) => value === res.estado_condicion).label}
                            </span>
                            <span className='col-span-2 text-center'>
                               {res.restriccion === 1 ? 'Alta' : 'Relajada'}
                            </span>
 
-                           <Button 
-                                 className='hover:bg-red-100 text-red-500'
-                                 onClick={() => handleDeleteRestriction(res.id_predecesoras)}
-                              >
-                                 <i className="fas fa-trash-alt" />
+                           <Button
+                              className='hover:bg-red-100 text-red-500'
+                              onClick={() => handleDeleteRestriction(res.id_predecesoras)}
+                           >
+                              <i className="fas fa-trash-alt" />
                            </Button>
-                           
+
                         </Box>
 
                      ))
-                     : 
+                     :
                      <span className='text-sm pl-4 text-zinc-400'>
                         No hay restricciones...
                      </span>

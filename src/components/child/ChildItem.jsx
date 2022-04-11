@@ -85,6 +85,27 @@ const ChildItem = (props) => {
       navigate(`/detalle-actividad/${props.id_det}`, { replace: false })
    }
 
+   const timeFormat = (time) => {
+
+      let days = time._data.days
+      const dayToHours = days * 24
+      let hours = time._data.hours + dayToHours
+      let minutes = time._data.minutes
+      let seconds = time._data.seconds
+      if (hours < 10) hours = '0' + hours
+      if (minutes < 10) minutes = '0' + minutes
+      if (seconds < 10) seconds = '0' + seconds
+
+      return {
+         complete: hours + ':' + minutes + ':' + seconds,
+         section: {
+            hours: time._data.hours + dayToHours,
+            minutes: time._data.minutes,
+            seconds: time._data.seconds,
+         },
+      }
+   }
+
    return (
 
       <>
@@ -169,9 +190,6 @@ const ChildItem = (props) => {
                <section className='grid content-center gap-1'>
 
                   <P tag='creación' value={moment(props.fecha_tx).format('DD-MM-YY')} />
-                  {/* <P tag='estado' value={optionsArray?.status?.find(os => os.value === props.estado).label} /> */}
-
-                  {/* <P tag='prioridad' value={props.num_prioridad} /> */}
 
                   <span
                      className={`
@@ -184,6 +202,19 @@ const ChildItem = (props) => {
                      `}
                   >
                      Prioridad: {props.num_prioridad}
+                  </span>
+
+                  <span
+                     className='px-3 font-bold flex gap-2 items-baseline w-max'
+                     title='Tiempo trabajado'
+                  >
+                     <i className='far fa-clock' />
+                     {timeFormat(
+                        moment.duration(
+                           props.tiempoTotal,
+                           'hours'
+                        )
+                     ).complete}
                   </span>
 
                </section>

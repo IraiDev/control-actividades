@@ -28,8 +28,6 @@ import Switch from '../components/ui/Switch'
 import queryString from 'query-string'
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
 import FloatMenu from '../components/ui/FloatMenu'
-// import MapSection from '../components/map/MapSection'
-// import MapArrow from '../components/map/MapArrow'
 import { fetchToken } from '../helpers/fetch'
 import CustomSelect from '../components/ui/CustomSelect'
 import ChildContainer from '../components/child/ChildContainer'
@@ -647,7 +645,7 @@ const Detail = () => {
    }
 
    // provee el formato de los timers
-   const timeFormat = (time, t) => {
+   const timeFormat = (time) => {
 
       let days = time._data.days
       const dayToHours = days * 24
@@ -1566,7 +1564,6 @@ const Detail = () => {
                         <aside>
                            <h5 className='text-sm mb-3 font-semibold flex gap-2'>
                               Archivos:
-                              <span className='font-normal text-zinc-500'>(Para guardar un archivo debes agregar una descripción)</span>
                            </h5>
                            <ul className='h-28 overflow-custom border-x p-1.5'>
                               {activity?.tarea_documentos?.length > 0 ? (
