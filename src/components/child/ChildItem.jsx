@@ -19,6 +19,19 @@ const defaultPauses = [
    { id: 1112425, desc: 'Fin jornada...' },
 ]
 
+const Content = ({ title, desc, time }) => {
+   return (
+      <div className='w-full'>
+         <section className='flex gap-2 items-center font-bold'>
+            <h1 className='max-w-[100px] truncate'>{title}</h1>
+            <h5>({time}):</h5>
+         </section>
+
+         <p className='text-justify'>{desc}</p>
+      </div>
+   )
+}
+
 const ChildItem = (props) => {
 
    const { optionsArray } = useContext(ActivityContext)
@@ -35,8 +48,12 @@ const ChildItem = (props) => {
    const handleShowDesc = () => {
       Alert({
          icon: 'none',
-         title: `<span class='text-lg'>Descripción de la actividad <br /> ${props.actividad}, ${props.id_det}</span>`,
-         content: `<p class='text-justify'>${props.func_objeto}</p>`,
+         title: `<span class='text-lg'>Descripción de la actividad: ${props.id_det} <br /> titulo: ${props.actividad}</span>`,
+         content: `<div class='w-full flex flex-wrap font-bold'>
+                     <h1 class='max-w-[170px] truncate mr-2'>${props.actividad}</h1>
+                     <h5>(${props.tiempo_estimado}):</h5>
+                     <p class='text-justify font-normal'>${props.func_objeto}</p>
+                  </div>`,
          showCancelButton: false,
          confirmText: 'cerrar',
       })
@@ -119,6 +136,8 @@ const ChildItem = (props) => {
                <div className='flex gap-2 items-center mb-2 px-2 py-1 rounded-lg bg-zinc-100 w-max'>
                   <Numerator number={props.number} />
                   <h1 className='font-semibold text-base'>{props.nombre_proyecto} - {props.actividad}</h1>
+                  <p title={props.func_objeto} className='max-w-[250px] truncate'>{props.func_objeto}</p>
+                  <p>({props.tiempo_estimado})</p>
                </div>
 
                <div className='grid grid-cols-3 gap-2 items-center w-80'>
