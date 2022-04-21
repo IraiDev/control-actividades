@@ -13,27 +13,27 @@ const { home, activity } = routes
 const SideBar = ({ isOpen, toggleSideBar }) => {
    const { pathname } = useLocation()
 
-   const { 
-      optionsArray, 
-      saveFilters, 
-      setOrder, 
-      order, 
-      setPager, 
+   const {
+      optionsArray,
+      saveFilters,
+      setOrder,
+      order,
+      setPager,
       pager,
       filters
    } = useContext(ActivityContext)
 
    const { view } = useContext(UiContext)
-   
+
    const [userCheck, setUserCheck] = useState(false)
-   
+
    const [options, setOptions] = useState({})
-   const [{ 
-      id, 
-      title, 
-      numPriority, 
-      ticket, 
-      desc 
+   const [{
+      id,
+      title,
+      numPriority,
+      ticket,
+      desc
    }, onChangeValues, reset, onPreset] = useForm({
       id: '',
       title: '',
@@ -46,23 +46,24 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
 
    const onFilter = () => {
       const filters = {
-         estado: options.st?.value || '',
+         estado:
+            options.st?.length > 0 ? options.st.map(item => item.value) : [],
          proyecto:
             options.pr?.length > 0 ? options.pr.map(item => item.value) : [],
          encargado:
             options.ue?.length > 0 ? options.ue.map(item => item.label) : [],
          solicitante:
             options.us?.length > 0 ? options.us.map(item => item.label) : [],
-         revisor: 
+         revisor:
             options.ur?.length > 0 ? options.ur.map(item => item.id) : [],
          subProy:
             options.sp?.length > 0 ? options.sp.map(item => item.value) : [],
-         id_tipo_actividad: 
+         id_tipo_actividad:
             options.ita?.length > 0 ? options.ita.map(item => item.value) : [],
          color: options.pi?.value || '',
          id_actividad: id,
          titulo: title,
-         numero_ticket:ticket,
+         numero_ticket: ticket,
          descripcion: desc,
          prioridad_ra: numPriority,
          offset: 0,
@@ -76,7 +77,7 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
    const onClear = () => {
       saveFilters({ reset: true })
       setOptions({
-         st: '',
+         st: [1, 2],
          pr: [],
          ue: [],
          us: [],
@@ -98,7 +99,9 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
 
    useEffect(() => {
       setOptions({
-         st: optionsArray?.status?.find(os => os.value === filters.estado),
+         st: optionsArray?.status?.filter(st => {
+            return filters.estado.includes(st.value)
+         }),
          pr: optionsArray?.projects?.filter(op => {
             return filters.proyecto.includes(op.value)
          }),
@@ -120,9 +123,9 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
       })
 
       onPreset({
-         id: filters.id_actividad, 
-         title: filters.titulo, 
-         desc: filters.descripcion, 
+         id: filters.id_actividad,
+         title: filters.titulo,
+         desc: filters.descripcion,
          ticket: filters.numero_ticket
       })
 
@@ -135,11 +138,10 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
          className={`
          fixed top-0 left-0 border bg-white shadow-lg h-screen w-[310px]
          animate__animated animate__faster z-30 overflow-custom
-         ${
-            pathname !== activity &&
+         ${pathname !== activity &&
             pathname !== home &&
             'animate__slideOutLeft'
-         }
+            }
          ${isOpen === null && 'hidden'}
          ${isOpen ? 'animate__slideInLeft' : 'animate__slideOutLeft'}
          `}
@@ -253,7 +255,7 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
 
          <section className='grid gap-3'>
 
-         <SelectFilter
+            <SelectFilter
                value={options.ita}
                options={activity_type}
                field='tipo actividad'
@@ -339,8 +341,9 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
                })}
             />
             <SelectFilter
+               isMulti
                value={options.st}
-               options={status?.filter(s => s.value === 2 || s.value === 1)}
+               options={status?.filter(s => s.value === 2 || s.value === 1 || s.value === 3 || s.value === 12)}
                field='estado'
                onChange={option => setOptions({ ...options, st: option })}
                filterDown={() => setOrder({ orden_estado: 'desc' })}
@@ -368,8 +371,8 @@ const SideBar = ({ isOpen, toggleSideBar }) => {
                   options.pr?.length > 1
                      ? []
                      : options.pr?.length > 0
-                     ? subProjects?.filter(s => s.id === options.pr[0]?.value)
-                     : subProjects
+                        ? subProjects?.filter(s => s.id === options.pr[0]?.value)
+                        : subProjects
                }
                field='sub proyecto'
                isMulti

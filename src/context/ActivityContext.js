@@ -1,9 +1,10 @@
 import React, { createContext, useState } from 'react'
 import { fetchToken } from '../helpers/fetch'
 import { Alert } from '../helpers/alerts'
+import { stringify } from 'query-string'
 
 const initFilters = {
-   estado: '',
+   estado: [1,2],
    proyecto: [],
    encargado: [],
    solicitante: [],
@@ -134,7 +135,7 @@ function ActivityProvider({ children }) {
                }),
                status: body.estados.map(item => {
                   return {
-                     label: item.desc_estado,
+                     label: item.desc_estado.toLowerCase(),
                      value: item.id_estado,
                      tooltip: item.abrev
                   }

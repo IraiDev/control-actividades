@@ -466,7 +466,7 @@ const ActivityCard = props => {
 
                      {/* <P tag='Tipo' value={props.desc_tipo_actividad} /> */}
 
-                     <P tag='estado' value={ESTADO_PAUSA ? ' pendiente' : ' en trabajo'} />
+                     <P tag='estado' value={optionsArray?.status?.find(st => st.value === estado).label || ''} />
 
                   </section>
 

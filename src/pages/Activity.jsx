@@ -141,7 +141,8 @@ const Activity = () => {
    const onFilter = () => {
 
       const filters = {
-         estado: options.st?.value || '',
+         estado:
+            options.st?.length > 0 ? options.st.map(item => item.value) : [],
          proyecto:
             options.pr?.length > 0 ? options.pr.map(item => item.value) : [],
          encargado:
@@ -171,7 +172,7 @@ const Activity = () => {
    const onClear = () => {
       saveFilters({ reset: true })
       setOptions({
-         st: '',
+         st: [1, 2],
          pr: [],
          ue: [],
          us: [],
@@ -352,7 +353,9 @@ const Activity = () => {
 
    useEffect(() => {
       setOptions({
-         st: optionsArray?.status?.find(os => os.value === filters.estado),
+         st: optionsArray?.status?.filter(st => {
+            return filters.estado.includes(st.value)
+         }),
          pr: optionsArray?.projects?.filter(op => {
             return filters.proyecto.includes(op.value)
          }),
@@ -705,8 +708,9 @@ const Activity = () => {
                         <Th>
                            <SelectFilter
                               type='table'
+                              isMulti
                               value={options.st}
-                              options={status.filter(s => s.value === 1 || s.value === 2)}
+                              options={status.filter(s => s.value === 1 || s.value === 2 || s.value === 12 || s.value === 3)}
                               onChange={option =>
                                  setOptions({ ...options, st: option })
                               }
