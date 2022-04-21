@@ -530,7 +530,7 @@ const ActivityCard = props => {
 
             <CardFooter>
                <FloatMenu
-                  hidden={!ESTADO_PAUSA || (isFather && isTicket)}
+                  hidden={estado !== 1 || (isFather && isTicket)}
                   name='time'
                   value={time}
                   onChange={onChangeValues}
@@ -542,7 +542,7 @@ const ActivityCard = props => {
                />
 
                <Button
-                  hidden={ESTADO_PAUSA || (isFather && isTicket)}
+                  hidden={estado !== 2 || (isFather && isTicket)}
                   className='hover:bg-black/5'
                   size='w-7 h-7'
                   onClick={
@@ -585,7 +585,7 @@ const ActivityCard = props => {
                         <i className='fas fa-pen' />
                      </MenuItem>
 
-                     {props.id_tipo_actividad !== 3 &&
+                     {props.id_tipo_actividad !== 3 && (estado === 1 || estado === 2) &&
                         <MenuItem
                            title='Solo se puede clonar actividad de tipo COORDINACION cuando esta esta andando'
                            disabled={props.id_tipo_actividad === 4 && !ESTADO_play}

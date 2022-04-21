@@ -1279,29 +1279,9 @@ const Detail = () => {
                                     'DD/MM/YYYY'
                                  )}
                               />
-                              {/* <P
-                                 tag='Encargado'
-                                 value={activity.encargado_actividad}
-                              />
-                              <P
-                                 tag='Proyecto'
-                                 value={activity.nombre_proyecto}
-                              />
-                              <P
-                                 tag='Sub proyecto'
-                                 value={activity.nombre_sub_proy ?? 'S/SP'}
-                              />
-                              <P
-                                 tag='Solicita'
-                                 value={activity.user_solicita}
-                              /> */}
                               <P
                                  tag='Estado'
-                                 value={
-                                    activity.estado === 1
-                                       ? ' pendiente'
-                                       : ' en trabajo'
-                                 }
+                                 value={optionsArray?.status?.find(st => st.value === activity?.estado).label || ''}
                               />
                               <P
                                  tag='Transcurridos'
@@ -1310,17 +1290,6 @@ const Detail = () => {
                                     moment(date).diff(TODAY, 'days') * 2
                                  }
                               />
-                              {/* <P
-                                 tag='Prioridad'
-                                 value={
-                                    <>
-                                       <span
-                                          className={`h-4 w-4 rounded-full mx-1 inline-block align-middle ${userStyles.styles}`}
-                                       />
-                                       {userStyles.priority} ({activity.num_prioridad})
-                                    </>
-                                 }
-                              /> */}
 
                               <span
                                  className={`
@@ -1697,85 +1666,87 @@ const Detail = () => {
                         <ViewFooter>
                            <section className='flex gap-1 items-center'>
 
-                              <Menu
-                                 direction='top'
-                                 align='start'
-                                 menuButton={
-                                    <MenuButton
-                                       className='flex items-center gap-3 bg-slate-100 hover:bg-slate-200/60 text-slate-600 disabled:text-opacity-40 px-2 h-9 rounded-lg font-semibold transition duration-200 disabled:line-through disabled:cursor-not-allowed disabled:bg-slate-50'
-                                       disabled={validation().isSave}
+                              {(activity.estado === 1 || activity.estado === 2) &&
+                                 <Menu
+                                    direction='top'
+                                    align='start'
+                                    menuButton={
+                                       <MenuButton
+                                          className='flex items-center gap-3 bg-slate-100 hover:bg-slate-200/60 text-slate-600 disabled:text-opacity-40 px-2 h-9 rounded-lg font-semibold transition duration-200 disabled:line-through disabled:cursor-not-allowed disabled:bg-slate-50'
+                                          disabled={validation().isSave}
+                                       >
+                                          <i className='fas fa-bars' />
+                                          Acciones
+                                       </MenuButton>
+                                    }>
+                                    <MenuItem
+                                       className='flex justify-between items-center gap-2 border-y border-zinc-200/60'
+                                       onClick={() =>
+                                          deleteActivity({
+                                             id_actividad: activity.id_det,
+                                             encargado: optionsArray.users.find(ou => ou.label === activity.encargado_actividad),
+                                             isFather,
+                                             isTicket
+                                          })
+                                       }
                                     >
-                                       <i className='fas fa-bars' />
-                                       Acciones
-                                    </MenuButton>
-                                 }>
-                                 <MenuItem
-                                    className='flex justify-between items-center gap-2 border-y border-zinc-200/60'
-                                    onClick={() =>
-                                       deleteActivity({
-                                          id_actividad: activity.id_det,
-                                          encargado: optionsArray.users.find(ou => ou.label === activity.encargado_actividad),
-                                          isFather,
-                                          isTicket
-                                       })
+                                       Eliminar
+                                       <i className='fas fa-trash text-red-400' />
+                                    </MenuItem>
+
+                                    {(activity.id_tipo_actividad !== 3 && (activity.estado === 2 || activity.estado === 1)) &&
+                                       <MenuItem
+                                          title='Solo se puede clonar actividad de tipo COORDINACION cuando esta esta andando'
+                                          disabled={activity.id_tipo_actividad === 4 && activity.estado_play_pausa !== 2}
+                                          className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
+                                          onClick={openModalClone}
+                                       >
+                                          Clonar
+                                          <i className='fas fa-clone text-zinc-600' />
+                                       </MenuItem>
                                     }
-                                 >
-                                    Eliminar
-                                    <i className='fas fa-trash text-red-400' />
-                                 </MenuItem>
 
-                                 {(activity.id_tipo_actividad !== 3) &&
-                                    <MenuItem
-                                       title='Solo se puede clonar actividad de tipo COORDINACION cuando esta esta andando'
-                                       disabled={activity.id_tipo_actividad === 4 && activity.estado_play_pausa !== 2}
-                                       className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
-                                       onClick={openModalClone}
-                                    >
-                                       Clonar
-                                       <i className='fas fa-clone text-zinc-600' />
-                                    </MenuItem>
-                                 }
+                                    {isTicket &&
+                                       <MenuItem
+                                          className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
+                                       >
+                                          <a
+                                             className='w-full flex items-center justify-between gap-2'
+                                             target='_blank'
+                                             rel='noreferrer'
+                                             title='Tickets (Eventos)'
+                                             href={`https://tickets.zproduccion.cl/#/in/${activity.num_ticket_edit}`}>
+                                             Ticket
+                                             <i className='fas fa-ticket-alt text-blue-400' />
+                                          </a>
+                                       </MenuItem>
+                                    }
 
-                                 {isTicket &&
-                                    <MenuItem
-                                       className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
-                                    >
-                                       <a
-                                          className='w-full flex items-center justify-between gap-2'
-                                          target='_blank'
-                                          rel='noreferrer'
-                                          title='Tickets (Eventos)'
-                                          href={`https://tickets.zproduccion.cl/#/in/${activity.num_ticket_edit}`}>
-                                          Ticket
-                                          <i className='fas fa-ticket-alt text-blue-400' />
-                                       </a>
-                                    </MenuItem>
-                                 }
+                                    {!(activity.estado !== 2 || activity.id_tipo_actividad !== 1 || (isFather && isTicket)) &&
+                                       <MenuItem
+                                          className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
+                                          onClick={handleOpenModalRevision}
+                                       >
+                                          Para Revisión
+                                          <i className='fas fa-eye text-orange-400' />
+                                       </MenuItem>
+                                    }
 
-                                 {!(activity.estado !== 2 || activity.id_tipo_actividad !== 1 || (isFather && isTicket)) &&
-                                    <MenuItem
-                                       className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
-                                       onClick={handleOpenModalRevision}
-                                    >
-                                       Para Revisión
-                                       <i className='fas fa-eye text-orange-400' />
-                                    </MenuItem>
-                                 }
-
-                                 {!((activity.id_tipo_actividad === 1 && !isFather) || activity.estado === 1 || !isTicket) &&
-                                    <MenuItem
-                                       className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
-                                       onClick={() => finishActivity(activity.id_tipo_actividad, isFather)}
-                                    >
-                                       {isFather ? 'Terminar' : 'Procesar'}
-                                       <i className='fas fa-check-double text-indigo-400' />
-                                    </MenuItem>
-                                 }
-                              </Menu>
+                                    {!((activity.id_tipo_actividad === 1 && !isFather) || activity.estado === 1 || !isTicket) &&
+                                       <MenuItem
+                                          className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
+                                          onClick={() => finishActivity(activity.id_tipo_actividad, isFather)}
+                                       >
+                                          {isFather ? 'Terminar' : 'Procesar'}
+                                          <i className='fas fa-check-double text-indigo-400' />
+                                       </MenuItem>
+                                    }
+                                 </Menu>
+                              }
 
                               <Button
                                  disabled={validation().isSave}
-                                 hidden={activity.estado === 1 || (activity.es_padre === 1 && activity.es_hijo === 0 && isTicket)}
+                                 hidden={activity.estado !== 2 || (activity.es_padre === 1 && activity.es_hijo === 0 && isTicket)}
                                  className={
                                     activity.estado_play_pausa === 2
                                        ? 'text-red-400 bg-red-50 hover:bg-red-100'
@@ -1794,7 +1765,7 @@ const Detail = () => {
 
                               <FloatMenu
                                  disabled={validation().isSave}
-                                 hidden={activity.estado === 2 || (isFather && isTicket)}
+                                 hidden={activity.estado !== 1 || (isFather && isTicket)}
                                  size='w-11 h-9'
                                  className='bg-slate-100 hover:bg-slate-200/60 text-slate-600'
                                  name='tiempo_estimado'
@@ -1813,6 +1784,7 @@ const Detail = () => {
                                  Cancelar
                               </Button>
                               <Button
+                                 hidden={activity.estado !== 1 && activity.estado !== 2}
                                  disabled={validation().isSave || !validateMod(true).res}
                                  className='text-emerald-500 hover:bg-emerald-100 place-self-end disabled:hover:bg-transparent'
                                  onClick={onSave}>
