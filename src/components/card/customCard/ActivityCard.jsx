@@ -347,7 +347,7 @@ const ActivityCard = props => {
       const vProject = actOptions.pr?.value === 0
       const vSolicita = actOptions.us?.value === 0
       const vEncargado = actOptions.ue?.value === 0
-      const vRevisor = actOptions.ta?.value === 1 ? actOptions.ur?.value === 0 : false
+      const vRevisor = actOptions.ta?.value === 1 ? actOptions.ur?.value === undefined ? true : actOptions.ur?.value === 0 : false
       const vRdisE = actOptions.ta?.value === 1 ? actOptions.ur?.id === actOptions.ue?.id : false
       const vTipo_actividad = actOptions.ta?.value === 0 || actOptions.ta?.value === undefined
 
@@ -1030,7 +1030,7 @@ const ActivityCard = props => {
                         </Button>
 
                         <Button
-                           disabled={validation().isClone}
+                           disabled={validation().validation}
                            className='text-yellow-500 hover:bg-yellow-100 place-self-end disabled:hover:bg-transparent'
                            onClick={onClone}>
                            clonar actividad

@@ -254,7 +254,7 @@ const Detail = () => {
       const vProject = options.pr?.value === 0
       const vSolicita = options.us?.value === 0
       const vEncargado = options.ue?.value === 0
-      const vRevisor = activity.id_tipo_actividad === 1 ? options.ur?.value === 0 : false
+      const vRevisor = activity.id_tipo_actividad === 1 ? options.ur?.id === undefined ? true : options.ur?.value === 0 : false
       const vRdisE = activity.id_tipo_actividad === 1 ? options.ur?.id === options.ue?.id : false
 
       const arrlabel = [
@@ -332,7 +332,7 @@ const Detail = () => {
       const vSub = options?.sp?.value !== activity.id_sub_proyecto
       const vSo = options?.us?.label !== activity.user_solicita
       const vEn = options?.ue?.label !== activity.encargado_actividad
-      const vRe = activity?.id_revisor && (activity.id_tipo_actividad !== 4 || activity.id_tipo_actividad !== 3) ? options?.ur?.id !== activity?.id_revisor : false
+      const vRe = activity.id_tipo_actividad === 1 ? (activity?.id_revisor ? options?.ur?.id !== activity?.id_revisor : true) : false
       const vTitle = title !== activity.actividad
       const vDesc = description !== activity.func_objeto
       const vGloss = activity.glosa_explicativa !== null ? gloss !== activity.glosa_explicativa : false
@@ -340,8 +340,6 @@ const Detail = () => {
       const vPriority = priority !== activity.num_prioridad && priority >= 0
       const vTime = time !== activity.tiempo_estimado && time > 0
       const vFile = files !== null
-
-      // console.log({ vPR, vSub, vSo, vEn, vRe, vTitle, vDesc, vGloss, vTicket, vPriority, vTime })
 
       const validate = vPR || vSub || vSo || vEn || vRe || vTitle || vDesc || vGloss || vTicket || vPriority || vTime || vFile
 
