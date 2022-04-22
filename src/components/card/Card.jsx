@@ -66,6 +66,7 @@ const Card = (props) => {
             id={props?.id_det_padre}
          >
             <i className='far fa-calendar-alt fa-lg' />
+            <i className='fas fa-child fa-lg' />
             {/* {props?.id_det_padre} */}
          </MarkActivity>
 
@@ -105,6 +106,7 @@ const Card = (props) => {
             id={props?.id_det_padre}
          >
             <i className='fas fa-truck fa-lg' />
+            <i className='fas fa-child fa-lg' />
             {/* {props?.id_det_padre} */}
          </MarkActivity>
 

@@ -13,6 +13,16 @@ const MarkActivity = ({
 
    const { idSelect, setIdSelect } = useContext(UiContext)
 
+   const handleClickId = (id) => {
+
+      if (idSelect === id) {
+         setIdSelect(null)
+         return
+      }
+
+      setIdSelect(id)
+   }
+
    if (hidden) return null
 
    return (
@@ -29,7 +39,7 @@ const MarkActivity = ({
                className={id === idSelect ?
                   'bg-rose-500 text-white rounded-md px-1 cursor-pointer'
                   : 'cursor-pointer'}
-               onClick={() => setIdSelect(id)}
+               onClick={() => handleClickId(id)}
             >
                {id}
             </span>

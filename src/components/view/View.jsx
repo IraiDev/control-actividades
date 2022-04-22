@@ -304,6 +304,7 @@ const View = props => {
                hidden={!isCoorActivity}
             >
                <i className='far fa-calendar-alt fa-lg' />
+               <i className='fas fa-child fa-lg' />
                {idFather}
             </MarkActivity>
 
@@ -331,6 +332,7 @@ const View = props => {
                hidden={!isDeliveryActivity}
             >
                <i className='fas fa-truck fa-lg' />
+               <i className='fas fa-child fa-lg' />
                {idFather}
             </MarkActivity>
 

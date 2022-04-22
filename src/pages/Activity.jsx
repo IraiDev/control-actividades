@@ -927,6 +927,7 @@ const Activity = () => {
                                        id={act?.id_det_padre}
                                     >
                                        <i className='far fa-calendar-alt fa-lg' />
+                                       <i className='fas fa-child fa-lg' />
                                        {/* {act?.id_det_padre} */}
                                     </MarkActivity>
 
@@ -975,6 +976,7 @@ const Activity = () => {
                                        id={act?.id_det_padre}
                                     >
                                        <i className='fas fa-truck fa-lg' />
+                                       <i className='fas fa-child fa-lg' />
                                        {/* {act?.id_det_padre} */}
                                     </MarkActivity>
 
