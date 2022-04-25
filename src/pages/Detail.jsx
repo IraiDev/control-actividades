@@ -206,6 +206,7 @@ const Detail = () => {
       ticket: '',
       time: 1,
       gloss: '',
+      orden: '',
    })
 
    const [cloneFields, setCloneFields] = useState({
@@ -242,7 +243,7 @@ const Detail = () => {
       })
 
    // destructuring
-   const { title, description, gloss, ticket, priority, time } = fields
+   const { title, description, gloss, ticket, priority, time, orden } = fields
    const { cTitle, cDescription, cPriority, cTicket, cTime, cGloss } = cloneFields
    const { projects, subProjects, users, activity_type, pause_type } = optionsArray
 
@@ -338,10 +339,11 @@ const Detail = () => {
       const vGloss = activity.glosa_explicativa !== null ? gloss !== activity.glosa_explicativa : false
       const vTicket = ticket !== activity.num_ticket_edit
       const vPriority = priority !== activity.num_prioridad && priority >= 0
+      const vOrden = orden.trim() !== activity?.orden
       const vTime = time !== activity.tiempo_estimado && time > 0
       const vFile = files !== null
 
-      const validate = vPR || vSub || vSo || vEn || vRe || vTitle || vDesc || vGloss || vTicket || vPriority || vTime || vFile
+      const validate = vPR || vSub || vSo || vEn || vRe || vTitle || vDesc || vGloss || vTicket || vPriority || vTime || vFile || vOrden
 
       return returnObj ? { res: validate } : validate
    }
@@ -602,6 +604,7 @@ const Detail = () => {
       options?.ue && formData.append('encargado', options.ue.label)
       options?.ur && formData.append('revisor', options.ur.id)
       formData.append('prioridad', priority)
+      formData.append('orden', orden)
       formData.append('ticket', ticket)
       formData.append('tiempo_estimado', time)
       formData.append('titulo', title)
@@ -1152,6 +1155,7 @@ const Detail = () => {
             gloss: activity?.glosa_explicativa ?? '',
             ticket: activity?.num_ticket_edit ?? '',
             priority: activity?.num_prioridad ?? '',
+            orden: activity?.orden ?? '',
             time: activity?.tiempo_estimado ?? '',
          })
 
@@ -1289,6 +1293,11 @@ const Detail = () => {
                                  }
                               />
 
+                              <P
+                                 tag='Orden'
+                                 value={activity?.orden || '- -'}
+                              />
+
                               <span
                                  className={`
                                     px-3 py-0.5 rounded-full font-semibold mt-3 block w-max
@@ -1411,7 +1420,7 @@ const Detail = () => {
                                  setFields({ ...fields, gloss: e.target.value })
                               }
                            />
-                           <div className='grid grid-cols-1 lg:grid-cols-3 gap-2'>
+                           <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2'>
                               <Input
                                  disabled={type_detail === 'pr'}
                                  highlight
@@ -1436,6 +1445,20 @@ const Detail = () => {
                                     setFields({
                                        ...fields,
                                        priority: e.target.value,
+                                    })
+                                 }
+                              />
+
+                              <Input
+                                 highlight
+                                 placeholder=''
+                                 disabled={type_detail === 'pr'}
+                                 field='Orden'
+                                 value={orden}
+                                 onChange={e =>
+                                    setFields({
+                                       ...fields,
+                                       orden: e.target.value,
                                     })
                                  }
                               />

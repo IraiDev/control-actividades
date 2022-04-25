@@ -458,13 +458,11 @@ const ActivityCard = props => {
 
                   <section className='capitalize'>
 
-                     <span className='block text-transparent' >h</span>
-
-                     <P tag='creacion' value={moment(fecha_tx).format('DD-MM-YY')} />
-
                      <span className='block text-transparent h-1.5' ></span>
 
-                     {/* <P tag='Tipo' value={props.desc_tipo_actividad} /> */}
+                     <P tag='Orden' value={props?.orden || '- -'} />
+
+                     <P tag='creacion' value={moment(fecha_tx).format('DD-MM-YY')} />
 
                      <P tag='estado' value={optionsArray?.status?.find(st => st.value === estado).label || ''} />
 
