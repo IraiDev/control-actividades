@@ -343,8 +343,6 @@ const Detail = () => {
       const vTime = time !== activity.tiempo_estimado && time > 0
       const vFile = files !== null
 
-      console.log(activity.orden)
-
       const validate = vPR || vSub || vSo || vEn || vRe || vTitle || vDesc || vGloss || vTicket || vPriority || vTime || vFile || vOrden
 
       return returnObj ? { res: validate } : validate
