@@ -339,7 +339,7 @@ const Detail = () => {
       const vGloss = activity.glosa_explicativa !== null ? gloss !== activity.glosa_explicativa : false
       const vTicket = ticket !== activity.num_ticket_edit
       const vPriority = priority !== activity.num_prioridad && priority >= 0
-      const vOrden = orden.trim() !== activity.orden && orden.trim() !== ''
+      const vOrden = orden.trim() === '' && activity.orden === null ? false : orden.trim() !== activity.orden
       const vTime = time !== activity.tiempo_estimado && time > 0
       const vFile = files !== null
 
