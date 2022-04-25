@@ -339,9 +339,11 @@ const Detail = () => {
       const vGloss = activity.glosa_explicativa !== null ? gloss !== activity.glosa_explicativa : false
       const vTicket = ticket !== activity.num_ticket_edit
       const vPriority = priority !== activity.num_prioridad && priority >= 0
-      const vOrden = orden.trim() !== activity?.orden
+      const vOrden = orden.trim() !== activity.orden && orden.trim() !== ''
       const vTime = time !== activity.tiempo_estimado && time > 0
       const vFile = files !== null
+
+      console.log(activity.orden)
 
       const validate = vPR || vSub || vSo || vEn || vRe || vTitle || vDesc || vGloss || vTicket || vPriority || vTime || vFile || vOrden
 
