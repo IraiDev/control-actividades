@@ -224,12 +224,6 @@ const Revision = () => {
       // eslint-disable-next-line
    }, [optionsArray, prFilters])
 
-   useEffect(() => {
-      console.log('filtros pr', prFilters)
-   }, [prFilters])
-   console.log(activitiesPR)
-
-
    return (
       <>
          <Container type='table'>
@@ -750,7 +744,7 @@ const Revision = () => {
                               onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
                            >
                               <span
-                                 title={`(T. zionit) + (T. cliente) = (T. total) --> ${act.tiempo_zionit} + ${act.tiempo_cliente} = ${act.tiempo_zionit + act.tiempo_cliente}`}
+                                 title={`(T. zionit) + (T. cliente) = (T. total) --> ${act?.tiempo_zionit} + ${act?.tiempo_cliente} = ${act?.tiempo_zionit + act?.tiempo_cliente}`}
                                  className='px-2 py-0.5 rounded-full bg-green-300/80 font-bold'
                               >
                                  {act?.tiempo_cliente.toFixed(4)}
