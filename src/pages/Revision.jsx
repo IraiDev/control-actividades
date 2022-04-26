@@ -227,6 +227,7 @@ const Revision = () => {
    useEffect(() => {
       console.log('filtros pr', prFilters)
    }, [prFilters])
+   console.log(activitiesPR)
 
 
    return (
@@ -602,8 +603,13 @@ const Revision = () => {
                            sub proyecto
                         </SpanFilter>
                      </Th>
-                     <Th primary >
-                        Tiempo (hrs)
+                     <Th primary  >
+                        <div
+                           className='w-full'
+                           title='Tiempo cobrable (T.cliente)'
+                        >
+                           Tiempo (hrs)
+                        </div>
                      </Th>
                      <Th primary >
                         <div className='flex items-baseline justify-center gap-2'>
@@ -739,12 +745,12 @@ const Revision = () => {
                            >
                               {act.nombre_sub_proy ?? '--'}
                            </Td>
-
+                           {/* TODO: aqui ver tiempo zionit */}
                            <Td
                               onDoubleClick={() => navigate(`actividad-pr-detalle/${act.id_det}?type_detail=pr`)}
                            >
                               <span
-                                 title='Tiempo total cobrable'
+                                 title={`(T. zionit) + (T. cliente) = (T. total) --> ${act.tiempo_zionit} + ${act.tiempo_cliente} = ${act.tiempo_zionit + act.tiempo_cliente}`}
                                  className='px-2 py-0.5 rounded-full bg-green-300/80 font-bold'
                               >
                                  {act?.tiempo_cliente.toFixed(4)}

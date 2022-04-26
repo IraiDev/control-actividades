@@ -85,6 +85,7 @@ const TdSwitch = (props) => {
                   {
                      isPaused ?
                         <Button
+                           title='trabajar en la entrega de la actividad con el cliente'
                            onClick={onPlay}
                            className='bg-green-100 hover:bg-green-200 text-green-500 border border-green-300'
                         >
@@ -95,6 +96,7 @@ const TdSwitch = (props) => {
                         <div className='flex gap-1.5'>
 
                            <Button
+                              title='pausar la entrega de la actividad'
                               onClick={openModalPause}
                               className='bg-red-100 hover:bg-red-200 text-red-500 border border-red-300'
                            >
@@ -103,6 +105,7 @@ const TdSwitch = (props) => {
                            </Button>
 
                            <Button
+                              title='aprobar la actividad de entrega'
                               onClick={() => props.onChangeCheckedActivity({ id: props.id_det, title: props.actividad, revisado: true, estado: props.estado })}
                               className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 border border-emerald-300'
                            >
@@ -110,6 +113,7 @@ const TdSwitch = (props) => {
                            </Button>
 
                            <Button
+                              title='rechazar la actividad de entrega'
                               onClick={() => props.onChangeCheckedActivity({ id: props.id_det, title: props.actividad, revisado: false, estado: props.estado })}
                               className='bg-red-100 hover:bg-red-200 text-red-500 border border-red-300'
                            >
