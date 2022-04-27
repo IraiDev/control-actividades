@@ -34,11 +34,13 @@ const CustomSelect = ({
    width,
    className,
    showTooltip = false,
-   isDefaultOptions = false
+   isDefaultOptions = false,
+   disabled = false
 }) => (
    <div className={`grid gap-1 capitalize text-sm ${width} ${className}`}>
       {label}
       <Select
+         isDisabled={disabled}
          components={showTooltip ? { Option } : null}
          menuPortalTarget={document.getElementById("select-root")}
          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}

@@ -31,6 +31,7 @@ import FloatMenu from '../components/ui/FloatMenu'
 import { fetchToken } from '../helpers/fetch'
 import CustomSelect from '../components/ui/CustomSelect'
 import ChildContainer from '../components/child/ChildContainer'
+import Tag from '../components/ui/Tag'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
@@ -62,6 +63,7 @@ const initOptions = {
    ta: { label: 'ninguno', value: 0 },
    pt: { label: 'ninguno', value: 0 },
    ptc: { label: 'ninguno', value: null },
+   product: { value: null, label: 'ninguno' },
 }
 
 const CheckBox = ({ value, onChange }) => {
@@ -171,6 +173,8 @@ const Detail = () => {
    const isFather = activity.es_padre === 1 && activity.es_hijo === 0
    const [showContent, setshowContent] = useState(false)
    const [showChilds, setShowChilds] = useState(false)
+   const [distributions, setDistributions] = useState([])
+   const [jobTime, setJobTime] = useState(0)
 
    // modals
    const [modalEdit, toggleModalEdit] = useState(false)
@@ -180,6 +184,7 @@ const Detail = () => {
    const [modalTimer, toggleModalTimer] = useState(false)
    const [modalPR, toggleModalPR] = useState(false)
    const [modalReject, setModalReject] = useState(false)
+   const [modalDistributions, setModalDistributions] = useState(false)
 
    // options
    const [options, setOptions] = useState(initOptions)
@@ -196,7 +201,9 @@ const Detail = () => {
       id: null,
       desc: '',
       content: '',
-      tiempo_total: ''
+      tiempo_total: '',
+      tiempo_cliente: '',
+      tiempo_zionit: ''
    })
 
    const [fields, setFields] = useState({
@@ -229,7 +236,11 @@ const Detail = () => {
       msg_revision,
       tiempo_cliente,
       tiempo_zionit,
-      tiempo_estimado
+      tiempo_estimado,
+      distr_cliente,
+      distr_zionit,
+      distr_total,
+      distr_glosa
    },
       onChangeValues, reset] = useForm({
          hinicio: moment(new Date()).format('HH:mm:ss'),
@@ -239,13 +250,17 @@ const Detail = () => {
          msg_revision: '',
          tiempo_cliente: 0,
          tiempo_zionit: 0,
-         tiempo_estimado: activity.tiempo_estimado
+         tiempo_estimado: activity.tiempo_estimado,
+         distr_cliente: 0,
+         distr_zionit: 0,
+         distr_total: 0,
+         distr_glosa: ''
       })
 
    // destructuring
    const { title, description, gloss, ticket, priority, time, orden } = fields
    const { cTitle, cDescription, cPriority, cTicket, cTime, cGloss } = cloneFields
-   const { projects, subProjects, users, activity_type, pause_type } = optionsArray
+   const { projects, subProjects, users, activity_type, pause_type, products } = optionsArray
 
    const validation = () => {
       const vTitle = title.trim() === ''
@@ -356,6 +371,7 @@ const Detail = () => {
       toggleModalTimer(false)
       toggleModalPR(false)
       setModalReject(false)
+      setModalDistributions(false)
       setCloneFiles(null)
       setSw({ a: { value: false, resp: false }, b: { value: false, resp: true } })
       onCleanFile(Math.random().toString(36))
@@ -667,62 +683,64 @@ const Detail = () => {
       }
    }
 
-   // cambia el estado de la actividad a PR y valida si hay modificaciones sin guardar
+   // TODO: (modificacion de accione de modal) cambia el estado de la actividad a PR y valida si hay modificaciones sin guardar
    const handleOpenModalRevision = () => {
+
+      setModalDistributions(true)
 
       // valida si la actividad esta corriendo antes de pasar a PR
 
-      const validate = validateMod()
+      // const validate = validateMod()
 
-      const action = async () => {
+      // const action = async () => {
 
-         if (validate) await onSave()
+      //    if (validate) await onSave()
 
-         const callback = () => {
-            const action = async () => {
+      //    const callback = () => {
+      //       const action = async () => {
 
-               if (isRuning) await onPlayPause({ id_actividad: activity.id_det, mensaje: 'Pausa para pasar a revisión' })
-               setValues({ ...values, tiempo_total: activity.tiempo_trabajado })
-               toggleModalPR(true)
+      //          if (isRuning) await onPlayPause({ id_actividad: activity.id_det, mensaje: 'Pausa para pasar a revisión' })
+      //          setValues({ ...values, tiempo_total: activity.tiempo_trabajado })
+      //          toggleModalPR(true)
 
-            }
+      //       }
 
-            if (isRuning) {
-               Alert({
-                  title: 'Atención',
-                  content: 'Debes pausar la actividad para cambiar el estado a Revisión\n¿Pausar actividad?',
-                  confirmText: 'Si, Pausar actividad',
-                  calcelText: 'No, cancelar',
-                  action
-               })
-               return
-            }
+      //       if (isRuning) {
+      //          Alert({
+      //             title: 'Atención',
+      //             content: 'Debes pausar la actividad para cambiar el estado a Revisión\n¿Pausar actividad?',
+      //             confirmText: 'Si, Pausar actividad',
+      //             calcelText: 'No, cancelar',
+      //             action
+      //          })
+      //          return
+      //       }
 
-            action()
-         }
+      //       action()
+      //    }
 
-         validatePredecessor({
-            array: activity.predecesoras,
-            callback,
-            state: 3,
-            options: optionsArray
-         })
+      //    validatePredecessor({
+      //       array: activity.predecesoras,
+      //       callback,
+      //       state: 3,
+      //       options: optionsArray
+      //    })
 
-      }
+      // }
 
-      if (validate) {
-         Alert({
-            title: '¡Atención!',
-            content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
-            confirmText: 'Si, Guardar y continuar',
-            cancelText: 'Cancelar',
-            action,
-         })
+      // if (validate) {
+      //    Alert({
+      //       title: '¡Atención!',
+      //       content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
+      //       confirmText: 'Si, Guardar y continuar',
+      //       cancelText: 'Cancelar',
+      //       action,
+      //    })
 
-         return
-      }
+      //    return
+      // }
 
-      action()
+      // action()
    }
 
    // termina la actividad, solo para actividades de coordinacion, padres y de revisión
@@ -1146,6 +1164,123 @@ const Detail = () => {
 
    }
 
+   // funciones para distribuciones
+
+   const handleCreateTimes = () => {
+
+      if ((Number(distr_cliente) + (Number(distr_zionit))) > values.tiempo_total) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'El tiempo ingresado es mayor al tiempo restante, por favor modifique el valor y vuelva a intentarlo',
+            showCancelButton: false,
+         })
+
+         return
+      }
+
+      if (distr_glosa === '' || options.product.value === undefined) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'Por favor complete todos los campos',
+            showCancelButton: false,
+         })
+
+         return
+      }
+
+      if (distr_cliente === 0) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'No puedes crear una distribucion de tiempo con 0 horas',
+            showCancelButton: false,
+         })
+
+         return
+      }
+
+      setDistributions(distributions => [
+         ...distributions,
+         {
+            id_dist_tiempo_act: distributions.length + 1,
+            id_producto: Number(options?.product?.value),
+            tiempo_dist_act: Number(distr_cliente) + Number(distr_zionit),
+            distr_cliente,
+            distr_zionit,
+            glosa_dist_tiempos_act: distr_glosa,
+         },
+      ])
+      setOptions({ ...options, product: { value: null, label: 'ninguno' } })
+      reset()
+   }
+
+   const handleDeleteTimes = id => {
+
+      const filter = distributions.filter(dis => dis.id_dist_tiempo_act !== id)
+
+      setDistributions(filter)
+   }
+
+   const handleApplyChanges = async () => {
+
+      const valZero = distributions.some(dis => Number(dis.distr_cliente) === 0 && Number(dis.distr_zionit) === 0)
+      const length = distributions.length
+      const tCliente = distributions.reduce((acc, cur) => acc + Number(cur.distr_cliente), 0)
+      const tZionit = distributions.reduce((acc, cur) => acc + Number(cur.distr_zionit), 0)
+
+      const validation =
+         length <= activity?.tiempos_distribuidos.length &&
+         (distr_cliente !== 0 || distr_glosa !== '' || options.product.value !== null)
+
+      if (validation) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'Quieres aplicar cambios sin agregar el item que estas escribiendo, por favor primero presiona agregar y luego aplica los cambios',
+            showCancelButton: false,
+         })
+         return
+      }
+
+      // if (jobTime < 0) {
+      //    Alert({
+      //       icon: 'warn',
+      //       title: 'Atención',
+      //       content: 'El tiempo restante no puede ser menor a 0, por favor ajuste los valores de la distribucion de tiempos',
+      //       showCancelButton: false,
+      //    })
+      //    return
+      // }
+
+      if (jobTime !== 0) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'Por favor distribuya el <strong>tiempo total</strong> hasta que este sea igual a 0 horas',
+            showCancelButton: false,
+         })
+
+         return
+      }
+
+      if (valZero) {
+         Alert({
+            icon: 'warn',
+            title: 'Atención',
+            content: 'No pueden existir lineas de distribucion de tiempo done el T. cliente y T. zionit sean igual a 0',
+            showCancelButton: false,
+         })
+         return
+      }
+
+      await toggleState({ tiempo_cliente: tCliente, tiempo_zionit: tZionit, distribuciones: distributions })
+      navigate(routes.activity, { replace: true })
+
+      onCloseModals()
+   }
+
    useEffect(() => {
       if (Object.keys(activity).length > 0) {
          setFields({
@@ -1187,15 +1322,6 @@ const Detail = () => {
    }, [optionsArray, activity, detentions])
 
    useEffect(() => {
-      setValues({
-         ...values,
-         tiempo_total: Number(activity.tiempo_trabajado).toFixed(4) - (Number(tiempo_cliente) + Number(tiempo_zionit)),
-      })
-
-      // eslint-disable-next-line
-   }, [tiempo_cliente, tiempo_zionit, activity])
-
-   useEffect(() => {
 
       setOptionDetentions(detentions.map(d => {
          return {
@@ -1206,6 +1332,43 @@ const Detail = () => {
 
 
    }, [detentions])
+
+   useEffect(() => {
+      setDistributions(activity.tiempos_distribuidos || [])
+   }, [activity])
+
+   useEffect(() => {
+      const tCliente = distributions.reduce((acc, cur) => acc + Number(cur.distr_cliente), 0)
+      const tZionit = distributions.reduce((acc, cur) => acc + Number(cur.distr_zionit), 0)
+      const tTotal = tCliente + tZionit
+      let tempJobTime = 0
+
+      if (tTotal > activity?.tiempo_trabajado) {
+         tempJobTime = Number((activity?.tiempo_trabajado - tTotal).toFixed(4))
+         setJobTime(tempJobTime)
+      }
+
+      else if (tTotal <= activity?.tiempo_trabajado) {
+         tempJobTime = Number((activity?.tiempo_trabajado - tTotal).toFixed(4))
+         setJobTime(tempJobTime)
+      }
+
+      setValues({
+         ...values,
+         tiempo_total: tempJobTime,
+         tiempo_cliente: tCliente,
+         tiempo_zionit: tZionit,
+      })
+
+      // eslint-disable-next-line
+   }, [distributions])
+
+   useEffect(() => {
+      const distr_suma = distributions.reduce((a, b) => Number(a) + Number(b?.tiempo_dist_act), 0)
+      const distr_total = distr_suma + (Number(distr_cliente) + Number(distr_zionit))
+      const resta = Number(activity?.tiempo_trabajado || 0).toFixed(4) - distr_total.toFixed(4)
+      setJobTime(resta.toFixed(4))
+   }, [distr_cliente, distr_zionit, activity])
 
    return (
       <>
@@ -2684,6 +2847,301 @@ const Detail = () => {
                      </div>
                   </Modal>
                }
+               {/* modal distribuciones */}
+               <Modal
+                  showModal={modalDistributions}
+                  isBlur={false}
+                  onClose={onCloseModals}
+                  className='max-w-7xl'
+                  padding='p-6'
+                  title='Distribucion de tiempos'
+               >
+
+                  <div className='mt-5 w-full pr-6 lg:pr-0'>
+
+                     <section className='p-3.5 mb-5 bg-zinc-100 rounded-md'>
+
+                        <h1 className='first-letter:capitalize mb-2'>
+                           <span className='font-semibold mr-2'>
+                              Titulo:
+                           </span>
+                           {activity?.actividad}, {activity?.id_det}
+                        </h1>
+
+                        <h1 className='capitalize font-semibold text-sm'>descripción</h1>
+
+                        <p className='text-zinc-500 text-xs'>{activity?.func_objeto}</p>
+
+                     </section>
+
+                     <Box className='bg-white' isBlock colCount={10} >
+
+                        <span className='col-span-4 flex gap-4 font-bold'>
+
+                           <div className='text-emerald-500 flex gap-2'>
+                              Tiempo Cliente:
+                              <NumberFormat
+                                 value={values.tiempo_cliente}
+                                 decimalScale={4}
+                                 fixedDecimalScale
+                                 displayType='text'
+                              />
+                           </div>
+
+                           <div className='text-sky-500 flex gap-2'>
+                              Tiempo Zionit:
+                              <NumberFormat
+                                 value={values.tiempo_zionit}
+                                 decimalScale={4}
+                                 fixedDecimalScale
+                                 displayType='text'
+                              />
+                           </div>
+
+                        </span>
+
+                        <span className='col-span-2' >
+                           {values.tiempo_total}
+                        </span>
+
+                        <span className='col-span-1' />
+
+                        <span className='col-span-1' />
+
+                        <span className='col-span-1' />
+
+                        <div className='font-semibold text-sm col-span-1 flex justify-between'>
+                           <span className='py-1 px-2.5 text-yellow-600 bg-yellow-100 rounded-md' title='Tiempo total'>T.T</span>
+                           <span className='py-1 px-2.5 text-emerald-600 bg-emerald-100 rounded-md' title='Tiempo restante'>T.R</span>
+                        </div>
+                     </Box>
+
+                     <Box isBlock colCount={10} >
+
+                        <h3 className='font-semibold text-sm col-span-1 py-2 text-center'>
+                           Nº
+                        </h3>
+
+                        <h3 className='font-semibold text-sm col-span-1 py-2 text-center'>
+                           Tipo Actividad
+                        </h3>
+
+                        <h3 className='font-semibold text-sm col-span-2 text-center'>
+                           Producto Zionit
+                        </h3>
+
+                        <h3 className='font-semibold text-sm col-span-2 text-center'>
+                           Glosa explicativa
+                        </h3>
+
+                        <h3 className='font-semibold text-sm col-span-1 text-center'>
+                           T. Cliente (hrs)
+                        </h3>
+
+                        <h3 className='font-semibold text-sm col-span-1 text-center'>
+                           T. Zionit (hrs)
+                        </h3>
+
+                        <h3 className='font-semibold text-sm col-span-1 text-center'>
+                           T. Total (hrs)
+                        </h3>
+
+                        <div className='font-semibold text-sm col-span-1 flex items-baseline gap-2 justify-center'>
+                           <NumberFormat
+                              className='text-yellow-500'
+                              value={activity?.tiempo_trabajado}
+                              decimalScale={4}
+                              fixedDecimalScale
+                              displayType='text'
+                           />
+                           /
+                           <NumberFormat
+                              className={jobTime < 0 ? 'text-red-500' : 'text-emerald-500'}
+                              value={jobTime}
+                              decimalScale={4}
+                              fixedDecimalScale
+                              displayType='text'
+                           />
+                        </div>
+                     </Box>
+
+                     <Box isBlock colCount={10} >
+
+                        <span className='col-span-1 py-6' />
+
+                        <span className='col-span-1 py-6' />
+
+                        <section className='col-span-2'>
+                           <CustomSelect
+                              disabled={values.tiempo_total <= 0}
+                              options={products}
+                              value={options?.product}
+                              onChange={option =>
+                                 setOptions({ ...options, product: option })
+                              }
+                              menuHeight={150}
+                           />
+                        </section>
+
+                        <Input
+                           disabled={values.tiempo_total <= 0}
+                           className='col-span-2'
+                           name='distr_glosa'
+                           value={distr_glosa}
+                           onChange={onChangeValues}
+                        />
+
+                        <Input
+                           disabled={values.tiempo_total <= 0}
+                           className='col-span-1'
+                           placeholder='ej:1.5'
+                           isNumber
+                           name='distr_cliente'
+                           value={distr_cliente}
+                           onChange={onChangeValues}
+                        />
+
+                        <Input
+                           disabled={values.tiempo_total <= 0}
+                           className='col-span-1'
+                           placeholder='ej:1.5'
+                           isNumber
+                           name='distr_zionit'
+                           value={distr_zionit}
+                           onChange={onChangeValues}
+                        />
+
+                        <NumberFormat
+                           className='flex justify-center'
+                           value={Number(distr_zionit) + Number(distr_cliente)}
+                           decimalScale={4}
+                           fixedDecimalScale
+                           displayType='text'
+                        />
+
+                        <Button
+                           disabled={values.tiempo_total <= 0}
+                           className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 col-span-1 mx-auto disabled:hover:bg-emerald-200/50'
+                           onClick={handleCreateTimes}>
+                           agregar
+                        </Button>
+                     </Box>
+
+                     <h5 className='pl-4 text-sm my-5'>
+                        Lista de distribucion de tiempos
+                     </h5>
+
+                     {distributions.length > 0 ?
+                        distributions.map((dis, i) => (
+
+                           <Box key={i} isBlock colCount={10}>
+
+                              <Numerator className='mx-auto' number={i + 1} />
+
+                              <span className='text-center capitalize'>{activity.desc_tipo_actividad}</span>
+
+                              <section className='col-span-2 py-1'>
+                                 <CustomSelect
+                                    options={products}
+                                    value={products.find(p => Number(distributions[i]?.id_producto) === Number(p.value)) ?? { value: null, label: 'ninguno' }}
+                                    onChange={option => {
+                                       setDistributions(distributions.map(inp => {
+                                          if (inp.id_dist_tiempo_act === dis.id_dist_tiempo_act) {
+                                             return { ...inp, id_producto: Number(option.value) }
+                                          }
+                                          return inp
+                                       }))
+                                    }}
+                                    menuHeight={150}
+                                 />
+                              </section>
+
+                              <Input
+                                 className='col-span-2'
+                                 value={distributions[i]?.glosa_dist_tiempos_act ?? ''}
+                                 onChange={e => {
+                                    setDistributions(distributions.map(inp => {
+                                       if (inp.id_dist_tiempo_act === dis.id_dist_tiempo_act) {
+                                          return { ...inp, glosa_dist_tiempos_act: e.target.value }
+                                       }
+                                       return inp
+                                    }))
+                                 }}
+                              />
+
+                              <Input
+                                 className='col-span-1'
+                                 placeholder='ej:1.5'
+                                 isNumber
+                                 value={distributions[i]?.distr_cliente ?? ''}
+                                 onChange={e => {
+                                    setDistributions(distributions.map(inp => {
+                                       if (inp.id_dist_tiempo_act === dis.id_dist_tiempo_act) {
+                                          return { ...inp, distr_cliente: e.target.value }
+                                       }
+                                       return inp
+                                    }))
+                                 }}
+                              />
+
+                              <Input
+                                 className='col-span-1'
+                                 placeholder='ej:1.5'
+                                 isNumber
+                                 value={distributions[i]?.distr_zionit ?? ''}
+                                 onChange={e => {
+                                    setDistributions(distributions.map(inp => {
+                                       if (inp.id_dist_tiempo_act === dis.id_dist_tiempo_act) {
+                                          return { ...inp, distr_zionit: e.target.value }
+                                       }
+                                       return inp
+                                    }))
+                                 }}
+                              />
+
+                              <NumberFormat
+                                 className='flex justify-center'
+                                 value={distributions[i]?.tiempo_dist_act ?? ''}
+                                 decimalScale={4}
+                                 fixedDecimalScale
+                                 displayType='text'
+                              />
+
+                              <Button
+                                 className='hover:bg-red-100 text-red-500 mx-auto'
+                                 onClick={() =>
+                                    handleDeleteTimes(dis.id_dist_tiempo_act)
+                                 }>
+                                 <i className='fas fa-trash-alt' />
+                              </Button>
+
+                           </Box>
+
+                        ))
+                        :
+                        <span className='text-sm text-zinc-400 pl-8'>
+                           No hay distribucion de tiempos...
+                        </span>
+                     }
+
+                     <footer className='flex justify-between mt-10'>
+                        <Button
+                           className='bg-red-100 hover:bg-red-200 text-red-500'
+                           onClick={onCloseModals}
+                        >
+                           cancelar
+                        </Button>
+
+                        <Button
+                           className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
+                           onClick={handleApplyChanges}
+                           title='Esto guardara las modificaciones realizadas en la Base de datos'
+                        >
+                           aplicar cambios
+                        </Button>
+                     </footer>
+                  </div>
+               </Modal>
             </>
          )}
       </>

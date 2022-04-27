@@ -628,13 +628,14 @@ export const useDetail = (id) => {
       mensaje_revision,
       tiempo_cliente = 0,
       tiempo_zionit = 0,
-      rechazada = false 
+      rechazada = false,
+      distribuciones = [],
    }) => {
       setIsLoading(true)
       try {
          const resp = await fetchToken(
             'task/change-activity-state',
-            { id_actividad, estado, mensaje_revision, tiempo_cliente, tiempo_zionit, rechazada },
+            { id_actividad, estado, mensaje_revision, tiempo_cliente, tiempo_zionit, rechazada, distribuciones },
             'POST'
          )
          const body = await resp.json()
