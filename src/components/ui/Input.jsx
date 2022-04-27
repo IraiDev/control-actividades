@@ -1,4 +1,5 @@
 import React from 'react'
+import NumberFormat from 'react-number-format'
 
 const Input = ({
    type = 'text',
@@ -16,8 +17,32 @@ const Input = ({
    padding = 'px-4 py-1.5',
    onBlur,
    isRequired = false,
-   highlight = false
+   highlight = false,
+   isNumberFormat = false
 }) => {
+
+   if (isNumberFormat) {
+      return (
+         <NumberFormat
+            disabled={disabled}
+            className={`${className} 
+            ${padding} ${width}
+            disabled:bg-zinc-100 disabled:text-slate-400
+            rounded-md bg-white text-slate-700 border border-zinc-300/70 transition duration-200 focus:ring-2 focus:shadow-lg text-right`}
+            placeholder={placeholder}
+            name={name}
+            value={value}
+            onChange={onChange}
+            decimalScale={4}
+            fixedDecimalScale
+            displayType='input'
+            onFocus={e => {
+               e.target.select()
+            }}
+         />
+      )
+   }
+
    return (
       <div className={className}>
          {field &&

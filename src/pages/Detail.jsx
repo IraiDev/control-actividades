@@ -375,7 +375,15 @@ const Detail = () => {
       setCloneFiles(null)
       setSw({ a: { value: false, resp: false }, b: { value: false, resp: true } })
       onCleanFile(Math.random().toString(36))
-      setValues({ desc: '', id: null, id_ref: null })
+      setValues({
+         id: null,
+         desc: '',
+         content: '',
+         tiempo_total: '',
+         tiempo_cliente: '',
+         tiempo_zionit: ''
+      })
+      setOptions({ ...options, product: initOptions.product })
       reset()
    }
 
@@ -686,6 +694,28 @@ const Detail = () => {
    // TODO: (modificacion de accione de modal) cambia el estado de la actividad a PR y valida si hay modificaciones sin guardar
    const handleOpenModalRevision = () => {
 
+      const validate = validateMod()
+
+      const action = async () => {
+
+         if (validate) await onSave()
+
+         setModalDistributions(true)
+
+      }
+
+      if (validate) {
+         Alert({
+            title: '¡Atención!',
+            content: 'Se han realizado modificaciones que no han sido guardadas, ¿Desea guardar antes de continuar?',
+            confirmText: 'Si, Guardar y continuar',
+            cancelText: 'Cancelar',
+            action,
+         })
+
+         return
+      }
+
       setModalDistributions(true)
 
       // valida si la actividad esta corriendo antes de pasar a PR
@@ -760,7 +790,7 @@ const Detail = () => {
                confirmText: 'Si, Terminar actividad',
                calcelText: 'No, cancelar',
                action: () => {
-                  toggleState({ estado: 5 })
+                  toggleState({ estado: 8 })
                   navigate(routes.activity, { replace: true })
                }
             })
@@ -1168,7 +1198,7 @@ const Detail = () => {
 
    const handleCreateTimes = () => {
 
-      if ((Number(distr_cliente) + (Number(distr_zionit))) > values.tiempo_total) {
+      if ((Number(distr_cliente) + (Number(distr_zionit))) > Number(values.tiempo_total)) {
          Alert({
             icon: 'warn',
             title: 'Atención',
@@ -1212,7 +1242,7 @@ const Detail = () => {
             glosa_dist_tiempos_act: distr_glosa,
          },
       ])
-      setOptions({ ...options, product: { value: null, label: 'ninguno' } })
+      setOptions({ ...options, product: initOptions.product })
       reset()
    }
 
@@ -1223,12 +1253,17 @@ const Detail = () => {
       setDistributions(filter)
    }
 
-   const handleApplyChanges = async () => {
+   const handleApplyChanges = async (tipo_actividad) => {
 
       const valZero = distributions.some(dis => Number(dis.distr_cliente) === 0 && Number(dis.distr_zionit) === 0)
       const length = distributions.length
       const tCliente = distributions.reduce((acc, cur) => acc + Number(cur.distr_cliente), 0)
       const tZionit = distributions.reduce((acc, cur) => acc + Number(cur.distr_zionit), 0)
+      const hashTableEstado = {
+         1: 3, // normal
+         3: 13, // de entrega
+         4: 13 // coordinacion
+      }
 
       const validation =
          length <= activity?.tiempos_distribuidos.length &&
@@ -1244,17 +1279,7 @@ const Detail = () => {
          return
       }
 
-      // if (jobTime < 0) {
-      //    Alert({
-      //       icon: 'warn',
-      //       title: 'Atención',
-      //       content: 'El tiempo restante no puede ser menor a 0, por favor ajuste los valores de la distribucion de tiempos',
-      //       showCancelButton: false,
-      //    })
-      //    return
-      // }
-
-      if (jobTime !== 0) {
+      if (Number(jobTime) !== 0) {
          Alert({
             icon: 'warn',
             title: 'Atención',
@@ -1275,10 +1300,42 @@ const Detail = () => {
          return
       }
 
-      await toggleState({ tiempo_cliente: tCliente, tiempo_zionit: tZionit, distribuciones: distributions })
+      await toggleState({
+         estado: hashTableEstado[tipo_actividad],
+         tiempo_cliente: tCliente,
+         tiempo_zionit: tZionit,
+         distribuciones: distributions,
+         // rechazada: tipo_actividad === 3 
+      })
       navigate(routes.activity, { replace: true })
 
       onCloseModals()
+   }
+
+   const onCloseDistributionModal = () => {
+
+      const action = () => {
+         setModalDistributions(false)
+         setValues({
+            id: null,
+            desc: '',
+            content: '',
+            tiempo_total: '',
+            tiempo_cliente: '',
+            tiempo_zionit: ''
+         })
+         setOptions({ ...options, product: initOptions.product })
+         setDistributions(activity.tiempos_distribuidos || [])
+         reset()
+      }
+
+      Alert({
+         title: '¡Atención!',
+         content: 'Al cancelar o cerrar el formulario se perdera toda la distribucion realizada ¿Esta seguro de continuar?',
+         confirmText: 'Si y continuar',
+         cancelText: 'Volver',
+         action
+      })
    }
 
    useEffect(() => {
@@ -1338,8 +1395,8 @@ const Detail = () => {
    }, [activity])
 
    useEffect(() => {
-      const tCliente = distributions.reduce((acc, cur) => acc + Number(cur.distr_cliente), 0)
-      const tZionit = distributions.reduce((acc, cur) => acc + Number(cur.distr_zionit), 0)
+      const tCliente = distributions.reduce((acc, cur) => acc + Number(cur.distr_cliente).toFixed(4), 0)
+      const tZionit = distributions.reduce((acc, cur) => acc + Number(cur.distr_zionit).toFixed(4), 0)
       const tTotal = tCliente + tZionit
       let tempJobTime = 0
 
@@ -1409,14 +1466,27 @@ const Detail = () => {
                         />
                      }
 
-                     <Button
-                        hidden={activity.es_padre === 0 || type_detail === 'pr'}
-                        className='bg-slate-100 hover:bg-slate-200 mx-auto'
-                        onClick={() => setShowChilds(!showChilds)}
-                     >
-                        {showChilds ? 'Ocultar actividades Hijas' : 'ver actividades Hijas'}
-                        <i className='fas fa-child' />
-                     </Button>
+                     <div className='mx-auto flex gap-2'>
+
+                        <Button
+                           hidden={activity.es_padre === 0 || type_detail === 'pr'}
+                           className='bg-slate-100 hover:bg-slate-200 mx-auto w-[230px]'
+                           onClick={() => setShowChilds(!showChilds)}
+                        >
+                           {showChilds ? 'Ocultar actividades Hijas' : 'ver actividades Hijas'}
+                           <i className='fas fa-child' />
+                        </Button>
+
+                        <Button
+                           hidden={!isTicket}
+                           className='bg-slate-100 hover:bg-slate-200 mx-auto w-[230px]'
+                           onClick={() => setShowChilds(!showChilds)}
+                        >
+                           Ver Eventos
+                           <i className='fas fa-ticket-alt' />
+
+                        </Button>
+                     </div>
 
                      {showChilds &&
 
@@ -1906,22 +1976,26 @@ const Detail = () => {
                                        </MenuItem>
                                     }
 
-                                    {!(activity.estado !== 2 || activity.id_tipo_actividad !== 1 || (isFather && isTicket)) &&
+                                    {activity.estado === 2 && !isFather &&
                                        <MenuItem
                                           className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
                                           onClick={handleOpenModalRevision}
                                        >
-                                          Para Revisión
+                                          {
+                                             activity.id_tipo_actividad === 1 ? 'Para Revisión' :
+                                                activity.id_tipo_actividad === 4 ? 'Procesar' :
+                                                   activity.id_tipo_actividad === 3 ? 'Procesar' : 'Aceptar'
+                                          }
                                           <i className='fas fa-eye text-orange-400' />
                                        </MenuItem>
                                     }
 
-                                    {!((activity.id_tipo_actividad === 1 && !isFather) || activity.estado === 1 || !isTicket) &&
+                                    {activity.id_tipo_actividad === 1 && isFather && isTicket && activity.estado === 2 &&
                                        <MenuItem
                                           className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
                                           onClick={() => finishActivity(activity.id_tipo_actividad, isFather)}
                                        >
-                                          {isFather ? 'Terminar' : 'Procesar'}
+                                          Para Facturar
                                           <i className='fas fa-check-double text-indigo-400' />
                                        </MenuItem>
                                     }
@@ -2851,24 +2925,26 @@ const Detail = () => {
                <Modal
                   showModal={modalDistributions}
                   isBlur={false}
-                  onClose={onCloseModals}
+                  onClose={onCloseDistributionModal}
                   className='max-w-7xl'
                   padding='p-6'
-                  title='Distribucion de tiempos'
+                  title='Distribución de tiempos'
                >
 
                   <div className='mt-5 w-full pr-6 lg:pr-0'>
 
                      <section className='p-3.5 mb-5 bg-zinc-100 rounded-md'>
 
-                        <h1 className='first-letter:capitalize mb-2'>
-                           <span className='font-semibold mr-2'>
-                              Titulo:
-                           </span>
-                           {activity?.actividad}, {activity?.id_det}
-                        </h1>
+                        <h1 className='first-letter:uppercase mb-2'><b className='font-bold'>Titulo</b>: {activity?.actividad}</h1>
 
-                        <h1 className='capitalize font-semibold text-sm'>descripción</h1>
+                        <section className='flex gap-1 items-baseline'>
+                           <h1 className='capitalize font-semibold text-sm'><b className='font-bold'>ID</b>: {activity?.id_det}</h1>,
+                           <h1 className='capitalize font-semibold text-sm'><b className='font-bold'>Encargado</b>: {activity.encargado_actividad}</h1>,
+                           <h1 className='capitalize font-semibold text-sm'><b className='font-bold'>Proyecto</b>: {activity.abrev}</h1>,
+                           <h1 className='capitalize font-semibold text-sm mb-2'><b className='font-bold'>Ticket</b>: {activity.num_ticket_edit === 0 ? '- -' : activity.num_ticket_edit}</h1>
+                        </section>
+
+                        <h1 className='capitalize font-semibold text-sm'><b className='font-bold'>descripción</b></h1>
 
                         <p className='text-zinc-500 text-xs'>{activity?.func_objeto}</p>
 
@@ -2876,44 +2952,62 @@ const Detail = () => {
 
                      <Box className='bg-white' isBlock colCount={10} >
 
-                        <span className='col-span-4 flex gap-4 font-bold'>
+                        <section className='col-span-6 flex gap-4 font-bold w-full'>
 
-                           <div className='text-emerald-500 flex gap-2'>
-                              Tiempo Cliente:
+                           <div className='text-yellow-500 flex gap-2'>
+                              Tiempo Total:
+
                               <NumberFormat
-                                 value={values.tiempo_cliente}
+                                 value={activity?.tiempo_trabajado}
                                  decimalScale={4}
                                  fixedDecimalScale
                                  displayType='text'
                               />
                            </div>
 
-                           <div className='text-sky-500 flex gap-2'>
-                              Tiempo Zionit:
+                           |
+
+                           <div className={`${jobTime < 0 ? 'text-red-500' : 'text-emerald-500'} flex gap-2`}>
+                              <p>Tiempo Restante:</p>
                               <NumberFormat
-                                 value={values.tiempo_zionit}
+                                 value={jobTime}
                                  decimalScale={4}
                                  fixedDecimalScale
                                  displayType='text'
                               />
                            </div>
 
+                        </section>
+
+                        <span className='col-span-1 text-right font-bold pr-4' title='Tiempo cliente acumulado'>
+                           <NumberFormat
+                              className='text-yellow-500'
+                              value={Number(values.tiempo_cliente)}
+                              decimalScale={4}
+                              fixedDecimalScale
+                              displayType='text'
+                           />
                         </span>
 
-                        <span className='col-span-2' >
-                           {values.tiempo_total}
+                        <span className='col-span-1 text-right font-bold pr-4' title='Tiempo zionit acumulado' >
+                           <NumberFormat
+                              className='text-yellow-500'
+                              value={Number(values.tiempo_zionit)}
+                              decimalScale={4}
+                              fixedDecimalScale
+                              displayType='text'
+                           />
                         </span>
 
-                        <span className='col-span-1' />
-
-                        <span className='col-span-1' />
-
-                        <span className='col-span-1' />
-
-                        <div className='font-semibold text-sm col-span-1 flex justify-between'>
-                           <span className='py-1 px-2.5 text-yellow-600 bg-yellow-100 rounded-md' title='Tiempo total'>T.T</span>
-                           <span className='py-1 px-2.5 text-emerald-600 bg-emerald-100 rounded-md' title='Tiempo restante'>T.R</span>
-                        </div>
+                        <span className='col-span-1 text-right font-bold pr-4' title='Tiempo total acumulado'>
+                           <NumberFormat
+                              className='text-yellow-500 '
+                              value={Number(values.tiempo_cliente) + Number(values.tiempo_zionit)}
+                              decimalScale={4}
+                              fixedDecimalScale
+                              displayType='text'
+                           />
+                        </span>
                      </Box>
 
                      <Box isBlock colCount={10} >
@@ -2947,7 +3041,7 @@ const Detail = () => {
                         </h3>
 
                         <div className='font-semibold text-sm col-span-1 flex items-baseline gap-2 justify-center'>
-                           <NumberFormat
+                           {/* <NumberFormat
                               className='text-yellow-500'
                               value={activity?.tiempo_trabajado}
                               decimalScale={4}
@@ -2961,7 +3055,7 @@ const Detail = () => {
                               decimalScale={4}
                               fixedDecimalScale
                               displayType='text'
-                           />
+                           /> */}
                         </div>
                      </Box>
 
@@ -2969,7 +3063,9 @@ const Detail = () => {
 
                         <span className='col-span-1 py-6' />
 
-                        <span className='col-span-1 py-6' />
+                        <span className='col-span-1 py-6 capitalize text-center' >
+                           {activity.desc_tipo_actividad}
+                        </span>
 
                         <section className='col-span-2'>
                            <CustomSelect
@@ -2992,10 +3088,10 @@ const Detail = () => {
                         />
 
                         <Input
+                           isNumberFormat
                            disabled={values.tiempo_total <= 0}
                            className='col-span-1'
                            placeholder='ej:1.5'
-                           isNumber
                            name='distr_cliente'
                            value={distr_cliente}
                            onChange={onChangeValues}
@@ -3005,14 +3101,14 @@ const Detail = () => {
                            disabled={values.tiempo_total <= 0}
                            className='col-span-1'
                            placeholder='ej:1.5'
-                           isNumber
+                           isNumberFormat
                            name='distr_zionit'
                            value={distr_zionit}
                            onChange={onChangeValues}
                         />
 
                         <NumberFormat
-                           className='flex justify-center'
+                           className='text-right w-full pr-4'
                            value={Number(distr_zionit) + Number(distr_cliente)}
                            decimalScale={4}
                            fixedDecimalScale
@@ -3020,7 +3116,7 @@ const Detail = () => {
                         />
 
                         <Button
-                           disabled={values.tiempo_total <= 0}
+                           // disabled={values.tiempo_total <= 0}
                            className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 col-span-1 mx-auto disabled:hover:bg-emerald-200/50'
                            onClick={handleCreateTimes}>
                            agregar
@@ -3070,9 +3166,9 @@ const Detail = () => {
                               />
 
                               <Input
+                                 isNumberFormat
                                  className='col-span-1'
                                  placeholder='ej:1.5'
-                                 isNumber
                                  value={distributions[i]?.distr_cliente ?? ''}
                                  onChange={e => {
                                     setDistributions(distributions.map(inp => {
@@ -3085,9 +3181,9 @@ const Detail = () => {
                               />
 
                               <Input
+                                 isNumberFormat
                                  className='col-span-1'
                                  placeholder='ej:1.5'
-                                 isNumber
                                  value={distributions[i]?.distr_zionit ?? ''}
                                  onChange={e => {
                                     setDistributions(distributions.map(inp => {
@@ -3100,7 +3196,7 @@ const Detail = () => {
                               />
 
                               <NumberFormat
-                                 className='flex justify-center'
+                                 className='text-right w-full pr-4'
                                  value={distributions[i]?.tiempo_dist_act ?? ''}
                                  decimalScale={4}
                                  fixedDecimalScale
@@ -3127,17 +3223,32 @@ const Detail = () => {
                      <footer className='flex justify-between mt-10'>
                         <Button
                            className='bg-red-100 hover:bg-red-200 text-red-500'
-                           onClick={onCloseModals}
+                           onClick={onCloseDistributionModal}
                         >
                            cancelar
                         </Button>
 
+                        {activity.id_tipo_actividad === 3 &&
+                           <div className='flex gap-2'>
+
+                              <Button className='bg-red-100 text-red-500'>rechazar</Button>
+                              <Button className='bg-emerald-100 text-emerald-500'>aprobar</Button>
+
+                           </div>
+                        }
+
                         <Button
-                           className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500'
-                           onClick={handleApplyChanges}
+                           hidden={activity.id_tipo_actividad === 3}
+                           disabled={Number(jobTime) !== 0}
+                           className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 disabled:hover:bg-emerald-100'
+                           onClick={() => handleApplyChanges(activity.id_tipo_actividad)}
                            title='Esto guardara las modificaciones realizadas en la Base de datos'
                         >
-                           aplicar cambios
+                           {
+                              activity.id_tipo_actividad === 1 ? 'Para Revisión' :
+                                 activity.id_tipo_actividad === 4 ? 'Procesar' :
+                                    activity.id_tipo_actividad === 3 ? 'Procesar' : 'Aceptar'
+                           }
                         </Button>
                      </footer>
                   </div>
