@@ -14,6 +14,8 @@ import Numerator from '../ui/Numerator'
 
 const DistributionForm = (props) => {
 
+  const { padre_original_facturado, padre_original_terminado } = props
+
   const { optionsArray } = useContext(ActivityContext)
   const { toggleState } = useDetail(props.id)
   const navigate = useNavigate()
@@ -42,7 +44,16 @@ const DistributionForm = (props) => {
   })
 
   useEffect(() => {
-    setDistributions(props.tiempos_distribuidos)
+    setDistributions(props.tiempos_distribuidos.map(dis => {
+      return {
+        id_dist_tiempo_act: dis.id_dist_tiempo_act,
+        id_producto: dis.id_producto,
+        tiempo_dist_act: dis.tiempo_dist_act,
+        distr_cliente: dis.distr_cliente,
+        distr_zionit: dis.distr_zionit,
+        glosa_dist_tiempos_act: dis.glosa_dist_tiempos_act,
+      }
+    }))
     setTiempo_pantalla(props.tiempo_trabajado)
   }, [props.tiempos_distribuidos])
 
@@ -193,6 +204,8 @@ const DistributionForm = (props) => {
     props.onClose()
   }
 
+  console.log({ distributions })
+
   return (
     <div className='mt-5 w-full pr-6 lg:pr-0'>
 
@@ -232,7 +245,6 @@ const DistributionForm = (props) => {
 
           <div
             className={`${tiempo_pantalla < 0 ? 'text-red-500' : 'text-emerald-500'} flex gap-2`}
-            title={tiempo_pantalla}
           >
             Tiempo Restante:
 
@@ -308,7 +320,7 @@ const DistributionForm = (props) => {
         </h3>
       </Box>
 
-      {!props.isFather &&
+      {!props.isFather && props.isTicket && !padre_original_terminado &&
         <Box isBlock colCount={10} >
 
           <span className='col-span-1 py-6' />
@@ -387,7 +399,7 @@ const DistributionForm = (props) => {
 
             <section className='col-span-2 py-1'>
               <CustomSelect
-                disabled={props.isFather}
+                disabled={props.isFather || padre_original_terminado}
                 options={optionsArray?.products}
                 value={optionsArray?.products.find(p => Number(distributions[i]?.id_producto) === Number(p.value)) ?? { value: 'empty', label: 'Ninguno' }}
                 onChange={option => {
@@ -403,7 +415,7 @@ const DistributionForm = (props) => {
             </section>
 
             <Input
-              disabled={props.isFather}
+              disabled={props.isFather || padre_original_terminado}
               className='col-span-2'
               value={distributions[i]?.glosa_dist_tiempos_act ?? ''}
               onChange={e => {
@@ -417,7 +429,7 @@ const DistributionForm = (props) => {
             />
 
             <Input
-              disabled={props.isFather}
+              disabled={props.isFather || padre_original_terminado}
               isNumberFormat
               className='col-span-1'
               placeholder='ej:1.5'
@@ -425,7 +437,7 @@ const DistributionForm = (props) => {
               onChange={e => {
                 setDistributions(distributions.map(inp => {
                   if (inp.id_dist_tiempo_act === dis.id_dist_tiempo_act) {
-                    return { ...inp, distr_cliente: e.target.value }
+                    return { ...inp, distr_cliente: e.target.value, tiempo_dist_act: (Number(distributions[i]?.distr_zionit) + Number(e.target.value)) }
                   }
                   return inp
                 }))
@@ -433,7 +445,7 @@ const DistributionForm = (props) => {
             />
 
             <Input
-              disabled={props.isFather}
+              disabled={props.isFather || padre_original_terminado}
               isNumberFormat
               className='col-span-1'
               placeholder='ej:1.5'
@@ -441,7 +453,7 @@ const DistributionForm = (props) => {
               onChange={e => {
                 setDistributions(distributions.map(inp => {
                   if (inp.id_dist_tiempo_act === dis.id_dist_tiempo_act) {
-                    return { ...inp, distr_zionit: e.target.value }
+                    return { ...inp, distr_zionit: e.target.value, tiempo_dist_act: (Number(e.target.value) + Number(distributions[i]?.distr_cliente)) }
                   }
                   return inp
                 }))
@@ -450,15 +462,15 @@ const DistributionForm = (props) => {
 
             <NumberFormat
               className='text-right w-full pr-4'
-              value={Number(distributions[i]?.distr_cliente) + Number(distributions[i]?.distr_zionit) ?? ''}
+              value={distributions[i]?.tiempo_dist_act ?? ''}
               decimalScale={4}
               fixedDecimalScale
               displayType='text'
             />
 
             <Button
-              hidden={props.isFather}
-              disabled={props.isFather}
+              hidden={props.isFather || padre_original_terminado}
+              disabled={props.isFather || padre_original_terminado}
               className='hover:bg-red-100 text-red-500 mx-auto'
               onClick={() =>
                 handleDeleteTimes(dis.id_dist_tiempo_act)

@@ -51,6 +51,7 @@ const TdSwitch = (props) => {
             callback={(times) => props.onDistribution({ distribuciones: times, id_actividad: props.id_det })}
             isStickyRight
             isFather={props.isFather}
+            isTicket={props.isTicket}
             {...props}
          />
       )

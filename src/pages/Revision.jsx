@@ -806,6 +806,7 @@ const Revision = () => {
                               onPlay={() => onPlay({ id_actividad: act.id_det })}
                               onPause={({ mensaje, tipo_pausa }) => onPause({ mensaje, tipo_pausa, id_actividad: act.id_det })}
                               isFather={act.es_padre === 1 && act.es_hijo === 0}
+                              isTicket={act.num_ticket_edit !== 0}
                               {...act}
                            />
                         </tr>

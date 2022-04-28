@@ -2763,7 +2763,12 @@ const Detail = () => {
                   hideCloseButton
                >
 
-                  <DistributionForm {...activity} onClose={onCloseDistributionModal} isFather={isFather} />
+                  <DistributionForm
+                     {...activity}
+                     onClose={onCloseDistributionModal}
+                     isFather={isFather}
+                     isTicket={isTicket}
+                  />
                </Modal>
             </>
          )}
