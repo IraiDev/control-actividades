@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, memo } from 'react'
+import { isEqual } from 'lodash'
 import Modal from '../../ui/Modal'
 import DistributionForm from '../../forms/DistributionForm'
 
@@ -22,6 +23,8 @@ const TdControlDistribution = props => {
    }
 
    const calculateTime = useCallback((trabajado, distribuido) => {
+
+      console.log('funcion renderi')
 
       const time = trabajado - Number(distribuido?.reduce((a, b) => Number(a.toFixed(4)) + Number(b?.tiempo_dist_act?.toFixed(4)), 0).toFixed(4))
       const length = distribuido?.length
@@ -51,7 +54,6 @@ const TdControlDistribution = props => {
             `}>
             <span
                onClick={handleOpenModal}
-               // title='tiempo restante para distribuir'
                className={`
 
                   px-2 py-1 font-bold rounded-full text-sm transition duration-300
@@ -61,49 +63,48 @@ const TdControlDistribution = props => {
                   
                `}
             >
-               {
-                  <>
-                     <i className='fas fa-clock mr-3' />
-                     {calculateTime(props?.tiempo_trabajado, props?.tiempos_distribuidos).time}
-                  </>
-               }
+               <i className='fas fa-clock mr-3' />
+               {calculateTime(props?.tiempo_trabajado, props?.tiempos_distribuidos).time}
             </span>
          </td>
 
-         <Modal
-            showModal={modal}
-            isBlur={false}
-            onClose={onCloseModal}
-            className='max-w-7xl'
-            padding='p-6'
-            title='Distribución de tiempos'
-         >
-            {padre_original_terminado &&
-               <span className='bg-red-100 text-red-500 rounded-lg px-2 py-1 w-max mx-auto block font-semibold'>
-
-                  El padre original de este ticket se encuentra en estado terminado, por ende, no se puede distribuir el tiempo.
-
-               </span>
-            }
-
-            {padre_original_facturado &&
-               <span className='bg-amber-100 text-amber-500 rounded-lg px-2 py-1 w-max mx-auto block font-semibold'>
-
-                  El padre original de este ticket se encuentra en estado para facturar, por ende, la modificacion de esstos tiempos afectaran las del padre.
-
-               </span>
-            }
-
-            <DistributionForm
-               {...props}
-               isFather={props.isFather}
+         {modal &&
+            <Modal
+               showModal={modal}
+               isBlur={false}
                onClose={onCloseModal}
-               callback={(data) => props.callback(data)}
-               isTicket={props.isTicket}
-            />
-         </Modal>
+               className='max-w-7xl'
+               padding='p-6'
+               title='Distribución de tiempos'
+               hideCloseButton
+            >
+               {padre_original_terminado &&
+                  <span className='bg-red-100 text-red-500 rounded-lg px-2 py-1 w-max mx-auto block font-semibold'>
+
+                     El padre original de este ticket se encuentra en estado terminado, por ende, no se puede distribuir el tiempo.
+
+                  </span>
+               }
+
+               {padre_original_facturado &&
+                  <span className='bg-amber-100 text-amber-500 rounded-lg px-2 py-1 w-max mx-auto block font-semibold'>
+
+                     El padre original de este ticket se encuentra en estado para facturar, por ende, la modificacion de esstos tiempos afectaran las del padre.
+
+                  </span>
+               }
+
+               <DistributionForm
+                  {...props}
+                  isFather={props.isFather}
+                  onClose={onCloseModal}
+                  callback={(data) => props.callback(data)}
+                  isTicket={props.isTicket}
+               />
+            </Modal>
+         }
       </>
    )
 }
 
-export default TdControlDistribution
+export default memo(TdControlDistribution, isEqual)

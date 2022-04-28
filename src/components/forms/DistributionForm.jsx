@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, memo } from 'react'
+import { isEqual } from 'lodash';
 import NumberFormat from 'react-number-format'
 import { useNavigate } from 'react-router-dom'
 import { ActivityContext } from '../../context/ActivityContext'
@@ -14,7 +15,7 @@ import Numerator from '../ui/Numerator'
 
 const DistributionForm = (props) => {
 
-  const { padre_original_facturado, padre_original_terminado } = props
+  const { padre_original_terminado } = props
 
   const { optionsArray } = useContext(ActivityContext)
   const { toggleState } = useDetail(props.id)
@@ -203,8 +204,6 @@ const DistributionForm = (props) => {
 
     props.onClose()
   }
-
-  console.log({ distributions })
 
   return (
     <div className='mt-5 w-full pr-6 lg:pr-0'>
@@ -519,7 +518,6 @@ const DistributionForm = (props) => {
           disabled={tiempo_restante !== 0}
           className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 disabled:hover:bg-emerald-100'
           onClick={() => handleApplyChanges({ type: props.id_tipo_actividad, status: props.estado })}
-          title='Esto guardara las modificaciones realizadas en la Base de datos'
         >
           {
             props.estado !== 2 ? 'Guardar' :
@@ -533,4 +531,4 @@ const DistributionForm = (props) => {
   )
 }
 
-export default DistributionForm
+export default memo(DistributionForm, isEqual)
