@@ -44,12 +44,13 @@ const TdSwitch = (props) => {
       onCloseModal()
    }
 
-   if (state === 13 || state === 5) {
+   if (state === 13 || state === 5 || state === 8) {
       return (
          <TdControlDistribution
             getId={(id_callback) => props.getId(id_callback)}
             callback={(times) => props.onDistribution({ distribuciones: times, id_actividad: props.id_det })}
             isStickyRight
+            isFather={props.isFather}
             {...props}
          />
       )

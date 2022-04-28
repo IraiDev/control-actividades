@@ -31,7 +31,6 @@ import FloatMenu from '../components/ui/FloatMenu'
 import { fetchToken } from '../helpers/fetch'
 import CustomSelect from '../components/ui/CustomSelect'
 import ChildContainer from '../components/child/ChildContainer'
-import Tag from '../components/ui/Tag'
 import DistributionForm from '../components/forms/DistributionForm'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
@@ -165,7 +164,8 @@ const Detail = () => {
       createDetention,
       updateDetention,
       deleteDetention,
-      runActivityPending
+      runActivityPending,
+      checkActivity
    } = useDetail(id)
 
    const date = moment(activity.fecha_tx).format('yyyy-MM-DD')
@@ -174,8 +174,6 @@ const Detail = () => {
    const isFather = activity.es_padre === 1 && activity.es_hijo === 0
    const [showContent, setshowContent] = useState(false)
    const [showChilds, setShowChilds] = useState(false)
-   const [distributions, setDistributions] = useState([])
-   const [jobTime, setJobTime] = useState(0)
 
    // modals
    const [modalEdit, toggleModalEdit] = useState(false)
@@ -238,10 +236,6 @@ const Detail = () => {
       tiempo_cliente,
       tiempo_zionit,
       tiempo_estimado,
-      distr_cliente,
-      distr_zionit,
-      distr_total,
-      distr_glosa
    },
       onChangeValues, reset] = useForm({
          hinicio: moment(new Date()).format('HH:mm:ss'),
@@ -252,16 +246,12 @@ const Detail = () => {
          tiempo_cliente: 0,
          tiempo_zionit: 0,
          tiempo_estimado: activity.tiempo_estimado,
-         distr_cliente: 0,
-         distr_zionit: 0,
-         distr_total: 0,
-         distr_glosa: ''
       })
 
    // destructuring
    const { title, description, gloss, ticket, priority, time, orden } = fields
    const { cTitle, cDescription, cPriority, cTicket, cTime, cGloss } = cloneFields
-   const { projects, subProjects, users, activity_type, pause_type, products } = optionsArray
+   const { projects, subProjects, users, activity_type, pause_type } = optionsArray
 
    const validation = () => {
       const vTitle = title.trim() === ''
@@ -693,7 +683,11 @@ const Detail = () => {
    }
 
    // TODO: (modificacion de accione de modal) cambia el estado de la actividad a PR y valida si hay modificaciones sin guardar
-   const handleOpenModalRevision = () => {
+   const handleOpenModalRevision = async () => {
+
+      const resp = await checkActivity({ id_actividad: activity.id_det })
+
+      if (!resp) return
 
       const validate = validateMod()
 
@@ -1197,122 +1191,6 @@ const Detail = () => {
 
    // funciones para distribuciones
 
-   const handleCreateTimes = () => {
-
-      if ((Number(distr_cliente) + (Number(distr_zionit))) > Number(values.tiempo_total)) {
-         Alert({
-            icon: 'warn',
-            title: 'Atención',
-            content: 'El tiempo ingresado es mayor al tiempo restante, por favor modifique el valor y vuelva a intentarlo',
-            showCancelButton: false,
-         })
-
-         return
-      }
-
-      if (distr_glosa === '' || options.product.value === undefined) {
-         Alert({
-            icon: 'warn',
-            title: 'Atención',
-            content: 'Por favor complete todos los campos',
-            showCancelButton: false,
-         })
-
-         return
-      }
-
-      if (distr_cliente === 0) {
-         Alert({
-            icon: 'warn',
-            title: 'Atención',
-            content: 'No puedes crear una distribucion de tiempo con 0 horas',
-            showCancelButton: false,
-         })
-
-         return
-      }
-
-      setDistributions(distributions => [
-         ...distributions,
-         {
-            id_dist_tiempo_act: distributions.length + 1,
-            id_producto: Number(options?.product?.value),
-            tiempo_dist_act: Number(distr_cliente) + Number(distr_zionit),
-            distr_cliente,
-            distr_zionit,
-            glosa_dist_tiempos_act: distr_glosa,
-         },
-      ])
-      setOptions({ ...options, product: initOptions.product })
-      reset()
-   }
-
-   const handleDeleteTimes = id => {
-
-      const filter = distributions.filter(dis => dis.id_dist_tiempo_act !== id)
-
-      setDistributions(filter)
-   }
-
-   const handleApplyChanges = async (tipo_actividad) => {
-
-      const valZero = distributions.some(dis => Number(dis.distr_cliente) === 0 && Number(dis.distr_zionit) === 0)
-      const length = distributions.length
-      const tCliente = distributions.reduce((acc, cur) => acc + Number(cur.distr_cliente), 0)
-      const tZionit = distributions.reduce((acc, cur) => acc + Number(cur.distr_zionit), 0)
-      const hashTableEstado = {
-         1: 3, // normal
-         3: 13, // de entrega
-         4: 13 // coordinacion
-      }
-
-      const validation =
-         length <= activity?.tiempos_distribuidos.length &&
-         (distr_cliente !== 0 || distr_glosa !== '' || options.product.value !== null)
-
-      if (validation) {
-         Alert({
-            icon: 'warn',
-            title: 'Atención',
-            content: 'Quieres aplicar cambios sin agregar el item que estas escribiendo, por favor primero presiona agregar y luego aplica los cambios',
-            showCancelButton: false,
-         })
-         return
-      }
-
-      if (Number(jobTime) !== 0) {
-         Alert({
-            icon: 'warn',
-            title: 'Atención',
-            content: 'Por favor distribuya el <strong>tiempo total</strong> hasta que este sea igual a 0 horas',
-            showCancelButton: false,
-         })
-
-         return
-      }
-
-      if (valZero) {
-         Alert({
-            icon: 'warn',
-            title: 'Atención',
-            content: 'No pueden existir lineas de distribucion de tiempo done el T. cliente y T. zionit sean igual a 0',
-            showCancelButton: false,
-         })
-         return
-      }
-
-      await toggleState({
-         estado: hashTableEstado[tipo_actividad],
-         tiempo_cliente: tCliente,
-         tiempo_zionit: tZionit,
-         distribuciones: distributions,
-         // rechazada: tipo_actividad === 3 
-      })
-      navigate(routes.activity, { replace: true })
-
-      onCloseModals()
-   }
-
    const onCloseDistributionModal = () => {
       setModalDistributions(false)
    }
@@ -1369,42 +1247,6 @@ const Detail = () => {
 
    }, [detentions])
 
-   useEffect(() => {
-      setDistributions(activity.tiempos_distribuidos || [])
-   }, [activity])
-
-   useEffect(() => {
-      const tCliente = distributions.reduce((acc, cur) => acc + Number(cur.distr_cliente).toFixed(4), 0)
-      const tZionit = distributions.reduce((acc, cur) => acc + Number(cur.distr_zionit).toFixed(4), 0)
-      const tTotal = tCliente + tZionit
-      let tempJobTime = 0
-
-      if (tTotal > activity?.tiempo_trabajado) {
-         tempJobTime = Number((activity?.tiempo_trabajado - tTotal).toFixed(4))
-         setJobTime(tempJobTime)
-      }
-
-      else if (tTotal <= activity?.tiempo_trabajado) {
-         tempJobTime = Number((activity?.tiempo_trabajado - tTotal).toFixed(4))
-         setJobTime(tempJobTime)
-      }
-
-      setValues({
-         ...values,
-         tiempo_total: tempJobTime,
-         tiempo_cliente: tCliente,
-         tiempo_zionit: tZionit,
-      })
-
-      // eslint-disable-next-line
-   }, [distributions])
-
-   useEffect(() => {
-      const distr_suma = distributions.reduce((a, b) => Number(a) + Number(b?.tiempo_dist_act), 0)
-      const distr_total = distr_suma + (Number(distr_cliente) + Number(distr_zionit))
-      const resta = Number(activity?.tiempo_trabajado || 0).toFixed(4) - distr_total.toFixed(4)
-      setJobTime(resta.toFixed(4))
-   }, [distr_cliente, distr_zionit, activity])
 
    return (
       <>
@@ -1965,6 +1807,16 @@ const Detail = () => {
                                                 activity.id_tipo_actividad === 4 ? 'Procesar' :
                                                    activity.id_tipo_actividad === 3 ? 'Procesar' : 'Aceptar'
                                           }
+                                          <i className='fas fa-eye text-orange-400' />
+                                       </MenuItem>
+                                    }
+
+                                    {isFather &&
+                                       <MenuItem
+                                          className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
+                                          onClick={handleOpenModalRevision}
+                                       >
+                                          Ver distribucion
                                           <i className='fas fa-eye text-orange-400' />
                                        </MenuItem>
                                     }
@@ -2908,9 +2760,10 @@ const Detail = () => {
                   className='max-w-7xl'
                   padding='p-6'
                   title='Distribución de tiempos'
+                  hideCloseButton
                >
 
-                  <DistributionForm {...activity} onClose={onCloseDistributionModal} />
+                  <DistributionForm {...activity} onClose={onCloseDistributionModal} isFather={isFather} />
                </Modal>
             </>
          )}

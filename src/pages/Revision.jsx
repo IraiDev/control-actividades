@@ -805,6 +805,7 @@ const Revision = () => {
                               onChangeCheckedActivity={({ id, title, revisado, estado }) => onChangeCheckedActivity({ id, title, revisado, estado })}
                               onPlay={() => onPlay({ id_actividad: act.id_det })}
                               onPause={({ mensaje, tipo_pausa }) => onPause({ mensaje, tipo_pausa, id_actividad: act.id_det })}
+                              isFather={act.es_padre === 1 && act.es_hijo === 0}
                               {...act}
                            />
                         </tr>

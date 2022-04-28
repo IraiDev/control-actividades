@@ -21,7 +21,7 @@ const Input = ({
    isNumberFormat = false
 }) => {
 
-   const [showZeros, setShowZeros] = useState(false)
+   const [showZeros, setShowZeros] = useState(true)
 
    const handleFocus = (e) => {
       e.target.select()

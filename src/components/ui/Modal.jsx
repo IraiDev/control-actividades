@@ -12,6 +12,7 @@ const Modal = ({
    className = 'max-w-4xl',
    padding = 'p-10',
    title,
+   hideCloseButton = false,
 }) => {
    const onBlur = () => {
       if (isBlur) onClose()
@@ -44,6 +45,7 @@ const Modal = ({
                <section className={`rounded-md bg-white shadow-xl relative w-full max-h-full overflow-custom ${padding}`}>
 
                   <Button
+                     hidden={hideCloseButton}
                      onClick={onClose}
                      className='absolute z-50 right-4 top-4 text-slate-700 hover:text-red-500'>
                      <i className='fas fa-times fa-lg' />

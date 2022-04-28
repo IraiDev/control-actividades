@@ -21,6 +21,7 @@ const DistributionForm = (props) => {
   const [options, setOptions] = useState({ value: 'empty', label: 'Ninguno' })
   const [distributions, setDistributions] = useState([])
   const [tiempo_restante, setTiempo_restante] = useState(0)
+  const [tiempo_pantalla, setTiempo_pantalla] = useState(0)
 
   const cliente_acumulado = distributions.reduce((acum, item) => acum + Number(item.distr_cliente), 0)
   const zionit_acumulado = distributions.reduce((acum, item) => acum + Number(item.distr_zionit), 0)
@@ -42,25 +43,35 @@ const DistributionForm = (props) => {
 
   useEffect(() => {
     setDistributions(props.tiempos_distribuidos)
+    setTiempo_pantalla(props.tiempo_trabajado)
   }, [props.tiempos_distribuidos])
 
   useEffect(() => {
-    setTiempo_restante(props.tiempo_trabajado - total_acumulado)
+
+    setTiempo_restante(Number((props.tiempo_trabajado - total_acumulado).toFixed(4)))
+    setTiempo_pantalla(Number((props.tiempo_trabajado - total_acumulado).toFixed(4)))
+
   }, [total_acumulado])
 
-  console.log(total_acumulado, typeof total_acumulado)
+  useEffect(() => {
+
+    if (Number(distr_cliente) > 0 || Number(distr_zionit) > 0) {
+      setTiempo_pantalla(Number((tiempo_restante - (Number(distr_cliente) + Number(distr_zionit))).toFixed(4)))
+      return
+    }
+
+  }, [distr_cliente, distr_zionit])
 
   const handleCreateTimes = () => {
 
-    const val_rest_time = (Number(distr_cliente) + Number(distr_zionit)) - tiempo_restante
     const empty_field = distr_glosa === '' && options.value === 'empty'
     const val_time_is_zero = Number(distr_cliente) === 0 && Number(distr_zionit) === 0
 
-    if (val_rest_time < 0) {
+    if (tiempo_restante < 0) {
       Alert({
         icon: 'warn',
         title: 'Atención',
-        content: 'El tiempo ingresado es mayor al tiempo restante, por favor modifique el valor y vuelva a intentarlo',
+        content: `El tiempo ingresado es mayor al tiempo restante, por favor modifique el valor y vuelva a intentarlo`,
         showCancelButton: false,
       })
       return
@@ -90,7 +101,7 @@ const DistributionForm = (props) => {
     setDistributions(distributions => [
       ...distributions,
       {
-        id_dist_tiempo_act: distributions.length + 1,
+        id_dist_tiempo_act: Math.random(),
         id_producto: Number(options?.value),
         tiempo_dist_act: Number(distr_cliente) + Number(distr_zionit),
         distr_cliente,
@@ -109,7 +120,7 @@ const DistributionForm = (props) => {
     setDistributions(filter)
   }
 
-  const handleApplyChanges = async (tipo_actividad) => {
+  const handleApplyChanges = async (type, aprove, status) => {
 
     const val_rest_time = distributions.some(dis => Number(dis.distr_cliente) === 0 && Number(dis.distr_zionit) === 0)
     const time_cliente = distributions.reduce((acc, item) => acc + Number(item.distr_cliente), 0)
@@ -130,16 +141,25 @@ const DistributionForm = (props) => {
       return
     }
 
-    await toggleState({
-      estado: hashTableEstado[tipo_actividad],
-      tiempo_cliente: time_cliente,
-      tiempo_zionit: time_zionit,
-      distribuciones: distributions,
-      // rechazada: tipo_actividad === 3 
-    })
+    if (status !== 2 || status !== 1) {
+      props.callback(distributions)
+    }
 
-    navigate(routes.activity, { replace: true })
+    else {
+
+      await toggleState({
+        estado: hashTableEstado[type],
+        tiempo_cliente: time_cliente,
+        tiempo_zionit: time_zionit,
+        distribuciones: distributions,
+        rechazada: type === 3 ? aprove : false,
+      })
+      navigate(routes.activity, { replace: true })
+
+    }
+
     setTiempo_restante(0)
+    setTiempo_pantalla(0)
     setOptions({ value: 'empty', label: 'Ninguno' })
     setDistributions(props.tiempos_distribuidos)
     reset()
@@ -210,11 +230,14 @@ const DistributionForm = (props) => {
 
           |
 
-          <div className={`${tiempo_restante < 0 ? 'text-red-500' : 'text-emerald-500'} flex gap-2`}>
+          <div
+            className={`${tiempo_pantalla < 0 ? 'text-red-500' : 'text-emerald-500'} flex gap-2`}
+            title={tiempo_pantalla}
+          >
             Tiempo Restante:
 
             <NumberFormat
-              value={tiempo_restante}
+              value={tiempo_pantalla}
               decimalScale={4}
               fixedDecimalScale
               displayType='text'
@@ -285,67 +308,69 @@ const DistributionForm = (props) => {
         </h3>
       </Box>
 
-      <Box isBlock colCount={10} >
+      {!props.isFather &&
+        <Box isBlock colCount={10} >
 
-        <span className='col-span-1 py-6' />
+          <span className='col-span-1 py-6' />
 
-        <span className='col-span-1 py-6 capitalize text-center' >
-          {props.desc_tipo_actividad}
-        </span>
+          <span className='col-span-1 py-6 capitalize text-center' >
+            {props.desc_tipo_actividad}
+          </span>
 
-        <section className='col-span-2'>
-          <CustomSelect
+          <section className='col-span-2'>
+            <CustomSelect
+              disabled={tiempo_restante <= 0}
+              options={optionsArray?.products}
+              value={options}
+              onChange={option => setOptions(option)}
+              menuHeight={150}
+            />
+          </section>
+
+          <Input
             disabled={tiempo_restante <= 0}
-            options={optionsArray?.products}
-            value={options}
-            onChange={option => setOptions(option)}
-            menuHeight={150}
+            className='col-span-2'
+            name='distr_glosa'
+            value={distr_glosa}
+            onChange={hanldeChange}
           />
-        </section>
 
-        <Input
-          disabled={tiempo_restante <= 0}
-          className='col-span-2'
-          name='distr_glosa'
-          value={distr_glosa}
-          onChange={hanldeChange}
-        />
+          <Input
+            isNumberFormat
+            disabled={tiempo_restante <= 0}
+            className='col-span-1'
+            placeholder='ej:1.5'
+            name='distr_cliente'
+            value={distr_cliente}
+            onChange={hanldeChange}
+          />
 
-        <Input
-          isNumberFormat
-          disabled={tiempo_restante <= 0}
-          className='col-span-1'
-          placeholder='ej:1.5'
-          name='distr_cliente'
-          value={distr_cliente}
-          onChange={hanldeChange}
-        />
+          <Input
+            disabled={tiempo_restante <= 0}
+            className='col-span-1'
+            placeholder='ej:1.5'
+            isNumberFormat
+            name='distr_zionit'
+            value={distr_zionit}
+            onChange={hanldeChange}
+          />
 
-        <Input
-          disabled={tiempo_restante <= 0}
-          className='col-span-1'
-          placeholder='ej:1.5'
-          isNumberFormat
-          name='distr_zionit'
-          value={distr_zionit}
-          onChange={hanldeChange}
-        />
+          <NumberFormat
+            className='text-right w-full pr-4'
+            value={Number(distr_zionit) + Number(distr_cliente)}
+            decimalScale={4}
+            fixedDecimalScale
+            displayType='text'
+          />
 
-        <NumberFormat
-          className='text-right w-full pr-4'
-          value={distr_zionit + distr_cliente}
-          decimalScale={4}
-          fixedDecimalScale
-          displayType='text'
-        />
-
-        <Button
-          disabled={tiempo_restante <= 0}
-          className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 col-span-1 mx-auto disabled:hover:bg-emerald-200/50'
-          onClick={handleCreateTimes}>
-          agregar
-        </Button>
-      </Box>
+          <Button
+            disabled={tiempo_restante <= 0}
+            className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 col-span-1 mx-auto disabled:hover:bg-emerald-200/50'
+            onClick={handleCreateTimes}>
+            agregar
+          </Button>
+        </Box>
+      }
 
       <h5 className='pl-4 text-sm my-5'>
         Lista de distribucion de tiempos
@@ -362,6 +387,7 @@ const DistributionForm = (props) => {
 
             <section className='col-span-2 py-1'>
               <CustomSelect
+                disabled={props.isFather}
                 options={optionsArray?.products}
                 value={optionsArray?.products.find(p => Number(distributions[i]?.id_producto) === Number(p.value)) ?? { value: 'empty', label: 'Ninguno' }}
                 onChange={option => {
@@ -377,6 +403,7 @@ const DistributionForm = (props) => {
             </section>
 
             <Input
+              disabled={props.isFather}
               className='col-span-2'
               value={distributions[i]?.glosa_dist_tiempos_act ?? ''}
               onChange={e => {
@@ -390,6 +417,7 @@ const DistributionForm = (props) => {
             />
 
             <Input
+              disabled={props.isFather}
               isNumberFormat
               className='col-span-1'
               placeholder='ej:1.5'
@@ -405,6 +433,7 @@ const DistributionForm = (props) => {
             />
 
             <Input
+              disabled={props.isFather}
               isNumberFormat
               className='col-span-1'
               placeholder='ej:1.5'
@@ -421,13 +450,15 @@ const DistributionForm = (props) => {
 
             <NumberFormat
               className='text-right w-full pr-4'
-              value={distributions[i]?.tiempo_dist_act ?? ''}
+              value={Number(distributions[i]?.distr_cliente) + Number(distributions[i]?.distr_zionit) ?? ''}
               decimalScale={4}
               fixedDecimalScale
               displayType='text'
             />
 
             <Button
+              hidden={props.isFather}
+              disabled={props.isFather}
               className='hover:bg-red-100 text-red-500 mx-auto'
               onClick={() =>
                 handleDeleteTimes(dis.id_dist_tiempo_act)
@@ -449,29 +480,40 @@ const DistributionForm = (props) => {
           className='bg-red-100 hover:bg-red-200 text-red-500'
           onClick={onCloseForm}
         >
-          cancelar
+          {props.isFather ? 'Cerrar' : 'Cancelar'}
         </Button>
 
-        {props.id_tipo_actividad === 3 &&
+        {props.id_tipo_actividad === 3 && props.estado === 2 &&
           <div className='flex gap-2'>
 
-            <Button className='bg-red-100 text-red-500'>rechazar</Button>
-            <Button className='bg-emerald-100 text-emerald-500'>aprobar</Button>
+            <Button
+              className='bg-red-100 text-red-500'
+              onClick={() => handleApplyChanges({ type: props.id_tipo_actividad, aprove: true, status: props.estado })}
+            >
+              rechazar
+            </Button>
+            <Button
+              className='bg-emerald-100 text-emerald-500'
+              onClick={() => handleApplyChanges({ type: props.id_tipo_actividad, aprove: true, status: props.estado })}
+            >
+              aprobar
+            </Button>
 
           </div>
         }
 
         <Button
-          hidden={props.id_tipo_actividad === 3}
+          hidden={(props.id_tipo_actividad === 3 && props.estado === 2) || props.isFather}
           disabled={tiempo_restante !== 0}
           className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 disabled:hover:bg-emerald-100'
-          onClick={() => handleApplyChanges(props.id_tipo_actividad)}
+          onClick={() => handleApplyChanges({ type: props.id_tipo_actividad, status: props.estado })}
           title='Esto guardara las modificaciones realizadas en la Base de datos'
         >
           {
-            props.id_tipo_actividad === 1 ? 'Para Revisión' :
-              props.id_tipo_actividad === 4 ? 'Procesar' :
-                props.id_tipo_actividad === 3 ? 'Procesar' : 'Aceptar'
+            props.estado !== 2 ? 'Guardar' :
+              props.id_tipo_actividad === 1 ? 'Para Revisión' :
+                props.id_tipo_actividad === 4 ? 'Procesar' :
+                  props.id_tipo_actividad === 3 ? 'Procesar' : 'Aceptar'
           }
         </Button>
       </footer>

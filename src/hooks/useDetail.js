@@ -752,6 +752,29 @@ export const useDetail = (id) => {
 
    }
 
+   const checkActivity = async ({ id_actividad = id }) => {
+      
+      try {
+
+         const resp = await fetchToken('task/comprobar-actividad', { id_actividad }, 'POST')
+         const body = await resp.json()
+
+         if (!body.ok) {
+            Alert({
+               icon: 'warn',
+               title: 'Atención!',
+               content: body.response,
+               showCancelButton: false,
+            })
+            return false
+         }
+         return true
+         
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
    useEffect(() => {
 
       if (id) {
@@ -783,6 +806,7 @@ export const useDetail = (id) => {
       updatePredecessor,
       getPredecessor,
       runActivityPending,
-      getMap
+      getMap,
+      checkActivity
    }
 }
