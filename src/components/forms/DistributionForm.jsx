@@ -132,7 +132,7 @@ const DistributionForm = (props) => {
     setDistributions(filter)
   }
 
-  const handleApplyChanges = async (type, aprove, status) => {
+  const handleApplyChanges = async ({ type, reject, status }) => {
 
     const val_rest_time = distributions.some(dis => Number(dis.distr_cliente) === 0 && Number(dis.distr_zionit) === 0)
     const time_cliente = distributions.reduce((acc, item) => acc + Number(item.distr_cliente), 0)
@@ -153,7 +153,7 @@ const DistributionForm = (props) => {
       return
     }
 
-    if (status !== 2 || status !== 1) {
+    if (status !== 2 && status !== 1) {
       props.callback(distributions)
     }
 
@@ -164,7 +164,8 @@ const DistributionForm = (props) => {
         tiempo_cliente: time_cliente,
         tiempo_zionit: time_zionit,
         distribuciones: distributions,
-        rechazada: type === 3 ? aprove : false,
+        rechazada: type === 3 ? reject : false,
+        id_actividad: props.id_det,
       })
       navigate(routes.activity, { replace: true })
 
@@ -499,13 +500,13 @@ const DistributionForm = (props) => {
 
             <Button
               className='bg-red-100 text-red-500'
-              onClick={() => handleApplyChanges({ type: props.id_tipo_actividad, aprove: true, status: props.estado })}
+              onClick={() => handleApplyChanges({ type: props.id_tipo_actividad, reject: true, status: props.estado })}
             >
               rechazar
             </Button>
             <Button
               className='bg-emerald-100 text-emerald-500'
-              onClick={() => handleApplyChanges({ type: props.id_tipo_actividad, aprove: true, status: props.estado })}
+              onClick={() => handleApplyChanges({ type: props.id_tipo_actividad, reject: false, status: props.estado })}
             >
               aprobar
             </Button>

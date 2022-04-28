@@ -32,6 +32,7 @@ import { fetchToken } from '../helpers/fetch'
 import CustomSelect from '../components/ui/CustomSelect'
 import ChildContainer from '../components/child/ChildContainer'
 import DistributionForm from '../components/forms/DistributionForm'
+import EventContainer from '../components/detail/EventContainer'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
@@ -174,6 +175,7 @@ const Detail = () => {
    const isFather = activity.es_padre === 1 && activity.es_hijo === 0
    const [showContent, setshowContent] = useState(false)
    const [showChilds, setShowChilds] = useState(false)
+   const [showEvents, setShowEvents] = useState(false)
 
    // modals
    const [modalEdit, toggleModalEdit] = useState(false)
@@ -1301,7 +1303,7 @@ const Detail = () => {
                         <Button
                            hidden={!isTicket}
                            className='bg-slate-100 hover:bg-slate-200 mx-auto w-[230px]'
-                           onClick={() => setShowChilds(!showChilds)}
+                           onClick={() => setShowEvents(!showEvents)}
                         >
                            Ver Eventos
                            <i className='fas fa-ticket-alt' />
@@ -1317,6 +1319,15 @@ const Detail = () => {
                            onPause={({ isDefaultPause, mensaje, id_actividad }) => onPlayOrPauseChild({ isDefaultPause, mensaje, id_actividad })}
                            onPlay={({ id_actividad }) => onPlayOrPauseChild({ id_actividad })}
                            hideChilds={(status) => setShowChilds(status)}
+                        />
+                     }
+
+                     {showEvents &&
+
+                        <EventContainer
+                           id={activity.id_det}
+                           ticket={activity.num_ticket_edit}
+                           events={activity.eventos_ticket}
                         />
                      }
 
