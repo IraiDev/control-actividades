@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState } from 'react'
 import NumberFormat from 'react-number-format'
 
 const Input = ({
@@ -21,24 +21,38 @@ const Input = ({
    isNumberFormat = false
 }) => {
 
+   const [showZeros, setShowZeros] = useState(false)
+
+   const handleFocus = (e) => {
+      e.target.select()
+      setShowZeros(false)
+   }
+
+   const handleBlur = () => {
+      setShowZeros(true)
+   }
+
    if (isNumberFormat) {
       return (
          <NumberFormat
             disabled={disabled}
-            className={`${className} 
-            ${padding} ${width}
+            className={`
+            ${className}
+            ${padding} 
+            ${width}
             disabled:bg-zinc-100 disabled:text-slate-400
-            rounded-md bg-white text-slate-700 border border-zinc-300/70 transition duration-200 focus:ring-2 focus:shadow-lg text-right`}
+            rounded-md bg-white text-slate-700 border
+            border-zinc-300/70 transition duration-200
+            focus:ring-2 focus:shadow-lg text-right`}
             placeholder={placeholder}
             name={name}
             value={value}
             onChange={onChange}
+            onBlur={handleBlur}
             decimalScale={4}
-            fixedDecimalScale
+            fixedDecimalScale={showZeros}
             displayType='input'
-            onFocus={e => {
-               e.target.select()
-            }}
+            onFocus={handleFocus}
          />
       )
    }
