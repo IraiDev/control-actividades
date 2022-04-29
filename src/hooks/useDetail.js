@@ -765,6 +765,7 @@ export const useDetail = (id) => {
                title: 'Atención!',
                content: body.response,
                showCancelButton: false,
+               width: '40rem'
             })
             return false
          }
