@@ -515,7 +515,7 @@ const DistributionForm = (props) => {
         }
 
         <Button
-          hidden={(props.id_tipo_actividad === 3 && props.estado === 2) || props.isFather}
+          hidden={(props.id_tipo_actividad === 3 && props.estado === 2) || (props.isFather && props.isTicket)}
           disabled={tiempo_restante !== 0}
           className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 disabled:hover:bg-emerald-100'
           onClick={() => handleApplyChanges({ type: props.id_tipo_actividad, status: props.estado })}
