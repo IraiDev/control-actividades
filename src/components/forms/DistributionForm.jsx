@@ -320,7 +320,7 @@ const DistributionForm = (props) => {
         </h3>
       </Box>
 
-      {!props.isFather && props.isTicket && !padre_original_terminado &&
+      {(!props.isFather || !props.isTicket) && !padre_original_terminado &&
         <Box isBlock colCount={10} >
 
           <span className='col-span-1 py-6' />

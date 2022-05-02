@@ -173,6 +173,7 @@ const Detail = () => {
    const isTicket = activity.num_ticket_edit !== 0
    const isRuning = activity.estado_play_pausa === 2
    const isFather = activity.es_padre === 1 && activity.es_hijo === 0
+   const isFatherChildren = activity.es_padre === 1 && activity.es_hijo === 1
    const [showContent, setshowContent] = useState(false)
    const [showChilds, setShowChilds] = useState(false)
    const [showEvents, setShowEvents] = useState(false)
@@ -1267,7 +1268,7 @@ const Detail = () => {
                      idFather={activity.id_det_padre}
                      isChildren={activity.es_hijo === 1 && activity.es_padre === 0}
                      isFather={isFather}
-                     isChildrenAndChildren={activity.es_hijo === 1 && activity.es_padre === 1}
+                     isFatherAndChildren={activity.es_hijo === 1 && activity.es_padre === 1}
                      isCoorActivity={activity.id_tipo_actividad === 4}
                      isReviewedActivity={activity.id_tipo_actividad === 2}
                      isDeliveryActivity={activity.id_tipo_actividad === 3}
@@ -1808,7 +1809,7 @@ const Detail = () => {
                                        </MenuItem>
                                     }
 
-                                    {activity.estado === 2 && !isFather &&
+                                    {activity.estado === 2 && (!isFather || !isTicket) &&
                                        <MenuItem
                                           className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
                                           onClick={handleOpenModalRevision}
@@ -1822,7 +1823,7 @@ const Detail = () => {
                                        </MenuItem>
                                     }
 
-                                    {isFather &&
+                                    {isFather && isTicket &&
                                        <MenuItem
                                           className='flex justify-between items-center gap-2 border-b border-zinc-200/60'
                                           onClick={handleOpenModalRevision}

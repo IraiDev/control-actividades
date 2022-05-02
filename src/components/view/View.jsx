@@ -55,7 +55,7 @@ const View = props => {
       isFather,
       isCoorActivity,
       isReviewedActivity,
-      isChildrenAndChildren,
+      isFatherAndChildren,
       isDeliveryActivity,
       isTicket,
       isPR,
@@ -320,10 +320,21 @@ const View = props => {
             <MarkActivity
                condicion={isTicket}
                position='absolute -top-3.5 left-1/2 transform -translate-x-1/2'
-               hidden={!isChildrenAndChildren}
+               hidden={!isFatherAndChildren}
             >
                <i className='fas fa-child' />
                <i className='fas fa-hat-cowboy' />
+               {idFather}
+            </MarkActivity>
+
+            <MarkActivity
+               condicion={isTicket}
+               position='absolute -top-3.5 left-1/2 transform -translate-x-1/2'
+               hidden={!(isFatherAndChildren && isCoorActivity)}
+            >
+               <i className='far fa-calendar-alt fa-lg' />
+               <i className='fas fa-hat-cowboy' />
+               <i className='fas fa-child' />
                {idFather}
             </MarkActivity>
 
