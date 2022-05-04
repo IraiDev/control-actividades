@@ -66,8 +66,8 @@ const EventContainer = ({ ticket, id, events }) => {
             </span>
             <span className='text-sm col-span-2'>{moment(event.fecha_hora).format('DD-MM-YYYY, HH:MM')}</span>
             <span>{event.id_actividad}</span>
-            <span>{event.desc_emisor}</span>
-            <span>{event.desc_emisor}</span>
+            <span className='uppercase'>{event.nombre_emisor}</span>
+            <span className='uppercase'>{event.nombre_receptor || 'Equipo'}</span>
             <span className='col-span-4'>{event.contenido}</span>
           </Box>
         ))}
