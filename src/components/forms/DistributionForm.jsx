@@ -345,6 +345,7 @@ const DistributionForm = (props) => {
             name='distr_glosa'
             value={distr_glosa}
             onChange={hanldeChange}
+            maxLength={60}
           />
 
           <Input
@@ -418,6 +419,7 @@ const DistributionForm = (props) => {
               disabled={props.isFather || padre_original_terminado}
               className='col-span-2'
               value={distributions[i]?.glosa_dist_tiempos_act ?? ''}
+              maxLength={60}
               onChange={e => {
                 setDistributions(distributions.map(inp => {
                   if (inp.id_dist_tiempo_act === dis.id_dist_tiempo_act) {

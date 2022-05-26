@@ -18,7 +18,8 @@ const Input = ({
    onBlur,
    isRequired = false,
    highlight = false,
-   isNumberFormat = false
+   isNumberFormat = false,
+   maxLength = undefined
 }) => {
 
    const [showZeros, setShowZeros] = useState(true)
@@ -77,6 +78,7 @@ const Input = ({
             onChange={onChange}
             onBlur={onBlur}
             disabled={disabled}
+            maxLength={maxLength}
             onFocus={e => {
                e.target.select()
             }}
