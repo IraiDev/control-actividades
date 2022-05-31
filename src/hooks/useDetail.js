@@ -370,6 +370,17 @@ export const useDetail = (id) => {
          }
       }
 
+      const isRuning = activity?.estado_play_pausa === 2
+
+      const alertTitle = isRuning ? 'Atención la actividad se esta ejecutando!' : 'Atención'
+      const alertContent = isRuning ?
+         `<div class="text-left font-semibold mb-1">Atencion! la actividad se encuentra andando y eliminarla hara que pierda todos los tiempos y avances realizados.</div>
+         ¿Estás seguro de eliminar la siguiente actividad? </br>
+         <b>${activity.actividad || 'Sin titulo'}</b>, ID: <b>${activity.id_det}</b>`
+         :
+         `¿Estás seguro de eliminar la siguiente actividad? </br>
+         <b>${activity.actividad}</b>, ID: <b>${activity.id_det}</b>`
+
       if(encargado?.id !== user?.id && isFather && isTicket) {
          Alert({
             icon: 'warn',
@@ -383,8 +394,8 @@ export const useDetail = (id) => {
 
       Alert({
          icon: 'warn',
-         title: 'Atención',
-         content: '¿Está seguro que desea eliminar esta actividad?',
+         title: alertTitle,
+         content: alertContent,
          cancelText: 'No, cancelar',
          confirmText: 'Si, eliminar',
          action,

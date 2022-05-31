@@ -567,7 +567,7 @@ const Detail = () => {
 
    }
 
-   // pregunta si desea eliminar la actividad
+   // pregunta si desea eliminar la nota apuntada
    const onDelete = ({ id, desc }) => {
       Alert({
          icon: 'warn',

@@ -272,6 +272,18 @@ const Activity = () => {
 
    const onDeleteActivity = ({ id_actividad, title = 'sin titulo', encargado, isFather, isTicket }) => {
 
+      const findActivity = activities.find(item => item.id_det === id_actividad)
+      const isRuning = findActivity.estado_play_pausa === 2
+
+      const alertTitle = isRuning ? 'Atención la actividad se esta ejecutando!' : 'Atención'
+      const alertContent = isRuning ?
+         `<div class="text-left font-semibold mb-1">Atencion! la actividad se encuentra andando y eliminarla hara que pierda todos los tiempos y avances realizados.</div>
+         ¿Estás seguro de eliminar la siguiente actividad? </br>
+         <b>${title}</b>, ID: <b>${id_actividad}</b>`
+         :
+         `¿Estás seguro de eliminar la siguiente actividad? </br>
+         <b>${title}</b>, ID: <b>${id_actividad}</b>`
+
       if (encargado?.id !== user?.id && isFather && isTicket) {
          Alert({
             icon: 'warn',
@@ -285,8 +297,8 @@ const Activity = () => {
 
       Alert({
          icon: 'warn',
-         title: 'Atención',
-         content: `¿Estás seguro de eliminar la siguiente actividad: <strong>${title}</strong>, id: <strong>${id_actividad}</strong>?`,
+         title: alertTitle,
+         content: alertContent,
          confirmText: 'Si, eliminar',
          cancelText: 'No, cancelar',
          action: () => deleteActivity({ id_actividad }),

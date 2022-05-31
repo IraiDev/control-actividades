@@ -258,11 +258,7 @@ export const useActivity = () => {
 
    const deleteActivity = async ({ id_actividad }) => {
       try {
-         const resp = await fetchToken(
-            'task/delete-actividad',
-            { id_actividad },
-            'DELETE'
-         )
+         const resp = await fetchToken('task/delete-actividad',  { id_actividad }, 'DELETE')
          const body = await resp.json()
 
          if (body.ok) {
