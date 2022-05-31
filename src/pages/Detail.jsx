@@ -36,7 +36,7 @@ import EventContainer from '../components/detail/EventContainer'
 
 const TODAY = moment(new Date()).format('yyyy-MM-DD')
 
-const BASE_URL = 'http://www.zcloud.cl/registro_avance/'
+const BASE_URL = 'https://registroavance.zcloud.cl/'
 
 const defaultNotes = [
    { id: 11121, desc: 'Inicializar actividad urgente' },
