@@ -508,7 +508,7 @@ const ActivityCard = props => {
                      {props.func_objeto}
                   </p>
 
-                  <div className='flex gap-3'>
+                  <div className='flex flex-wrap gap-3'>
 
                      <Tag hideIcon>
                         Tipo: {props.desc_tipo_actividad}
