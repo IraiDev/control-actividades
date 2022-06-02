@@ -22,7 +22,6 @@ export const useActivity = () => {
          const { ok, tareas, total_tareas } = body
          
          setIsLoading(false)
-         console.log(tareas[0])
 
          if (ok) {
             setActivities(tareas)
