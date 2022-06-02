@@ -1014,7 +1014,7 @@ const Activity = () => {
 
                               <Td>
                                  <span className='bg-orange-200 border border-orange-400 text-orange-500 font-semibold rounded-full px-1.5 py-0.5 shadow-md'>
-                                    {act.tiempo_trabajado.toFixed(2)}
+                                    {act?.tiempo_trabajado?.toFixed(act?.tiempo_trabajado > 0 ? 2 : 0) || '- -'}
                                  </span>
                               </Td>
 
