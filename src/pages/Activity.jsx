@@ -680,7 +680,7 @@ const Activity = () => {
                            />
                         </Th>
 
-                        {/* <Th></Th> */}
+                        <Th></Th>
 
                         <Th>
                            <InputFilter
@@ -807,7 +807,7 @@ const Activity = () => {
                               prioridad
                            </SpanFilter>
                         </Th>
-                        {/* <Th primary>fecha</Th> */}
+                        <Th primary><span title='tiempo trabajado'>Tiempo</span></Th>
                         <Th primary>
                            <div className='flex items-baseline justify-center gap-2'>
                               <SpanFilter condition={filters.titulo.length > 0}>
@@ -1012,9 +1012,11 @@ const Activity = () => {
 
                               <Td>{act.num_prioridad}</Td>
 
-                              {/* <Td >
-                                 {moment(act.fecha_tx).format('DD/MM/yyyy')}
-                              </Td> */}
+                              <Td>
+                                 <span className='bg-orange-200 border border-orange-400 text-orange-500 font-semibold rounded-full px-1.5 py-0.5 shadow-md'>
+                                    {act.tiempo_trabajado.toFixed(2)}
+                                 </span>
+                              </Td>
 
                               <Td
                                  isMultiLine={multiline}

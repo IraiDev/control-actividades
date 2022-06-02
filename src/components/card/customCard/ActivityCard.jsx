@@ -448,8 +448,6 @@ const ActivityCard = props => {
 
                      <P tag='Prioridad' value={props.num_prioridad} />
 
-                     <span className='block text-transparent h-1.5' ></span>
-
                      <P tag='solicita' value={props.user_solicita} />
 
                      <P tag='revisor' value={props.abrev_revisor || '--'} />
@@ -458,23 +456,23 @@ const ActivityCard = props => {
 
                   <section className='capitalize'>
 
-                     <span className='block text-transparent h-1.5' ></span>
-
                      <P tag='Orden' value={props?.orden || '- -'} />
 
-                     <P tag='creacion' value={moment(fecha_tx).format('DD-MM-YY')} />
+                     <P tag='estado' value={optionsArray?.status?.find(st => st.value === estado).tooltip || ''} />
 
-                     <P tag='estado' value={optionsArray?.status?.find(st => st.value === estado).label || ''} />
+                     <P tag='fecha' value={moment(fecha_tx).format('DD-MM-YY')} />
+
+                     {/* <P tag='tiempo' value={props.tiempo_trabajado.toFixed(2)} /> */}
 
                   </section>
 
-                  <aside className='capitalize'>
+                  <aside className='capitalize pl-3'>
 
                      <P tag='proy' value={props.abrev} />
 
                      <P tag='sub p' value={props.nombre_sub_proy || '- -'} />
 
-                     <span className='block text-transparent h-1.5' ></span>
+                     {/* <span className='block text-transparent h-1.5' ></span> */}
 
                      <span className='flex gap-1 max-w-max rounded'>
                         <strong>ID:</strong>
@@ -500,6 +498,7 @@ const ActivityCard = props => {
                      />
 
                   </aside>
+
                </CardSection>
 
                <br />
@@ -511,8 +510,12 @@ const ActivityCard = props => {
 
                   <div className='flex gap-3'>
 
-                     <Tag>
+                     <Tag hideIcon>
                         Tipo: {props.desc_tipo_actividad}
+                     </Tag>
+
+                     <Tag hideIcon title='tiempo trabajado'>
+                        Tiempo: {props?.tiempo_trabajado?.toFixed(props?.tiempo_trabajado > 0 ? 2 : 0) || '- -'}
                      </Tag>
 
                      {props.notas.length > 0 &&
