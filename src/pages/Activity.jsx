@@ -25,6 +25,7 @@ import Td from '../components/table2/Td'
 import MarkActivity from '../components/ui/MarkActivity'
 import SpanFilter from '../components/filter/SpanFilter'
 import { fetchToken } from '../helpers/fetch'
+import NumberFormat from 'react-number-format'
 
 const PrioritySelector = ({ onClick, color = 'bg-slate-400', disabled }) => {
    return (
@@ -681,6 +682,7 @@ const Activity = () => {
                         </Th>
 
                         <Th></Th>
+                        <Th></Th>
 
                         <Th>
                            <InputFilter
@@ -808,6 +810,7 @@ const Activity = () => {
                            </SpanFilter>
                         </Th>
                         <Th primary><span title='tiempo trabajado'>Tiempo</span></Th>
+                        <Th primary><span title='tiempo trabajado'>Tiempo Estimado</span></Th>
                         <Th primary>
                            <div className='flex items-baseline justify-center gap-2'>
                               <SpanFilter condition={filters.titulo.length > 0}>
@@ -1013,9 +1016,27 @@ const Activity = () => {
                               <Td>{act.num_prioridad}</Td>
 
                               <Td>
-                                 <span className='bg-orange-200 border border-orange-400 text-orange-500 font-semibold rounded-full px-1.5 py-0.5 shadow-md'>
-                                    {act?.tiempo_trabajado?.toFixed(act?.tiempo_trabajado > 0 ? 2 : 0) || '- -'}
-                                 </span>
+                                 <div className='flex justify-end p-1'>
+                                    <NumberFormat
+                                       allowLeadingZeros
+                                       fixedDecimalScale
+                                       className='text-orange-500 font-bold'
+                                       displayType='text'
+                                       decimalScale={2}
+                                       value={act.tiempo_trabajado} />
+                                 </div>
+                              </Td>
+
+                              <Td>
+                                 <div className='flex justify-end p-1'>
+                                    <NumberFormat
+                                       allowLeadingZeros
+                                       fixedDecimalScale
+                                       className='text-emerald-500 font-bold'
+                                       displayType='text'
+                                       decimalScale={2}
+                                       value={act.tiempo_estimado} />
+                                 </div>
                               </Td>
 
                               <Td
@@ -1058,6 +1079,33 @@ const Activity = () => {
 
                            </tr>
                         ))}
+
+                     <tr >
+                        <td colSpan={10}></td>
+                        <td>
+                           <div className='flex justify-end p-2'>
+                              <NumberFormat
+                                 allowLeadingZeros
+                                 fixedDecimalScale
+                                 className='text-orange-600 font-bold'
+                                 displayType='text'
+                                 decimalScale={2}
+                                 value={activities.reduce((acc, act) => acc + act.tiempo_trabajado, 0)} />
+                           </div>
+                        </td>
+                        <td>
+                           <div className='flex justify-end p-2'>
+                              <NumberFormat
+                                 allowLeadingZeros
+                                 fixedDecimalScale
+                                 className='text-emerald-600 font-bold'
+                                 displayType='text'
+                                 decimalScale={2}
+                                 value={activities.reduce((acc, act) => acc + act.tiempo_estimado, 0)} />
+                           </div>
+                        </td>
+                        <td colSpan={4}></td>
+                     </tr>
                   </TBody>
 
                </Table>

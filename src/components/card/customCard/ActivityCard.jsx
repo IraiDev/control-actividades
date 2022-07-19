@@ -23,6 +23,7 @@ import Select from 'react-select'
 import AlertBar from '../../ui/AlertBar'
 import Input from '../../ui/Input'
 import { useDetail } from '../../../hooks/useDetail'
+import NumberFormat from 'react-number-format'
 
 const defaultNotes = [
    { id: 11121, desc: 'Inicializar actividad urgente' },
@@ -135,7 +136,7 @@ const ActivityCard = props => {
    const [modalClone, toggleModalClone] = useState(false)
 
    // variables
-   const ESTADO_PAUSA = estado === 1
+   // const ESTADO_PAUSA = estado === 1
    const ESTADO_play = estado_play_pausa === 2
    const isFather = props.es_padre === 1 && props.es_hijo === 0
    const isChildren = props.es_hijo === 1 && props.es_padre === 0
@@ -515,7 +516,22 @@ const ActivityCard = props => {
                      </Tag>
 
                      <Tag hideIcon title='tiempo trabajado'>
-                        Tiempo: {props?.tiempo_trabajado?.toFixed(props?.tiempo_trabajado > 0 ? 2 : 0) || '- -'}
+                        {/* Tiempo: {props?.tiempo_trabajado?.toFixed(props?.tiempo_trabajado > 0 ? 2 : 0) || '- -'} */}
+                        T.T:
+                        <NumberFormat
+                           className='ml-1'
+                           displayType='text'
+                           decimalScale={2}
+                           value={props?.tiempo_trabajado ?? '- -'} />
+                     </Tag>
+
+                     <Tag hideIcon title='tiempo estimado'>
+                        T.E:
+                        <NumberFormat
+                           className='ml-1'
+                           displayType='text'
+                           decimalScale={2}
+                           value={props?.tiempo_trabajado ?? '- -'} />
                      </Tag>
 
                      {props.notas.length > 0 &&

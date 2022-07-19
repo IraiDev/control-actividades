@@ -35,13 +35,13 @@ const { activity, home } = routes
 
 const EnvType = ({ env, isHide = false }) => (
    <>
-      {env.length > 0 && (
+      {env.length > 0 ? (
          <h5
             className={`text-lg text-red-400 font-semibold ${isHide && 'hidden md:block'
                }`}>
             Serv: {env}
          </h5>
-      )}
+      ) : null}
    </>
 )
 
