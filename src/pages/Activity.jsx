@@ -809,8 +809,8 @@ const Activity = () => {
                               prioridad
                            </SpanFilter>
                         </Th>
-                        <Th primary><span title='tiempo trabajado'>Tiempo</span></Th>
-                        <Th primary><span title='tiempo trabajado'>Tiempo Estimado</span></Th>
+                        <Th primary><span title='tiempo trabajado'>T.T</span></Th>
+                        <Th primary><span title='tiempo estimado'>T.E</span></Th>
                         <Th primary>
                            <div className='flex items-baseline justify-center gap-2'>
                               <SpanFilter condition={filters.titulo.length > 0}>
