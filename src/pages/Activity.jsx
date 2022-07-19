@@ -1053,7 +1053,7 @@ const Activity = () => {
                                  {act.func_objeto}
                               </Td>
 
-                              <Td>{act.estado === 1 ? 'Pendiente' : 'En trabajo'}</Td>
+                              <Td>{optionsArray?.status?.find(item => act.estado === item.value).label ?? 'Estado no encontrado'}</Td>
 
                               <TdActivityControls
                                  onPause={onPauseActivity}
