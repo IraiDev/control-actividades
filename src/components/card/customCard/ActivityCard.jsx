@@ -531,7 +531,7 @@ const ActivityCard = props => {
                            className='ml-1'
                            displayType='text'
                            decimalScale={2}
-                           value={props?.tiempo_trabajado ?? '- -'} />
+                           value={props?.tiempo_estimado ?? '- -'} />
                      </Tag>
 
                      {props.notas.length > 0 &&
