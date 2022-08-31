@@ -61,16 +61,17 @@ const TdSwitch = (props) => {
       return (
          <Td isStickyRight >
             <div className='flex gap-2 justify-center'>
+
                <Button
                   className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 border border-emerald-300'
-                  onClick={() => props.onChangeCheckedActivity({ id: props.id_det, title: props.actividad, revisado: true, estado: props.estado })}
+                  onClick={() => props.onChangeCheckedActivity({ id: props.id_det, title: props.actividad, revisado: true, estado: props.estado, coorId: props.id_coordinacion })}
                >
                   <i className='fas fa-check' />
                </Button>
 
                <Button
                   className='bg-red-100 hover:bg-red-200 text-red-500 border border-red-300 px-3'
-                  onClick={() => props.onChangeCheckedActivity({ id: props.id_det, title: props.actividad, revisado: false, estado: props.estado })}
+                  onClick={() => props.onChangeCheckedActivity({ id: props.id_det, title: props.actividad, revisado: false, estado: props.estado, coorId: props.id_coordinacion })}
                >
                   <i className='fas fa-times' />
                </Button>

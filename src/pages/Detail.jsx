@@ -173,7 +173,6 @@ const Detail = () => {
    const isTicket = activity.num_ticket_edit !== 0
    const isRuning = activity.estado_play_pausa === 2
    const isFather = activity.es_padre === 1 && activity.es_hijo === 0
-   const isFatherChildren = activity.es_padre === 1 && activity.es_hijo === 1
    const [showContent, setshowContent] = useState(false)
    const [showChilds, setShowChilds] = useState(false)
    const [showEvents, setShowEvents] = useState(false)
@@ -615,6 +614,9 @@ const Detail = () => {
 
    // realiza la accion de guardar los cambios realizados en la actividad
    const onSave = async () => {
+
+      const fileValidation = files !== null ? files.size < 5000000 : true
+
       const formData = new FormData()
       options?.pr && formData.append('proyecto', options.pr.value)
       options?.sp && formData.append('sub_proyecto', options.sp.value)
@@ -629,9 +631,17 @@ const Detail = () => {
       formData.append('descripcion', description)
       formData.append('glosa', gloss)
       formData.append('id_actividad', activity.id_det)
-      files && formData.append('archivos', files)
+      fileValidation && formData.append('archivos', files)
 
       await saveActivity(formData)
+
+      if (!fileValidation) {
+         Alert({
+            title: 'Atencion!',
+            content: 'El archivo seleccionado excede el peso maximo permitido (5MB), no se anexo a la actividad.',
+            showCancelButton: false,
+         })
+      }
 
       setFiles(null)
       onCleanFile(Math.random().toString(36))
@@ -2631,7 +2641,7 @@ const Detail = () => {
                                  <CloneSelect
                                     isRequired
                                     field='tipo actividad'
-                                    options={activity_type}
+                                    options={isFather ? activity_type.filter(item => item.value !== 1) : activity_type}
                                     value={cloneOptions.ta}
                                     onChange={option =>
                                        setCloneOptions({

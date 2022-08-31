@@ -32,7 +32,9 @@ const Revision = () => {
       total,
       toggleCheckActivity,
       onDistribution,
-      onPlayPause
+      onPlayPause,
+      getFather,
+      playFatherActivity
    } = useActivityPr()
 
    // context
@@ -151,7 +153,38 @@ const Revision = () => {
       reset()
    }
 
-   const onChangeCheckedActivity = ({ id, title, estado, revisado }) => {
+   const onChangeCheckedActivity = async ({ id, title, estado, revisado, coorId }) => {
+
+      console.log({ coorId });
+      const { es_padre = false, estado_play = false } = await getFather(coorId)
+
+      const action = async () => {
+         const isOk = await playFatherActivity(coorId)
+         if (isOk || !es_padre || estado_play) {
+            Alert({
+               title: 'Atención',
+               content: `${revisado ? 'Aprobar' : 'Rechazar'} revisión de la siguiente actividad: <strong>${title}</strong>, <strong>${id}</strong>`,
+               confirmText: `${revisado ? 'inciar Si, Aprobar' : 'Si, Rechazar'}`,
+               cancelText: 'No, cancelar',
+               action: () => {
+                  revisado ?
+                     toggleCheckActivity({ id_actividad: id, estado, revisado })
+                     : openModalReject(id, estado)
+               }
+            })
+         }
+      }
+
+      if (es_padre && !estado_play) {
+         Alert({
+            title: 'Atención!',
+            content: `Para revisar la siguiente actividad es necesario iniciar la actividad coordinadora. </br> <b>¿Iniciar actividad de coordinación?</b>`,
+            confirmText: 'Iniciar actividad',
+            cancelText: 'No, cancelar',
+            action
+         })
+         return
+      }
 
       Alert({
          title: 'Atención',
@@ -802,7 +835,7 @@ const Revision = () => {
                               state={act.estado}
                               onDistribution={({ distribuciones, id_actividad }) => onDistribution({ distribuciones, id_actividad })}
                               getId={(id_callback) => setIsActive(id_callback)}
-                              onChangeCheckedActivity={({ id, title, revisado, estado }) => onChangeCheckedActivity({ id, title, revisado, estado })}
+                              onChangeCheckedActivity={({ id, title, revisado, estado, coorId }) => onChangeCheckedActivity({ id, title, revisado, estado, coorId })}
                               onPlay={() => onPlay({ id_actividad: act.id_det })}
                               onPause={({ mensaje, tipo_pausa }) => onPause({ mensaje, tipo_pausa, id_actividad: act.id_det })}
                               isFather={act.es_padre === 1 && act.es_hijo === 0}
