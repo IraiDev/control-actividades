@@ -953,7 +953,7 @@ const ActivityCard = props => {
                            <CloneSelect
                               isRequired
                               field='tipo actividad'
-                              options={optionsArray?.activity_type}
+                              options={(isFather && isTicket) ? optionsArray?.activity_type.filter(item => item.value !== 1) : optionsArray?.activity_type}
                               value={actOptions.ta}
                               onChange={option =>
                                  setActOptions({
