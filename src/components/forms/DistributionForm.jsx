@@ -39,8 +39,8 @@ const DistributionForm = (props) => {
     hanldeChange,
     reset
   ] = useForm({
-    distr_cliente: 0,
-    distr_zionit: 0,
+    distr_cliente: '',
+    distr_zionit: '',
     distr_glosa: ''
   })
 
@@ -207,30 +207,30 @@ const DistributionForm = (props) => {
   }
 
   return (
-    <div className='mt-5 w-full pr-6 lg:pr-0'>
+    <div className='w-full pr-6 mt-5 lg:pr-0'>
 
       <section className='p-3.5 mb-5 bg-zinc-100 rounded-md'>
 
-        <h1 className='first-letter:uppercase mb-2'><b className='font-bold'>Titulo</b>: {props?.actividad}</h1>
+        <h1 className='mb-2 first-letter:uppercase'><b className='font-bold'>Titulo</b>: {props?.actividad}</h1>
 
-        <section className='flex gap-1 items-baseline'>
-          <h1 className='capitalize font-semibold text-sm'><b className='font-bold'>ID</b>: {props?.id_det}</h1>,
-          <h1 className='capitalize font-semibold text-sm'><b className='font-bold'>Encargado</b>: {props.encargado_actividad}</h1>,
-          <h1 className='capitalize font-semibold text-sm'><b className='font-bold'>Proyecto</b>: {props.abrev}</h1>,
-          <h1 className='capitalize font-semibold text-sm mb-2'><b className='font-bold'>Ticket</b>: {props.num_ticket_edit === 0 ? '- -' : props.num_ticket_edit}</h1>
+        <section className='flex items-baseline gap-1'>
+          <h1 className='text-sm font-semibold capitalize'><b className='font-bold'>ID</b>: {props?.id_det}</h1>,
+          <h1 className='text-sm font-semibold capitalize'><b className='font-bold'>Encargado</b>: {props.encargado_actividad}</h1>,
+          <h1 className='text-sm font-semibold capitalize'><b className='font-bold'>Proyecto</b>: {props.abrev}</h1>,
+          <h1 className='mb-2 text-sm font-semibold capitalize'><b className='font-bold'>Ticket</b>: {props.num_ticket_edit === 0 ? '- -' : props.num_ticket_edit}</h1>
         </section>
 
-        <h1 className='capitalize font-semibold text-sm'><b className='font-bold'>descripción</b></h1>
+        <h1 className='text-sm font-semibold capitalize'><b className='font-bold'>descripción</b></h1>
 
-        <p className='text-zinc-500 text-xs'>{props?.func_objeto}</p>
+        <p className='text-xs text-zinc-500'>{props?.func_objeto}</p>
 
       </section>
 
       <Box className='bg-white' isBlock colCount={10} >
 
-        <section className='col-span-6 flex gap-4 font-bold w-full'>
+        <section className='flex w-full col-span-6 gap-4 font-bold'>
 
-          <div className='text-yellow-500 flex gap-2'>
+          <div className='flex gap-2 text-yellow-500'>
             Tiempo Total:
 
             <NumberFormat
@@ -258,7 +258,7 @@ const DistributionForm = (props) => {
 
         </section>
 
-        <span className='col-span-1 text-right font-bold pr-4' title='Tiempo cliente acumulado'>
+        <span className='col-span-1 pr-4 font-bold text-right' title='Tiempo cliente acumulado'>
           <NumberFormat
             className='text-blue-400'
             value={cliente_acumulado}
@@ -268,7 +268,7 @@ const DistributionForm = (props) => {
           />
         </span>
 
-        <span className='col-span-1 text-right font-bold pr-4' title='Tiempo zionit acumulado' >
+        <span className='col-span-1 pr-4 font-bold text-right' title='Tiempo zionit acumulado' >
           <NumberFormat
             className='text-blue-400'
             value={zionit_acumulado}
@@ -278,7 +278,7 @@ const DistributionForm = (props) => {
           />
         </span>
 
-        <span className='col-span-1 text-right font-bold pr-4' title='Tiempo total acumulado'>
+        <span className='col-span-1 pr-4 font-bold text-right' title='Tiempo total acumulado'>
           <NumberFormat
             className='text-blue-400 '
             value={total_acumulado}
@@ -291,31 +291,31 @@ const DistributionForm = (props) => {
 
       <Box isBlock colCount={10} >
 
-        <h3 className='font-semibold text-sm col-span-1 py-2 text-center'>
+        <h3 className='col-span-1 py-2 text-sm font-semibold text-center'>
           Nº
         </h3>
 
-        <h3 className='font-semibold text-sm col-span-1 py-2 text-center'>
+        <h3 className='col-span-1 py-2 text-sm font-semibold text-center'>
           Tipo Actividad
         </h3>
 
-        <h3 className='font-semibold text-sm col-span-2 text-center'>
+        <h3 className='col-span-2 text-sm font-semibold text-center'>
           Producto Zionit
         </h3>
 
-        <h3 className='font-semibold text-sm col-span-2 text-center'>
+        <h3 className='col-span-2 text-sm font-semibold text-center'>
           Glosa explicativa
         </h3>
 
-        <h3 className='font-semibold text-sm col-span-1 text-center'>
+        <h3 className='col-span-1 text-sm font-semibold text-center'>
           T. Cliente (hrs)
         </h3>
 
-        <h3 className='font-semibold text-sm col-span-1 text-center'>
+        <h3 className='col-span-1 text-sm font-semibold text-center'>
           T. Zionit (hrs)
         </h3>
 
-        <h3 className='font-semibold text-sm col-span-1 text-center'>
+        <h3 className='col-span-1 text-sm font-semibold text-center'>
           T. Total (hrs)
         </h3>
       </Box>
@@ -325,7 +325,7 @@ const DistributionForm = (props) => {
 
           <span className='col-span-1 py-6' />
 
-          <span className='col-span-1 py-6 capitalize text-center' >
+          <span className='col-span-1 py-6 text-center capitalize' >
             {props.desc_tipo_actividad}
           </span>
 
@@ -369,7 +369,7 @@ const DistributionForm = (props) => {
           />
 
           <NumberFormat
-            className='text-right w-full pr-4'
+            className='w-full pr-4 text-right'
             value={Number(distr_zionit) + Number(distr_cliente)}
             decimalScale={4}
             fixedDecimalScale
@@ -378,14 +378,14 @@ const DistributionForm = (props) => {
 
           <Button
             disabled={tiempo_restante <= 0}
-            className='bg-emerald-100 hover:bg-emerald-200 text-emerald-500 col-span-1 mx-auto disabled:hover:bg-emerald-200/50'
+            className='col-span-1 mx-auto bg-emerald-100 hover:bg-emerald-200 text-emerald-500 disabled:hover:bg-emerald-200/50'
             onClick={handleCreateTimes}>
             agregar
           </Button>
         </Box>
       }
 
-      <h5 className='pl-4 text-sm my-5'>
+      <h5 className='pl-4 my-5 text-sm'>
         Lista de distribucion de tiempos
       </h5>
 
@@ -463,7 +463,7 @@ const DistributionForm = (props) => {
             />
 
             <NumberFormat
-              className='text-right w-full pr-4'
+              className='w-full pr-4 text-right'
               value={distributions[i]?.tiempo_dist_act ?? ''}
               decimalScale={4}
               fixedDecimalScale
@@ -473,7 +473,7 @@ const DistributionForm = (props) => {
             <Button
               hidden={props.isFather || padre_original_terminado}
               disabled={props.isFather || padre_original_terminado}
-              className='hover:bg-red-100 text-red-500 mx-auto'
+              className='mx-auto text-red-500 hover:bg-red-100'
               onClick={() =>
                 handleDeleteTimes(dis.id_dist_tiempo_act)
               }>
@@ -484,14 +484,14 @@ const DistributionForm = (props) => {
 
         ))
         :
-        <span className='text-sm text-zinc-400 pl-8'>
+        <span className='pl-8 text-sm text-zinc-400'>
           No hay distribucion de tiempos...
         </span>
       }
 
       <footer className='flex justify-between mt-10'>
         <Button
-          className='bg-red-100 hover:bg-red-200 text-red-500'
+          className='text-red-500 bg-red-100 hover:bg-red-200'
           onClick={onCloseForm}
         >
           {props.isFather ? 'Cerrar' : 'Cancelar'}
@@ -501,7 +501,7 @@ const DistributionForm = (props) => {
           <div className='flex gap-2'>
 
             <Button
-              className='bg-red-100 text-red-500'
+              className='text-red-500 bg-red-100'
               onClick={() => handleApplyChanges({ type: props.id_tipo_actividad, reject: true, status: props.estado })}
             >
               rechazar
