@@ -276,6 +276,22 @@ const Detail = () => {
    const { cTitle, cDescription, cPriority, cTicket, cTime, cGloss } = cloneFields
    const { projects, subProjects, users, activity_type, pause_type } = optionsArray
 
+   const pausesList = (activityType) => {
+      const list = optionsArray?.pause_type ?? []
+
+      if (activityType === 1) {
+         //tipo actividad normal
+         return list.filter((item) => item.value === 1) //tipo pausa normal
+      }
+
+      if (activityType === 3) {
+         //tipo actividad normal
+         return list.filter((item) => item.value === 3) //tipo pausa entrega
+      }
+      //tipo actividad coordinacion
+      return list //tipo pausa todas
+   }
+
    const validation = () => {
       const vTitle = title.trim() === ''
       const vDesc = description.trim() === ''
@@ -1847,7 +1863,8 @@ const Detail = () => {
                                              title="Solo se puede clonar actividad de tipo COORDINACION cuando esta esta andando"
                                              disabled={
                                                 activity.id_tipo_actividad === 4 &&
-                                                activity.estado_play_pausa !== 2
+                                                activity.estado_play_pausa !== 2 &&
+                                                isTicket
                                              }
                                              className="flex items-center justify-between gap-2 border-b border-zinc-200/60"
                                              onClick={openModalClone}
@@ -2638,9 +2655,17 @@ const Detail = () => {
                            {values.content}
                         </p>
 
-                        <CustomSelect
+                        {/* <CustomSelect
                            label="Tipo de pausa"
                            options={optionsArray?.pause_type}
+                           isDefaultOptions
+                           value={options?.pt}
+                           onChange={(option) => setOptions({ ...options, pt: option })}
+                        /> */}
+
+                        <CustomSelect
+                           label="Tipo de pausa"
+                           options={pausesList(activity?.id_tipo_actividad)}
                            isDefaultOptions
                            value={options?.pt}
                            onChange={(option) => setOptions({ ...options, pt: option })}

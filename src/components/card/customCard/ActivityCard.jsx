@@ -160,6 +160,22 @@ const ActivityCard = (props) => {
    const isTicket = props.num_ticket_edit > 0
    const isRestricted = props.predecesoras.length > 0
 
+   const pausesList = (activityType) => {
+      const list = optionsArray?.pause_type ?? []
+
+      if (activityType === 1) {
+         //tipo actividad normal
+         return list.filter((item) => item.value === 1) //tipo pausa normal
+      }
+
+      if (activityType === 3) {
+         //tipo actividad normal
+         return list.filter((item) => item.value === 3) //tipo pausa entrega
+      }
+      //tipo actividad coordinacion
+      return list //tipo pausa todas
+   }
+
    const onCloseModals = () => {
       reset()
       resetAct()
@@ -615,7 +631,9 @@ const ActivityCard = (props) => {
                      {props.id_tipo_actividad !== 3 && (estado === 1 || estado === 2) && (
                         <MenuItem
                            title="Solo se puede clonar actividad de tipo COORDINACION cuando esta esta andando"
-                           disabled={props.id_tipo_actividad === 4 && !ESTADO_play}
+                           disabled={
+                              props.id_tipo_actividad === 4 && !ESTADO_play && isTicket
+                           }
                            className="flex items-center justify-between gap-2"
                            onClick={() => openModalClone(props)}
                         >
@@ -824,7 +842,7 @@ const ActivityCard = (props) => {
 
                <CustomSelect
                   label="Tipo de pausa"
-                  options={optionsArray?.pause_type}
+                  options={pausesList(props?.id_tipo_actividad)}
                   isDefaultOptions
                   value={options}
                   onChange={(option) => setOptions(option)}
